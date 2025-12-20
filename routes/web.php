@@ -1,0 +1,147 @@
+<?php
+
+use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
+use App\Http\Controllers\Admin\ProductController as AdminProduct;
+use App\Http\Controllers\Admin\OrderController as AdminOrder;
+use App\Http\Controllers\Admin\TestimonialController as AdminTestimonial;
+use App\Http\Controllers\Admin\UserController as AdminUser;
+use App\Http\Controllers\Admin\HistoryController as AdminHistory;
+use App\Http\Controllers\Customer\ProductController as CustomerProduct;
+use App\Http\Controllers\Customer\CartController;
+use App\Http\Controllers\Customer\OrderController as CustomerOrder;
+use App\Http\Controllers\Customer\ProfileController;
+use App\Http\Controllers\Customer\TestimonialController as CustomerTestimonial;
+use App\Http\Controllers\Courier\DashboardController as CourierDashboard;
+use App\Http\Controllers\Courier\DeliveryController as CourierDelivery;
+use App\Http\Controllers\Courier\ProfileController as CourierProfile;
+use App\Http\Controllers\Courier\NotificationController as CourierNotification;
+use Illuminate\Support\Facades\Route;
+
+// Landing Page
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// Auth Routes
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+    Route::post('/register', [AuthController::class, 'register']);
+});
+
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
+
+// Admin Routes
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
+    Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard');
+    
+    // Products
+    Route::resource('products', AdminProduct::class);
+    Route::patch('/products/{product}/toggle-status', [AdminProduct::class, 'toggleStatus'])->name('products.toggle-status');
+    
+    // Orders
+    Route::get('/orders', [AdminOrder::class, 'index'])->name('orders.index');
+    Route::get('/orders/{order}', [AdminOrder::class, 'show'])->name('orders.show');
+    Route::patch('/orders/{order}/status', [AdminOrder::class, 'updateStatus'])->name('orders.update-status');
+    Route::patch('/orders/{order}/verify-payment', [AdminOrder::class, 'verifyPayment'])->name('orders.verify-payment');
+    Route::patch('/orders/{order}/reject-payment', [AdminOrder::class, 'rejectPayment'])->name('orders.reject-payment');
+    Route::patch('/orders/{order}/shipping', [AdminOrder::class, 'updateShipping'])->name('orders.update-shipping');
+    Route::post('/orders/{order}/assign-courier', [AdminOrder::class, 'assignCourier'])->name('orders.assign-courier');
+    Route::get('/orders/{order}/receipt', [AdminOrder::class, 'viewReceipt'])->name('orders.receipt');
+    Route::get('/orders/{order}/print-receipt', [AdminOrder::class, 'printReceipt'])->name('orders.print-receipt');
+    Route::get('/couriers', [AdminOrder::class, 'getCouriers'])->name('couriers.list');
+    
+    // Testimonials
+    Route::get('/testimonials', [AdminTestimonial::class, 'index'])->name('testimonials.index');
+    Route::patch('/testimonials/{testimonial}/approve', [AdminTestimonial::class, 'approve'])->name('testimonials.approve');
+    Route::patch('/testimonials/{testimonial}/reject', [AdminTestimonial::class, 'reject'])->name('testimonials.reject');
+    Route::delete('/testimonials/{testimonial}', [AdminTestimonial::class, 'destroy'])->name('testimonials.destroy');
+    
+    // Users
+    Route::get('/users', [AdminUser::class, 'index'])->name('users.index');
+    Route::get('/users/{user}', [AdminUser::class, 'show'])->name('users.show');
+    Route::patch('/users/{user}/toggle-status', [AdminUser::class, 'toggleStatus'])->name('users.toggle-status');
+    Route::patch('/users/{user}/reset-password', [AdminUser::class, 'resetPassword'])->name('users.reset-password');
+    
+    // History
+    Route::get('/history', [AdminHistory::class, 'index'])->name('history.index');
+    Route::get('/history/{order}', [AdminHistory::class, 'show'])->name('history.show');
+    Route::get('/history-export', [AdminHistory::class, 'export'])->name('history.export');
+
+    // Notifications
+    Route::get('/notifications', function () {
+        $notifications = auth()->user()->notifications()->paginate(20);
+        return view('admin.notifications.index', compact('notifications'));
+    })->name('notifications.index');
+    
+    Route::post('/notifications/mark-read', function () {
+        auth()->user()->unreadNotifications->markAsRead();
+        return back()->with('success', 'Semua notifikasi telah ditandai dibaca.');
+    })->name('notifications.mark-read');
+});
+
+// Courier Routes
+Route::prefix('courier')->name('courier.')->middleware(['auth', 'courier'])->group(function () {
+    // Dashboard
+    Route::get('/dashboard', [CourierDashboard::class, 'index'])->name('dashboard');
+    
+    // Deliveries
+    Route::get('/deliveries', [CourierDelivery::class, 'index'])->name('deliveries.index');
+    Route::get('/deliveries/history', [CourierDelivery::class, 'history'])->name('deliveries.history');
+    Route::get('/deliveries/{order}', [CourierDelivery::class, 'show'])->name('deliveries.show');
+    Route::post('/deliveries/{order}/pickup', [CourierDelivery::class, 'pickUp'])->name('deliveries.pickup');
+    Route::post('/deliveries/{order}/start', [CourierDelivery::class, 'startDelivery'])->name('deliveries.start');
+    Route::post('/deliveries/{order}/delivered', [CourierDelivery::class, 'markDelivered'])->name('deliveries.delivered');
+    
+    // Profile
+    Route::get('/profile', [CourierProfile::class, 'show'])->name('profile');
+    Route::put('/profile', [CourierProfile::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [CourierProfile::class, 'updatePassword'])->name('profile.password');
+    
+    // Notifications
+    Route::post('/notifications/mark-read', [CourierNotification::class, 'markAllAsRead'])->name('notifications.markRead');
+});
+
+// Customer Routes
+Route::prefix('customer')->name('customer.')->middleware(['auth', 'customer'])->group(function () {
+    // Products
+    Route::get('/products', [CustomerProduct::class, 'index'])->name('products.index');
+    Route::get('/products/{product}', [CustomerProduct::class, 'show'])->name('products.show');
+    
+    // Cart
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/add/{product}', [CartController::class, 'add'])->name('cart.add');
+    Route::patch('/cart/{cart}', [CartController::class, 'update'])->name('cart.update');
+    Route::delete('/cart/{cart}', [CartController::class, 'remove'])->name('cart.remove');
+    Route::delete('/cart', [CartController::class, 'clear'])->name('cart.clear');
+    Route::get('/cart/count', [CartController::class, 'count'])->name('cart.count');
+    
+    // Checkout & Orders
+    Route::get('/checkout', [CustomerOrder::class, 'checkout'])->name('checkout');
+    Route::post('/checkout', [CustomerOrder::class, 'processCheckout'])->name('checkout.process');
+    Route::get('/orders', [CustomerOrder::class, 'index'])->name('orders.index');
+    Route::get('/orders/{order}', [CustomerOrder::class, 'show'])->name('orders.show');
+    Route::post('/orders/{order}/payment', [CustomerOrder::class, 'uploadPayment'])->name('orders.upload-payment');
+    Route::patch('/orders/{order}/cancel', [CustomerOrder::class, 'cancel'])->name('orders.cancel');
+    Route::patch('/orders/{order}/confirm', [CustomerOrder::class, 'confirmReceived'])->name('orders.confirm');
+    
+    // Testimonials
+    Route::post('/orders/{order}/testimonial', [CustomerTestimonial::class, 'store'])->name('testimonials.store');
+    
+    // Profile
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.update-password');
+
+    // Notifications
+    Route::get('/notifications', function () {
+        $notifications = auth()->user()->notifications()->paginate(20);
+        return view('customer.notifications.index', compact('notifications'));
+    })->name('notifications.index');
+    
+    Route::post('/notifications/mark-read', function () {
+        auth()->user()->unreadNotifications->markAsRead();
+        return back()->with('success', 'Semua notifikasi telah ditandai dibaca.');
+    })->name('notifications.mark-read');
+});
