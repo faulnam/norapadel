@@ -9,9 +9,8 @@
             <div class="card shadow-sm">
                 <div class="card-body p-5">
                     <div class="text-center mb-4">
-                        <h3 class="fw-bold text-success">
-                            <i class="fas fa-leaf me-2"></i>PATAH
-                        </h3>
+                        <img src="{{ asset('images/logo.png') }}" alt="{{ config('branding.name', 'PATAH') }}" height="60" class="mb-3">
+                        <h3 class="fw-bold text-success">{{ config('branding.name', 'PATAH') }}</h3>
                         <p class="text-muted">Masuk ke akun Anda</p>
                     </div>
 

@@ -73,18 +73,21 @@ class DeliveryController extends Controller
             return back()->with('error', 'Status pesanan tidak valid untuk diambil.');
         }
 
-        // Validate photo is required
+        // Validate base64 photo is required
         $request->validate([
-            'pickup_photo' => 'required|image|mimes:jpeg,png,jpg|max:5120', // Max 5MB
+            'pickup_photo_base64' => 'required|string',
         ], [
-            'pickup_photo.required' => 'Foto pengambilan barang wajib disertakan.',
-            'pickup_photo.image' => 'File harus berupa gambar.',
-            'pickup_photo.mimes' => 'Format gambar harus jpeg, png, atau jpg.',
-            'pickup_photo.max' => 'Ukuran gambar maksimal 5MB.',
+            'pickup_photo_base64.required' => 'Foto pengambilan barang wajib diambil dari kamera.',
         ]);
 
-        // Upload photo
-        $photoPath = $request->file('pickup_photo')->store('delivery-photos/pickup', 'public');
+        // Process base64 image
+        $base64Image = $request->input('pickup_photo_base64');
+        $photoPath = $this->saveBase64Image($base64Image, 'delivery-photos/pickup');
+        
+        if (!$photoPath) {
+            return back()->with('error', 'Gagal menyimpan foto. Silakan coba lagi.');
+        }
+        
         $order->pickup_photo = $photoPath;
         $order->save();
 
@@ -130,19 +133,22 @@ class DeliveryController extends Controller
             return back()->with('error', 'Status pesanan tidak valid.');
         }
 
-        // Validate photo is required
+        // Validate base64 photo is required
         $request->validate([
-            'delivery_photo' => 'required|image|mimes:jpeg,png,jpg|max:5120', // Max 5MB
+            'delivery_photo_base64' => 'required|string',
             'delivery_notes' => 'nullable|string|max:500',
         ], [
-            'delivery_photo.required' => 'Foto bukti pengiriman wajib disertakan.',
-            'delivery_photo.image' => 'File harus berupa gambar.',
-            'delivery_photo.mimes' => 'Format gambar harus jpeg, png, atau jpg.',
-            'delivery_photo.max' => 'Ukuran gambar maksimal 5MB.',
+            'delivery_photo_base64.required' => 'Foto bukti pengiriman wajib diambil dari kamera.',
         ]);
 
-        // Upload photo
-        $photoPath = $request->file('delivery_photo')->store('delivery-photos/delivered', 'public');
+        // Process base64 image
+        $base64Image = $request->input('delivery_photo_base64');
+        $photoPath = $this->saveBase64Image($base64Image, 'delivery-photos/delivered');
+        
+        if (!$photoPath) {
+            return back()->with('error', 'Gagal menyimpan foto. Silakan coba lagi.');
+        }
+        
         $order->delivery_photo = $photoPath;
         $order->save();
 
@@ -192,5 +198,38 @@ class DeliveryController extends Controller
         $totalEarnings = $stats->sum('shipping_cost');
 
         return view('courier.deliveries.history', compact('deliveries', 'totalDelivered', 'totalEarnings'));
+    }
+    
+    /**
+     * Save base64 image to storage
+     */
+    private function saveBase64Image($base64Image, $folder)
+    {
+        try {
+            // Extract the image data from base64 string
+            if (preg_match('/^data:image\/(\w+);base64,/', $base64Image, $matches)) {
+                $extension = $matches[1];
+                $base64Image = substr($base64Image, strpos($base64Image, ',') + 1);
+            } else {
+                $extension = 'jpg';
+            }
+            
+            $imageData = base64_decode($base64Image);
+            
+            if ($imageData === false) {
+                return null;
+            }
+            
+            // Generate unique filename
+            $filename = $folder . '/' . uniqid() . '_' . time() . '.' . $extension;
+            
+            // Save to storage
+            Storage::disk('public')->put($filename, $imageData);
+            
+            return $filename;
+        } catch (\Exception $e) {
+            \Log::error('Failed to save base64 image: ' . $e->getMessage());
+            return null;
+        }
     }
 }

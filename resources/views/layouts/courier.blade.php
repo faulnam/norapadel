@@ -10,177 +10,650 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts - Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --primary-color: #1565C0;
-            --secondary-color: #42A5F5;
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #dbeafe;
+            --accent: #f97316;
+            --accent-light: #ffedd5;
+            --dark: #1f2937;
+            --gray: #6b7280;
+            --gray-light: #f3f4f6;
+            --white: #ffffff;
+            --off-white: #fafafa;
+            --border-color: #e5e7eb;
+            --radius: 12px;
+            --radius-sm: 8px;
+            --radius-lg: 16px;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            --transition: all 0.2s ease;
             --sidebar-width: 260px;
         }
         
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f4f6f9;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--off-white);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        /* Sidebar - Clean & Minimal */
         .sidebar {
             width: var(--sidebar-width);
             height: 100vh;
             position: fixed;
             left: 0;
             top: 0;
-            background: linear-gradient(180deg, #0D47A1 0%, #1565C0 100%);
-            color: white;
+            background: var(--white);
+            border-right: 1px solid var(--border-color);
             overflow-y: auto;
             z-index: 1000;
-            transition: all 0.3s;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
         }
         
         .sidebar-brand {
-            padding: 20px;
-            font-size: 1.5rem;
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .sidebar-brand-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+        
+        .sidebar-brand-text {
+            font-size: 1.125rem;
             font-weight: 700;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            color: var(--dark);
+            letter-spacing: -0.5px;
+        }
+        
+        .sidebar-brand-text span {
+            font-weight: 400;
+            color: var(--gray);
+            font-size: 0.75rem;
+            display: block;
+            letter-spacing: 0;
         }
         
         .sidebar-menu {
-            padding: 15px 0;
+            padding: 1rem 0;
+            flex: 1;
+        }
+        
+        .sidebar-label {
+            padding: 0.75rem 1.5rem 0.5rem;
+            font-size: 0.6875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--gray);
         }
         
         .sidebar-menu .nav-link {
-            color: rgba(255,255,255,0.8);
-            padding: 12px 20px;
+            color: var(--gray);
+            padding: 0.625rem 1.5rem;
             display: flex;
             align-items: center;
-            transition: all 0.3s;
+            gap: 0.75rem;
+            transition: var(--transition);
+            font-size: 0.875rem;
+            font-weight: 500;
             border-left: 3px solid transparent;
+            margin: 2px 0;
         }
         
-        .sidebar-menu .nav-link:hover,
+        .sidebar-menu .nav-link:hover {
+            color: var(--dark);
+            background: var(--gray-light);
+        }
+        
         .sidebar-menu .nav-link.active {
-            background-color: rgba(255,255,255,0.1);
-            color: white;
-            border-left-color: #FFC107;
-        }
-        
-        .sidebar-menu .nav-link i {
-            width: 24px;
-            margin-right: 10px;
-        }
-        
-        .main-content {
-            margin-left: var(--sidebar-width);
-            padding: 20px;
-            min-height: 100vh;
-        }
-        
-        .top-navbar {
-            background: white;
-            padding: 15px 25px;
-            margin: -20px -20px 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .card {
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-        
-        .card-header {
-            background: white;
-            border-bottom: 1px solid #eee;
+            color: var(--primary);
+            background: var(--primary-light);
+            border-left-color: var(--primary);
             font-weight: 600;
         }
         
-        .stat-card {
-            border-radius: 10px;
-            padding: 20px;
+        .sidebar-menu .nav-link i {
+            width: 18px;
+            font-size: 0.9375rem;
+            text-align: center;
+        }
+        
+        .sidebar-menu .nav-link .badge {
+            margin-left: auto;
+            font-size: 0.6875rem;
+            padding: 0.25rem 0.5rem;
+            font-weight: 600;
+        }
+        
+        .sidebar-divider {
+            height: 1px;
+            background: var(--border-color);
+            margin: 0.75rem 1.5rem;
+        }
+        
+        /* User Panel */
+        .user-panel {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .user-panel-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
             color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .user-panel-info {
+            flex: 1;
+        }
+        
+        .user-panel-info h6 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin: 0;
+        }
+        
+        .user-panel-info span {
+            font-size: 0.75rem;
+            color: var(--gray);
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+        }
+        
+        /* Top Navbar */
+        .top-navbar {
+            background: var(--white);
+            padding: 0.875rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .top-navbar .page-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin: 0;
+        }
+        
+        .top-navbar .page-breadcrumb {
+            font-size: 0.8125rem;
+            color: var(--gray);
+        }
+        
+        .top-navbar .page-breadcrumb a {
+            color: var(--gray);
+            text-decoration: none;
+        }
+        
+        .top-navbar .page-breadcrumb a:hover {
+            color: var(--primary);
+        }
+        
+        /* Notification Dropdown */
+        .notification-btn {
             position: relative;
-            overflow: hidden;
+            background: var(--gray-light);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+            transition: var(--transition);
         }
         
-        .stat-card .icon {
+        .notification-btn:hover {
+            background: var(--border-color);
+            color: var(--dark);
+        }
+        
+        .notification-badge {
             position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 3rem;
-            opacity: 0.3;
+            top: -2px;
+            right: -2px;
+            background: #dc2626;
+            color: white;
+            font-size: 0.625rem;
+            font-weight: 600;
+            padding: 0.125rem 0.375rem;
+            border-radius: 10px;
+            min-width: 18px;
+            text-align: center;
         }
         
-        .stat-card.bg-info {
-            background: linear-gradient(135deg, #0288D1, #03A9F4) !important;
+        /* Page Content Container */
+        .page-content {
+            padding: 1.5rem;
         }
         
-        .stat-card.bg-warning {
-            background: linear-gradient(135deg, #F57C00, #FFB74D) !important;
+        /* Cards - Clean Style */
+        .card {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            box-shadow: none;
+            transition: var(--transition);
         }
         
-        .stat-card.bg-success {
-            background: linear-gradient(135deg, #388E3C, #66BB6A) !important;
+        .card:hover {
+            box-shadow: var(--shadow-md);
         }
         
-        .stat-card.bg-primary {
-            background: linear-gradient(135deg, #1565C0, #42A5F5) !important;
+        .card-header {
+            background: transparent;
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 1.25rem;
+            font-weight: 600;
+            font-size: 0.9375rem;
+            color: var(--dark);
+        }
+        
+        .card-body {
+            padding: 1.25rem;
+        }
+        
+        /* Stat Cards - Minimal */
+        .stat-card {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            transition: var(--transition);
+        }
+        
+        .stat-card:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+        
+        .stat-icon.primary {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+        
+        .stat-icon.accent {
+            background: var(--accent-light);
+            color: var(--accent);
+        }
+        
+        .stat-icon.success {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+        
+        .stat-icon.purple {
+            background: #f3e8ff;
+            color: #9333ea;
+        }
+        
+        .stat-info h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.125rem;
+            line-height: 1;
+        }
+        
+        .stat-info p {
+            font-size: 0.8125rem;
+            color: var(--gray);
+            margin: 0;
+        }
+        
+        /* Delivery Card */
+        .delivery-card {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--primary);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            transition: var(--transition);
+            margin-bottom: 1rem;
+        }
+        
+        .delivery-card:hover {
+            box-shadow: var(--shadow-md);
+        }
+        
+        /* Buttons */
+        .btn {
+            font-weight: 600;
+            font-size: 0.875rem;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
         }
         
         .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
+            background: var(--primary);
+            border: none;
+            color: white;
         }
         
         .btn-primary:hover {
-            background-color: #0D47A1;
-            border-color: #0D47A1;
+            background: var(--primary-dark);
+        }
+        
+        .btn-outline-primary {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .btn-outline-primary:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-light {
+            background: var(--gray-light);
+            border: 1px solid var(--border-color);
+            color: var(--dark);
+        }
+        
+        .btn-light:hover {
+            background: var(--border-color);
+        }
+        
+        .btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.8125rem;
+        }
+        
+        /* Tables - Clean */
+        .table {
+            margin: 0;
         }
         
         .table th {
             font-weight: 600;
-            background-color: #f8f9fa;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--gray);
+            background: var(--gray-light);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.75rem 1rem;
         }
         
+        .table td {
+            padding: 0.875rem 1rem;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.875rem;
+            color: var(--dark);
+        }
+        
+        .table tbody tr:hover {
+            background: var(--off-white);
+        }
+        
+        .table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        /* Badges - Minimal */
         .badge {
-            font-weight: 500;
-            padding: 5px 10px;
+            font-weight: 600;
+            font-size: 0.6875rem;
+            padding: 0.375rem 0.625rem;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
         
-        .delivery-card {
-            border-left: 4px solid var(--primary-color);
-            transition: all 0.2s ease;
+        .badge.bg-success {
+            background: #dcfce7 !important;
+            color: #15803d;
         }
         
-        .delivery-card:hover {
-            background-color: #f8f9fa;
+        .badge.bg-warning {
+            background: var(--accent-light) !important;
+            color: #c2410c;
         }
         
-        .user-panel {
-            padding: 15px 20px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            margin-top: auto;
+        .badge.bg-danger {
+            background: #fee2e2 !important;
+            color: #dc2626;
         }
         
-        .user-panel img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
+        .badge.bg-info {
+            background: var(--primary-light) !important;
+            color: var(--primary);
         }
-
-        @media (max-width: 768px) {
+        
+        .badge.bg-secondary {
+            background: var(--gray-light) !important;
+            color: var(--gray);
+        }
+        
+        .badge.bg-primary {
+            background: var(--primary-light) !important;
+            color: var(--primary);
+        }
+        
+        /* Forms */
+        .form-control, .form-select {
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 0.625rem 0.875rem;
+            font-size: 0.875rem;
+            transition: var(--transition);
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+        
+        .form-label {
+            font-weight: 600;
+            font-size: 0.8125rem;
+            color: var(--dark);
+            margin-bottom: 0.375rem;
+        }
+        
+        /* Alerts */
+        .alert {
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 0.875rem 1rem;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+        }
+        
+        .alert-success {
+            background: #dcfce7;
+            color: #15803d;
+        }
+        
+        .alert-danger {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        
+        .alert-warning {
+            background: var(--accent-light);
+            color: #c2410c;
+        }
+        
+        .alert-info {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+        
+        /* Dropdown Menu */
+        .dropdown-menu {
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-lg);
+            padding: 0.5rem;
+        }
+        
+        .dropdown-item {
+            border-radius: 6px;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            color: var(--dark);
+            transition: var(--transition);
+        }
+        
+        .dropdown-item:hover {
+            background: var(--gray-light);
+        }
+        
+        .dropdown-item i {
+            width: 18px;
+            margin-right: 0.5rem;
+            color: var(--gray);
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1.5rem;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            color: var(--border-color);
+            margin-bottom: 1rem;
+        }
+        
+        .empty-state h5 {
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+        
+        .empty-state p {
+            color: var(--gray);
+            font-size: 0.875rem;
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--gray-light);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gray);
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 991.98px) {
             .sidebar {
-                margin-left: calc(-1 * var(--sidebar-width));
+                transform: translateX(-100%);
             }
+            
             .sidebar.show {
-                margin-left: 0;
+                transform: translateX(0);
             }
+            
             .main-content {
                 margin-left: 0;
+            }
+            
+            .sidebar-backdrop {
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: 999;
+                display: none;
+            }
+            
+            .sidebar-backdrop.show {
+                display: block;
+            }
+        }
+        
+        /* Toggle Button */
+        .sidebar-toggle {
+            display: none;
+            background: none;
+            border: none;
+            padding: 0.5rem;
+            color: var(--dark);
+            font-size: 1.25rem;
+        }
+        
+        @media (max-width: 991.98px) {
+            .sidebar-toggle {
+                display: block;
             }
         }
     </style>
@@ -188,15 +661,24 @@
     @stack('styles')
 </head>
 <body>
+    <!-- Sidebar Backdrop (Mobile) -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+    
     <!-- Sidebar -->
-    <div class="sidebar d-flex flex-column">
+    <div class="sidebar" id="sidebar">
         <div class="sidebar-brand">
-            <i class="fas fa-motorcycle me-2"></i>PATAH Kurir
+            <img src="{{ asset('images/logo.png') }}" alt="{{ config('branding.name', 'PATAH') }}" height="40" class="brand-logo">
+            <div class="sidebar-brand-text">
+                {{ config('branding.name', 'PATAH') }}
+                <span>Panel Kurir</span>
+            </div>
         </div>
         
         <nav class="sidebar-menu">
+            <div class="sidebar-label">Menu Utama</div>
+            
             <a href="{{ route('courier.dashboard') }}" class="nav-link {{ request()->routeIs('courier.dashboard') ? 'active' : '' }}">
-                <i class="fas fa-tachometer-alt"></i> Dashboard
+                <i class="fas fa-th-large"></i> Dashboard
             </a>
             
             <a href="{{ route('courier.deliveries.index') }}" class="nav-link {{ request()->routeIs('courier.deliveries.index') || request()->routeIs('courier.deliveries.show') ? 'active' : '' }}">
@@ -205,34 +687,37 @@
                     $activeDeliveries = auth()->user()->activeDeliveries()->count();
                 @endphp
                 @if($activeDeliveries > 0)
-                    <span class="badge bg-danger ms-auto">{{ $activeDeliveries }}</span>
+                    <span class="badge bg-danger">{{ $activeDeliveries }}</span>
                 @endif
             </a>
             
             <a href="{{ route('courier.deliveries.history') }}" class="nav-link {{ request()->routeIs('courier.deliveries.history') ? 'active' : '' }}">
-                <i class="fas fa-history"></i> Riwayat Pengiriman
+                <i class="fas fa-history"></i> Riwayat
             </a>
+            
+            <div class="sidebar-divider"></div>
+            <div class="sidebar-label">Akun</div>
             
             <a href="{{ route('courier.profile') }}" class="nav-link {{ request()->routeIs('courier.profile') ? 'active' : '' }}">
                 <i class="fas fa-user-cog"></i> Profil Saya
             </a>
             
-            <hr class="mx-3 my-3" style="border-color: rgba(255,255,255,0.2);">
-            
-            <form action="{{ route('logout') }}" method="POST" class="px-0">
+            <form action="{{ route('logout') }}" method="POST">
                 @csrf
-                <button type="submit" class="nav-link w-100 text-start border-0 bg-transparent">
-                    <i class="fas fa-sign-out-alt"></i> Logout
+                <button type="submit" class="nav-link w-100 text-start border-0 bg-transparent" style="color: var(--gray);">
+                    <i class="fas fa-sign-out-alt"></i> Keluar
                 </button>
             </form>
         </nav>
         
         <!-- User Panel -->
-        <div class="user-panel d-flex align-items-center mt-auto">
-            <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=random" alt="Profile">
-            <div class="ms-3">
-                <div class="text-white fw-semibold">{{ auth()->user()->name }}</div>
-                <small class="text-white-50">Kurir</small>
+        <div class="user-panel">
+            <div class="user-panel-avatar">
+                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+            </div>
+            <div class="user-panel-info">
+                <h6>{{ Str::limit(auth()->user()->name, 15) }}</h6>
+                <span>Kurir Aktif</span>
             </div>
         </div>
     </div>
@@ -241,88 +726,120 @@
     <div class="main-content">
         <!-- Top Navbar -->
         <div class="top-navbar">
-            <div>
-                <button class="btn btn-link d-md-none me-2 p-0" id="sidebarToggle">
+            <div class="d-flex align-items-center gap-3">
+                <button class="sidebar-toggle" id="sidebarToggle">
                     <i class="fas fa-bars"></i>
                 </button>
-                <h5 class="mb-0 d-inline">@yield('title', 'Dashboard')</h5>
+                <div>
+                    <h1 class="page-title">@yield('title', 'Dashboard')</h1>
+                    @hasSection('breadcrumb')
+                        <div class="page-breadcrumb">
+                            @yield('breadcrumb')
+                        </div>
+                    @endif
+                </div>
             </div>
-            <div class="d-flex align-items-center">
-                <!-- Notifications Dropdown -->
-                <div class="dropdown me-3">
-                    <a class="btn btn-link position-relative p-0" href="#" data-bs-toggle="dropdown">
-                        <i class="fas fa-bell fs-5 text-muted"></i>
+            
+            <div class="d-flex align-items-center gap-3">
+                <!-- Notifications -->
+                <div class="dropdown">
+                    <button class="notification-btn" data-bs-toggle="dropdown">
+                        <i class="fas fa-bell"></i>
                         @if(auth()->user()->unreadNotifications->count() > 0)
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
-                                {{ auth()->user()->unreadNotifications->count() }}
-                            </span>
+                            <span class="notification-badge">{{ auth()->user()->unreadNotifications->count() }}</span>
                         @endif
-                    </a>
+                    </button>
                     <div class="dropdown-menu dropdown-menu-end" style="width: 320px; max-height: 400px; overflow-y: auto;">
-                        <h6 class="dropdown-header">Notifikasi</h6>
+                        <div class="px-3 py-2 border-bottom">
+                            <h6 class="mb-0 fw-600">Notifikasi</h6>
+                        </div>
                         @forelse(auth()->user()->unreadNotifications->take(5) as $notification)
                             <a class="dropdown-item py-2" href="{{ route('courier.deliveries.show', $notification->data['order_id'] ?? 0) }}">
-                                <div class="d-flex align-items-start">
-                                    <div class="bg-primary text-white rounded-circle p-2 me-2" style="width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;">
-                                        <i class="fas fa-truck fa-sm"></i>
+                                <div class="d-flex align-items-start gap-2">
+                                    <div class="stat-icon primary" style="width: 32px; height: 32px; font-size: 0.75rem;">
+                                        <i class="fas fa-truck"></i>
                                     </div>
                                     <div class="flex-grow-1">
-                                        <div class="fw-bold small">{{ $notification->data['title'] ?? 'Notifikasi Baru' }}</div>
+                                        <div class="fw-600 small">{{ $notification->data['title'] ?? 'Notifikasi Baru' }}</div>
                                         <small class="text-muted">{{ Str::limit($notification->data['message'] ?? '', 50) }}</small>
                                         <div class="text-muted small mt-1">{{ $notification->created_at->diffForHumans() }}</div>
                                     </div>
                                 </div>
                             </a>
                         @empty
-                            <div class="dropdown-item text-center text-muted py-3">
-                                <i class="fas fa-bell-slash"></i> Tidak ada notifikasi baru
+                            <div class="text-center text-muted py-4">
+                                <i class="fas fa-bell-slash mb-2"></i>
+                                <p class="mb-0 small">Tidak ada notifikasi baru</p>
                             </div>
                         @endforelse
                         @if(auth()->user()->unreadNotifications->count() > 0)
-                            <div class="dropdown-divider"></div>
-                            <form action="{{ route('courier.notifications.markRead') }}" method="POST" class="px-3 py-2">
-                                @csrf
-                                <button type="submit" class="btn btn-sm btn-outline-primary w-100">
-                                    Tandai Semua Dibaca
-                                </button>
-                            </form>
+                            <div class="border-top px-3 py-2">
+                                <form action="{{ route('courier.notifications.markRead') }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-outline-primary w-100">
+                                        Tandai Semua Dibaca
+                                    </button>
+                                </form>
+                            </div>
                         @endif
                     </div>
                 </div>
-                
-                <span class="text-muted">
-                    <i class="fas fa-user-circle me-1"></i> {{ auth()->user()->name }}
-                </span>
             </div>
         </div>
 
-        <!-- Flash Messages -->
-        @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
-
-        @if(session('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="fas fa-exclamation-circle me-2"></i>{{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
-
         <!-- Page Content -->
-        @yield('content')
+        <div class="page-content">
+            <!-- Flash Messages -->
+            @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                    <i class="fas fa-check-circle"></i>
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                    <i class="fas fa-exclamation-circle"></i>
+                    {{ session('error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+
+            @if(session('warning'))
+                <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    {{ session('warning') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+
+            @yield('content')
+        </div>
     </div>
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        // Sidebar toggle for mobile
-        document.getElementById('sidebarToggle')?.addEventListener('click', function() {
-            document.querySelector('.sidebar').classList.toggle('show');
-        });
+        // Sidebar Toggle for Mobile
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+        
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('show');
+                sidebarBackdrop.classList.toggle('show');
+            });
+        }
+        
+        if (sidebarBackdrop) {
+            sidebarBackdrop.addEventListener('click', function() {
+                sidebar.classList.remove('show');
+                sidebarBackdrop.classList.remove('show');
+            });
+        }
     </script>
     
     @stack('scripts')

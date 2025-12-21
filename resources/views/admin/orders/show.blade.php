@@ -2,394 +2,827 @@
 
 @section('page-title', 'Detail Pesanan')
 
+@push('styles')
+<style>
+    :root {
+        --admin-bg: #fafafa;
+        --card-bg: #ffffff;
+        --border-color: #e5e7eb;
+        --text-primary: #1f2937;
+        --text-secondary: #6b7280;
+        --text-muted: #9ca3af;
+        --accent: #374151;
+    }
+    
+    .order-detail-page {
+        background: var(--admin-bg);
+        min-height: 100vh;
+        padding: 24px 0;
+    }
+    
+    .detail-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+    
+    .detail-card-header {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .detail-card-header h6 {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .detail-card-header i {
+        color: var(--text-secondary);
+        font-size: 14px;
+    }
+    
+    .detail-card-body {
+        padding: 20px;
+    }
+    
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+        background: #f3f4f6;
+        color: var(--text-secondary);
+        border: 1px solid var(--border-color);
+    }
+    
+    .status-badge.pending { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+    .status-badge.processing { background: #e0e7ff; color: #3730a3; border-color: #c7d2fe; }
+    .status-badge.delivery { background: #dbeafe; color: #1e40af; border-color: #bfdbfe; }
+    .status-badge.success { background: #d1fae5; color: #065f46; border-color: #a7f3d0; }
+    .status-badge.danger { background: #fee2e2; color: #991b1b; border-color: #fecaca; }
+    
+    .info-row {
+        display: flex;
+        margin-bottom: 12px;
+    }
+    
+    .info-row:last-child {
+        margin-bottom: 0;
+    }
+    
+    .info-label {
+        font-size: 13px;
+        color: var(--text-muted);
+        width: 140px;
+        flex-shrink: 0;
+    }
+    
+    .info-value {
+        font-size: 13px;
+        color: var(--text-primary);
+        font-weight: 500;
+    }
+    
+    .section-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .items-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .items-table th {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border-color);
+        background: #f9fafb;
+        text-align: left;
+    }
+    
+    .items-table th:last-child,
+    .items-table td:last-child {
+        text-align: right;
+    }
+    
+    .items-table th:nth-child(2),
+    .items-table td:nth-child(2) {
+        text-align: center;
+    }
+    
+    .items-table td {
+        font-size: 13px;
+        color: var(--text-primary);
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .items-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+    
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 16px;
+        font-size: 13px;
+    }
+    
+    .summary-row.total {
+        background: #f9fafb;
+        font-weight: 600;
+        border-top: 1px solid var(--border-color);
+    }
+    
+    .courier-card {
+        background: #f9fafb;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 16px;
+    }
+    
+    .courier-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: var(--text-secondary);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 16px;
+    }
+    
+    .timeline-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .timeline-item:last-child {
+        border-bottom: none;
+    }
+    
+    .timeline-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f3f4f6;
+        color: var(--text-secondary);
+        margin-right: 12px;
+        font-size: 12px;
+    }
+    
+    .timeline-label {
+        font-size: 13px;
+        color: var(--text-primary);
+    }
+    
+    .timeline-time {
+        font-size: 12px;
+        color: var(--text-muted);
+    }
+    
+    .note-box {
+        background: #f9fafb;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        padding: 12px 16px;
+        margin-top: 16px;
+    }
+    
+    .note-box-title {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        margin-bottom: 6px;
+    }
+    
+    .note-box-content {
+        font-size: 13px;
+        color: var(--text-primary);
+    }
+    
+    .photo-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    
+    .photo-item {
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        overflow: hidden;
+    }
+    
+    .photo-item img {
+        width: 100%;
+        height: 120px;
+        object-fit: cover;
+    }
+    
+    .photo-item-label {
+        padding: 10px;
+        text-align: center;
+        font-size: 12px;
+        color: var(--text-secondary);
+        background: #f9fafb;
+    }
+    
+    .photo-item-label strong {
+        display: block;
+        font-size: 13px;
+        color: var(--text-primary);
+        margin-bottom: 4px;
+    }
+    
+    .photo-datetime {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-top: 2px;
+    }
+    
+    .photo-datetime i {
+        width: 14px;
+        margin-right: 4px;
+        color: #9ca3af;
+    }
+    
+    .action-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        padding: 12px 16px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        border: none;
+    }
+    
+    .action-btn-primary {
+        background: var(--text-primary);
+        color: white;
+    }
+    
+    .action-btn-primary:hover {
+        background: #374151;
+        color: white;
+    }
+    
+    .action-btn-outline {
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+    }
+    
+    .action-btn-outline:hover {
+        background: #f9fafb;
+        color: var(--text-primary);
+    }
+    
+    .action-btn-success {
+        background: #065f46;
+        color: white;
+    }
+    
+    .action-btn-success:hover {
+        background: #047857;
+    }
+    
+    .action-btn-danger {
+        background: transparent;
+        border: 1px solid #fecaca;
+        color: #991b1b;
+    }
+    
+    .action-btn-danger:hover {
+        background: #fee2e2;
+    }
+    
+    .form-label-minimal {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        margin-bottom: 6px;
+    }
+    
+    .form-select-minimal,
+    .form-control-minimal {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        font-size: 13px;
+        color: var(--text-primary);
+        background: white;
+        transition: border-color 0.2s ease;
+    }
+    
+    .form-select-minimal:focus,
+    .form-control-minimal:focus {
+        outline: none;
+        border-color: var(--text-secondary);
+    }
+    
+    .breadcrumb-minimal {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        margin-bottom: 20px;
+    }
+    
+    .breadcrumb-minimal a {
+        color: var(--text-muted);
+        text-decoration: none;
+    }
+    
+    .breadcrumb-minimal a:hover {
+        color: var(--text-primary);
+    }
+    
+    .breadcrumb-minimal span {
+        color: var(--text-muted);
+    }
+    
+    .breadcrumb-minimal .current {
+        color: var(--text-primary);
+        font-weight: 500;
+    }
+    
+    .payment-proof-img {
+        width: 100%;
+        max-height: 180px;
+        object-fit: contain;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        margin-top: 12px;
+    }
+    
+    .verified-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 12px;
+        color: #065f46;
+        margin-top: 8px;
+    }
+</style>
+@endpush
+
 @section('content')
-<div class="row">
-    <!-- Order Info -->
-    <div class="col-lg-8">
-        <div class="card mb-4">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <span><i class="fas fa-info-circle me-2"></i>Informasi Pesanan</span>
-                <span class="badge bg-{{ $order->status_color }} fs-6">{{ $order->status_label }}</span>
+<div class="order-detail-page">
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-minimal">
+        <a href="{{ route('admin.dashboard') }}">Dashboard</a>
+        <span>/</span>
+        <a href="{{ route('admin.orders.index') }}">Pesanan</a>
+        <span>/</span>
+        <span class="current">{{ $order->order_number }}</span>
+    </div>
+
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <!-- Order Info -->
+            <div class="detail-card">
+                <div class="detail-card-header">
+                    <h6><i class="fas fa-file-alt"></i> Informasi Pesanan</h6>
+                    @php
+                        $statusClass = match($order->status) {
+                            'pending_payment' => 'pending',
+                            'paid', 'processing' => 'processing',
+                            'assigned', 'picked_up', 'on_delivery' => 'delivery',
+                            'delivered', 'completed' => 'success',
+                            'cancelled' => 'danger',
+                            default => ''
+                        };
+                    @endphp
+                    <span class="status-badge {{ $statusClass }}">{{ $order->status_label }}</span>
+                </div>
+                <div class="detail-card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-row">
+                                <span class="info-label">No. Pesanan</span>
+                                <span class="info-value">{{ $order->order_number }}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Tanggal</span>
+                                <span class="info-value">{{ $order->created_at->format('d M Y, H:i') }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            @if($order->delivery_date)
+                            <div class="info-row">
+                                <span class="info-label">Jadwal Kirim</span>
+                                <span class="info-value">{{ $order->formatted_delivery_date }}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Waktu</span>
+                                <span class="info-value">{{ $order->delivery_time_slot ?? '10:00 - 16:00' }} WIB</span>
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <strong>No. Pesanan:</strong><br>
-                        <span class="text-primary">{{ $order->order_number }}</span>
-                    </div>
-                    <div class="col-md-6">
-                        <strong>Tanggal Pesanan:</strong><br>
-                        {{ $order->created_at->format('d F Y, H:i') }}
-                    </div>
+            
+            <!-- Customer Info -->
+            <div class="detail-card">
+                <div class="detail-card-header">
+                    <h6><i class="fas fa-user"></i> Data Customer</h6>
                 </div>
-                
-                <hr>
-                
-                <h6><i class="fas fa-user me-2"></i>Data Customer</h6>
-                <div class="row mb-3">
-                    <div class="col-md-4">
-                        <strong>Nama:</strong><br>{{ $order->user->name }}
+                <div class="detail-card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-row">
+                                <span class="info-label">Nama</span>
+                                <span class="info-value">{{ $order->user->name }}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Email</span>
+                                <span class="info-value">{{ $order->user->email }}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Telepon</span>
+                                <span class="info-value">{{ $order->user->phone }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="section-title" style="margin-top: 0;">Alamat Pengiriman</div>
+                            <div class="info-row">
+                                <span class="info-label">Penerima</span>
+                                <span class="info-value">{{ $order->shipping_name }}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Telepon</span>
+                                <span class="info-value">{{ $order->shipping_phone }}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Alamat</span>
+                                <span class="info-value">{{ $order->shipping_address }}</span>
+                            </div>
+                            @if($order->delivery_distance_minutes)
+                            <div class="info-row">
+                                <span class="info-label">Estimasi</span>
+                                <span class="info-value">{{ $order->delivery_distance_minutes }} menit</span>
+                            </div>
+                            @endif
+                        </div>
                     </div>
-                    <div class="col-md-4">
-                        <strong>Email:</strong><br>{{ $order->user->email }}
-                    </div>
-                    <div class="col-md-4">
-                        <strong>Telepon:</strong><br>{{ $order->user->phone }}
-                    </div>
-                </div>
-                
-                <hr>
-                
-                <h6><i class="fas fa-map-marker-alt me-2"></i>Alamat Pengiriman</h6>
-                <p class="mb-1"><strong>{{ $order->shipping_name }}</strong> ({{ $order->shipping_phone }})</p>
-                <p class="text-muted mb-2">{{ $order->shipping_address }}</p>
-                
-                @if($order->delivery_distance_minutes)
-                <div class="row">
-                    <div class="col-md-6">
-                        <small class="text-muted">
-                            <i class="fas fa-route me-1"></i>Estimasi Jarak: 
-                            <strong class="text-dark">{{ $order->delivery_distance_minutes }} menit</strong>
-                        </small>
-                    </div>
-                    @if($order->shipping_latitude && $order->shipping_longitude)
-                    <div class="col-md-6">
-                        <small class="text-muted">
-                            <i class="fas fa-map-pin me-1"></i>Koordinat: 
-                            <strong class="text-dark">{{ $order->shipping_latitude }}, {{ $order->shipping_longitude }}</strong>
-                        </small>
+                    
+                    @if($order->notes)
+                    <div class="note-box">
+                        <div class="note-box-title">Catatan Pesanan</div>
+                        <div class="note-box-content">{{ $order->notes }}</div>
                     </div>
                     @endif
                 </div>
-                @endif
-
-                <!-- Jadwal Pengiriman -->
-                @if($order->delivery_date)
-                <div class="alert alert-warning mt-3 mb-0">
-                    <strong><i class="fas fa-calendar-alt me-2"></i>Jadwal Pengiriman</strong>
-                    <div class="row mt-2">
-                        <div class="col-md-6">
-                            <i class="fas fa-calendar me-1"></i> Tanggal: <strong>{{ $order->formatted_delivery_date }}</strong>
-                        </div>
-                        <div class="col-md-6">
-                            <i class="fas fa-clock me-1"></i> Jam: <strong>{{ $order->delivery_time_slot ?? '10:00 - 16:00' }} WIB</strong>
-                        </div>
-                    </div>
+            </div>
+            
+            <!-- Order Items -->
+            <div class="detail-card">
+                <div class="detail-card-header">
+                    <h6><i class="fas fa-box"></i> Item Pesanan</h6>
                 </div>
-                @endif
-                
-                @if($order->notes)
-                    <div class="alert alert-info mt-3">
-                        <strong>Catatan:</strong> {{ $order->notes }}
-                    </div>
-                @endif
-            </div>
-        </div>
-        
-        <!-- Order Items -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <i class="fas fa-box me-2"></i>Item Pesanan
-            </div>
-            <div class="card-body p-0">
-                <table class="table mb-0">
+                <table class="items-table">
                     <thead>
                         <tr>
                             <th>Produk</th>
-                            <th class="text-center">Qty</th>
-                            <th class="text-end">Harga</th>
-                            <th class="text-end">Subtotal</th>
+                            <th>Qty</th>
+                            <th>Harga</th>
+                            <th>Subtotal</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($order->items as $item)
-                            <tr>
-                                <td>
-                                    <strong>{{ $item->product_name }}</strong>
-                                </td>
-                                <td class="text-center">{{ $item->quantity }}</td>
-                                <td class="text-end">{{ $item->formatted_price }}</td>
-                                <td class="text-end">{{ $item->formatted_subtotal }}</td>
-                            </tr>
+                        <tr>
+                            <td>{{ $item->product_name }}</td>
+                            <td>{{ $item->quantity }}</td>
+                            <td>{{ $item->formatted_price }}</td>
+                            <td>{{ $item->formatted_subtotal }}</td>
+                        </tr>
                         @endforeach
                     </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="3" class="text-end"><strong>Subtotal:</strong></td>
-                            <td class="text-end">{{ $order->formatted_subtotal }}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="3" class="text-end">
-                                <strong>Ongkir:</strong>
-                                @if($order->delivery_distance_minutes)
-                                <small class="text-muted">({{ $order->delivery_distance_minutes }} menit)</small>
-                                @endif
-                            </td>
-                            <td class="text-end">{{ $order->formatted_shipping_cost }}</td>
-                        </tr>
-                        <tr class="table-success">
-                            <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                            <td class="text-end"><strong>{{ $order->formatted_total }}</strong></td>
-                        </tr>
-                    </tfoot>
                 </table>
-            </div>
-        </div>
-
-        <!-- Tugaskan Kurir - di area content utama -->
-        @if($order->canAssignCourier())
-        <div class="card mb-4 border-primary">
-            <div class="card-header bg-primary text-white">
-                <i class="fas fa-motorcycle me-2"></i>Tugaskan Kurir
-            </div>
-            <div class="card-body">
-                <form action="{{ route('admin.orders.assign-courier', $order) }}" method="POST">
-                    @csrf
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Pilih Kurir yang Tersedia</label>
-                        <select class="form-select form-select-lg" name="courier_id" required>
-                            <option value="">-- Pilih Kurir --</option>
-                            @foreach($couriers as $courier)
-                                <option value="{{ $courier->id }}">
-                                    {{ $courier->name }} - {{ $courier->phone }}
-                                    ({{ $courier->activeDeliveries()->count() }} tugas aktif)
-                                </option>
-                            @endforeach
-                        </select>
-                        <div class="form-text">Pilih kurir untuk mengantarkan pesanan ini</div>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary btn-lg w-100">
-                        <i class="fas fa-paper-plane me-2"></i>Tugaskan Kurir Sekarang
-                    </button>
-                </form>
-            </div>
-        </div>
-        @endif
-
-        <!-- Kurir Info (if already assigned) -->
-        @if($order->courier)
-        <div class="card mb-4 border-success">
-            <div class="card-header bg-success text-white">
-                <i class="fas fa-motorcycle me-2"></i>Kurir Ditugaskan
-            </div>
-            <div class="card-body">
-                <div class="d-flex align-items-center mb-3">
-                    <img src="https://ui-avatars.com/api/?name={{ urlencode($order->courier->name) }}&background=28a745&color=fff&size=60" 
-                         class="rounded-circle me-3" alt="Courier">
-                    <div>
-                        <h5 class="mb-1">{{ $order->courier->name }}</h5>
-                        <p class="mb-0 text-muted">
-                            <i class="fas fa-phone me-1"></i>{{ $order->courier->phone ?? '-' }}
-                        </p>
-                    </div>
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span>{{ $order->formatted_subtotal }}</span>
                 </div>
-                
-                <hr>
-                
-                <div class="small">
+                <div class="summary-row">
+                    <span>Ongkir @if($order->delivery_distance_minutes)<small style="color: var(--text-muted);">({{ $order->delivery_distance_minutes }} menit)</small>@endif</span>
+                    <span>{{ $order->formatted_shipping_cost }}</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Total</span>
+                    <span>{{ $order->formatted_total }}</span>
+                </div>
+            </div>
+
+            <!-- Assign Courier -->
+            @if($order->canAssignCourier())
+            <div class="detail-card">
+                <div class="detail-card-header">
+                    <h6><i class="fas fa-motorcycle"></i> Tugaskan Kurir</h6>
+                </div>
+                <div class="detail-card-body">
+                    <form action="{{ route('admin.orders.assign-courier', $order) }}" method="POST">
+                        @csrf
+                        <div class="mb-3">
+                            <label class="form-label-minimal">Pilih Kurir</label>
+                            <select class="form-select-minimal" name="courier_id" required>
+                                <option value="">-- Pilih Kurir --</option>
+                                @foreach($couriers as $courier)
+                                    <option value="{{ $courier->id }}">
+                                        {{ $courier->name }} - {{ $courier->phone }}
+                                        ({{ $courier->activeDeliveries()->count() }} tugas aktif)
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <button type="submit" class="action-btn action-btn-primary">
+                            <i class="fas fa-paper-plane"></i> Tugaskan Sekarang
+                        </button>
+                    </form>
+                </div>
+            </div>
+            @endif
+
+            <!-- Courier Info -->
+            @if($order->courier)
+            <div class="detail-card">
+                <div class="detail-card-header">
+                    <h6><i class="fas fa-motorcycle"></i> Kurir</h6>
+                    <span class="status-badge success">Ditugaskan</span>
+                </div>
+                <div class="detail-card-body">
+                    <div class="courier-card mb-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="courier-avatar">
+                                {{ strtoupper(substr($order->courier->name, 0, 1)) }}
+                            </div>
+                            <div>
+                                <div style="font-weight: 600; color: var(--text-primary);">{{ $order->courier->name }}</div>
+                                <div style="font-size: 13px; color: var(--text-muted);">{{ $order->courier->phone ?? '-' }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="section-title">Timeline Pengiriman</div>
+                    
                     @if($order->assigned_at)
-                        <div class="d-flex justify-content-between mb-2">
-                            <span><i class="fas fa-clipboard-list text-primary me-2"></i>Ditugaskan</span>
-                            <span>{{ $order->assigned_at->format('d/m/Y H:i') }}</span>
+                    <div class="timeline-item">
+                        <div class="d-flex align-items-center">
+                            <div class="timeline-icon"><i class="fas fa-clipboard-list"></i></div>
+                            <span class="timeline-label">Ditugaskan</span>
                         </div>
-                    @endif
-                    @if($order->picked_up_at)
-                        <div class="d-flex justify-content-between mb-2">
-                            <span><i class="fas fa-box text-info me-2"></i>Barang Diambil</span>
-                            <span>{{ $order->picked_up_at->format('d/m/Y H:i') }}</span>
-                        </div>
-                    @endif
-                    @if($order->on_delivery_at)
-                        <div class="d-flex justify-content-between mb-2">
-                            <span><i class="fas fa-truck text-warning me-2"></i>Mulai Antar</span>
-                            <span>{{ $order->on_delivery_at->format('d/m/Y H:i') }}</span>
-                        </div>
-                    @endif
-                    @if($order->delivered_at)
-                        <div class="d-flex justify-content-between mb-2">
-                            <span><i class="fas fa-check-circle text-success me-2"></i>Sampai Tujuan</span>
-                            <span>{{ $order->delivered_at->format('d/m/Y H:i') }}</span>
-                        </div>
-                    @endif
-                </div>
-                
-                @if($order->delivery_notes)
-                    <div class="alert alert-light mt-3 mb-0">
-                        <strong><i class="fas fa-sticky-note me-1"></i>Catatan Kurir:</strong><br>
-                        {{ $order->delivery_notes }}
-                    </div>
-                @endif
-                
-                <!-- Delivery Photos -->
-                @if($order->pickup_photo || $order->delivery_photo)
-                <hr>
-                <h6 class="mb-3"><i class="fas fa-camera me-2"></i>Foto Dokumentasi</h6>
-                <div class="row g-2">
-                    @if($order->pickup_photo)
-                    <div class="col-6">
-                        <div class="card">
-                            <a href="{{ asset('storage/' . $order->pickup_photo) }}" target="_blank">
-                                <img src="{{ asset('storage/' . $order->pickup_photo) }}" class="card-img-top" style="height: 120px; object-fit: cover;">
-                            </a>
-                            <div class="card-body p-2 text-center">
-                                <small class="text-muted">Foto Pengambilan</small>
-                                @if($order->picked_up_at)
-                                <br><small class="text-muted">{{ $order->picked_up_at->format('d/m H:i') }}</small>
-                                @endif
-                            </div>
-                        </div>
+                        <span class="timeline-time">{{ $order->assigned_at->format('d/m/Y H:i') }}</span>
                     </div>
                     @endif
-                    @if($order->delivery_photo)
-                    <div class="col-6">
-                        <div class="card">
-                            <a href="{{ asset('storage/' . $order->delivery_photo) }}" target="_blank">
-                                <img src="{{ asset('storage/' . $order->delivery_photo) }}" class="card-img-top" style="height: 120px; object-fit: cover;">
-                            </a>
-                            <div class="card-body p-2 text-center">
-                                <small class="text-muted">Foto Pengiriman</small>
-                                @if($order->delivered_at)
-                                <br><small class="text-muted">{{ $order->delivered_at->format('d/m H:i') }}</small>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                    @endif
-                </div>
-                @endif
-            </div>
-        </div>
-        @endif
-    </div>
-    
-    <!-- Actions Sidebar -->
-    <div class="col-lg-4">
-        <!-- Payment Status -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <i class="fas fa-credit-card me-2"></i>Status Pembayaran
-            </div>
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <span>Status:</span>
-                    <span class="badge bg-{{ $order->payment_status_color }} fs-6">{{ $order->payment_status_label }}</span>
-                </div>
-                
-                @if($order->payment_proof)
-                    <div class="mb-3">
-                        <strong>Bukti Pembayaran:</strong>
-                        <a href="{{ asset('storage/' . $order->payment_proof) }}" target="_blank" class="d-block mt-2">
-                            <img src="{{ asset('storage/' . $order->payment_proof) }}" class="img-fluid rounded" style="max-height: 200px;">
-                        </a>
-                    </div>
                     
-                    @if($order->payment_status === 'pending_verification')
-                        <div class="d-grid gap-2">
+                    @if($order->picked_up_at)
+                    <div class="timeline-item">
+                        <div class="d-flex align-items-center">
+                            <div class="timeline-icon"><i class="fas fa-box"></i></div>
+                            <span class="timeline-label">Barang Diambil</span>
+                        </div>
+                        <span class="timeline-time">{{ $order->picked_up_at->format('d/m/Y H:i') }}</span>
+                    </div>
+                    @endif
+                    
+                    @if($order->on_delivery_at)
+                    <div class="timeline-item">
+                        <div class="d-flex align-items-center">
+                            <div class="timeline-icon"><i class="fas fa-truck"></i></div>
+                            <span class="timeline-label">Dalam Perjalanan</span>
+                        </div>
+                        <span class="timeline-time">{{ $order->on_delivery_at->format('d/m/Y H:i') }}</span>
+                    </div>
+                    @endif
+                    
+                    @if($order->delivered_at)
+                    <div class="timeline-item">
+                        <div class="d-flex align-items-center">
+                            <div class="timeline-icon" style="background: #d1fae5; color: #065f46;"><i class="fas fa-check"></i></div>
+                            <span class="timeline-label">Terkirim</span>
+                        </div>
+                        <span class="timeline-time">{{ $order->delivered_at->format('d/m/Y H:i') }}</span>
+                    </div>
+                    @endif
+                    
+                    @if($order->delivery_notes)
+                    <div class="note-box">
+                        <div class="note-box-title">Catatan Kurir</div>
+                        <div class="note-box-content">{{ $order->delivery_notes }}</div>
+                    </div>
+                    @endif
+                    
+                    @if($order->pickup_photo || $order->delivery_photo)
+                    <div class="section-title" style="margin-top: 20px;">Foto Dokumentasi</div>
+                    <div class="photo-grid">
+                        @if($order->pickup_photo)
+                        <div class="photo-item">
+                            <a href="{{ asset('storage/' . $order->pickup_photo) }}" target="_blank">
+                                <img src="{{ asset('storage/' . $order->pickup_photo) }}" alt="Foto Pengambilan">
+                            </a>
+                            <div class="photo-item-label">
+                                <strong>Barang Diambil</strong>
+                                @if($order->picked_up_at)
+                                <div class="photo-datetime">
+                                    <i class="fas fa-calendar"></i> {{ $order->picked_up_at->format('d M Y') }}
+                                </div>
+                                <div class="photo-datetime">
+                                    <i class="fas fa-clock"></i> {{ $order->picked_up_at->format('H:i') }} WIB
+                                </div>
+                                @endif
+                            </div>
+                        </div>
+                        @endif
+                        @if($order->delivery_photo)
+                        <div class="photo-item">
+                            <a href="{{ asset('storage/' . $order->delivery_photo) }}" target="_blank">
+                                <img src="{{ asset('storage/' . $order->delivery_photo) }}" alt="Foto Pengiriman">
+                            </a>
+                            <div class="photo-item-label">
+                                <strong>Pesanan Diterima</strong>
+                                @if($order->delivered_at)
+                                <div class="photo-datetime">
+                                    <i class="fas fa-calendar"></i> {{ $order->delivered_at->format('d M Y') }}
+                                </div>
+                                <div class="photo-datetime">
+                                    <i class="fas fa-clock"></i> {{ $order->delivered_at->format('H:i') }} WIB
+                                </div>
+                                @endif
+                            </div>
+                        </div>
+                        @endif
+                    </div>
+                    @endif
+                </div>
+            </div>
+            @endif
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Payment Status -->
+            <div class="detail-card">
+                <div class="detail-card-header">
+                    <h6><i class="fas fa-credit-card"></i> Pembayaran</h6>
+                    @php
+                        $paymentClass = match($order->payment_status) {
+                            'pending' => 'pending',
+                            'pending_verification' => 'processing',
+                            'paid' => 'success',
+                            'failed' => 'danger',
+                            default => ''
+                        };
+                    @endphp
+                    <span class="status-badge {{ $paymentClass }}">{{ $order->payment_status_label }}</span>
+                </div>
+                <div class="detail-card-body">
+                    @if($order->payment_proof)
+                        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">Bukti Pembayaran:</div>
+                        <a href="{{ asset('storage/' . $order->payment_proof) }}" target="_blank">
+                            <img src="{{ asset('storage/' . $order->payment_proof) }}" class="payment-proof-img" alt="Bukti Pembayaran">
+                        </a>
+                        
+                        @if($order->payment_status === 'pending_verification')
+                        <div class="d-grid gap-2 mt-3">
                             <form action="{{ route('admin.orders.verify-payment', $order) }}" method="POST">
                                 @csrf
                                 @method('PATCH')
-                                <button type="submit" class="btn btn-success w-100">
-                                    <i class="fas fa-check me-1"></i>Verifikasi Pembayaran
+                                <button type="submit" class="action-btn action-btn-success">
+                                    <i class="fas fa-check"></i> Verifikasi Pembayaran
                                 </button>
                             </form>
                             <form action="{{ route('admin.orders.reject-payment', $order) }}" method="POST">
                                 @csrf
                                 @method('PATCH')
-                                <button type="submit" class="btn btn-outline-danger w-100" 
+                                <button type="submit" class="action-btn action-btn-danger" 
                                         onclick="return confirm('Tolak bukti pembayaran ini?')">
-                                    <i class="fas fa-times me-1"></i>Tolak Pembayaran
+                                    <i class="fas fa-times"></i> Tolak Pembayaran
                                 </button>
                             </form>
                         </div>
+                        @endif
+                    @else
+                        <p style="font-size: 13px; color: var(--text-muted); margin: 0;">Belum ada bukti pembayaran</p>
                     @endif
-                @else
-                    <p class="text-muted mb-0">Belum ada bukti pembayaran</p>
-                @endif
 
-                @if($order->payment_verified_at)
-                    <small class="text-success">
-                        <i class="fas fa-check-circle me-1"></i>
-                        Diverifikasi: {{ $order->payment_verified_at->format('d/m/Y H:i') }}
-                    </small>
-                @endif
-            </div>
-        </div>
-        
-        <!-- Update Status -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <i class="fas fa-sync me-2"></i>Update Status
-            </div>
-            <div class="card-body">
-                <form action="{{ route('admin.orders.update-status', $order) }}" method="POST" id="statusForm">
-                    @csrf
-                    @method('PATCH')
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Status Pesanan</label>
-                        <select class="form-select" name="status" id="statusSelect" onchange="toggleCancelReason()">
-                            <option value="pending_payment" {{ $order->status == 'pending_payment' ? 'selected' : '' }}>Menunggu Pembayaran</option>
-                            <option value="paid" {{ $order->status == 'paid' ? 'selected' : '' }}>Sudah Dibayar</option>
-                            <option value="assigned" {{ $order->status == 'assigned' ? 'selected' : '' }}>Ditugaskan ke Kurir</option>
-                            <option value="picked_up" {{ $order->status == 'picked_up' ? 'selected' : '' }}>Barang Diambil</option>
-                            <option value="on_delivery" {{ $order->status == 'on_delivery' ? 'selected' : '' }}>Sedang Diantar</option>
-                            <option value="delivered" {{ $order->status == 'delivered' ? 'selected' : '' }}>Sudah Sampai</option>
-                            <option value="completed" {{ $order->status == 'completed' ? 'selected' : '' }}>Selesai</option>
-                            <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>Dibatalkan</option>
-                        </select>
+                    @if($order->payment_verified_at)
+                    <div class="verified-badge">
+                        <i class="fas fa-check-circle"></i>
+                        Diverifikasi {{ $order->payment_verified_at->format('d/m/Y H:i') }}
                     </div>
-                    
-                    <div class="mb-3" id="cancelReasonDiv" style="display: none;">
-                        <label class="form-label">Alasan Pembatalan</label>
-                        <textarea class="form-control" name="cancel_reason" rows="3">{{ $order->cancel_reason }}</textarea>
+                    @endif
+                </div>
+            </div>
+            
+            <!-- Update Status -->
+            <div class="detail-card">
+                <div class="detail-card-header">
+                    <h6><i class="fas fa-edit"></i> Update Status</h6>
+                </div>
+                <div class="detail-card-body">
+                    <form action="{{ route('admin.orders.update-status', $order) }}" method="POST" id="statusForm">
+                        @csrf
+                        @method('PATCH')
+                        
+                        <div class="mb-3">
+                            <label class="form-label-minimal">Status Pesanan</label>
+                            <select class="form-select-minimal" name="status" id="statusSelect" onchange="toggleCancelReason()">
+                                <option value="pending_payment" {{ $order->status == 'pending_payment' ? 'selected' : '' }}>Menunggu Pembayaran</option>
+                                <option value="paid" {{ $order->status == 'paid' ? 'selected' : '' }}>Sudah Dibayar</option>
+                                <option value="assigned" {{ $order->status == 'assigned' ? 'selected' : '' }}>Ditugaskan ke Kurir</option>
+                                <option value="picked_up" {{ $order->status == 'picked_up' ? 'selected' : '' }}>Barang Diambil</option>
+                                <option value="on_delivery" {{ $order->status == 'on_delivery' ? 'selected' : '' }}>Sedang Diantar</option>
+                                <option value="delivered" {{ $order->status == 'delivered' ? 'selected' : '' }}>Sudah Sampai</option>
+                                <option value="completed" {{ $order->status == 'completed' ? 'selected' : '' }}>Selesai</option>
+                                <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>Dibatalkan</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3" id="cancelReasonDiv" style="display: none;">
+                            <label class="form-label-minimal">Alasan Pembatalan</label>
+                            <textarea class="form-control-minimal" name="cancel_reason" rows="3">{{ $order->cancel_reason }}</textarea>
+                        </div>
+                        
+                        <button type="submit" class="action-btn action-btn-primary">
+                            <i class="fas fa-save"></i> Update Status
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Print Receipt -->
+            <div class="detail-card">
+                <div class="detail-card-header">
+                    <h6><i class="fas fa-print"></i> Cetak Resi</h6>
+                </div>
+                <div class="detail-card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{{ route('admin.orders.receipt', $order) }}" class="action-btn action-btn-outline" target="_blank">
+                            <i class="fas fa-eye"></i> Lihat Resi
+                        </a>
+                        <a href="{{ route('admin.orders.print-receipt', $order) }}" class="action-btn action-btn-primary">
+                            <i class="fas fa-download"></i> Download PDF
+                        </a>
                     </div>
-                    
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="fas fa-save me-1"></i>Update Status
-                    </button>
-                </form>
+                </div>
             </div>
+            
+            <!-- Back Button -->
+            <a href="{{ route('admin.orders.index') }}" class="action-btn action-btn-outline">
+                <i class="fas fa-arrow-left"></i> Kembali ke Daftar
+            </a>
         </div>
-        
-        <!-- Print Receipt -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <i class="fas fa-print me-2"></i>Cetak Resi
-            </div>
-            <div class="card-body">
-                <a href="{{ route('admin.orders.receipt', $order) }}" class="btn btn-outline-primary w-100 mb-2" target="_blank">
-                    <i class="fas fa-eye me-1"></i>Lihat Resi
-                </a>
-                <a href="{{ route('admin.orders.print-receipt', $order) }}" class="btn btn-primary w-100">
-                    <i class="fas fa-download me-1"></i>Download PDF
-                </a>
-            </div>
-        </div>
-        
-        <!-- Back Button -->
-        <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary w-100">
-            <i class="fas fa-arrow-left me-1"></i>Kembali ke Daftar Pesanan
-        </a>
     </div>
 </div>
+@endsection
 
 @push('scripts')
 <script>
 function toggleCancelReason() {
     const status = document.getElementById('statusSelect').value;
     const cancelDiv = document.getElementById('cancelReasonDiv');
-    
-    if (status === 'cancelled') {
-        cancelDiv.style.display = 'block';
-    } else {
-        cancelDiv.style.display = 'none';
-    }
+    cancelDiv.style.display = status === 'cancelled' ? 'block' : 'none';
 }
 
-// Initialize on page load
 toggleCancelReason();
 </script>
 @endpush
-@endsection

@@ -81,24 +81,7 @@
     </div>
 </section>
 
-<!-- CTA -->
-<section class="cta-section">
-    <div class="container">
-        <div class="cta-content">
-            <h2>Ingin Merasakan Sendiri?</h2>
-            <p>Pesan sekarang dan ceritakan pengalamanmu!</p>
-            @guest
-                <a href="{{ route('register') }}" class="btn btn-accent btn-lg">
-                    <i class="fas fa-user-plus me-2"></i>Daftar & Pesan
-                </a>
-            @else
-                <a href="{{ route('customer.products.index') }}" class="btn btn-accent btn-lg">
-                    <i class="fas fa-shopping-bag me-2"></i>Belanja Sekarang
-                </a>
-            @endguest
-        </div>
-    </div>
-</section>
+
 @endsection
 
 @push('styles')

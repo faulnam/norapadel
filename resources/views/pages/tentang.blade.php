@@ -17,7 +17,7 @@
     <div class="container">
         <div class="row align-items-center g-5">
             <div class="col-lg-6">
-                <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600" 
+                <img src="images/beranda.png"
                      alt="Tim PATAH" class="img-fluid rounded-4">
             </div>
             <div class="col-lg-6">
@@ -34,7 +34,7 @@
                 </p>
                 <div class="story-stats">
                     <div class="story-stat">
-                        <span class="stat-number">2019</span>
+                        <span class="stat-number">2023</span>
                         <span class="stat-label">Tahun Berdiri</span>
                     </div>
                     <div class="story-stat">
@@ -57,9 +57,7 @@
         <div class="row g-4">
             <div class="col-md-6">
                 <div class="vm-card">
-                    <div class="vm-icon">
-                        <i class="fas fa-eye"></i>
-                    </div>
+                    
                     <h3>Visi Kami</h3>
                     <p class="text-gray mb-0">
                         Menjadi produsen camilan sehat terdepan di Indonesia yang menginspirasi 
@@ -69,9 +67,7 @@
             </div>
             <div class="col-md-6">
                 <div class="vm-card">
-                    <div class="vm-icon vm-icon-accent">
-                        <i class="fas fa-bullseye"></i>
-                    </div>
+                    
                     <h3>Misi Kami</h3>
                     <ul class="text-gray mb-0 ps-3">
                         <li>Menghasilkan produk berkualitas tinggi dengan bahan alami</li>
@@ -85,54 +81,7 @@
     </div>
 </section>
 
-<!-- Values -->
-<section class="py-5">
-    <div class="container">
-        <div class="text-center mb-5">
-            <span class="section-badge">Nilai-Nilai</span>
-            <h2 class="section-title">Yang Kami Pegang Teguh</h2>
-        </div>
-        
-        <div class="row g-4">
-            <div class="col-md-6 col-lg-3">
-                <div class="value-card">
-                    <div class="value-icon">
-                        <i class="fas fa-leaf"></i>
-                    </div>
-                    <h5>Alami</h5>
-                    <p class="small text-gray mb-0">100% bahan alami tanpa pengawet dan pewarna buatan</p>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-3">
-                <div class="value-card">
-                    <div class="value-icon value-icon-orange">
-                        <i class="fas fa-heart"></i>
-                    </div>
-                    <h5>Kualitas</h5>
-                    <p class="small text-gray mb-0">Standar produksi tinggi untuk hasil terbaik</p>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-3">
-                <div class="value-card">
-                    <div class="value-icon value-icon-blue">
-                        <i class="fas fa-handshake"></i>
-                    </div>
-                    <h5>Integritas</h5>
-                    <p class="small text-gray mb-0">Jujur dan transparan dalam setiap proses</p>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-3">
-                <div class="value-card">
-                    <div class="value-icon value-icon-purple">
-                        <i class="fas fa-lightbulb"></i>
-                    </div>
-                    <h5>Inovasi</h5>
-                    <p class="small text-gray mb-0">Terus berkreasi untuk pengalaman baru</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+
 
 <!-- Process -->
 <section class="py-5 bg-gray-light">
@@ -182,18 +131,7 @@
     </div>
 </section>
 
-<!-- CTA -->
-<section class="cta-section">
-    <div class="container">
-        <div class="cta-content">
-            <h2>Tertarik Mencoba?</h2>
-            <p>Rasakan sendiri kelezatan kerupuk sehat PATAH</p>
-            <a href="{{ route('produk.index') }}" class="btn btn-accent btn-lg">
-                <i class="fas fa-shopping-bag me-2"></i>Lihat Produk
-            </a>
-        </div>
-    </div>
-</section>
+
 @endsection
 
 @push('styles')

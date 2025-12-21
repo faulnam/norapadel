@@ -3,16 +3,17 @@
 @section('title', 'Detail Pengiriman')
 
 @section('content')
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="{{ route('courier.dashboard') }}" class="text-decoration-none" style="color: var(--primary);">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('courier.deliveries.index') }}" class="text-decoration-none" style="color: var(--primary);">Pengiriman</a></li>
+        <li class="breadcrumb-item active">#{{ $order->order_number }}</li>
+    </ol>
+</nav>
+
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-2">
-                <li class="breadcrumb-item"><a href="{{ route('courier.dashboard') }}" class="text-decoration-none">Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('courier.deliveries.index') }}" class="text-decoration-none">Pengiriman</a></li>
-                <li class="breadcrumb-item active">#{{ $order->order_number }}</li>
-            </ol>
-        </nav>
-        <h4 class="mb-0">Detail Pengiriman #{{ $order->order_number }}</h4>
+        <h4 class="mb-0" style="font-weight: 700; color: var(--dark);">Detail Pengiriman #{{ $order->order_number }}</h4>
     </div>
     <a href="{{ route('courier.deliveries.index') }}" class="btn btn-outline-secondary">
         <i class="fas fa-arrow-left me-1"></i>Kembali
@@ -24,8 +25,8 @@
     <div class="col-lg-8">
         <!-- Status Progress -->
         <div class="card mb-4">
-            <div class="card-header py-3">
-                <h5 class="mb-0"><i class="fas fa-truck text-success me-2"></i>Status Pengiriman</h5>
+            <div class="card-header">
+                <i class="fas fa-truck me-2" style="color: var(--primary);"></i>Status Pengiriman
             </div>
             <div class="card-body">
                 <div class="d-flex justify-content-between position-relative mb-4">
@@ -40,12 +41,13 @@
                                 default => '0%'
                             };
                         @endphp
-                        <div class="bg-success h-100" style="width: {{ $progress }}; transition: width 0.5s;"></div>
+                        <div style="width: {{ $progress }}; transition: width 0.5s; background: var(--primary); height: 100%;"></div>
                     </div>
                     
                     <!-- Step 1: Assigned -->
                     <div class="text-center position-relative" style="z-index: 1;">
-                        <div class="rounded-circle {{ in_array($order->status, [\App\Models\Order::STATUS_ASSIGNED, \App\Models\Order::STATUS_PICKED_UP, \App\Models\Order::STATUS_ON_DELIVERY, \App\Models\Order::STATUS_DELIVERED, \App\Models\Order::STATUS_COMPLETED]) ? 'bg-success' : 'bg-secondary' }} text-white d-flex align-items-center justify-content-center mx-auto" style="width: 35px; height: 35px;">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto" 
+                             style="width: 35px; height: 35px; {{ in_array($order->status, [\App\Models\Order::STATUS_ASSIGNED, \App\Models\Order::STATUS_PICKED_UP, \App\Models\Order::STATUS_ON_DELIVERY, \App\Models\Order::STATUS_DELIVERED, \App\Models\Order::STATUS_COMPLETED]) ? 'background: var(--primary); color: white;' : 'background: #e9ecef; color: var(--gray);' }}">
                             <i class="fas fa-clipboard-list"></i>
                         </div>
                         <div class="small mt-2 fw-bold">Ditugaskan</div>
@@ -56,7 +58,8 @@
                     
                     <!-- Step 2: Picked Up -->
                     <div class="text-center position-relative" style="z-index: 1;">
-                        <div class="rounded-circle {{ in_array($order->status, [\App\Models\Order::STATUS_PICKED_UP, \App\Models\Order::STATUS_ON_DELIVERY, \App\Models\Order::STATUS_DELIVERED, \App\Models\Order::STATUS_COMPLETED]) ? 'bg-success' : 'bg-secondary' }} text-white d-flex align-items-center justify-content-center mx-auto" style="width: 35px; height: 35px;">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto" 
+                             style="width: 35px; height: 35px; {{ in_array($order->status, [\App\Models\Order::STATUS_PICKED_UP, \App\Models\Order::STATUS_ON_DELIVERY, \App\Models\Order::STATUS_DELIVERED, \App\Models\Order::STATUS_COMPLETED]) ? 'background: var(--primary); color: white;' : 'background: #e9ecef; color: var(--gray);' }}">
                             <i class="fas fa-box"></i>
                         </div>
                         <div class="small mt-2 fw-bold">Diambil</div>
@@ -67,7 +70,8 @@
                     
                     <!-- Step 3: On Delivery -->
                     <div class="text-center position-relative" style="z-index: 1;">
-                        <div class="rounded-circle {{ in_array($order->status, [\App\Models\Order::STATUS_ON_DELIVERY, \App\Models\Order::STATUS_DELIVERED, \App\Models\Order::STATUS_COMPLETED]) ? 'bg-success' : 'bg-secondary' }} text-white d-flex align-items-center justify-content-center mx-auto" style="width: 35px; height: 35px;">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto" 
+                             style="width: 35px; height: 35px; {{ in_array($order->status, [\App\Models\Order::STATUS_ON_DELIVERY, \App\Models\Order::STATUS_DELIVERED, \App\Models\Order::STATUS_COMPLETED]) ? 'background: var(--primary); color: white;' : 'background: #e9ecef; color: var(--gray);' }}">
                             <i class="fas fa-truck"></i>
                         </div>
                         <div class="small mt-2 fw-bold">Diantar</div>
@@ -78,7 +82,8 @@
                     
                     <!-- Step 4: Delivered -->
                     <div class="text-center position-relative" style="z-index: 1;">
-                        <div class="rounded-circle {{ in_array($order->status, [\App\Models\Order::STATUS_DELIVERED, \App\Models\Order::STATUS_COMPLETED]) ? 'bg-success' : 'bg-secondary' }} text-white d-flex align-items-center justify-content-center mx-auto" style="width: 35px; height: 35px;">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto" 
+                             style="width: 35px; height: 35px; {{ in_array($order->status, [\App\Models\Order::STATUS_DELIVERED, \App\Models\Order::STATUS_COMPLETED]) ? 'background: var(--primary); color: white;' : 'background: #e9ecef; color: var(--gray);' }}">
                             <i class="fas fa-check"></i>
                         </div>
                         <div class="small mt-2 fw-bold">Sampai</div>
@@ -91,14 +96,14 @@
                 <!-- Action Buttons -->
                 <div class="text-center mt-4 pt-3 border-top">
                     @if($order->status === \App\Models\Order::STATUS_ASSIGNED)
-                        <button type="button" class="btn btn-info btn-lg px-5" data-bs-toggle="modal" data-bs-target="#pickupModal">
+                        <button type="button" class="btn btn-primary btn-lg px-5" data-bs-toggle="modal" data-bs-target="#pickupModal">
                             <i class="fas fa-hand-holding me-2"></i>Ambil Barang
                         </button>
                         <p class="text-muted small mt-2 mb-0">Klik tombol di atas dan foto barang setelah mengambil dari toko</p>
                     @elseif($order->status === \App\Models\Order::STATUS_PICKED_UP)
                         <form action="{{ route('courier.deliveries.start', $order) }}" method="POST" class="d-inline">
                             @csrf
-                            <button type="submit" class="btn btn-warning btn-lg px-5">
+                            <button type="submit" class="btn btn-primary btn-lg px-5">
                                 <i class="fas fa-play me-2"></i>Mulai Pengiriman
                             </button>
                         </form>
@@ -106,24 +111,24 @@
                         
                         @if($order->pickup_photo)
                         <div class="mt-3 text-start">
-                            <strong class="d-block mb-2"><i class="fas fa-camera text-info me-1"></i>Foto Pengambilan:</strong>
+                            <strong class="d-block mb-2"><i class="fas fa-camera me-1" style="color: var(--primary);"></i>Foto Pengambilan:</strong>
                             <img src="{{ asset('storage/' . $order->pickup_photo) }}" class="img-thumbnail" style="max-height: 150px;">
                         </div>
                         @endif
                     @elseif($order->status === \App\Models\Order::STATUS_ON_DELIVERY)
-                        <button type="button" class="btn btn-success btn-lg px-5" data-bs-toggle="modal" data-bs-target="#deliveredModal">
+                        <button type="button" class="btn btn-primary btn-lg px-5" data-bs-toggle="modal" data-bs-target="#deliveredModal">
                             <i class="fas fa-check me-2"></i>Pesanan Sudah Sampai
                         </button>
                         <p class="text-muted small mt-2 mb-0">Klik tombol di atas dan foto bukti pengiriman</p>
                         
                         @if($order->pickup_photo)
                         <div class="mt-3 text-start">
-                            <strong class="d-block mb-2"><i class="fas fa-camera text-info me-1"></i>Foto Pengambilan:</strong>
+                            <strong class="d-block mb-2"><i class="fas fa-camera me-1" style="color: var(--primary);"></i>Foto Pengambilan:</strong>
                             <img src="{{ asset('storage/' . $order->pickup_photo) }}" class="img-thumbnail" style="max-height: 150px;">
                         </div>
                         @endif
                     @elseif($order->status === \App\Models\Order::STATUS_DELIVERED || $order->status === \App\Models\Order::STATUS_COMPLETED)
-                        <div class="alert alert-success mb-0">
+                        <div class="alert mb-0" style="background: rgba(37, 99, 235, 0.1); border: none; color: var(--primary);">
                             <i class="fas fa-trophy me-2"></i>
                             Pengiriman selesai! Terima kasih.
                         </div>
@@ -132,7 +137,7 @@
                         <div class="row mt-3 text-start">
                             @if($order->pickup_photo)
                             <div class="col-6">
-                                <strong class="d-block mb-2"><i class="fas fa-box text-info me-1"></i>Foto Pengambilan:</strong>
+                                <strong class="d-block mb-2"><i class="fas fa-box me-1" style="color: var(--primary);"></i>Foto Pengambilan:</strong>
                                 <a href="{{ asset('storage/' . $order->pickup_photo) }}" target="_blank">
                                     <img src="{{ asset('storage/' . $order->pickup_photo) }}" class="img-thumbnail" style="max-height: 120px;">
                                 </a>
@@ -143,7 +148,7 @@
                             @endif
                             @if($order->delivery_photo)
                             <div class="col-6">
-                                <strong class="d-block mb-2"><i class="fas fa-check-circle text-success me-1"></i>Foto Pengiriman:</strong>
+                                <strong class="d-block mb-2"><i class="fas fa-check-circle me-1" style="color: #10b981;"></i>Foto Pengiriman:</strong>
                                 <a href="{{ asset('storage/' . $order->delivery_photo) }}" target="_blank">
                                     <img src="{{ asset('storage/' . $order->delivery_photo) }}" class="img-thumbnail" style="max-height: 120px;">
                                 </a>
@@ -160,8 +165,8 @@
 
         <!-- Order Items -->
         <div class="card mb-4">
-            <div class="card-header py-3">
-                <h5 class="mb-0"><i class="fas fa-shopping-bag text-success me-2"></i>Item Pesanan</h5>
+            <div class="card-header">
+                <i class="fas fa-shopping-bag me-2" style="color: var(--primary);"></i>Item Pesanan
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -208,7 +213,7 @@
                             </tr>
                             <tr class="fw-bold">
                                 <td colspan="3" class="text-end">Total</td>
-                                <td class="text-end text-success">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</td>
+                                <td class="text-end" style="color: var(--primary);">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</td>
                             </tr>
                         </tfoot>
                     </table>
@@ -218,8 +223,8 @@
 
         @if($order->notes)
             <div class="card mb-4">
-                <div class="card-header py-3">
-                    <h5 class="mb-0"><i class="fas fa-sticky-note text-warning me-2"></i>Catatan Pesanan</h5>
+                <div class="card-header">
+                    <i class="fas fa-sticky-note me-2" style="color: #f59e0b;"></i>Catatan Pesanan
                 </div>
                 <div class="card-body">
                     <p class="mb-0">{{ $order->notes }}</p>
@@ -232,27 +237,27 @@
     <div class="col-lg-4">
         <!-- Customer Details -->
         <div class="card mb-4">
-            <div class="card-header py-3">
-                <h5 class="mb-0"><i class="fas fa-user text-primary me-2"></i>Info Customer</h5>
+            <div class="card-header">
+                <i class="fas fa-user me-2" style="color: var(--primary);"></i>Info Customer
             </div>
             <div class="card-body">
                 <div class="d-flex align-items-center mb-3">
-                    <img src="https://ui-avatars.com/api/?name={{ urlencode($order->user->name) }}&background=random" 
+                    <img src="https://ui-avatars.com/api/?name={{ urlencode($order->user->name) }}&background=2563eb&color=fff" 
                          class="rounded-circle me-3" style="width: 50px; height: 50px;">
                     <div>
-                        <h6 class="mb-0">{{ $order->user->name }}</h6>
+                        <h6 class="mb-0" style="font-weight: 600;">{{ $order->user->name }}</h6>
                         <small class="text-muted">{{ $order->user->email }}</small>
                     </div>
                 </div>
                 @if($order->user->phone)
                     <div class="mb-2">
-                        <i class="fas fa-phone text-success me-2"></i>
-                        <a href="tel:{{ $order->user->phone }}" class="text-decoration-none">{{ $order->user->phone }}</a>
+                        <i class="fas fa-phone me-2" style="color: var(--primary);"></i>
+                        <a href="tel:{{ $order->user->phone }}" class="text-decoration-none" style="color: var(--dark);">{{ $order->user->phone }}</a>
                     </div>
                 @endif
                 @if($order->user->phone)
                     <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $order->user->phone) }}" 
-                       class="btn btn-success btn-sm w-100 mt-2" target="_blank">
+                       class="btn btn-sm w-100 mt-2" target="_blank" style="background: #25d366; color: white;">
                         <i class="fab fa-whatsapp me-1"></i>Hubungi via WhatsApp
                     </a>
                 @endif
@@ -261,13 +266,13 @@
 
         <!-- Delivery Info -->
         <div class="card mb-4">
-            <div class="card-header py-3">
-                <h5 class="mb-0"><i class="fas fa-map-marker-alt text-danger me-2"></i>Info Pengiriman</h5>
+            <div class="card-header">
+                <i class="fas fa-map-marker-alt me-2" style="color: #ef4444;"></i>Info Pengiriman
             </div>
             <div class="card-body">
                 <div class="mb-3">
                     <div class="text-muted small mb-1">Alamat Tujuan</div>
-                    <div>{{ $order->delivery_address }}</div>
+                    <div style="font-weight: 500;">{{ $order->delivery_address }}</div>
                 </div>
                 @if($order->delivery_latitude && $order->delivery_longitude)
                     <div class="mb-3">
@@ -282,15 +287,15 @@
                 <hr>
                 <div class="mb-3">
                     <div class="text-muted small mb-1">Tanggal Pengiriman</div>
-                    <div class="fw-bold">
-                        <i class="fas fa-calendar text-success me-1"></i>
+                    <div style="font-weight: 600; color: var(--dark);">
+                        <i class="fas fa-calendar me-1" style="color: var(--primary);"></i>
                         {{ $order->delivery_date->isoFormat('dddd, D MMMM Y') }}
                     </div>
                 </div>
                 <div class="mb-3">
                     <div class="text-muted small mb-1">Waktu Pengiriman</div>
-                    <div class="fw-bold">
-                        <i class="fas fa-clock text-success me-1"></i>
+                    <div style="font-weight: 600; color: var(--dark);">
+                        <i class="fas fa-clock me-1" style="color: var(--primary);"></i>
                         {{ $order->delivery_time }}
                     </div>
                 </div>
@@ -298,11 +303,11 @@
                     <div class="text-muted small mb-1">Metode Pembayaran</div>
                     <div>
                         @if($order->payment_method === 'cod')
-                            <span class="badge bg-warning text-dark">
+                            <span class="badge" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
                                 <i class="fas fa-money-bill-wave me-1"></i>Bayar di Tempat (COD)
                             </span>
                         @else
-                            <span class="badge bg-success">
+                            <span class="badge" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
                                 <i class="fas fa-credit-card me-1"></i>Transfer Bank
                             </span>
                         @endif
@@ -313,8 +318,8 @@
 
         @if($order->delivery_notes)
             <div class="card">
-                <div class="card-header py-3">
-                    <h5 class="mb-0"><i class="fas fa-clipboard text-info me-2"></i>Catatan Pengiriman</h5>
+                <div class="card-header">
+                    <i class="fas fa-clipboard me-2" style="color: var(--primary);"></i>Catatan Pengiriman
                 </div>
                 <div class="card-body">
                     <p class="mb-0">{{ $order->delivery_notes }}</p>
@@ -331,31 +336,47 @@
         <div class="modal-content">
             <form action="{{ route('courier.deliveries.pickup', $order) }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                <div class="modal-header bg-info text-white">
+                <div class="modal-header" style="background: var(--primary); color: white;">
                     <h5 class="modal-title"><i class="fas fa-camera me-2"></i>Foto Pengambilan Barang</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="alert alert-info">
+                    <div class="alert" style="background: rgba(37, 99, 235, 0.1); border: none; color: var(--primary);">
                         <i class="fas fa-info-circle me-1"></i>
                         Ambil foto barang yang sudah siap dikirim sebagai bukti pengambilan.
                     </div>
                     
                     <div class="mb-3">
                         <label class="form-label fw-bold">Foto Pengambilan Barang <span class="text-danger">*</span></label>
-                        <input type="file" class="form-control" name="pickup_photo" id="pickupPhoto" 
-                               accept="image/*" capture="environment" required>
-                        <div class="form-text">Ambil foto menggunakan kamera atau pilih dari galeri</div>
-                    </div>
-                    
-                    <!-- Preview -->
-                    <div id="pickupPhotoPreview" class="text-center d-none">
-                        <img id="pickupPreviewImg" src="" class="img-fluid rounded" style="max-height: 250px;">
+                        
+                        <!-- Camera Capture Only -->
+                        <div class="camera-capture-wrapper">
+                            <video id="pickupCameraStream" class="camera-preview d-none" autoplay playsinline></video>
+                            <canvas id="pickupCanvas" class="d-none"></canvas>
+                            <input type="hidden" name="pickup_photo_base64" id="pickupPhotoBase64">
+                            
+                            <div id="pickupCapturedPreview" class="captured-preview d-none">
+                                <img id="pickupCapturedImg" src="" class="img-fluid rounded">
+                            </div>
+                            
+                            <div class="camera-buttons">
+                                <button type="button" class="btn btn-primary w-100" id="startPickupCamera">
+                                    <i class="fas fa-camera me-2"></i>Buka Kamera
+                                </button>
+                                <button type="button" class="btn btn-success w-100 d-none" id="capturePickupPhoto">
+                                    <i class="fas fa-circle me-2"></i>Ambil Foto
+                                </button>
+                                <button type="button" class="btn btn-warning w-100 d-none" id="retakePickupPhoto">
+                                    <i class="fas fa-redo me-2"></i>Ulangi Foto
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-text text-danger"><i class="fas fa-exclamation-circle me-1"></i>Foto harus diambil langsung dari kamera</div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-info">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">
                         <i class="fas fa-check me-1"></i>Konfirmasi Pengambilan
                     </button>
                 </div>
@@ -372,27 +393,45 @@
         <div class="modal-content">
             <form action="{{ route('courier.deliveries.delivered', $order) }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                <div class="modal-header bg-success text-white">
+                <div class="modal-header" style="background: #10b981; color: white;">
                     <h5 class="modal-title"><i class="fas fa-camera me-2"></i>Foto Bukti Pengiriman</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="alert alert-success">
+                    <div class="alert" style="background: rgba(16, 185, 129, 0.1); border: none; color: #10b981;">
                         <i class="fas fa-info-circle me-1"></i>
                         Ambil foto barang yang sudah diterima customer sebagai bukti pengiriman.
                     </div>
                     
                     <div class="mb-3">
                         <label class="form-label fw-bold">Foto Bukti Pengiriman <span class="text-danger">*</span></label>
-                        <input type="file" class="form-control" name="delivery_photo" id="deliveryPhoto" 
-                               accept="image/*" capture="environment" required>
-                        <div class="form-text">Foto barang yang sudah diterima customer</div>
+                        
+                        <!-- Camera Capture Only -->
+                        <div class="camera-capture-wrapper">
+                            <video id="deliveryCameraStream" class="camera-preview d-none" autoplay playsinline></video>
+                            <canvas id="deliveryCanvas" class="d-none"></canvas>
+                            <input type="hidden" name="delivery_photo_base64" id="deliveryPhotoBase64">
+                            
+                            <div id="deliveryCapturedPreview" class="captured-preview d-none">
+                                <img id="deliveryCapturedImg" src="" class="img-fluid rounded">
+                            </div>
+                            
+                            <div class="camera-buttons">
+                                <button type="button" class="btn btn-success w-100" id="startDeliveryCamera">
+                                    <i class="fas fa-camera me-2"></i>Buka Kamera
+                                </button>
+                                <button type="button" class="btn btn-primary w-100 d-none" id="captureDeliveryPhoto">
+                                    <i class="fas fa-circle me-2"></i>Ambil Foto
+                                </button>
+                                <button type="button" class="btn btn-warning w-100 d-none" id="retakeDeliveryPhoto">
+                                    <i class="fas fa-redo me-2"></i>Ulangi Foto
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-text text-danger"><i class="fas fa-exclamation-circle me-1"></i>Foto harus diambil langsung dari kamera</div>
                     </div>
                     
-                    <!-- Preview -->
-                    <div id="deliveryPhotoPreview" class="text-center mb-3 d-none">
-                        <img id="deliveryPreviewImg" src="" class="img-fluid rounded" style="max-height: 250px;">
-                    </div>
+                    <!-- Preview dihapus karena sudah ada di camera capture -->
                     
                     <div class="mb-3">
                         <label class="form-label">Catatan Pengiriman (Opsional)</label>
@@ -401,8 +440,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-success">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn" style="background: #10b981; color: white;">
                         <i class="fas fa-check me-1"></i>Pesanan Selesai
                     </button>
                 </div>
@@ -413,36 +452,198 @@
 @endif
 @endsection
 
+@push('styles')
+<style>
+    .camera-capture-wrapper {
+        border: 2px dashed #dee2e6;
+        border-radius: 12px;
+        padding: 1rem;
+        text-align: center;
+        background: #f8f9fa;
+    }
+    
+    .camera-preview {
+        width: 100%;
+        max-height: 300px;
+        border-radius: 8px;
+        background: #000;
+        margin-bottom: 1rem;
+    }
+    
+    .captured-preview {
+        margin-bottom: 1rem;
+    }
+    
+    .captured-preview img {
+        max-height: 250px;
+        border: 3px solid #10b981;
+        border-radius: 8px;
+    }
+    
+    .camera-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+</style>
+@endpush
+
 @push('scripts')
 <script>
-// Preview pickup photo
-document.getElementById('pickupPhoto')?.addEventListener('change', function(e) {
-    const preview = document.getElementById('pickupPhotoPreview');
-    const img = document.getElementById('pickupPreviewImg');
-    
-    if (this.files && this.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            img.src = e.target.result;
-            preview.classList.remove('d-none');
-        };
-        reader.readAsDataURL(this.files[0]);
+// Camera Capture untuk Pickup Photo
+let pickupStream = null;
+
+document.getElementById('startPickupCamera')?.addEventListener('click', async function() {
+    try {
+        pickupStream = await navigator.mediaDevices.getUserMedia({ 
+            video: { 
+                facingMode: 'environment',
+                width: { ideal: 1280 },
+                height: { ideal: 720 }
+            } 
+        });
+        
+        const video = document.getElementById('pickupCameraStream');
+        video.srcObject = pickupStream;
+        video.classList.remove('d-none');
+        
+        document.getElementById('startPickupCamera').classList.add('d-none');
+        document.getElementById('capturePickupPhoto').classList.remove('d-none');
+        document.getElementById('pickupCapturedPreview').classList.add('d-none');
+        document.getElementById('retakePickupPhoto').classList.add('d-none');
+    } catch (err) {
+        alert('Tidak dapat mengakses kamera. Pastikan izin kamera sudah diberikan.');
+        console.error('Error accessing camera:', err);
     }
 });
 
-// Preview delivery photo
-document.getElementById('deliveryPhoto')?.addEventListener('change', function(e) {
-    const preview = document.getElementById('deliveryPhotoPreview');
-    const img = document.getElementById('deliveryPreviewImg');
+document.getElementById('capturePickupPhoto')?.addEventListener('click', function() {
+    const video = document.getElementById('pickupCameraStream');
+    const canvas = document.getElementById('pickupCanvas');
+    const context = canvas.getContext('2d');
     
-    if (this.files && this.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            img.src = e.target.result;
-            preview.classList.remove('d-none');
-        };
-        reader.readAsDataURL(this.files[0]);
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    context.drawImage(video, 0, 0);
+    
+    const imageData = canvas.toDataURL('image/jpeg', 0.8);
+    document.getElementById('pickupPhotoBase64').value = imageData;
+    document.getElementById('pickupCapturedImg').src = imageData;
+    
+    // Stop camera stream
+    if (pickupStream) {
+        pickupStream.getTracks().forEach(track => track.stop());
     }
+    
+    video.classList.add('d-none');
+    document.getElementById('capturePickupPhoto').classList.add('d-none');
+    document.getElementById('pickupCapturedPreview').classList.remove('d-none');
+    document.getElementById('retakePickupPhoto').classList.remove('d-none');
+});
+
+document.getElementById('retakePickupPhoto')?.addEventListener('click', function() {
+    document.getElementById('pickupPhotoBase64').value = '';
+    document.getElementById('pickupCapturedPreview').classList.add('d-none');
+    document.getElementById('retakePickupPhoto').classList.add('d-none');
+    document.getElementById('startPickupCamera').classList.remove('d-none');
+});
+
+// Camera Capture untuk Delivery Photo
+let deliveryStream = null;
+
+document.getElementById('startDeliveryCamera')?.addEventListener('click', async function() {
+    try {
+        deliveryStream = await navigator.mediaDevices.getUserMedia({ 
+            video: { 
+                facingMode: 'environment',
+                width: { ideal: 1280 },
+                height: { ideal: 720 }
+            } 
+        });
+        
+        const video = document.getElementById('deliveryCameraStream');
+        video.srcObject = deliveryStream;
+        video.classList.remove('d-none');
+        
+        document.getElementById('startDeliveryCamera').classList.add('d-none');
+        document.getElementById('captureDeliveryPhoto').classList.remove('d-none');
+        document.getElementById('deliveryCapturedPreview').classList.add('d-none');
+        document.getElementById('retakeDeliveryPhoto').classList.add('d-none');
+    } catch (err) {
+        alert('Tidak dapat mengakses kamera. Pastikan izin kamera sudah diberikan.');
+        console.error('Error accessing camera:', err);
+    }
+});
+
+document.getElementById('captureDeliveryPhoto')?.addEventListener('click', function() {
+    const video = document.getElementById('deliveryCameraStream');
+    const canvas = document.getElementById('deliveryCanvas');
+    const context = canvas.getContext('2d');
+    
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    context.drawImage(video, 0, 0);
+    
+    const imageData = canvas.toDataURL('image/jpeg', 0.8);
+    document.getElementById('deliveryPhotoBase64').value = imageData;
+    document.getElementById('deliveryCapturedImg').src = imageData;
+    
+    // Stop camera stream
+    if (deliveryStream) {
+        deliveryStream.getTracks().forEach(track => track.stop());
+    }
+    
+    video.classList.add('d-none');
+    document.getElementById('captureDeliveryPhoto').classList.add('d-none');
+    document.getElementById('deliveryCapturedPreview').classList.remove('d-none');
+    document.getElementById('retakeDeliveryPhoto').classList.remove('d-none');
+});
+
+document.getElementById('retakeDeliveryPhoto')?.addEventListener('click', function() {
+    document.getElementById('deliveryPhotoBase64').value = '';
+    document.getElementById('deliveryCapturedPreview').classList.add('d-none');
+    document.getElementById('retakeDeliveryPhoto').classList.add('d-none');
+    document.getElementById('startDeliveryCamera').classList.remove('d-none');
+});
+
+// Validasi form sebelum submit
+document.querySelector('#pickupModal form')?.addEventListener('submit', function(e) {
+    const photoBase64 = document.getElementById('pickupPhotoBase64').value;
+    if (!photoBase64) {
+        e.preventDefault();
+        alert('Silakan ambil foto pengambilan barang terlebih dahulu!');
+        return false;
+    }
+});
+
+document.querySelector('#deliveredModal form')?.addEventListener('submit', function(e) {
+    const photoBase64 = document.getElementById('deliveryPhotoBase64').value;
+    if (!photoBase64) {
+        e.preventDefault();
+        alert('Silakan ambil foto bukti pengiriman terlebih dahulu!');
+        return false;
+    }
+});
+
+// Stop camera when modal is closed
+document.getElementById('pickupModal')?.addEventListener('hidden.bs.modal', function() {
+    if (pickupStream) {
+        pickupStream.getTracks().forEach(track => track.stop());
+        pickupStream = null;
+    }
+    document.getElementById('pickupCameraStream').classList.add('d-none');
+    document.getElementById('startPickupCamera').classList.remove('d-none');
+    document.getElementById('capturePickupPhoto').classList.add('d-none');
+});
+
+document.getElementById('deliveredModal')?.addEventListener('hidden.bs.modal', function() {
+    if (deliveryStream) {
+        deliveryStream.getTracks().forEach(track => track.stop());
+        deliveryStream = null;
+    }
+    document.getElementById('deliveryCameraStream').classList.add('d-none');
+    document.getElementById('startDeliveryCamera').classList.remove('d-none');
+    document.getElementById('captureDeliveryPhoto').classList.add('d-none');
 });
 </script>
 @endpush

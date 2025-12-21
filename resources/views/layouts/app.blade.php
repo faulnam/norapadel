@@ -403,8 +403,7 @@
     <nav class="navbar navbar-expand-lg sticky-top" id="mainNavbar">
         <div class="container">
             <a class="navbar-brand" href="{{ route('home') }}">
-                <span class="navbar-brand-icon"><i class="fas fa-leaf"></i></span>
-                PATAH
+                <img src="{{ asset('images/logo.png') }}" alt="{{ config('branding.name', 'PATAH') }}" height="40" class="brand-logo">
             </a>
             
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -524,7 +523,10 @@
         <div class="container">
             <div class="row g-4">
                 <div class="col-lg-4">
-                    <h5><i class="fas fa-leaf me-2"></i>PATAH</h5>
+                    <h5>
+                        <img src="{{ asset('images/logo.png') }}" alt="{{ config('branding.name', 'PATAH') }}" height="30" class="me-2">
+                        {{ config('branding.name', 'PATAH') }}
+                    </h5>
                     <p class="text-white-50 mb-3">Kerupuk sehat dari pakcoy & tahu. Renyah, gurih, tanpa pengawet ✨</p>
                     <div class="footer-social">
                         <a href="#"><i class="fab fa-instagram"></i></a>

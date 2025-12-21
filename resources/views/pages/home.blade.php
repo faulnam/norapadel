@@ -8,7 +8,7 @@
     <div class="container">
         <div class="row align-items-center min-vh-75">
             <div class="col-lg-6">
-                <span class="hero-badge">🌿 100% Alami & Sehat</span>
+                <span class="hero-badge">100% Alami & Sehat</span>
                 <h1 class="hero-title">
                     Kerupuk <span class="text-primary">PATAH</span>
                     <br>Renyah & Bergizi
@@ -50,19 +50,16 @@
             <div class="col-lg-6">
                 <div class="hero-image-wrapper">
                     <div class="hero-image-container">
-                        <img src="https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=600" 
+                        <img src="images/beranda.png" 
                              alt="Kerupuk PATAH" class="hero-image" id="heroImage">
                         <div class="floating-card floating-card-1">
-                            <i class="fas fa-leaf text-primary"></i>
-                            <span>Organik</span>
+                            <img src="images/ngemilsantairb.png" alt="Organik" class="floating-icon">
                         </div>
                         <div class="floating-card floating-card-2">
-                            <i class="fas fa-heart text-danger"></i>
-                            <span>Sehat</span>
+                            <img src="images/temankerjarb.png" alt="Sehat" class="floating-icon">
                         </div>
                         <div class="floating-card floating-card-3">
-                            <i class="fas fa-fire text-warning"></i>
-                            <span>Renyah</span>
+                            <img src="images/oleh2maskotrb.png" alt="Renyah" class="floating-icon">
                         </div>
                     </div>
                 </div>
@@ -77,11 +74,7 @@
         <div class="row align-items-center g-5">
             <div class="col-lg-5">
                 <div class="about-image-grid">
-                    <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400" alt="Proses Pembuatan" class="about-img-main">
-                    <div class="about-badge">
-                        <span class="about-badge-number">5+</span>
-                        <span class="about-badge-text">Tahun<br>Pengalaman</span>
-                    </div>
+                    <img src="images/promo.png" alt="Proses Pembuatan" class="about-img-main">
                 </div>
             </div>
             <div class="col-lg-7">
@@ -123,7 +116,6 @@
 <section class="py-5 bg-gray-light" id="why-us">
     <div class="container">
         <div class="text-center mb-5">
-            <span class="section-badge">Keunggulan</span>
             <h2 class="section-title">Mengapa Memilih PATAH?</h2>
             <p class="section-subtitle">Alasan mengapa ribuan orang menyukai kerupuk kami</p>
         </div>
@@ -132,34 +124,34 @@
             <div class="col-md-6 col-lg-3">
                 <div class="why-card" data-aos="fade-up">
                     <div class="why-icon">
-                        <i class="fas fa-leaf"></i>
+                        <img src="images/ngemilsantairb.png">
                     </div>
-                    <h5>100% Alami</h5>
-                    <p class="text-gray small mb-0">Tanpa pengawet, pewarna, dan bahan kimia berbahaya</p>
+                    <h5>Ngemil Santai</h5>
+                    <p class="text-gray small mb-0">Lagi rebahan, nonton drama, atau main game, Kerupuk Patah siap nemenin!</p>
                 </div>
             </div>
             <div class="col-md-6 col-lg-3">
                 <div class="why-card" data-aos="fade-up" data-aos-delay="100">
-                    <div class="why-icon why-icon-orange">
-                        <i class="fas fa-fire-alt"></i>
+                     <div class="why-icon">
+                        <img src="images/temankerjarb.png">
                     </div>
-                    <h5>Renyah Sempurna</h5>
-                    <p class="text-gray small mb-0">Tekstur krispy yang bikin nagih setiap gigitan</p>
+                    <h5>Teman Kerja</h5>
+                    <p class="text-gray small mb-0">Butuh camilan biar kerja makin semangat? Cukup buka bungkus Kerupuk Patah.</p>
                 </div>
             </div>
             <div class="col-md-6 col-lg-3">
                 <div class="why-card" data-aos="fade-up" data-aos-delay="200">
-                    <div class="why-icon why-icon-red">
-                        <i class="fas fa-heart"></i>
+                     <div class="why-icon">
+                        <img src="images/oleh2maskotrb.png">
                     </div>
-                    <h5>Kaya Nutrisi</h5>
-                    <p class="text-gray small mb-0">Vitamin & protein dari pakcoy dan tahu</p>
+                    <h5>Oleh-Oleh Sidoarjo</h5>
+                    <p class="text-gray small mb-0">Mau bawa pulang sesuatu yang beda buat keluarga atau teman? Kerupuk Patah aja!</p>
                 </div>
             </div>
             <div class="col-md-6 col-lg-3">
                 <div class="why-card" data-aos="fade-up" data-aos-delay="300">
-                    <div class="why-icon why-icon-blue">
-                        <i class="fas fa-truck"></i>
+                    <div class="why-icon">
+                        <img src="images/maskot2.png">
                     </div>
                     <h5>Pengiriman Cepat</h5>
                     <p class="text-gray small mb-0">Sampai di rumah dengan kondisi fresh</p>
@@ -327,13 +319,13 @@
 <style>
     /* Hero Section */
     .hero-section {
-        padding: 4rem 0;
+        padding: 2rem 0;
         background: var(--white);
         overflow: hidden;
     }
     
     .min-vh-75 {
-        min-height: 75vh;
+        min-height: auto;
     }
     
     .hero-badge {
@@ -365,7 +357,7 @@
     .hero-buttons {
         display: flex;
         gap: 1rem;
-        margin-bottom: 3rem;
+        margin-bottom: 1.5rem;
     }
     
     .hero-stats {
@@ -398,7 +390,7 @@
     
     .hero-image-wrapper {
         position: relative;
-        padding: 2rem;
+        padding: 1rem;
     }
     
     .hero-image-container {
@@ -415,15 +407,19 @@
     .floating-card {
         position: absolute;
         background: var(--white);
-        padding: 0.75rem 1rem;
-        border-radius: var(--radius);
+        padding: 0.5rem;
+        border-radius: 50%;
         box-shadow: var(--shadow-lg);
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        font-weight: 600;
-        font-size: 0.875rem;
+        justify-content: center;
         animation: floatCard 4s ease-in-out infinite;
+    }
+    
+    .floating-icon {
+        width: 50px;
+        height: 50px;
+        object-fit: contain;
     }
     
     .floating-card-1 {
@@ -559,6 +555,13 @@
         font-size: 1.5rem;
         margin: 0 auto 1rem;
         transition: var(--transition);
+        overflow: hidden;
+    }
+    
+    .why-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
     
     .why-icon-orange {
