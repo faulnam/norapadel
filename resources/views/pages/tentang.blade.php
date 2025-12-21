@@ -284,14 +284,203 @@
         margin-bottom: 1.5rem;
     }
     
-    @media (max-width: 767.98px) {
+    /* Responsive untuk tablet */
+    @media (max-width: 991.98px) {
+        .page-hero {
+            padding: 3rem 0;
+        }
+        
         .page-title {
+            font-size: 2rem;
+        }
+        
+        .story-stats {
+            gap: 1.5rem;
+        }
+        
+        .story-stat .stat-number {
             font-size: 1.75rem;
+        }
+        
+        .vm-card {
+            padding: 1.5rem;
+        }
+        
+        .process-item {
+            min-width: 150px;
+            max-width: 180px;
+            padding: 1.25rem 0.75rem;
+        }
+        
+        .cta-section {
+            padding: 3rem 0;
+        }
+        
+        .cta-content h2 {
+            font-size: 1.75rem;
+        }
+    }
+    
+    /* Responsive untuk mobile */
+    @media (max-width: 767.98px) {
+        .page-hero {
+            padding: 2.5rem 0;
+        }
+        
+        .page-title {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-subtitle {
+            font-size: 0.9rem;
+        }
+        
+        .section-title {
+            font-size: 1.25rem;
         }
         
         .story-stats {
             flex-wrap: wrap;
             justify-content: center;
+            gap: 1rem;
+        }
+        
+        .story-stat {
+            flex: 0 0 calc(33.333% - 0.75rem);
+        }
+        
+        .story-stat .stat-number {
+            font-size: 1.5rem;
+        }
+        
+        .story-stat .stat-label {
+            font-size: 0.75rem;
+        }
+        
+        .vm-card {
+            padding: 1.25rem;
+        }
+        
+        .vm-card h3 {
+            font-size: 1.125rem;
+        }
+        
+        .vm-card ul {
+            font-size: 0.9rem;
+        }
+        
+        .vm-icon {
+            width: 50px;
+            height: 50px;
+            font-size: 1.25rem;
+        }
+        
+        .value-card {
+            padding: 1.25rem;
+        }
+        
+        .value-icon {
+            width: 50px;
+            height: 50px;
+            font-size: 1rem;
+        }
+        
+        .value-card h5 {
+            font-size: 1rem;
+        }
+        
+        .process-timeline {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .process-item {
+            min-width: 100%;
+            max-width: 100%;
+            display: flex;
+            align-items: center;
+            text-align: left;
+            padding: 1rem;
+            gap: 1rem;
+        }
+        
+        .process-number {
+            margin: 0;
+            flex-shrink: 0;
+        }
+        
+        .process-content {
+            flex: 1;
+        }
+        
+        .process-content h5 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .cta-section {
+            padding: 2rem 0;
+        }
+        
+        .cta-content h2 {
+            font-size: 1.25rem;
+        }
+        
+        .cta-content p {
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+        
+        .cta-content .btn {
+            padding: 0.5rem 1.5rem;
+            font-size: 0.875rem;
+        }
+    }
+    
+    /* Responsive untuk mobile kecil */
+    @media (max-width: 575.98px) {
+        .page-hero {
+            padding: 2rem 0;
+        }
+        
+        .page-title {
+            font-size: 1.25rem;
+        }
+        
+        .section-badge {
+            font-size: 0.7rem;
+        }
+        
+        .story-stat {
+            flex: 0 0 calc(50% - 0.5rem);
+        }
+        
+        .story-stat .stat-number {
+            font-size: 1.25rem;
+        }
+        
+        .vm-card {
+            padding: 1rem;
+        }
+        
+        .vm-card p,
+        .vm-card ul {
+            font-size: 0.85rem;
+        }
+        
+        .process-item {
+            padding: 0.75rem;
+        }
+        
+        .process-number {
+            width: 35px;
+            height: 35px;
+            font-size: 0.875rem;
+        }
+        
+        .cta-content h2 {
+            font-size: 1.125rem;
         }
     }
 </style>

@@ -241,6 +241,54 @@
             font-weight: 700;
         }
         
+        /* Mobile Nav Icons */
+        .mobile-nav-icons {
+            gap: 0.5rem;
+            margin-right: 0.75rem;
+        }
+        
+        .nav-icon-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--gray-light);
+            color: var(--dark);
+            text-decoration: none;
+            position: relative;
+            transition: var(--transition);
+        }
+        
+        .nav-icon-link:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+        
+        .nav-icon-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background: var(--accent);
+            color: white;
+            font-size: 0.6rem;
+            min-width: 16px;
+            height: 16px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+        
+        .nav-avatar {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        
         /* Dropdown */
         .dropdown-menu {
             border: 1px solid var(--gray-light);
@@ -272,6 +320,11 @@
         .footer h5 {
             font-weight: 700;
             margin-bottom: 1rem;
+            font-size: 1.125rem;
+        }
+        
+        .footer h6 {
+            font-size: 0.875rem;
         }
         
         .footer-link {
@@ -280,6 +333,7 @@
             transition: var(--transition);
             display: block;
             padding: 0.25rem 0;
+            font-size: 0.875rem;
         }
         
         .footer-link:hover {
@@ -303,6 +357,50 @@
         .footer-social a:hover {
             background: var(--primary);
             transform: translateY(-3px);
+        }
+        
+        /* Footer responsive */
+        @media (max-width: 767.98px) {
+            .footer {
+                padding: 2rem 0 1rem;
+            }
+            
+            .footer h5 {
+                font-size: 1rem;
+                margin-bottom: 0.75rem;
+            }
+            
+            .footer h5 img {
+                height: 24px !important;
+            }
+            
+            .footer p {
+                font-size: 0.8125rem;
+            }
+            
+            .footer h6 {
+                font-size: 0.8125rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .footer-link {
+                font-size: 0.8125rem;
+                padding: 0.1875rem 0;
+            }
+            
+            .footer-social a {
+                width: 36px;
+                height: 36px;
+                font-size: 0.875rem;
+            }
+            
+            .footer .text-white-50 {
+                font-size: 0.75rem;
+            }
+            
+            .footer hr {
+                margin: 1.5rem 0 0.75rem;
+            }
         }
         
         /* Alert */
@@ -359,25 +457,40 @@
         
         /* Mobile */
         @media (max-width: 991.98px) {
+            .navbar {
+                padding: 0.625rem 0;
+            }
+            
+            .navbar-brand img {
+                height: 32px;
+            }
+            
+            .navbar-toggler {
+                padding: 0.375rem 0.5rem;
+                font-size: 1rem;
+            }
+            
             .navbar-collapse {
                 background: var(--white);
                 padding: 1rem;
                 border-radius: var(--radius);
-                margin-top: 1rem;
-                box-shadow: var(--shadow);
+                margin-top: 0.75rem;
+                box-shadow: var(--shadow-lg);
+                border: 1px solid var(--gray-light);
             }
             
             .navbar-nav {
-                gap: 0;
+                gap: 0.25rem;
             }
             
             .nav-link {
                 padding: 0.75rem 1rem !important;
-                border-radius: 6px;
+                border-radius: 8px;
+                font-size: 0.9375rem;
             }
             
             .nav-link:hover {
-                background: var(--off-white);
+                background: var(--gray-light);
             }
             
             .nav-link.active {
@@ -388,10 +501,37 @@
                 display: none;
             }
             
+            /* Simpler mobile menu */
+            .navbar-nav .border-top {
+                border-color: var(--gray-light) !important;
+            }
+            
             .btn-nav-login {
                 display: block;
                 text-align: center;
-                margin-top: 0.5rem;
+                margin-top: 0.75rem;
+                padding: 0.75rem 1.25rem;
+            }
+            
+            /* Mobile utility classes */
+            .ms-lg-2, .ms-lg-3 {
+                margin-left: 0 !important;
+            }
+        }
+        
+        @media (max-width: 575.98px) {
+            .navbar-brand img {
+                height: 28px;
+            }
+            
+            .nav-link {
+                font-size: 0.875rem;
+                padding: 0.625rem 0.875rem !important;
+            }
+            
+            .cart-badge {
+                font-size: 0.5625rem;
+                padding: 1px 4px;
             }
         }
     </style>
@@ -411,7 +551,7 @@
             </button>
             
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-center">
+                <ul class="navbar-nav ms-auto align-items-lg-center">
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">Beranda</a>
                     </li>
@@ -433,13 +573,12 @@
                             <a class="btn-nav-login" href="{{ route('login') }}">Masuk</a>
                         </li>
                     @else
+                        <!-- Desktop: Cart Icon -->
                         @if(auth()->user()->isCustomer())
-                            <li class="nav-item ms-lg-2">
+                            <li class="nav-item ms-lg-2 d-none d-lg-block">
                                 <a class="nav-link position-relative" href="{{ route('customer.cart.index') }}">
                                     <i class="fas fa-shopping-cart fa-lg"></i>
-                                    @php
-                                        $cartCount = auth()->user()->cartItems()->sum('quantity');
-                                    @endphp
+                                    @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
                                     @if($cartCount > 0)
                                         <span class="cart-badge">{{ $cartCount }}</span>
                                     @endif
@@ -447,7 +586,8 @@
                             </li>
                         @endif
                         
-                        <li class="nav-item dropdown ms-lg-2">
+                        <!-- Desktop: User Dropdown -->
+                        <li class="nav-item dropdown ms-lg-2 d-none d-lg-block">
                             <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" data-bs-toggle="dropdown">
                                 <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" 
                                      class="rounded-circle me-2" style="width: 28px; height: 28px; object-fit: cover;">
@@ -490,6 +630,48 @@
                                 </li>
                             </ul>
                         </li>
+                        
+                        <!-- Mobile: User Menu -->
+                        <li class="nav-item d-lg-none mobile-user-section">
+                            <hr class="my-2">
+                            @if(auth()->user()->isAdmin())
+                                <a class="nav-link" href="{{ route('admin.dashboard') }}">
+                                    <i class="fas fa-tachometer-alt me-2 text-primary"></i>Dashboard
+                                </a>
+                            @elseif(auth()->user()->isCourier())
+                                <a class="nav-link" href="{{ route('courier.dashboard') }}">
+                                    <i class="fas fa-tachometer-alt me-2 text-primary"></i>Dashboard
+                                </a>
+                            @else
+                                <a class="nav-link" href="{{ route('customer.cart.index') }}">
+                                    <i class="fas fa-shopping-cart me-2 text-primary"></i>Keranjang
+                                    @if($cartCount > 0)
+                                        <span class="badge bg-primary ms-1">{{ $cartCount }}</span>
+                                    @endif
+                                </a>
+                                <a class="nav-link" href="{{ route('customer.products.index') }}">
+                                    <i class="fas fa-store me-2 text-primary"></i>Belanja
+                                </a>
+                                <a class="nav-link" href="{{ route('customer.orders.index') }}">
+                                    <i class="fas fa-shopping-bag me-2 text-primary"></i>Pesanan
+                                </a>
+                                <a class="nav-link" href="{{ route('customer.profile.index') }}">
+                                    <i class="fas fa-user me-2 text-primary"></i>Profil
+                                </a>
+                                <a class="nav-link" href="{{ route('customer.notifications.index') }}">
+                                    <i class="fas fa-bell me-2 text-primary"></i>Notifikasi
+                                    @if(auth()->user()->unreadNotifications->count() > 0)
+                                        <span class="badge bg-danger ms-1">{{ auth()->user()->unreadNotifications->count() }}</span>
+                                    @endif
+                                </a>
+                            @endif
+                            <form action="{{ route('logout') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="nav-link text-danger border-0 bg-transparent w-100 text-start">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Keluar
+                                </button>
+                            </form>
+                        </li>
                     @endguest
                 </ul>
             </div>
@@ -524,7 +706,7 @@
     <footer class="footer">
         <div class="container">
             <div class="row g-4">
-                <div class="col-lg-4">
+                <div class="col-lg-4 col-12">
                     <h5>
                         <img src="{{ asset('images/logo.png') }}" alt="{{ config('branding.name', 'PATAH') }}" height="30" class="me-2">
                         {{ config('branding.name', 'PATAH') }}
@@ -536,20 +718,21 @@
                         <a href="#"><i class="fab fa-whatsapp"></i></a>
                     </div>
                 </div>
-                <div class="col-6 col-lg-2">
+                <!-- Menu & Lainnya - hidden di mobile -->
+                <div class="col-6 col-lg-2 d-none d-md-block">
                     <h6 class="text-white-50 mb-3">Menu</h6>
                     <a href="{{ route('home') }}" class="footer-link">Beranda</a>
                     <a href="{{ route('tentang') }}" class="footer-link">Tentang</a>
                     <a href="{{ route('produk.index') }}" class="footer-link">Produk</a>
                     <a href="{{ route('galeri') }}" class="footer-link">Galeri</a>
                 </div>
-                <div class="col-6 col-lg-2">
+                <div class="col-6 col-lg-2 d-none d-md-block">
                     <h6 class="text-white-50 mb-3">Lainnya</h6>
                     <a href="{{ route('testimoni') }}" class="footer-link">Testimoni</a>
                     <a href="{{ route('login') }}" class="footer-link">Masuk</a>
                     <a href="{{ route('register') }}" class="footer-link">Daftar</a>
                 </div>
-                <div class="col-lg-4">
+                <div class="col-lg-4 col-12">
                     <h6 class="text-white-50 mb-3">Kontak</h6>
                     <p class="text-white-50 mb-2"><i class="fas fa-phone me-2"></i>+62 812 3456 7890</p>
                     <p class="text-white-50 mb-2"><i class="fas fa-envelope me-2"></i>hello@patah.id</p>

@@ -207,13 +207,119 @@
         margin-bottom: 1.5rem;
     }
     
-    @media (max-width: 767.98px) {
+    @media (max-width: 991.98px) {
+        .page-hero {
+            padding: 2.5rem 0;
+        }
+        
         .page-title {
-            font-size: 1.75rem;
+            font-size: 2rem;
+        }
+        
+        .page-subtitle {
+            font-size: 1rem;
+        }
+    }
+    
+    @media (max-width: 767.98px) {
+        .page-hero {
+            padding: 2rem 0;
+        }
+        
+        .page-title {
+            font-size: 1.5rem;
+        }
+        
+        .page-subtitle {
+            font-size: 0.875rem;
+        }
+        
+        .filter-bar {
+            padding: 0.75rem;
+        }
+        
+        .filter-item select {
+            min-width: 120px;
+            font-size: 0.875rem;
+            padding: 0.375rem 0.625rem;
         }
         
         .product-image {
-            height: 140px;
+            height: 130px;
+        }
+        
+        .product-body {
+            padding: 0.75rem;
+        }
+        
+        .product-title {
+            font-size: 0.8125rem;
+            line-height: 1.3;
+        }
+        
+        .product-weight {
+            font-size: 0.625rem;
+            padding: 0.125rem 0.375rem;
+            margin-bottom: 0.375rem !important;
+        }
+        
+        .product-price {
+            font-size: 0.875rem;
+        }
+        
+        .product-card .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+    }
+    
+    @media (max-width: 575.98px) {
+        .page-title {
+            font-size: 1.375rem;
+        }
+        
+        .filter-bar {
+            padding: 0.5rem;
+        }
+        
+        .filter-bar form {
+            gap: 0.5rem !important;
+        }
+        
+        .filter-item select {
+            min-width: 100px;
+            font-size: 0.75rem;
+        }
+        
+        .filter-bar .btn {
+            font-size: 0.75rem;
+            padding: 0.375rem 0.75rem;
+        }
+        
+        .product-image {
+            height: 110px;
+        }
+        
+        .product-body {
+            padding: 0.5rem;
+        }
+        
+        .product-title {
+            font-size: 0.75rem;
+        }
+        
+        .product-price {
+            font-size: 0.75rem;
+        }
+        
+        .product-card .btn-sm {
+            padding: 0.1875rem 0.375rem;
+            font-size: 0.6875rem;
+        }
+        
+        .product-badges .badge {
+            font-size: 0.5625rem;
+            padding: 0.25rem 0.5rem;
         }
     }
 </style>

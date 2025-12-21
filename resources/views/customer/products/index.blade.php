@@ -3,14 +3,23 @@
 @section('title', 'Produk - PATAH')
 
 @section('content')
-<div class="container py-5">
+<div class="container py-4 py-lg-5">
     <div class="row">
+        <!-- Mobile Filter Toggle -->
+        <div class="col-12 d-lg-none mb-3">
+            <button class="btn btn-success w-100" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-expanded="false">
+                <i class="fas fa-filter me-2"></i>Filter Produk
+                <i class="fas fa-chevron-down ms-2 filter-toggle-icon"></i>
+            </button>
+        </div>
+        
         <!-- Sidebar Filters -->
         <div class="col-lg-3 mb-4">
-            <div class="card">
-                <div class="card-header bg-success text-white">
-                    <i class="fas fa-filter me-2"></i>Filter Produk
-                </div>
+            <div class="collapse d-lg-block" id="filterCollapse">
+                <div class="card filter-card">
+                    <div class="card-header bg-success text-white d-none d-lg-block">
+                        <i class="fas fa-filter me-2"></i>Filter Produk
+                    </div>
                 <div class="card-body">
                     <form action="{{ route('customer.products.index') }}" method="GET">
                         <div class="mb-3">
@@ -60,39 +69,39 @@
                 <span class="text-muted">{{ $products->total() }} produk ditemukan</span>
             </div>
             
-            <div class="row g-4">
+            <div class="row g-3 g-lg-4">
                 @forelse($products as $product)
-                    <div class="col-md-6 col-lg-4">
+                    <div class="col-6 col-md-6 col-lg-4">
                         <div class="card h-100 product-card">
                             <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=400' }}" 
-                                 class="card-img-top" alt="{{ $product->name }}" style="height: 200px; object-fit: cover;">
-                            <div class="card-body">
+                                 class="card-img-top product-img" alt="{{ $product->name }}">
+                            <div class="card-body p-2 p-lg-3">
                                 <div class="mb-2">
-                                    <span class="badge bg-{{ $product->category == 'original' ? 'success' : 'danger' }} me-1">{{ $product->category_label }}</span>
-                                    <span class="badge bg-secondary">{{ $product->formatted_weight }}</span>
+                                    <span class="badge bg-{{ $product->category == 'original' ? 'success' : 'danger' }} product-badge">{{ $product->category_label }}</span>
+                                    <span class="badge bg-secondary product-badge d-none d-sm-inline">{{ $product->formatted_weight }}</span>
                                 </div>
-                                <h5 class="card-title">{{ $product->name }}</h5>
-                                <p class="card-text text-muted small">{{ Str::limit($product->description, 60) }}</p>
+                                <h5 class="card-title product-title">{{ $product->name }}</h5>
+                                <p class="card-text text-muted small d-none d-md-block">{{ Str::limit($product->description, 60) }}</p>
                                 
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <span class="h5 text-success mb-0">{{ $product->formatted_price }}</span>
+                                <div class="d-flex justify-content-between align-items-center mb-2 mb-lg-3">
+                                    <span class="product-price text-success mb-0">{{ $product->formatted_price }}</span>
                                     @if($product->stock > 0)
-                                        <small class="text-muted">Stok: {{ $product->stock }}</small>
+                                        <small class="text-muted d-none d-sm-inline">Stok: {{ $product->stock }}</small>
                                     @else
                                         <small class="text-danger">Habis</small>
                                     @endif
                                 </div>
                                 
-                                <div class="d-grid gap-2">
-                                    <a href="{{ route('customer.products.show', $product) }}" class="btn btn-outline-success">
-                                        <i class="fas fa-eye me-1"></i>Lihat Detail
+                                <div class="d-grid gap-1 gap-lg-2">
+                                    <a href="{{ route('customer.products.show', $product) }}" class="btn btn-outline-success btn-sm btn-lg-md">
+                                        <i class="fas fa-eye me-1 d-none d-sm-inline"></i>Detail
                                     </a>
                                     @if($product->stock > 0)
                                         <form action="{{ route('customer.cart.add', $product) }}" method="POST">
                                             @csrf
                                             <input type="hidden" name="quantity" value="1">
-                                            <button type="submit" class="btn btn-success w-100">
-                                                <i class="fas fa-cart-plus me-1"></i>Tambah ke Keranjang
+                                            <button type="submit" class="btn btn-success w-100 btn-sm btn-lg-md">
+                                                <i class="fas fa-cart-plus me-1 d-none d-sm-inline"></i><span class="d-none d-sm-inline">+ </span>Keranjang
                                             </button>
                                         </form>
                                     @endif
@@ -127,6 +136,78 @@
     .product-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    .product-img {
+        height: 200px;
+        object-fit: cover;
+    }
+    .product-title {
+        font-size: 1.1rem;
+    }
+    .product-price {
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+    .product-badge {
+        font-size: 0.7rem;
+    }
+    .filter-toggle-icon {
+        transition: transform 0.3s;
+    }
+    [aria-expanded="true"] .filter-toggle-icon {
+        transform: rotate(180deg);
+    }
+    
+    /* Mobile Responsive */
+    @media (max-width: 991.98px) {
+        .filter-card {
+            margin-bottom: 1rem;
+        }
+    }
+    
+    @media (max-width: 767.98px) {
+        .product-img {
+            height: 140px;
+        }
+        .product-title {
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem !important;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .product-price {
+            font-size: 0.95rem;
+        }
+        .product-badge {
+            font-size: 0.6rem;
+            padding: 0.2em 0.5em;
+        }
+        .btn-sm {
+            font-size: 0.75rem;
+            padding: 0.4rem 0.6rem;
+        }
+    }
+    
+    @media (max-width: 575.98px) {
+        .product-img {
+            height: 120px;
+        }
+        .product-card {
+            margin-bottom: 0;
+        }
+        .product-card:hover {
+            transform: none;
+            box-shadow: none;
+        }
+    }
+    
+    @media (min-width: 992px) {
+        .btn-lg-md {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
     }
 </style>
 @endpush

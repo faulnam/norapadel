@@ -7,12 +7,30 @@
 <section class="hero-section">
     <div class="container">
         <div class="row align-items-center min-vh-75">
-            <div class="col-lg-6">
+            <div class="col-lg-6 hero-text-col">
                 <span class="hero-badge">100% Alami & Sehat</span>
                 <h1 class="hero-title">
                     Kerupuk <span class="text-primary">PATAH</span>
                     <br>Renyah & Bergizi
                 </h1>
+                
+                <!-- Hero Image - muncul di sini saat mobile -->
+                <div class="hero-image-mobile d-lg-none">
+                    <div class="hero-image-container">
+                        <img src="images/beranda.png" 
+                             alt="Kerupuk PATAH" class="hero-image">
+                        <div class="floating-card floating-card-1">
+                            <img src="images/ngemilsantairb.png" alt="Organik" class="floating-icon">
+                        </div>
+                        <div class="floating-card floating-card-2">
+                            <img src="images/temankerjarb.png" alt="Sehat" class="floating-icon">
+                        </div>
+                        <div class="floating-card floating-card-3">
+                            <img src="images/oleh2maskotrb.png" alt="Renyah" class="floating-icon">
+                        </div>
+                    </div>
+                </div>
+                
                 <p class="hero-subtitle">
                     Nikmati sensasi kerupuk sehat dari pakcoy dan tahu. Tanpa pengawet, tanpa MSG, cocok untuk semua usia!
                 </p>
@@ -47,7 +65,8 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6">
+            <!-- Hero Image - hanya tampil di desktop -->
+            <div class="col-lg-6 hero-image-col d-none d-lg-block">
                 <div class="hero-image-wrapper">
                     <div class="hero-image-container">
                         <img src="images/beranda.png" 
@@ -72,7 +91,8 @@
 <section class="py-5" id="about-brief">
     <div class="container">
         <div class="row align-items-center g-5">
-            <div class="col-lg-5">
+            <!-- Gambar hanya tampil di desktop -->
+            <div class="col-lg-5 d-none d-lg-block">
                 <div class="about-image-grid">
                     <img src="images/promo.png" alt="Proses Pembuatan" class="about-img-main">
                 </div>
@@ -174,9 +194,9 @@
             </a>
         </div>
         
-        <div class="row g-4">
-            @forelse($products->take(3) as $product)
-                <div class="col-md-6 col-lg-4">
+        <div class="row g-3 g-md-4">
+            @forelse($products->take(4) as $product)
+                <div class="col-6 col-md-6 col-lg-3">
                     <div class="product-card">
                         <div class="product-image">
                             <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=400' }}" 
@@ -190,18 +210,18 @@
                         <div class="product-body">
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <h5 class="product-title mb-0">{{ $product->name }}</h5>
-                                <span class="product-weight">{{ $product->formatted_weight }}</span>
+                                <span class="product-weight d-none d-sm-inline">{{ $product->formatted_weight }}</span>
                             </div>
-                            <p class="product-desc text-gray small">{{ Str::limit($product->description, 60) }}</p>
+                            <p class="product-desc text-gray small d-none d-md-block">{{ Str::limit($product->description, 60) }}</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="product-price">{{ $product->formatted_price }}</span>
                                 @auth
                                     <a href="{{ route('customer.products.show', $product) }}" class="btn btn-sm btn-primary">
-                                        <i class="fas fa-shopping-cart me-1"></i>Beli
+                                        <i class="fas fa-shopping-cart me-1 d-none d-sm-inline"></i>Beli
                                     </a>
                                 @else
                                     <a href="{{ route('produk.show', $product) }}" class="btn btn-sm btn-outline-primary">
-                                        <i class="fas fa-eye me-1"></i>Detail
+                                        <i class="fas fa-eye me-1 d-none d-sm-inline"></i>Detail
                                     </a>
                                 @endauth
                             </div>
@@ -402,6 +422,43 @@
         max-width: 450px;
         border-radius: 20px;
         animation: float 6s ease-in-out infinite;
+    }
+    
+    /* Hero Image Mobile - tampil setelah judul */
+    .hero-image-mobile {
+        position: relative;
+        padding: 1.5rem 0;
+        text-align: center;
+    }
+    
+    .hero-image-mobile .hero-image-container {
+        display: inline-block;
+        position: relative;
+        padding: 2rem 3rem;
+    }
+    
+    .hero-image-mobile .hero-image {
+        max-width: 500px;
+        margin: 0 auto;
+    }
+    
+    .hero-image-mobile .floating-card {
+        transform: scale(0.65);
+    }
+    
+    .hero-image-mobile .floating-card-1 {
+        top: 0%;
+        left: -15%;
+    }
+    
+    .hero-image-mobile .floating-card-2 {
+        bottom: 0%;
+        left: -10%;
+    }
+    
+    .hero-image-mobile .floating-card-3 {
+        top: 5%;
+        right: -15%;
     }
     
     .floating-card {
@@ -782,37 +839,63 @@
     
     /* Responsive */
     @media (max-width: 991.98px) {
+        .hero-section {
+            padding: 2rem 0 3rem;
+        }
+        
         .hero-title {
-            font-size: 2.5rem;
+            font-size: 2.25rem;
+            text-align: center;
+        }
+        
+        .hero-badge {
+            display: block;
+            text-align: center;
+        }
+        
+        .hero-subtitle {
+            text-align: center;
+            font-size: 1rem;
+        }
+        
+        .hero-buttons {
+            justify-content: center;
+            flex-wrap: wrap;
         }
         
         .hero-image-wrapper {
-            margin-top: 3rem;
+            margin-top: 2rem;
+        }
+        
+        .hero-image-container {
+            text-align: center;
+        }
+        
+        .hero-image {
+            max-width: 320px;
         }
         
         .floating-card {
-            display: none;
+            transform: scale(0.8);
+        }
+        
+        .floating-card-1 {
+            top: 5%;
+            left: 5%;
+        }
+        
+        .floating-card-2 {
+            bottom: 15%;
+            left: 0%;
+        }
+        
+        .floating-card-3 {
+            top: 25%;
+            right: 0%;
         }
         
         .hero-stats {
             justify-content: center;
-        }
-    }
-    
-    @media (max-width: 767.98px) {
-        .hero-section {
-            padding: 2rem 0;
-        }
-        
-        .hero-title {
-            font-size: 2rem;
-        }
-        
-        .hero-buttons {
-            flex-direction: column;
-        }
-        
-        .hero-stats {
             flex-wrap: wrap;
             gap: 1rem;
         }
@@ -821,18 +904,388 @@
             display: none;
         }
         
-        .about-badge {
-            right: 10px;
-            bottom: -10px;
+        .section-title {
+            font-size: 1.625rem;
         }
         
+        .section-subtitle {
+            font-size: 0.9rem;
+        }
+        
+        /* About Section Mobile */
+        .about-image-grid {
+            margin-bottom: 2rem;
+        }
+        
+        .about-img-main {
+            max-height: 280px;
+            object-fit: cover;
+        }
+        
+        .about-badge {
+            right: 10px;
+            bottom: -15px;
+            padding: 0.875rem;
+        }
+        
+        .about-badge-number {
+            font-size: 1.5rem;
+        }
+        
+        /* Why Cards - 2 per row on tablet */
+        .why-card {
+            padding: 1.5rem;
+        }
+        
+        .why-icon {
+            width: 60px;
+            height: 60px;
+        }
+        
+        /* Product Cards */
+        .product-image {
+            height: 180px;
+        }
+        
+        .product-body {
+            padding: 1rem;
+        }
+        
+        .product-title {
+            font-size: 0.9375rem;
+        }
+        
+        .product-price {
+            font-size: 1rem;
+        }
+        
+        /* Gallery */
         .gallery-item {
-            flex: 0 0 250px;
+            flex: 0 0 260px;
             height: 200px;
         }
         
+        /* Testimonial */
         .testimonial-card {
             flex: 0 0 300px;
+            padding: 1.25rem;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            padding: 3rem 0;
+        }
+        
+        .cta-content h2 {
+            font-size: 1.625rem;
+        }
+        
+        .cta-content p {
+            font-size: 1rem;
+        }
+    }
+    
+    @media (max-width: 767.98px) {
+        .hero-section {
+            padding: 1.5rem 0 2rem;
+        }
+        
+        .hero-title {
+            font-size: 1.75rem;
+            line-height: 1.3;
+            text-align: center;
+        }
+        
+        .hero-badge {
+            display: block;
+            text-align: center;
+        }
+        
+        .hero-subtitle {
+            font-size: 0.9375rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .hero-buttons {
+            flex-direction: column;
+            gap: 0.75rem;
+            justify-content: center;
+        }
+        
+        .hero-buttons .btn {
+            width: 100%;
+        }
+        
+        /* Hero image mobile styles */
+        .hero-image-mobile {
+            padding: 1rem 0;
+        }
+        
+        .hero-image-mobile .hero-image-container {
+            padding: 1.5rem 2.5rem;
+        }
+        
+        .hero-image-mobile .hero-image {
+            max-width: 220px;
+        }
+        
+        .hero-image-mobile .floating-card {
+            transform: scale(0.6);
+        }
+        
+        .hero-image-mobile .floating-card-1 {
+            top: -5%;
+            left: -15%;
+        }
+        
+        .hero-image-mobile .floating-card-2 {
+            bottom: -5%;
+            left: -10%;
+        }
+        
+        .hero-image-mobile .floating-card-3 {
+            top: 0%;
+            right: -15%;
+        }
+        
+        .hero-stats {
+            background: var(--white);
+            padding: 1rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            justify-content: center;
+        }
+        
+        .stat-item {
+            flex: 1;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 1.25rem;
+        }
+        
+        .stat-label {
+            font-size: 0.6875rem;
+        }
+        
+        /* Section styles */
+        .section-title {
+            font-size: 1.375rem;
+        }
+        
+        .section-badge {
+            font-size: 0.6875rem;
+            padding: 0.25rem 0.625rem;
+        }
+        
+        /* About Section - tanpa gambar di mobile */
+        .about-feature-item {
+            padding: 0.875rem;
+        }
+        
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            font-size: 1rem;
+        }
+        
+        .about-feature-item h6 {
+            font-size: 0.875rem;
+        }
+        
+        .about-feature-item small {
+            font-size: 0.75rem;
+        }
+        
+        /* Why Cards - full width on mobile */
+        .why-card {
+            padding: 1.25rem;
+        }
+        
+        .why-icon {
+            width: 55px;
+            height: 55px;
+        }
+        
+        .why-card h5 {
+            font-size: 1rem;
+        }
+        
+        .why-card p {
+            font-size: 0.8125rem;
+        }
+        
+        /* Product Cards - 2 per row on mobile */
+        .product-image {
+            height: 140px;
+        }
+        
+        .product-body {
+            padding: 0.875rem;
+        }
+        
+        .product-title {
+            font-size: 0.8125rem;
+            line-height: 1.3;
+        }
+        
+        .product-weight {
+            font-size: 0.625rem;
+            padding: 0.125rem 0.375rem;
+        }
+        
+        .product-desc {
+            font-size: 0.75rem;
+            margin-bottom: 0.625rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .product-price {
+            font-size: 0.875rem;
+        }
+        
+        .product-card .btn-sm {
+            font-size: 0.6875rem;
+            padding: 0.375rem 0.625rem;
+        }
+        
+        /* Gallery */
+        .gallery-item {
+            flex: 0 0 200px;
+            height: 160px;
+        }
+        
+        /* Testimonial */
+        .testimonial-card {
+            flex: 0 0 260px;
+            padding: 1rem;
+        }
+        
+        .testimonial-content {
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+        
+        .author-avatar {
+            width: 36px;
+            height: 36px;
+            font-size: 0.875rem;
+        }
+        
+        .testimonial-author h6 {
+            font-size: 0.875rem;
+        }
+        
+        .testimonial-author small {
+            font-size: 0.75rem;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            padding: 2rem 0;
+        }
+        
+        .cta-content h2 {
+            font-size: 1.375rem;
+        }
+        
+        .cta-content p {
+            font-size: 0.875rem;
+        }
+        
+        .cta-section .btn {
+            width: 100%;
+        }
+    }
+    
+    /* Extra small devices */
+    @media (max-width: 575.98px) {
+        .hero-title {
+            font-size: 1.5rem;
+        }
+        
+        /* Hero image mobile smaller */
+        .hero-image-mobile .hero-image-container {
+            padding: 1.5rem 2rem;
+        }
+        
+        .hero-image-mobile .hero-image {
+            max-width: 180px;
+        }
+        
+        .hero-image-mobile .floating-card {
+            transform: scale(0.55);
+        }
+        
+        .hero-image-mobile .floating-card-1 {
+            top: -5%;
+            left: -20%;
+        }
+        
+        .hero-image-mobile .floating-card-2 {
+            bottom: -5%;
+            left: -15%;
+        }
+        
+        .hero-image-mobile .floating-card-3 {
+            top: 0%;
+            right: -20%;
+        }
+        
+        .section-title {
+            font-size: 1.25rem;
+        }
+        
+        /* Make product cards 2 per row */
+        #products .row {
+            margin-left: -0.375rem;
+            margin-right: -0.375rem;
+        }
+        
+        #products .row > div {
+            padding-left: 0.375rem;
+            padding-right: 0.375rem;
+        }
+        
+        .product-image {
+            height: 120px;
+        }
+        
+        .product-body {
+            padding: 0.625rem;
+        }
+        
+        .product-title {
+            font-size: 0.75rem;
+        }
+        
+        .product-price {
+            font-size: 0.8125rem;
+        }
+        
+        .product-card .btn-sm {
+            font-size: 0.625rem;
+            padding: 0.25rem 0.5rem;
+        }
+        
+        .product-card .btn-sm i {
+            display: none;
+        }
+        
+        /* Gallery */
+        .gallery-item {
+            flex: 0 0 160px;
+            height: 130px;
+        }
+        
+        /* Testimonial */
+        .testimonial-card {
+            flex: 0 0 240px;
         }
     }
 </style>

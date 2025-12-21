@@ -287,6 +287,161 @@
         border-radius: 10px;
         padding: 1rem 1.25rem;
     }
+    
+    /* Mobile Responsive */
+    @media (max-width: 991.98px) {
+        .order-detail-page {
+            padding: 1rem 0;
+        }
+    }
+    
+    @media (max-width: 767.98px) {
+        .order-detail-page {
+            padding: 0.75rem 0;
+        }
+        .detail-card {
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        .detail-card-header {
+            padding: 0.75rem 1rem;
+            font-size: 13px;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .detail-card-body {
+            padding: 1rem;
+        }
+        .order-number {
+            font-size: 15px;
+        }
+        .breadcrumb-minimal {
+            font-size: 12px;
+            margin-bottom: 1rem;
+        }
+        
+        /* Progress Tracker Mobile */
+        .progress-tracker {
+            margin: 1rem 0;
+        }
+        .progress-tracker::before {
+            top: 15px;
+            left: 5%;
+            right: 5%;
+        }
+        .step-icon {
+            width: 30px;
+            height: 30px;
+            font-size: 11px;
+        }
+        .step-label {
+            font-size: 10px;
+        }
+        
+        /* Items Mobile */
+        .item-row {
+            padding: 0.75rem 0;
+        }
+        .item-img {
+            width: 40px;
+            height: 40px;
+            margin-right: 0.75rem;
+        }
+        .item-name {
+            font-size: 13px;
+        }
+        .item-qty {
+            font-size: 11px;
+        }
+        .item-price {
+            font-size: 13px;
+        }
+        
+        /* Summary Mobile */
+        .summary-row {
+            font-size: 13px;
+        }
+        .summary-total {
+            font-size: 15px;
+        }
+        
+        /* Photo Grid Mobile */
+        .photo-grid {
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+        .photo-item img {
+            height: 100px;
+        }
+        .photo-label {
+            font-size: 11px;
+            padding: 6px;
+        }
+        .photo-label strong {
+            font-size: 12px;
+        }
+        .photo-datetime {
+            font-size: 10px;
+        }
+        
+        /* Courier Box Mobile */
+        .courier-box {
+            padding: 0.75rem 1rem;
+        }
+        .courier-name {
+            font-size: 14px;
+        }
+        
+        /* Address Mobile */
+        .address-label {
+            font-size: 11px;
+        }
+        .address-value {
+            font-size: 13px;
+        }
+        
+        /* Bank Info Mobile */
+        .bank-info {
+            font-size: 12px;
+            padding: 0.75rem;
+        }
+        
+        /* Upload Box Mobile */
+        .upload-box {
+            padding: 1rem;
+        }
+        
+        /* Buttons Mobile */
+        .btn-action {
+            padding: 8px 12px;
+            font-size: 13px;
+        }
+    }
+    
+    @media (max-width: 575.98px) {
+        .progress-tracker::before {
+            left: 3%;
+            right: 3%;
+        }
+        .step-icon {
+            width: 26px;
+            height: 26px;
+            font-size: 10px;
+        }
+        .step-label {
+            font-size: 9px;
+        }
+        .item-img {
+            width: 35px;
+            height: 35px;
+        }
+        .photo-grid {
+            gap: 0.5rem;
+        }
+        .photo-item img {
+            height: 80px;
+        }
+    }
 </style>
 @endpush
 

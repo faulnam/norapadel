@@ -3,8 +3,8 @@
 @section('title', 'Profil Saya - PATAH')
 
 @section('content')
-<div class="container py-5">
-    <h3 class="mb-4">
+<div class="container py-4 py-lg-5">
+    <h3 class="mb-4 profile-title">
         <i class="fas fa-user me-2 text-success"></i>Profil Saya
     </h3>
     
@@ -25,15 +25,13 @@
     <div class="row">
         <div class="col-lg-4 mb-4">
             <!-- Profile Card -->
-            <div class="card">
-                <div class="card-body text-center">
+            <div class="card profile-card">
+                <div class="card-body text-center py-3 py-lg-4">
                     <!-- Avatar with upload -->
                     <div class="position-relative d-inline-block mb-3">
                         <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" 
-                             class="rounded-circle" id="avatarPreview"
-                             style="width: 120px; height: 120px; object-fit: cover; border: 4px solid #16a34a;">
-                        <label for="avatarInput" class="position-absolute bottom-0 end-0 bg-success text-white rounded-circle d-flex align-items-center justify-content-center" 
-                               style="width: 36px; height: 36px; cursor: pointer; border: 3px solid white;">
+                             class="rounded-circle avatar-img" id="avatarPreview">
+                        <label for="avatarInput" class="position-absolute bottom-0 end-0 bg-success text-white rounded-circle d-flex align-items-center justify-content-center avatar-upload-btn"> 
                             <i class="fas fa-camera"></i>
                         </label>
                     </div>
@@ -47,16 +45,16 @@
                         <div class="text-danger small mb-2">{{ $message }}</div>
                     @enderror
                     
-                    <h5 class="mb-1">{{ $user->name }}</h5>
-                    <p class="text-muted mb-3">{{ $user->email }}</p>
+                    <h5 class="mb-1 profile-name">{{ $user->name }}</h5>
+                    <p class="text-muted mb-3 profile-email">{{ $user->email }}</p>
                     <span class="badge bg-success">Customer</span>
                 </div>
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item d-flex justify-content-between">
+                    <li class="list-group-item d-flex justify-content-between profile-info-item">
                         <span><i class="fas fa-phone me-2 text-muted"></i>Telepon</span>
-                        <span>{{ $user->phone ?? '-' }}</span>
+                        <span class="text-truncate ms-2" style="max-width: 150px;">{{ $user->phone ?? '-' }}</span>
                     </li>
-                    <li class="list-group-item d-flex justify-content-between">
+                    <li class="list-group-item d-flex justify-content-between profile-info-item">
                         <span><i class="fas fa-calendar me-2 text-muted"></i>Bergabung</span>
                         <span>{{ $user->created_at->format('d M Y') }}</span>
                     </li>
@@ -67,7 +65,7 @@
         <div class="col-lg-8">
             <!-- Update Profile -->
             <div class="card mb-4">
-                <div class="card-header bg-success text-white">
+                <div class="card-header bg-success text-white profile-card-header">
                     <i class="fas fa-edit me-2"></i>Edit Profil
                 </div>
                 <div class="card-body">
@@ -117,7 +115,7 @@
             
             <!-- Change Password -->
             <div class="card">
-                <div class="card-header bg-white">
+                <div class="card-header bg-white profile-card-header">
                     <i class="fas fa-lock me-2"></i>Ubah Password
                 </div>
                 <div class="card-body">
@@ -158,6 +156,82 @@
         </div>
     </div>
 </div>
+
+@push('styles')
+<style>
+    .avatar-img {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+        border: 4px solid #16a34a;
+    }
+    .avatar-upload-btn {
+        width: 36px;
+        height: 36px;
+        cursor: pointer;
+        border: 3px solid white;
+    }
+    
+    /* Mobile Responsive */
+    @media (max-width: 767.98px) {
+        .profile-title {
+            font-size: 1.3rem;
+        }
+        .avatar-img {
+            width: 100px;
+            height: 100px;
+            border-width: 3px;
+        }
+        .avatar-upload-btn {
+            width: 30px;
+            height: 30px;
+            border-width: 2px;
+            font-size: 0.75rem;
+        }
+        .profile-name {
+            font-size: 1.1rem;
+        }
+        .profile-email {
+            font-size: 0.85rem;
+        }
+        .profile-info-item {
+            font-size: 0.85rem;
+            padding: 0.6rem 1rem;
+        }
+        .profile-card-header {
+            padding: 0.6rem 1rem;
+            font-size: 0.9rem;
+        }
+        .form-label {
+            font-size: 0.85rem;
+        }
+        .form-control {
+            font-size: 0.9rem;
+        }
+        .profile-card .card-body {
+            padding: 1rem;
+        }
+        .btn {
+            font-size: 0.9rem;
+        }
+    }
+    
+    @media (max-width: 575.98px) {
+        .avatar-img {
+            width: 80px;
+            height: 80px;
+        }
+        .avatar-upload-btn {
+            width: 26px;
+            height: 26px;
+            font-size: 0.65rem;
+        }
+        .profile-info-item {
+            font-size: 0.8rem;
+        }
+    }
+</style>
+@endpush
 
 @push('scripts')
 <script>

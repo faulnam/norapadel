@@ -177,13 +177,164 @@
         margin-bottom: 1.5rem;
     }
     
-    @media (max-width: 767.98px) {
+    /* Responsive untuk tablet */
+    @media (max-width: 991.98px) {
+        .page-hero {
+            padding: 3rem 0;
+        }
+        
         .page-title {
+            font-size: 2rem;
+        }
+        
+        .stats-section {
+            padding: 2rem 0;
+        }
+        
+        .stat-box .stat-number {
             font-size: 1.75rem;
+        }
+        
+        .testimonials-section {
+            padding: 3rem 0;
+        }
+        
+        .cta-section {
+            padding: 3rem 0;
+        }
+        
+        .cta-content h2 {
+            font-size: 1.75rem;
+        }
+    }
+    
+    /* Responsive untuk mobile */
+    @media (max-width: 767.98px) {
+        .page-hero {
+            padding: 2.5rem 0;
+        }
+        
+        .page-title {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-subtitle {
+            font-size: 0.875rem;
+        }
+        
+        .stats-section {
+            padding: 1.5rem 0;
+        }
+        
+        .stat-box {
+            padding: 1rem;
         }
         
         .stat-box .stat-number {
             font-size: 1.5rem;
+        }
+        
+        .stat-box .stat-label {
+            font-size: 0.75rem;
+        }
+        
+        .testimonials-section {
+            padding: 2rem 0;
+        }
+        
+        .section-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .section-subtitle {
+            font-size: 0.875rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .testimonial-card {
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+        
+        .testimonial-content {
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        .author-avatar {
+            width: 40px;
+            height: 40px;
+            font-size: 0.875rem;
+        }
+        
+        .author-info h6 {
+            font-size: 0.9rem;
+        }
+        
+        .author-info small {
+            font-size: 0.75rem;
+        }
+        
+        .cta-section {
+            padding: 2rem 0;
+        }
+        
+        .cta-content h2 {
+            font-size: 1.25rem;
+        }
+        
+        .cta-content p {
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+        
+        .cta-content .btn {
+            padding: 0.5rem 1.5rem;
+            font-size: 0.875rem;
+        }
+    }
+    
+    /* Responsive untuk mobile kecil */
+    @media (max-width: 575.98px) {
+        .page-hero {
+            padding: 2rem 0;
+        }
+        
+        .page-title {
+            font-size: 1.25rem;
+        }
+        
+        .stat-box .stat-number {
+            font-size: 1.25rem;
+        }
+        
+        .stat-box .stat-label {
+            font-size: 0.7rem;
+        }
+        
+        .testimonial-card {
+            padding: 1rem;
+        }
+        
+        .testimonial-content {
+            font-size: 0.85rem;
+        }
+        
+        .testimonial-author {
+            gap: 0.75rem;
+        }
+        
+        .author-avatar {
+            width: 35px;
+            height: 35px;
+            font-size: 0.8rem;
+        }
+        
+        .cta-content h2 {
+            font-size: 1.125rem;
         }
     }
 </style>

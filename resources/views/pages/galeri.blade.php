@@ -177,18 +177,134 @@
         overflow: hidden;
     }
     
-    @media (max-width: 767.98px) {
+    /* Responsive untuk tablet */
+    @media (max-width: 991.98px) {
+        .page-hero {
+            padding: 3rem 0;
+        }
+        
         .page-title {
-            font-size: 1.75rem;
+            font-size: 2rem;
         }
         
         .gallery-grid {
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 1rem;
         }
         
         .gallery-item {
-            height: 180px;
+            height: 240px;
+        }
+    }
+    
+    /* Responsive untuk mobile */
+    @media (max-width: 767.98px) {
+        .page-hero {
+            padding: 2.5rem 0;
+        }
+        
+        .page-title {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-subtitle {
+            font-size: 0.9rem;
+        }
+        
+        .gallery-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+        
+        .gallery-item {
+            height: 160px;
+        }
+        
+        .gallery-hover i {
+            font-size: 1.5rem;
+        }
+        
+        .gallery-hover span {
+            font-size: 0.8rem;
+            padding: 0 0.5rem;
+            text-align: center;
+        }
+        
+        .gallery-video-thumb i {
+            font-size: 2rem !important;
+        }
+        
+        .gallery-video-thumb span {
+            font-size: 0.8rem;
+            padding: 0 0.5rem;
+            text-align: center;
+        }
+        
+        /* Instagram CTA mobile */
+        .bg-gray-light h4 {
+            font-size: 1.125rem;
+        }
+        
+        .bg-gray-light p {
+            font-size: 0.875rem;
+        }
+        
+        .bg-gray-light .btn {
+            padding: 0.5rem 1.25rem;
+            font-size: 0.875rem;
+        }
+        
+        .bg-gray-light .fa-3x {
+            font-size: 2rem !important;
+        }
+        
+        /* Modal mobile */
+        .modal-dialog {
+            margin: 0.5rem;
+        }
+        
+        .modal-title {
+            font-size: 1rem;
+        }
+        
+        .modal-footer p {
+            font-size: 0.875rem;
+        }
+    }
+    
+    /* Responsive untuk mobile kecil */
+    @media (max-width: 575.98px) {
+        .page-hero {
+            padding: 2rem 0;
+        }
+        
+        .page-title {
+            font-size: 1.25rem;
+        }
+        
+        .gallery-grid {
+            gap: 0.5rem;
+        }
+        
+        .gallery-item {
+            height: 140px;
+        }
+        
+        .gallery-hover i {
+            font-size: 1.25rem;
+        }
+        
+        .gallery-hover span {
+            font-size: 0.7rem;
+        }
+        
+        .gallery-video-thumb span {
+            font-size: 0.7rem;
+        }
+        
+        .bg-gray-light h4 {
+            font-size: 1rem;
         }
     }
 </style>
