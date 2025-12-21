@@ -11,6 +11,32 @@ use Illuminate\Support\Str;
 class ProductController extends Controller
 {
     /**
+     * Generate unique slug for product
+     */
+    private function generateUniqueSlug($name, $excludeId = null)
+    {
+        $slug = Str::slug($name);
+        $originalSlug = $slug;
+        $count = 1;
+
+        // Check if slug exists (excluding current product if editing)
+        $existsQuery = function($checkSlug) use ($excludeId) {
+            $query = Product::where('slug', $checkSlug);
+            if ($excludeId !== null) {
+                $query->where('id', '!=', $excludeId);
+            }
+            return $query->exists();
+        };
+
+        while ($existsQuery($slug)) {
+            $slug = $originalSlug . '-' . $count;
+            $count++;
+        }
+
+        return $slug;
+    }
+
+    /**
      * Display products list
      */
     public function index(Request $request)
@@ -79,7 +105,7 @@ class ProductController extends Controller
 
         Product::create([
             'name' => $validated['name'],
-            'slug' => Str::slug($validated['name']),
+            'slug' => $this->generateUniqueSlug($validated['name']),
             'description' => $validated['description'],
             'price' => $validated['price'],
             'stock' => $validated['stock'],
@@ -127,7 +153,6 @@ class ProductController extends Controller
 
         $data = [
             'name' => $validated['name'],
-            'slug' => Str::slug($validated['name']),
             'description' => $validated['description'],
             'price' => $validated['price'],
             'stock' => $validated['stock'],
@@ -135,6 +160,22 @@ class ProductController extends Controller
             'weight' => $validated['weight'],
             'is_active' => $request->boolean('is_active', true),
         ];
+
+        // Generate new slug only if name changed, always ensure uniqueness
+        $newSlug = Str::slug($validated['name']);
+        if ($product->slug !== $newSlug) {
+            // Check if this exact slug is already used by another product
+            $slugExists = Product::where('slug', $newSlug)
+                ->where('id', '!=', $product->id)
+                ->exists();
+            
+            if ($slugExists) {
+                // Generate unique slug with suffix
+                $data['slug'] = $this->generateUniqueSlug($validated['name'], $product->id);
+            } else {
+                $data['slug'] = $newSlug;
+            }
+        }
 
         if ($request->hasFile('image')) {
             // Delete old image

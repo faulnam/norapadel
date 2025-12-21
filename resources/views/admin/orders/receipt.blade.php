@@ -515,24 +515,6 @@
                 </div>
             </div>
             
-            <!-- Courier Info -->
-            @if($order->courier)
-            <div class="courier-box">
-                <h3>Kurir Pengantar</h3>
-                <div class="courier-info">
-                    <div class="courier-avatar">
-                        {{ strtoupper(substr($order->courier->name, 0, 1)) }}
-                    </div>
-                    <div class="courier-detail">
-                        <p class="name">{{ $order->courier->name }}</p>
-                        <p class="phone">📱 {{ $order->courier->phone ?? '-' }}</p>
-                        @if($order->assigned_at)
-                        <p class="phone">Ditugaskan: {{ $order->assigned_at->format('d/m/Y H:i') }}</p>
-                        @endif
-                    </div>
-                </div>
-            </div>
-            @endif
             
             <!-- Items -->
             <div class="items-section">
