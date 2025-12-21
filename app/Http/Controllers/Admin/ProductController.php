@@ -151,41 +151,32 @@ class ProductController extends Controller
             'is_active' => 'boolean',
         ]);
 
-        $data = [
-            'name' => $validated['name'],
-            'description' => $validated['description'],
-            'price' => $validated['price'],
-            'stock' => $validated['stock'],
-            'category' => $validated['category'],
-            'weight' => $validated['weight'],
-            'is_active' => $request->boolean('is_active', true),
-        ];
+        // Update basic fields (without slug)
+        $product->name = $validated['name'];
+        $product->description = $validated['description'];
+        $product->price = $validated['price'];
+        $product->stock = $validated['stock'];
+        $product->category = $validated['category'];
+        $product->weight = $validated['weight'];
+        $product->is_active = $request->boolean('is_active', true);
 
-        // Generate new slug only if name changed, always ensure uniqueness
-        $newSlug = Str::slug($validated['name']);
-        if ($product->slug !== $newSlug) {
-            // Check if this exact slug is already used by another product
-            $slugExists = Product::where('slug', $newSlug)
-                ->where('id', '!=', $product->id)
-                ->exists();
-            
-            if ($slugExists) {
-                // Generate unique slug with suffix
-                $data['slug'] = $this->generateUniqueSlug($validated['name'], $product->id);
-            } else {
-                $data['slug'] = $newSlug;
-            }
+        // Only update slug if name actually changed (compare trimmed values)
+        $oldName = trim($product->getOriginal('name'));
+        $newName = trim($validated['name']);
+        
+        if ($oldName !== $newName) {
+            $product->slug = $this->generateUniqueSlug($newName, $product->id);
         }
 
+        // Handle image upload
         if ($request->hasFile('image')) {
-            // Delete old image
             if ($product->image) {
                 Storage::disk('public')->delete($product->image);
             }
-            $data['image'] = $request->file('image')->store('products', 'public');
+            $product->image = $request->file('image')->store('products', 'public');
         }
 
-        $product->update($data);
+        $product->save();
 
         return redirect()->route('admin.products.index')
             ->with('success', 'Produk berhasil diperbarui.');

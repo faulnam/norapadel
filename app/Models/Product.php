@@ -65,11 +65,7 @@ class Product extends Model
             }
         });
 
-        static::updating(function ($product) {
-            if ($product->isDirty('name')) {
-                $product->slug = Str::slug($product->name);
-            }
-        });
+        // Removed auto-slug update on updating - handled in controller
     }
 
     /**
