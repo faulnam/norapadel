@@ -8,10 +8,8 @@
         <!-- User Profile Card -->
         <div class="card mb-4">
             <div class="card-body text-center">
-                <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center mb-3" 
-                     style="width: 100px; height: 100px; font-size: 2.5rem;">
-                    {{ strtoupper(substr($user->name, 0, 1)) }}
-                </div>
+                <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" 
+                     class="rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover; border: 3px solid #16a34a;">
                 <h5 class="mb-1">{{ $user->name }}</h5>
                 <p class="text-muted mb-3">Customer</p>
                 

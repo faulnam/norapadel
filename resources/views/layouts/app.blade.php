@@ -448,8 +448,10 @@
                         @endif
                         
                         <li class="nav-item dropdown ms-lg-2">
-                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                                <i class="fas fa-user-circle me-1"></i>{{ Str::limit(auth()->user()->name, 10) }}
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" data-bs-toggle="dropdown">
+                                <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" 
+                                     class="rounded-circle me-2" style="width: 28px; height: 28px; object-fit: cover;">
+                                <span>{{ Str::limit(auth()->user()->name, 10) }}</span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
                                 @if(auth()->user()->isAdmin())

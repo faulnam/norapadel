@@ -25,6 +25,7 @@ class User extends Authenticatable
         'address',
         'role',
         'is_active',
+        'avatar',
     ];
 
     /**
@@ -131,5 +132,18 @@ class User extends Authenticatable
     public function cart()
     {
         return $this->hasMany(Cart::class)->with('product');
+    }
+
+    /**
+     * Get avatar URL
+     */
+    public function getAvatarUrlAttribute(): string
+    {
+        if ($this->avatar) {
+            return asset('storage/' . $this->avatar);
+        }
+        
+        // Return default avatar with initials
+        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=16a34a&color=fff&size=200';
     }
 }

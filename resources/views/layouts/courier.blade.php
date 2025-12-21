@@ -712,9 +712,8 @@
         
         <!-- User Panel -->
         <div class="user-panel">
-            <div class="user-panel-avatar">
-                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-            </div>
+            <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" 
+                 class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
             <div class="user-panel-info">
                 <h6>{{ Str::limit(auth()->user()->name, 15) }}</h6>
                 <span>Kurir Aktif</span>

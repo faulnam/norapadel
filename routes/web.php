@@ -9,6 +9,8 @@ use App\Http\Controllers\Admin\TestimonialController as AdminTestimonial;
 use App\Http\Controllers\Admin\UserController as AdminUser;
 use App\Http\Controllers\Admin\HistoryController as AdminHistory;
 use App\Http\Controllers\Admin\GalleryController as AdminGallery;
+use App\Http\Controllers\Admin\ProfileController as AdminProfile;
+use App\Http\Controllers\Admin\UserManagementController as AdminStaff;
 use App\Http\Controllers\Customer\ProductController as CustomerProduct;
 use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Customer\OrderController as CustomerOrder;
@@ -89,6 +91,21 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     // Galleries
     Route::resource('galleries', AdminGallery::class);
     Route::patch('/galleries/{gallery}/toggle', [AdminGallery::class, 'toggle'])->name('galleries.toggle');
+
+    // Admin Profile
+    Route::get('/profile', [AdminProfile::class, 'index'])->name('profile.index');
+    Route::put('/profile', [AdminProfile::class, 'update'])->name('profile.update');
+    Route::post('/profile/avatar', [AdminProfile::class, 'updateAvatar'])->name('profile.avatar');
+    Route::put('/profile/password', [AdminProfile::class, 'updatePassword'])->name('profile.password');
+
+    // Staff Management (Admin & Courier)
+    Route::get('/staff', [AdminStaff::class, 'index'])->name('staff.index');
+    Route::get('/staff/create', [AdminStaff::class, 'create'])->name('staff.create');
+    Route::post('/staff', [AdminStaff::class, 'store'])->name('staff.store');
+    Route::get('/staff/{user}/edit', [AdminStaff::class, 'edit'])->name('staff.edit');
+    Route::put('/staff/{user}', [AdminStaff::class, 'update'])->name('staff.update');
+    Route::patch('/staff/{user}/toggle-active', [AdminStaff::class, 'toggleActive'])->name('staff.toggle-active');
+    Route::delete('/staff/{user}', [AdminStaff::class, 'destroy'])->name('staff.destroy');
 });
 
 // Courier Routes
@@ -107,6 +124,7 @@ Route::prefix('courier')->name('courier.')->middleware(['auth', 'courier'])->gro
     // Profile
     Route::get('/profile', [CourierProfile::class, 'show'])->name('profile');
     Route::put('/profile', [CourierProfile::class, 'update'])->name('profile.update');
+    Route::post('/profile/avatar', [CourierProfile::class, 'updateAvatar'])->name('profile.avatar');
     Route::put('/profile/password', [CourierProfile::class, 'updatePassword'])->name('profile.password');
     
     // Notifications
@@ -142,6 +160,7 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'customer'])->
     // Profile
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/avatar', [ProfileController::class, 'updateAvatar'])->name('profile.avatar');
     Route::patch('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.update-password');
 
     // Notifications

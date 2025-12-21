@@ -1,11 +1,11 @@
-@extends('layouts.courier')
+@extends('layouts.admin')
 
-@section('title', 'Profil Saya')
+@section('page-title', 'Profil Saya')
 
 @section('content')
 <nav aria-label="breadcrumb" class="mb-3">
     <ol class="breadcrumb mb-0">
-        <li class="breadcrumb-item"><a href="{{ route('courier.dashboard') }}" class="text-decoration-none" style="color: var(--primary);">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}" class="text-decoration-none" style="color: var(--primary);">Dashboard</a></li>
         <li class="breadcrumb-item active">Profil</li>
     </ol>
 </nav>
@@ -13,7 +13,7 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h4 class="mb-1" style="font-weight: 700; color: var(--dark);">Profil Saya</h4>
-        <p class="text-muted mb-0">Kelola informasi akun Anda</p>
+        <p class="text-muted mb-0">Kelola informasi akun administrator</p>
     </div>
 </div>
 
@@ -37,16 +37,16 @@
             <div class="card-body text-center">
                 <!-- Avatar with upload -->
                 <div class="position-relative d-inline-block mb-3">
-                    <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" 
+                    <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" 
                          class="rounded-circle" id="avatarPreview"
-                         style="width: 120px; height: 120px; object-fit: cover; border: 4px solid #2563eb;">
-                    <label for="avatarInput" class="position-absolute bottom-0 end-0 bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" 
+                         style="width: 120px; height: 120px; object-fit: cover; border: 4px solid #16a34a;">
+                    <label for="avatarInput" class="position-absolute bottom-0 end-0 bg-success text-white rounded-circle d-flex align-items-center justify-content-center" 
                            style="width: 36px; height: 36px; cursor: pointer; border: 3px solid white;">
                         <i class="fas fa-camera"></i>
                     </label>
                 </div>
                 
-                <form action="{{ route('courier.profile.avatar') }}" method="POST" enctype="multipart/form-data" id="avatarForm">
+                <form action="{{ route('admin.profile.avatar') }}" method="POST" enctype="multipart/form-data" id="avatarForm">
                     @csrf
                     <input type="file" name="avatar" id="avatarInput" accept="image/*" class="d-none">
                 </form>
@@ -55,19 +55,20 @@
                     <div class="text-danger small mb-2">{{ $message }}</div>
                 @enderror
                 
-                <h5 class="mb-1" style="font-weight: 600; color: var(--dark);">{{ auth()->user()->name }}</h5>
-                <p class="text-muted mb-3">Kurir</p>
-                <div class="d-flex justify-content-center gap-4 text-center">
-                    <div>
-                        <h5 class="mb-0" style="font-weight: 700; color: #10b981;">{{ auth()->user()->completedDeliveries()->count() }}</h5>
-                        <small class="text-muted">Pengiriman Selesai</small>
-                    </div>
-                    <div>
-                        <h5 class="mb-0" style="font-weight: 700; color: var(--primary);">{{ auth()->user()->assignedDeliveries()->count() }}</h5>
-                        <small class="text-muted">Total Ditugaskan</small>
-                    </div>
-                </div>
+                <h5 class="mb-1" style="font-weight: 600; color: var(--dark);">{{ $user->name }}</h5>
+                <p class="text-muted mb-2">{{ $user->email }}</p>
+                <span class="badge bg-success">Administrator</span>
             </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between">
+                    <span><i class="fas fa-phone me-2 text-muted"></i>Telepon</span>
+                    <span>{{ $user->phone ?? '-' }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span><i class="fas fa-calendar me-2 text-muted"></i>Bergabung</span>
+                    <span>{{ $user->created_at->format('d M Y') }}</span>
+                </li>
+            </ul>
         </div>
     </div>
     
@@ -78,14 +79,14 @@
                 <i class="fas fa-user-edit me-2" style="color: var(--primary);"></i>Update Profil
             </div>
             <div class="card-body">
-                <form action="{{ route('courier.profile.update') }}" method="POST">
+                <form action="{{ route('admin.profile.update') }}" method="POST">
                     @csrf
                     @method('PUT')
                     
                     <div class="mb-3">
                         <label class="form-label">Nama Lengkap</label>
                         <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" 
-                               value="{{ old('name', auth()->user()->name) }}" required>
+                               value="{{ old('name', $user->name) }}" required>
                         @error('name')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -94,7 +95,7 @@
                     <div class="mb-3">
                         <label class="form-label">Email</label>
                         <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" 
-                               value="{{ old('email', auth()->user()->email) }}" required>
+                               value="{{ old('email', $user->email) }}" required>
                         @error('email')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -103,17 +104,8 @@
                     <div class="mb-3">
                         <label class="form-label">No. Telepon</label>
                         <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" 
-                               value="{{ old('phone', auth()->user()->phone) }}">
+                               value="{{ old('phone', $user->phone) }}">
                         @error('phone')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Alamat</label>
-                        <textarea name="address" class="form-control @error('address') is-invalid @enderror" 
-                                  rows="3">{{ old('address', auth()->user()->address) }}</textarea>
-                        @error('address')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
@@ -131,9 +123,9 @@
                 <i class="fas fa-lock me-2" style="color: #f59e0b;"></i>Ubah Password
             </div>
             <div class="card-body">
-                <form action="{{ route('courier.profile.password') }}" method="POST">
+                <form action="{{ route('admin.profile.password') }}" method="POST">
                     @csrf
-                    @method('PUT')
+                    @method('PATCH')
                     
                     <div class="mb-3">
                         <label class="form-label">Password Saat Ini</label>
@@ -149,6 +141,7 @@
                         @error('password')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
+                        <small class="text-muted">Minimal 8 karakter</small>
                     </div>
                     
                     <div class="mb-3">

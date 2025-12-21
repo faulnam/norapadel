@@ -685,6 +685,10 @@
                 <i class="fas fa-users"></i> Pelanggan
             </a>
             
+            <a href="{{ route('admin.staff.index') }}" class="nav-link {{ request()->routeIs('admin.staff.*') ? 'active' : '' }}">
+                <i class="fas fa-user-shield"></i> Staff
+            </a>
+            
             <a href="{{ route('admin.galleries.index') }}" class="nav-link {{ request()->routeIs('admin.galleries.*') ? 'active' : '' }}">
                 <i class="fas fa-images"></i> Galeri
             </a>
@@ -698,6 +702,10 @@
                 @if(auth()->user()->unreadNotifications->count() > 0)
                     <span class="badge bg-danger">{{ auth()->user()->unreadNotifications->count() }}</span>
                 @endif
+            </a>
+            
+            <a href="{{ route('admin.profile.index') }}" class="nav-link {{ request()->routeIs('admin.profile.*') ? 'active' : '' }}">
+                <i class="fas fa-user-cog"></i> Profil Saya
             </a>
             
             <div class="sidebar-divider"></div>
@@ -735,13 +743,17 @@
             
             <div class="user-dropdown dropdown">
                 <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
-                    <div class="user-avatar">
-                        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                    </div>
+                    <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" 
+                         class="rounded-circle" style="width: 32px; height: 32px; object-fit: cover;">
                     <span class="d-none d-md-inline">{{ Str::limit(auth()->user()->name, 15) }}</span>
                     <i class="fas fa-chevron-down fa-xs ms-1"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                        <a class="dropdown-item" href="{{ route('admin.profile.index') }}">
+                            <i class="fas fa-user-cog"></i> Profil Saya
+                        </a>
+                    </li>
                     <li>
                         <a class="dropdown-item" href="{{ route('home') }}" target="_blank">
                             <i class="fas fa-globe"></i> Lihat Website

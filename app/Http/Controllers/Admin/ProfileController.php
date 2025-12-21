@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Courier;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -10,9 +10,10 @@ use Illuminate\Validation\Rules\Password;
 
 class ProfileController extends Controller
 {
-    public function show()
+    public function index()
     {
-        return view('courier.profile');
+        $user = auth()->user();
+        return view('admin.profile.index', compact('user'));
     }
 
     public function update(Request $request)
@@ -23,7 +24,6 @@ class ProfileController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
             'phone' => 'nullable|string|max:20',
-            'address' => 'nullable|string|max:500',
         ]);
 
         $user->update($validated);
@@ -60,14 +60,25 @@ class ProfileController extends Controller
     public function updatePassword(Request $request)
     {
         $validated = $request->validate([
-            'current_password' => 'required|current_password',
+            'current_password' => 'required',
             'password' => ['required', 'confirmed', Password::min(8)],
+        ], [
+            'current_password.required' => 'Password saat ini wajib diisi.',
+            'password.required' => 'Password baru wajib diisi.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
+            'password.min' => 'Password minimal 8 karakter.',
         ]);
 
-        auth()->user()->update([
-            'password' => Hash::make($validated['password']),
+        $user = auth()->user();
+
+        if (!Hash::check($validated['current_password'], $user->password)) {
+            return back()->with('error', 'Password saat ini salah.');
+        }
+
+        $user->update([
+            'password' => Hash::make($validated['password'])
         ]);
 
-        return back()->with('success', 'Password berhasil diubah.');
+        return back()->with('success', 'Password berhasil diperbarui.');
     }
 }
