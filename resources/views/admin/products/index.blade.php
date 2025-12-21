@@ -19,9 +19,9 @@
             <div class="col-md-3">
                 <select class="form-select" name="category">
                     <option value="">Semua Kategori</option>
-                    <option value="pakcoy" {{ request('category') == 'pakcoy' ? 'selected' : '' }}>Pakcoy</option>
-                    <option value="tahu" {{ request('category') == 'tahu' ? 'selected' : '' }}>Tahu</option>
-                    <option value="mix" {{ request('category') == 'mix' ? 'selected' : '' }}>Mix</option>
+                    @foreach(\App\Models\Product::categories() as $value => $label)
+                        <option value="{{ $value }}" {{ request('category') == $value ? 'selected' : '' }}>{{ $label }}</option>
+                    @endforeach
                 </select>
             </div>
             <div class="col-md-3">
@@ -46,6 +46,7 @@
                         <th>Gambar</th>
                         <th>Nama Produk</th>
                         <th>Kategori</th>
+                        <th>Berat</th>
                         <th>Harga</th>
                         <th>Stok</th>
                         <th>Status</th>
@@ -63,7 +64,8 @@
                                 <strong>{{ $product->name }}</strong>
                                 <br><small class="text-muted">{{ Str::limit($product->description, 50) }}</small>
                             </td>
-                            <td><span class="badge bg-success">{{ ucfirst($product->category) }}</span></td>
+                            <td><span class="badge bg-{{ $product->category == 'original' ? 'success' : 'danger' }}">{{ $product->category_label }}</span></td>
+                            <td><span class="badge bg-secondary">{{ $product->formatted_weight }}</span></td>
                             <td>{{ $product->formatted_price }}</td>
                             <td>
                                 @if($product->stock > 10)

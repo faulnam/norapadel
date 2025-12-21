@@ -1,13 +1,14 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PageController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\ProductController as AdminProduct;
 use App\Http\Controllers\Admin\OrderController as AdminOrder;
 use App\Http\Controllers\Admin\TestimonialController as AdminTestimonial;
 use App\Http\Controllers\Admin\UserController as AdminUser;
 use App\Http\Controllers\Admin\HistoryController as AdminHistory;
+use App\Http\Controllers\Admin\GalleryController as AdminGallery;
 use App\Http\Controllers\Customer\ProductController as CustomerProduct;
 use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Customer\OrderController as CustomerOrder;
@@ -19,8 +20,13 @@ use App\Http\Controllers\Courier\ProfileController as CourierProfile;
 use App\Http\Controllers\Courier\NotificationController as CourierNotification;
 use Illuminate\Support\Facades\Route;
 
-// Landing Page
-Route::get('/', [HomeController::class, 'index'])->name('home');
+// Public Pages (Guest)
+Route::get('/', [PageController::class, 'home'])->name('home');
+Route::get('/tentang', [PageController::class, 'tentang'])->name('tentang');
+Route::get('/produk', [PageController::class, 'produkIndex'])->name('produk.index');
+Route::get('/produk/{product}', [PageController::class, 'produkShow'])->name('produk.show');
+Route::get('/galeri', [PageController::class, 'galeri'])->name('galeri');
+Route::get('/testimoni', [PageController::class, 'testimoni'])->name('testimoni');
 
 // Auth Routes
 Route::middleware('guest')->group(function () {
@@ -79,6 +85,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         auth()->user()->unreadNotifications->markAsRead();
         return back()->with('success', 'Semua notifikasi telah ditandai dibaca.');
     })->name('notifications.mark-read');
+
+    // Galleries
+    Route::resource('galleries', AdminGallery::class);
+    Route::patch('/galleries/{gallery}/toggle', [AdminGallery::class, 'toggle'])->name('galleries.toggle');
 });
 
 // Courier Routes

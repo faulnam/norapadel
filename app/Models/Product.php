@@ -16,6 +16,7 @@ class Product extends Model
         'description',
         'price',
         'stock',
+        'weight',
         'image',
         'category',
         'is_active',
@@ -23,8 +24,33 @@ class Product extends Model
 
     protected $casts = [
         'price' => 'decimal:2',
+        'weight' => 'integer',
         'is_active' => 'boolean',
     ];
+
+    // Categories
+    const CATEGORY_ORIGINAL = 'original';
+    const CATEGORY_PEDAS = 'pedas';
+
+    public static function categories(): array
+    {
+        return [
+            self::CATEGORY_ORIGINAL => 'Original',
+            self::CATEGORY_PEDAS => 'Pedas',
+        ];
+    }
+
+    // Weight options in grams
+    public static function weightOptions(): array
+    {
+        return [
+            50 => '50 gram',
+            100 => '100 gram',
+            250 => '250 gram',
+            500 => '500 gram',
+            1000 => '1 kg',
+        ];
+    }
 
     /**
      * Boot function to auto-generate slug
@@ -52,6 +78,25 @@ class Product extends Model
     public function getFormattedPriceAttribute(): string
     {
         return 'Rp ' . number_format($this->price, 0, ',', '.');
+    }
+
+    /**
+     * Get formatted weight
+     */
+    public function getFormattedWeightAttribute(): string
+    {
+        if ($this->weight >= 1000) {
+            return ($this->weight / 1000) . ' kg';
+        }
+        return $this->weight . ' gram';
+    }
+
+    /**
+     * Get category label
+     */
+    public function getCategoryLabelAttribute(): string
+    {
+        return self::categories()[$this->category] ?? $this->category;
     }
 
     /**

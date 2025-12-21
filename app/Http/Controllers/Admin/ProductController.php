@@ -55,7 +55,8 @@ class ProductController extends Controller
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
-            'category' => 'required|in:pakcoy,tahu,mix',
+            'category' => 'required|in:original,pedas',
+            'weight' => 'required|in:50,100,250,500,1000',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'is_active' => 'boolean',
         ], [
@@ -66,6 +67,7 @@ class ProductController extends Controller
             'stock.required' => 'Stok wajib diisi.',
             'stock.integer' => 'Stok harus berupa angka.',
             'category.required' => 'Kategori wajib dipilih.',
+            'weight.required' => 'Berat wajib dipilih.',
             'image.image' => 'File harus berupa gambar.',
             'image.max' => 'Ukuran gambar maksimal 2MB.',
         ]);
@@ -82,6 +84,7 @@ class ProductController extends Controller
             'price' => $validated['price'],
             'stock' => $validated['stock'],
             'category' => $validated['category'],
+            'weight' => $validated['weight'],
             'image' => $imagePath,
             'is_active' => $request->boolean('is_active', true),
         ]);
@@ -116,7 +119,8 @@ class ProductController extends Controller
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
-            'category' => 'required|in:pakcoy,tahu,mix',
+            'category' => 'required|in:original,pedas',
+            'weight' => 'required|in:50,100,250,500,1000',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'is_active' => 'boolean',
         ]);
@@ -128,6 +132,7 @@ class ProductController extends Controller
             'price' => $validated['price'],
             'stock' => $validated['stock'],
             'category' => $validated['category'],
+            'weight' => $validated['weight'],
             'is_active' => $request->boolean('is_active', true),
         ];
 

@@ -22,9 +22,9 @@
                             <label class="form-label fw-semibold">Kategori</label>
                             <select class="form-select" name="category">
                                 <option value="">Semua Kategori</option>
-                                <option value="pakcoy" {{ request('category') == 'pakcoy' ? 'selected' : '' }}>Pakcoy</option>
-                                <option value="tahu" {{ request('category') == 'tahu' ? 'selected' : '' }}>Tahu</option>
-                                <option value="mix" {{ request('category') == 'mix' ? 'selected' : '' }}>Mix</option>
+                                @foreach(\App\Models\Product::categories() as $value => $label)
+                                    <option value="{{ $value }}" {{ request('category') == $value ? 'selected' : '' }}>{{ $label }}</option>
+                                @endforeach
                             </select>
                         </div>
                         
@@ -67,7 +67,10 @@
                             <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=400' }}" 
                                  class="card-img-top" alt="{{ $product->name }}" style="height: 200px; object-fit: cover;">
                             <div class="card-body">
-                                <span class="badge bg-success mb-2">{{ ucfirst($product->category) }}</span>
+                                <div class="mb-2">
+                                    <span class="badge bg-{{ $product->category == 'original' ? 'success' : 'danger' }} me-1">{{ $product->category_label }}</span>
+                                    <span class="badge bg-secondary">{{ $product->formatted_weight }}</span>
+                                </div>
                                 <h5 class="card-title">{{ $product->name }}</h5>
                                 <p class="card-text text-muted small">{{ Str::limit($product->description, 60) }}</p>
                                 

@@ -199,6 +199,10 @@
                 <i class="fas fa-history"></i> Riwayat
             </a>
             
+            <a href="{{ route('admin.galleries.index') }}" class="nav-link {{ request()->routeIs('admin.galleries.*') ? 'active' : '' }}">
+                <i class="fas fa-images"></i> Galeri
+            </a>
+            
             <a href="{{ route('admin.notifications.index') }}" class="nav-link {{ request()->routeIs('admin.notifications.*') ? 'active' : '' }}">
                 <i class="fas fa-bell"></i> Notifikasi
                 @if(auth()->user()->unreadNotifications->count() > 0)

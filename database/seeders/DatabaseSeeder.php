@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Gallery;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -60,66 +61,79 @@ class DatabaseSeeder extends Seeder
             'is_active' => true,
         ]);
 
-        // Create Products
-        $products = [
-            [
-                'name' => 'Kerupuk Pakcoy Original',
-                'slug' => 'kerupuk-pakcoy-original',
-                'description' => 'Kerupuk renyah berbahan dasar pakcoy segar pilihan. Diproduksi dengan cara tradisional tanpa pengawet dan pewarna buatan. Cocok sebagai camilan sehat untuk keluarga.',
-                'price' => 25000,
+        // Create Products - Original variants
+        $originalProducts = [
+            ['weight' => 50, 'price' => 10000],
+            ['weight' => 100, 'price' => 18000],
+            ['weight' => 250, 'price' => 40000],
+            ['weight' => 500, 'price' => 75000],
+            ['weight' => 1000, 'price' => 140000],
+        ];
+
+        foreach ($originalProducts as $product) {
+            $weightLabel = $product['weight'] >= 1000 ? ($product['weight'] / 1000) . ' kg' : $product['weight'] . ' gram';
+            Product::create([
+                'name' => 'Kerupuk PATAH Original ' . $weightLabel,
+                'slug' => 'kerupuk-patah-original-' . $product['weight'] . 'g',
+                'description' => 'Kerupuk PATAH rasa Original dengan berat ' . $weightLabel . '. Terbuat dari pakcoy dan tahu pilihan, diproses secara higienis tanpa pengawet. Renyah, gurih, dan sehat!',
+                'price' => $product['price'],
                 'stock' => 100,
-                'category' => 'pakcoy',
+                'weight' => $product['weight'],
+                'category' => 'original',
+                'is_active' => true,
+            ]);
+        }
+
+        // Create Products - Pedas variants
+        $pedasProducts = [
+            ['weight' => 50, 'price' => 12000],
+            ['weight' => 100, 'price' => 20000],
+            ['weight' => 250, 'price' => 45000],
+            ['weight' => 500, 'price' => 85000],
+            ['weight' => 1000, 'price' => 160000],
+        ];
+
+        foreach ($pedasProducts as $product) {
+            $weightLabel = $product['weight'] >= 1000 ? ($product['weight'] / 1000) . ' kg' : $product['weight'] . ' gram';
+            Product::create([
+                'name' => 'Kerupuk PATAH Pedas ' . $weightLabel,
+                'slug' => 'kerupuk-patah-pedas-' . $product['weight'] . 'g',
+                'description' => 'Kerupuk PATAH rasa Pedas dengan berat ' . $weightLabel . '. Perpaduan pakcoy, tahu, dan bumbu pedas pilihan. Sensasi pedas yang bikin nagih!',
+                'price' => $product['price'],
+                'stock' => 100,
+                'weight' => $product['weight'],
+                'category' => 'pedas',
+                'is_active' => true,
+            ]);
+        }
+
+        // Create sample galleries
+        $galleries = [
+            [
+                'title' => 'Kerupuk PATAH Fresh dari Oven',
+                'description' => 'Proses pembuatan kerupuk PATAH yang higienis',
+                'type' => 'image',
+                'sort_order' => 1,
                 'is_active' => true,
             ],
             [
-                'name' => 'Kerupuk Pakcoy Pedas',
-                'slug' => 'kerupuk-pakcoy-pedas',
-                'description' => 'Variasi kerupuk pakcoy dengan tambahan bumbu pedas yang menggugah selera. Tingkat kepedasan pas untuk pecinta makanan pedas.',
-                'price' => 28000,
-                'stock' => 75,
-                'category' => 'pakcoy',
+                'title' => 'Bahan Baku Pilihan',
+                'description' => 'Pakcoy dan tahu segar berkualitas tinggi',
+                'type' => 'image',
+                'sort_order' => 2,
                 'is_active' => true,
             ],
             [
-                'name' => 'Kerupuk Tahu Crispy',
-                'slug' => 'kerupuk-tahu-crispy',
-                'description' => 'Kerupuk tahu dengan tekstur super crispy. Terbuat dari tahu berkualitas tinggi yang diproses secara higienis. Kaya protein dan rendah lemak.',
-                'price' => 22000,
-                'stock' => 120,
-                'category' => 'tahu',
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Kerupuk Tahu Keju',
-                'slug' => 'kerupuk-tahu-keju',
-                'description' => 'Perpaduan unik kerupuk tahu dengan taburan keju. Gurih, renyah, dan cocok untuk semua usia. Favorit anak-anak!',
-                'price' => 30000,
-                'stock' => 60,
-                'category' => 'tahu',
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Kerupuk Mix Pakcoy Tahu',
-                'slug' => 'kerupuk-mix-pakcoy-tahu',
-                'description' => 'Kombinasi terbaik kerupuk pakcoy dan tahu dalam satu kemasan. Dapatkan dua rasa sekaligus dengan harga hemat!',
-                'price' => 35000,
-                'stock' => 80,
-                'category' => 'mix',
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Kerupuk Mix Premium',
-                'slug' => 'kerupuk-mix-premium',
-                'description' => 'Paket premium berisi 3 varian kerupuk: pakcoy original, tahu crispy, dan mix special. Kemasan eksklusif cocok untuk hadiah.',
-                'price' => 50000,
-                'stock' => 40,
-                'category' => 'mix',
+                'title' => 'Packaging PATAH',
+                'description' => 'Kemasan praktis dan higienis',
+                'type' => 'image',
+                'sort_order' => 3,
                 'is_active' => true,
             ],
         ];
 
-        foreach ($products as $product) {
-            Product::create($product);
+        foreach ($galleries as $gallery) {
+            Gallery::create($gallery);
         }
     }
 }

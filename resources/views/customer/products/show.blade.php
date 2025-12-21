@@ -23,7 +23,10 @@
         
         <!-- Product Details -->
         <div class="col-lg-7">
-            <span class="badge bg-success mb-2">{{ ucfirst($product->category) }}</span>
+            <div class="mb-2">
+                <span class="badge bg-{{ $product->category == 'original' ? 'success' : 'danger' }} me-1">{{ $product->category_label }}</span>
+                <span class="badge bg-secondary">{{ $product->formatted_weight }}</span>
+            </div>
             <h2 class="mb-3">{{ $product->name }}</h2>
             
             <div class="mb-4">
