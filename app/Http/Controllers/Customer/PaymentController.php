@@ -61,11 +61,22 @@ class PaymentController extends Controller
         }
 
         $validated = $request->validate([
-            'payment_method' => 'required|string|in:qris,bni_va,bri_va,cimb_niaga_va,permata_va,maybank_va,redirect',
+            'payment_method' => 'required|string|in:qris,bni_va,bri_va,cimb_niaga_va,permata_va,maybank_va,redirect,cod',
         ]);
 
         $paymentMethod = $validated['payment_method'];
         $amount = (int) $order->total_amount;
+
+        // If COD payment
+        if ($paymentMethod === 'cod') {
+            $order->update([
+                'payment_method' => 'cod',
+                'status' => Order::STATUS_PAID, // Ready for courier assignment
+            ]);
+
+            return redirect()->route('customer.orders.show', $order)
+                ->with('success', 'Pesanan berhasil dibuat dengan pembayaran COD. Bayar saat barang diterima.');
+        }
 
         // If using redirect method (let user choose on Pakasir page)
         if ($paymentMethod === 'redirect') {

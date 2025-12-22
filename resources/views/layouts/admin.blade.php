@@ -693,6 +693,10 @@
                 <i class="fas fa-images"></i> Galeri
             </a>
             
+            <a href="{{ route('admin.shipping-discounts.index') }}" class="nav-link {{ request()->routeIs('admin.shipping-discounts.*') ? 'active' : '' }}">
+                <i class="fas fa-tags"></i> Diskon Ongkir
+            </a>
+            
             <a href="{{ route('admin.history.index') }}" class="nav-link {{ request()->routeIs('admin.history.*') ? 'active' : '' }}">
                 <i class="fas fa-history"></i> Riwayat
             </a>

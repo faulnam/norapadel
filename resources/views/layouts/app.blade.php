@@ -713,9 +713,8 @@
                     </h5>
                     <p class="text-white-50 mb-3">Kerupuk sehat dari pakcoy & tahu. Renyah, gurih, tanpa pengawet ✨</p>
                     <div class="footer-social">
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-tiktok"></i></a>
-                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                        <a href="https://www.instagram.com/kriptasticpatah?igsh=MWNtODJibzczbWVwbQ=="><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.tiktok.com/@kerupukpatah?_r=1&_t=ZS-92QzZHimGYi"><i class="fab fa-tiktok"></i></a>
                     </div>
                 </div>
                 <!-- Menu & Lainnya - hidden di mobile -->
@@ -734,16 +733,11 @@
                 </div>
                 <div class="col-lg-4 col-12">
                     <h6 class="text-white-50 mb-3">Kontak</h6>
-                    <p class="text-white-50 mb-2"><i class="fas fa-phone me-2"></i>+62 812 3456 7890</p>
-                    <p class="text-white-50 mb-2"><i class="fas fa-envelope me-2"></i>hello@patah.id</p>
-                    <p class="text-white-50"><i class="fas fa-map-marker-alt me-2"></i>Surabaya, Jawa Timur</p>
+                    <p class="text-white-50 mb-2"><i class="fas fa-phone me-2"></i>+62 858 0620 5829</p>
+                    <p class="text-white-50"><i class="fas fa-map-marker-alt me-2"></i>Mojokerto, Jawa Timur</p>
                 </div>
             </div>
             <hr style="border-color: rgba(255,255,255,0.1); margin: 2rem 0 1rem;">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
-                <small class="text-white-50">&copy; {{ date('Y') }} PATAH. Made with 💚 in Surabaya</small>
-                <small class="text-white-50 mt-2 mt-md-0">Kerupuk Pakcoy & Tahu</small>
-            </div>
         </div>
     </footer>
 

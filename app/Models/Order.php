@@ -15,6 +15,8 @@ class Order extends Model
         'courier_id',
         'assigned_at',
         'subtotal',
+        'product_discount',
+        'shipping_discount',
         'shipping_cost',
         'total',
         'status',
@@ -23,12 +25,15 @@ class Order extends Model
         'payment_proof',
         'payment_verified_at',
         'paid_at',
+        'cod_verified',
+        'cod_verified_at',
         'shipping_address',
         'shipping_phone',
         'shipping_name',
         'shipping_latitude',
         'shipping_longitude',
         'delivery_distance_minutes',
+        'delivery_distance_km',
         'delivery_date',
         'delivery_time_slot',
         'picked_up_at',
@@ -44,14 +49,19 @@ class Order extends Model
 
     protected $casts = [
         'subtotal' => 'decimal:2',
+        'product_discount' => 'decimal:2',
+        'shipping_discount' => 'decimal:2',
         'shipping_cost' => 'decimal:2',
         'total' => 'decimal:2',
         'shipping_latitude' => 'decimal:8',
         'shipping_longitude' => 'decimal:8',
         'delivery_distance_minutes' => 'integer',
+        'delivery_distance_km' => 'decimal:2',
         'delivery_date' => 'date',
         'payment_verified_at' => 'datetime',
         'paid_at' => 'datetime',
+        'cod_verified' => 'boolean',
+        'cod_verified_at' => 'datetime',
         'assigned_at' => 'datetime',
         'picked_up_at' => 'datetime',
         'on_delivery_at' => 'datetime',
@@ -251,6 +261,56 @@ class Order extends Model
     }
 
     /**
+     * Get formatted product discount
+     */
+    public function getFormattedProductDiscountAttribute(): string
+    {
+        return 'Rp ' . number_format($this->product_discount ?? 0, 0, ',', '.');
+    }
+
+    /**
+     * Get formatted shipping discount
+     */
+    public function getFormattedShippingDiscountAttribute(): string
+    {
+        return 'Rp ' . number_format($this->shipping_discount ?? 0, 0, ',', '.');
+    }
+
+    /**
+     * Get total discount
+     */
+    public function getTotalDiscountAttribute(): float
+    {
+        return ($this->product_discount ?? 0) + ($this->shipping_discount ?? 0);
+    }
+
+    /**
+     * Get formatted total discount
+     */
+    public function getFormattedTotalDiscountAttribute(): string
+    {
+        return 'Rp ' . number_format($this->total_discount, 0, ',', '.');
+    }
+
+    /**
+     * Check if payment is COD
+     */
+    public function isCod(): bool
+    {
+        return $this->payment_method === 'cod';
+    }
+
+    /**
+     * Check if COD payment can be verified (by courier)
+     */
+    public function canVerifyCod(): bool
+    {
+        return $this->isCod() 
+            && $this->status === self::STATUS_DELIVERED 
+            && !$this->cod_verified;
+    }
+
+    /**
      * Check if order can be cancelled
      */
     public function canBeCancelled(): bool
@@ -387,20 +447,18 @@ class Order extends Model
      * Calculate shipping cost based on distance in minutes
      * 10 minutes = Rp 10.000
      */
-    public static function calculateShippingCost(int $distanceMinutes): int
+    public static function calculateShippingCost(float $distanceKm): int
     {
-        // Setiap 10 menit = Rp 10.000
-        $units = ceil($distanceMinutes / 10);
-        return $units * 10000;
+        // Setiap 1 KM = Rp 2.500
+        return (int) ceil($distanceKm) * 2500;
     }
 
     /**
-     * Calculate distance in minutes between two coordinates
-     * Using Haversine formula and average speed of 30 km/h
+     * Calculate distance in KM between two coordinates
+     * Using Haversine formula
      */
-    public static function calculateDistanceMinutes(float $lat1, float $lon1, float $lat2, float $lon2): int
+    public static function calculateDistanceKm(float $lat1, float $lon1, float $lat2, float $lon2): float
     {
-        // Koordinat toko PATAH (contoh: Surabaya)
         $earthRadius = 6371; // km
 
         $latDiff = deg2rad($lat2 - $lat1);
@@ -413,6 +471,18 @@ class Order extends Model
         $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
         $distance = $earthRadius * $c; // dalam km
 
+        return max(1, round($distance, 2)); // Minimal 1 km
+    }
+
+    /**
+     * Calculate distance in minutes (for backward compatibility)
+     * Using average speed of 30 km/h
+     * @deprecated Use calculateDistanceKm instead
+     */
+    public static function calculateDistanceMinutes(float $lat1, float $lon1, float $lat2, float $lon2): int
+    {
+        $distance = self::calculateDistanceKm($lat1, $lon1, $lat2, $lon2);
+
         // Konversi ke menit dengan asumsi kecepatan rata-rata 30 km/jam
         $minutes = ($distance / 30) * 60;
 
@@ -424,6 +494,9 @@ class Order extends Model
      */
     public function getFormattedDeliveryDistanceAttribute(): string
     {
+        if ($this->delivery_distance_km) {
+            return $this->delivery_distance_km . ' km';
+        }
         if ($this->delivery_distance_minutes) {
             return $this->delivery_distance_minutes . ' menit';
         }

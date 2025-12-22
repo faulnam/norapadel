@@ -479,6 +479,11 @@
                                 <div class="order-number">{{ $order->order_number }}</div>
                                 <div class="text-muted" style="font-size: 13px;">{{ $order->created_at->format('d F Y, H:i') }}</div>
                             </div>
+                            @if(in_array($order->status, ['paid', 'assigned', 'picked_up', 'on_delivery', 'delivered', 'completed']))
+                                <a href="{{ route('customer.orders.receipt', $order) }}" class="btn btn-sm btn-outline-success" target="_blank">
+                                    <i class="fas fa-file-pdf me-1"></i>Lihat Resi
+                                </a>
+                            @endif
                         </div>
 
                         <!-- Progress Tracker -->
@@ -522,12 +527,16 @@
                         @if($order->courier)
                             <div class="courier-box mt-3">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <div style="font-size: 12px; color: #166534;">Kurir</div>
-                                        <div class="courier-name">{{ $order->courier->name }}</div>
-                                        @if($order->courier->phone)
-                                            <div style="font-size: 13px; color: #166534;">{{ $order->courier->phone }}</div>
-                                        @endif
+                                    <div class="d-flex align-items-center gap-3">
+                                        <img src="{{ $order->courier->avatar_url }}" alt="{{ $order->courier->name }}" 
+                                             class="rounded-circle" style="width: 45px; height: 45px; object-fit: cover;">
+                                        <div>
+                                            <div style="font-size: 12px; color: #166534;">Kurir</div>
+                                            <div class="courier-name">{{ $order->courier->name }}</div>
+                                            @if($order->courier->phone)
+                                                <div style="font-size: 13px; color: #166534;">{{ $order->courier->phone }}</div>
+                                            @endif
+                                        </div>
                                     </div>
                                     @if($order->courier->phone)
                                         <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $order->courier->phone) }}" class="btn-wa" target="_blank">
@@ -719,10 +728,22 @@
                             <span>Subtotal</span>
                             <span>{{ $order->formatted_subtotal }}</span>
                         </div>
+                        @if($order->product_discount > 0)
+                            <div class="summary-row text-danger">
+                                <span>Diskon Produk</span>
+                                <span>-{{ $order->formatted_product_discount }}</span>
+                            </div>
+                        @endif
                         <div class="summary-row">
                             <span>Ongkos Kirim</span>
                             <span>{{ $order->formatted_shipping_cost }}</span>
                         </div>
+                        @if($order->shipping_discount > 0)
+                            <div class="summary-row text-danger">
+                                <span>Diskon Ongkir</span>
+                                <span>-{{ $order->formatted_shipping_discount }}</span>
+                            </div>
+                        @endif
                         <div class="summary-total">
                             <span>Total</span>
                             <span>{{ $order->formatted_total }}</span>
@@ -735,9 +756,9 @@
                     <div class="detail-card">
                         <div class="detail-card-body p-0">
                             <!-- Payment Gateway Option -->
-                            <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 1px solid #bbf7d0; border-radius: 12px 12px 0 0; padding: 1rem 1.25rem;">
+                            <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 1px solid #bbf7d0; border-radius: 12px; padding: 1.25rem;">
                                 <div style="font-size: 14px; font-weight: 600; color: #166534; margin-bottom: 8px;">
-                                    <i class="fas fa-bolt me-1"></i>Bayar Online (Lebih Cepat)
+                                    <i class="fas fa-bolt me-1"></i>Bayar Online
                                 </div>
                                 <p style="font-size: 13px; color: #166534; margin-bottom: 12px;">
                                     Bayar langsung via QRIS atau Virtual Account
@@ -745,37 +766,6 @@
                                 <a href="{{ route('customer.payment.show', $order) }}" class="btn btn-success w-100">
                                     <i class="fas fa-credit-card me-2"></i>Bayar Sekarang
                                 </a>
-                            </div>
-                            
-                            <div class="text-center py-2" style="background: #f9fafb; font-size: 12px; color: #6b7280;">
-                                atau
-                            </div>
-                            
-                            <!-- Manual Transfer Option -->
-                            <div class="upload-box" style="border-radius: 0 0 12px 12px; border-top: none;">
-                                <div style="font-size: 14px; font-weight: 600; color: #92400e; margin-bottom: 12px;">
-                                    <i class="fas fa-upload me-1"></i>Upload Bukti Transfer Manual
-                                </div>
-                                <div class="bank-info">
-                                    <div style="font-size: 12px; color: #6b7280; margin-bottom: 8px;">Transfer ke:</div>
-                                    <div class="bank-row">
-                                        <span>BCA</span>
-                                        <strong>1234567890</strong>
-                                    </div>
-                                    <div class="bank-row">
-                                        <span>Mandiri</span>
-                                        <strong>0987654321</strong>
-                                    </div>
-                                    <div style="font-size: 12px; color: #6b7280; margin-top: 8px;">a.n. PATAH Store</div>
-                                </div>
-                                
-                                <form action="{{ route('customer.orders.upload-payment', $order) }}" method="POST" enctype="multipart/form-data">
-                                    @csrf
-                                    <input type="file" class="form-control mb-2" name="payment_proof" accept="image/*" required style="font-size: 13px;">
-                                    <button type="submit" class="btn btn-action btn-outline-custom w-100">
-                                        <i class="fas fa-upload me-1"></i>Upload Bukti
-                                    </button>
-                                </form>
                             </div>
                         </div>
                     </div>

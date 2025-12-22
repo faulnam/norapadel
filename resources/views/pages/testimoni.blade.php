@@ -53,9 +53,7 @@
                             </div>
                             <p class="testimonial-content">"{{ $testimonial->content }}"</p>
                             <div class="testimonial-author">
-                                <div class="author-avatar">
-                                    {{ strtoupper(substr($testimonial->user->name, 0, 1)) }}
-                                </div>
+                                <img src="{{ $testimonial->user->avatar_url }}" alt="{{ $testimonial->user->name }}" class="author-avatar-img">
                                 <div>
                                     <h6 class="mb-0">{{ $testimonial->user->name }}</h6>
                                     <small class="text-gray">{{ $testimonial->created_at->format('d M Y') }}</small>
@@ -154,6 +152,14 @@
         align-items: center;
         justify-content: center;
         font-weight: 700;
+    }
+    
+    .author-avatar-img {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--primary);
     }
     
     .cta-section {

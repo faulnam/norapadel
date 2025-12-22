@@ -74,8 +74,13 @@
                 @forelse($products as $product)
                     <div class="col">
                         <div class="card h-100 product-card">
-                            <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=400' }}" 
-                                 class="card-img-top product-img" alt="{{ $product->name }}">
+                            <div class="position-relative">
+                                <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=400' }}" 
+                                     class="card-img-top product-img" alt="{{ $product->name }}">
+                                @if($product->hasActiveDiscount())
+                                    <span class="position-absolute top-0 end-0 m-2 badge bg-danger">-{{ $product->formatted_discount_percent }}</span>
+                                @endif
+                            </div>
                             <div class="card-body d-flex flex-column">
                                 <div class="mb-2">
                                     <span class="badge bg-{{ $product->category == 'original' ? 'success' : 'danger' }} product-badge">{{ $product->category_label }}</span>
@@ -86,7 +91,14 @@
                                 
                                 <div class="mt-auto">
                                     <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <span class="product-price text-success fw-bold">{{ $product->formatted_price }}</span>
+                                        <div>
+                                            @if($product->hasActiveDiscount())
+                                                <span class="product-price text-success fw-bold">{{ $product->formatted_discounted_price }}</span>
+                                                <small class="text-decoration-line-through text-muted d-block">{{ $product->formatted_price }}</small>
+                                            @else
+                                                <span class="product-price text-success fw-bold">{{ $product->formatted_price }}</span>
+                                            @endif
+                                        </div>
                                         @if($product->stock > 0)
                                             <small class="text-muted d-none d-sm-inline">Stok: {{ $product->stock }}</small>
                                         @else
@@ -139,14 +151,15 @@
         border: 1px solid #e9ecef;
     }
     .product-card:hover {
-        transform: translateY(-5px);
+        transform: translateY(-8px);
         box-shadow: 0 10px 30px rgba(0,0,0,0.12);
     }
     
     /* Product Image */
     .product-img {
         height: 200px;
-        object-fit: cover;
+        object-fit: contain;
+        background: #f8f9fa;
     }
     
     /* Product Title */

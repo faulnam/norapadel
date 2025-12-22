@@ -195,53 +195,6 @@
             color: var(--dark);
         }
         
-        /* Courier Box */
-        .courier-box {
-            background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(37, 99, 235, 0.1) 100%);
-            border: 1px solid rgba(37, 99, 235, 0.2);
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .courier-box h3 {
-            font-size: 12px;
-            font-weight: 600;
-            color: #2563eb;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 12px;
-        }
-        
-        .courier-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .courier-avatar {
-            width: 50px;
-            height: 50px;
-            background: #2563eb;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            font-size: 18px;
-        }
-        
-        .courier-detail .name {
-            font-weight: 600;
-            color: var(--dark);
-        }
-        
-        .courier-detail .phone {
-            color: var(--gray);
-            font-size: 12px;
-        }
-        
         /* Table */
         .items-section h3 {
             font-size: 12px;
@@ -425,11 +378,47 @@
             }
             
             .schedule-box,
-            .courier-box,
             .notes-box,
             .summary-wrapper {
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .receipt {
+                padding: 20px;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .order-meta {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+            
+            .order-meta-item {
+                flex: 1 1 45%;
+            }
+            
+            .address-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .schedule-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            table {
+                font-size: 12px;
+            }
+            
+            th, td {
+                padding: 8px 10px;
             }
         }
     </style>
@@ -440,7 +429,7 @@
             <button onclick="window.print()" class="btn-print">
                 🖨️ Cetak Resi
             </button>
-            <a href="{{ route('admin.orders.show', $order) }}" class="btn-back">
+            <a href="{{ route('customer.orders.show', $order) }}" class="btn-back">
                 ← Kembali
             </a>
         </div>
@@ -456,7 +445,6 @@
                         <p>{{ config('branding.address', 'Kec. Tarik, Sidoarjo, Jawa Timur 61265') }}</p>
                     </div>
                 </div>
-                
             </div>
             
             <!-- Order Meta -->
@@ -514,7 +502,6 @@
                     </div>
                 </div>
             </div>
-            
             
             <!-- Items -->
             <div class="items-section">
@@ -581,7 +568,11 @@
             </div>
             @endif
             
-           
+            <!-- Footer -->
+            <div class="footer">
+                <p>Terima kasih telah berbelanja di PATAH</p>
+                <p class="thanks">Selamat menikmati kerupuk sehat kami! 🥬</p>
+            </div>
         </div>
     </div>
 </body>

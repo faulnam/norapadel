@@ -80,6 +80,9 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
+            'discount_percent' => 'nullable|numeric|min:0|max:100',
+            'discount_start' => 'nullable|date',
+            'discount_end' => 'nullable|date|after_or_equal:discount_start',
             'stock' => 'required|integer|min:0',
             'category' => 'required|in:original,pedas',
             'weight' => 'required|in:50,100,250,500,1000',
@@ -108,6 +111,9 @@ class ProductController extends Controller
             'slug' => $this->generateUniqueSlug($validated['name']),
             'description' => $validated['description'],
             'price' => $validated['price'],
+            'discount_percent' => $validated['discount_percent'] ?? 0,
+            'discount_start' => $validated['discount_start'] ?? null,
+            'discount_end' => $validated['discount_end'] ?? null,
             'stock' => $validated['stock'],
             'category' => $validated['category'],
             'weight' => $validated['weight'],
@@ -144,6 +150,9 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
+            'discount_percent' => 'nullable|numeric|min:0|max:100',
+            'discount_start' => 'nullable|date',
+            'discount_end' => 'nullable|date|after_or_equal:discount_start',
             'stock' => 'required|integer|min:0',
             'category' => 'required|in:original,pedas',
             'weight' => 'required|in:50,100,250,500,1000',
@@ -155,6 +164,9 @@ class ProductController extends Controller
         $product->name = $validated['name'];
         $product->description = $validated['description'];
         $product->price = $validated['price'];
+        $product->discount_percent = $validated['discount_percent'] ?? 0;
+        $product->discount_start = $validated['discount_start'] ?? null;
+        $product->discount_end = $validated['discount_end'] ?? null;
         $product->stock = $validated['stock'];
         $product->category = $validated['category'];
         $product->weight = $validated['weight'];

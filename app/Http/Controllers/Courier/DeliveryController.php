@@ -154,13 +154,54 @@ class DeliveryController extends Controller
 
         $order->updateDeliveryStatus(Order::STATUS_DELIVERED, $request->delivery_notes);
 
-        // Auto complete after delivery
+        // For COD orders, don't auto-complete - wait for COD verification
+        if ($order->payment_method !== 'cod') {
+            // Auto complete after delivery for non-COD orders
+            $order->updateDeliveryStatus(Order::STATUS_COMPLETED);
+            
+            // Notify customer
+            $order->user->notify(new OrderStatusChanged($order, 'Pesanan Anda sudah sampai dan selesai! Terima kasih telah berbelanja di PATAH.'));
+        } else {
+            // For COD, notify to pay
+            $order->user->notify(new OrderStatusChanged($order, 'Pesanan Anda sudah sampai! Silakan bayar kepada kurir.'));
+        }
+
+        return back()->with('success', 'Pesanan berhasil diantar' . ($order->payment_method === 'cod' ? '. Silakan konfirmasi pembayaran COD dari customer.' : ' dan selesai!'));
+    }
+
+    /**
+     * Verify COD payment received
+     */
+    public function verifyCod(Order $order)
+    {
+        if ($order->courier_id !== auth()->id()) {
+            abort(403);
+        }
+
+        if (!$order->canVerifyCod()) {
+            return back()->with('error', 'Verifikasi COD tidak valid untuk pesanan ini.');
+        }
+
+        $order->update([
+            'cod_verified' => true,
+            'cod_verified_at' => now(),
+            'payment_status' => Order::PAYMENT_PAID,
+            'paid_at' => now(),
+        ]);
+
+        // Mark as completed after COD payment verified
         $order->updateDeliveryStatus(Order::STATUS_COMPLETED);
 
         // Notify customer
-        $order->user->notify(new OrderStatusChanged($order, 'Pesanan Anda sudah sampai dan selesai! Terima kasih telah berbelanja di PATAH.'));
+        $order->user->notify(new OrderStatusChanged($order, 'Pembayaran COD sudah diterima. Pesanan selesai! Terima kasih telah berbelanja di PATAH.'));
 
-        return back()->with('success', 'Pesanan berhasil diantar dan selesai!');
+        // Notify admin
+        $admins = User::where('role', 'admin')->get();
+        if ($admins->isNotEmpty()) {
+            Notification::send($admins, new OrderStatusChanged($order, 'Pembayaran COD pesanan ' . $order->order_number . ' sudah diverifikasi oleh kurir.'));
+        }
+
+        return back()->with('success', 'Pembayaran COD berhasil diverifikasi. Pesanan selesai!');
     }
 
     /**

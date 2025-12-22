@@ -56,6 +56,51 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Diskon Produk -->
+                    <div class="card border-warning mb-3">
+                        <div class="card-header bg-warning bg-opacity-10">
+                            <i class="fas fa-percent me-1"></i>Diskon Produk (Opsional)
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="discount_percent" class="form-label">Diskon</label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control @error('discount_percent') is-invalid @enderror" 
+                                                   id="discount_percent" name="discount_percent" value="{{ old('discount_percent', 0) }}" min="0" max="100" step="0.01">
+                                            <span class="input-group-text">%</span>
+                                        </div>
+                                        @error('discount_percent')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="discount_start" class="form-label">Mulai</label>
+                                        <input type="datetime-local" class="form-control @error('discount_start') is-invalid @enderror" 
+                                               id="discount_start" name="discount_start" value="{{ old('discount_start') }}">
+                                        @error('discount_start')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="discount_end" class="form-label">Berakhir</label>
+                                        <input type="datetime-local" class="form-control @error('discount_end') is-invalid @enderror" 
+                                               id="discount_end" name="discount_end" value="{{ old('discount_end') }}">
+                                        @error('discount_end')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+                            <small class="text-muted">Kosongkan tanggal jika diskon berlaku selamanya.</small>
+                        </div>
+                    </div>
                     
                     <div class="row">
                         <div class="col-md-6">

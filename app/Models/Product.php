@@ -15,6 +15,9 @@ class Product extends Model
         'slug',
         'description',
         'price',
+        'discount_percent',
+        'discount_start',
+        'discount_end',
         'stock',
         'weight',
         'image',
@@ -24,6 +27,9 @@ class Product extends Model
 
     protected $casts = [
         'price' => 'decimal:2',
+        'discount_percent' => 'decimal:2',
+        'discount_start' => 'datetime',
+        'discount_end' => 'datetime',
         'weight' => 'integer',
         'is_active' => 'boolean',
     ];
@@ -164,5 +170,76 @@ class Product extends Model
             return asset('storage/' . $this->image);
         }
         return asset('images/default-product.png');
+    }
+
+    /**
+     * Check if product has active discount
+     */
+    public function hasActiveDiscount(): bool
+    {
+        if ($this->discount_percent <= 0) return false;
+        
+        $now = now();
+        
+        if ($this->discount_start && $now->lt($this->discount_start)) return false;
+        if ($this->discount_end && $now->gt($this->discount_end)) return false;
+        
+        return true;
+    }
+
+    /**
+     * Get discounted price
+     */
+    public function getDiscountedPriceAttribute(): float
+    {
+        if (!$this->hasActiveDiscount()) {
+            return $this->price;
+        }
+        
+        return $this->price - ($this->price * ($this->discount_percent / 100));
+    }
+
+    /**
+     * Get formatted discounted price
+     */
+    public function getFormattedDiscountedPriceAttribute(): string
+    {
+        return 'Rp ' . number_format($this->discounted_price, 0, ',', '.');
+    }
+
+    /**
+     * Get discount amount
+     */
+    public function getDiscountAmountAttribute(): float
+    {
+        if (!$this->hasActiveDiscount()) {
+            return 0;
+        }
+        
+        return $this->price * ($this->discount_percent / 100);
+    }
+
+    /**
+     * Get formatted discount amount
+     */
+    public function getFormattedDiscountAmountAttribute(): string
+    {
+        return 'Rp ' . number_format($this->discount_amount, 0, ',', '.');
+    }
+
+    /**
+     * Get formatted savings amount (alias for discount amount)
+     */
+    public function getFormattedSavingsAmountAttribute(): string
+    {
+        return $this->formatted_discount_amount;
+    }
+
+    /**
+     * Get formatted discount percent
+     */
+    public function getFormattedDiscountPercentAttribute(): string
+    {
+        return number_format($this->discount_percent, 0) . '%';
     }
 }

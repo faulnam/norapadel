@@ -51,6 +51,9 @@
                                 <span class="badge badge-{{ $product->category == 'original' ? 'primary' : 'accent' }}">
                                     {{ $product->category_label }}
                                 </span>
+                                @if($product->hasActiveDiscount())
+                                    <span class="badge bg-danger ms-1">-{{ $product->formatted_discount_percent }}</span>
+                                @endif
                             </div>
                         </div>
                         <div class="product-body">
@@ -60,7 +63,14 @@
                             <span class="product-weight d-inline-block mb-2">{{ $product->formatted_weight }}</span>
                             <p class="product-desc text-gray small d-none d-md-block">{{ Str::limit($product->description, 50) }}</p>
                             <div class="d-flex justify-content-between align-items-center">
-                                <span class="product-price">{{ $product->formatted_price }}</span>
+                                <div>
+                                    @if($product->hasActiveDiscount())
+                                        <span class="product-price">{{ $product->formatted_discounted_price }}</span>
+                                        <small class="text-decoration-line-through text-muted d-block">{{ $product->formatted_price }}</small>
+                                    @else
+                                        <span class="product-price">{{ $product->formatted_price }}</span>
+                                    @endif
+                                </div>
                                 @if($product->stock > 0)
                                     <a href="{{ route('produk.show', $product) }}" class="btn btn-sm btn-primary">
                                         <i class="fas fa-eye d-md-none"></i>
@@ -135,20 +145,21 @@
     }
     
     .product-card:hover {
-        transform: translateY(-5px);
+        transform: translateY(-8px);
         box-shadow: var(--shadow-lg);
     }
     
     .product-image {
         position: relative;
-        height: 180px;
+        height: 200px;
         overflow: hidden;
+        background: var(--gray-light);
     }
     
     .product-image img {
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        object-fit: contain;
         transition: var(--transition);
     }
     
@@ -158,30 +169,30 @@
     
     .product-badges {
         position: absolute;
-        top: 0.75rem;
-        left: 0.75rem;
+        top: 1rem;
+        left: 1rem;
     }
     
     .product-body {
-        padding: 1rem;
+        padding: 1.25rem;
     }
     
     .product-title {
         font-weight: 700;
-        font-size: 0.9rem;
+        font-size: 1rem;
     }
     
     .product-weight {
         background: var(--gray-light);
-        padding: 0.2rem 0.5rem;
+        padding: 0.25rem 0.5rem;
         border-radius: 4px;
-        font-size: 0.7rem;
+        font-size: 0.75rem;
         font-weight: 600;
         color: var(--gray);
     }
     
     .product-price {
-        font-size: 1rem;
+        font-size: 1.125rem;
         font-weight: 800;
         color: var(--primary);
     }

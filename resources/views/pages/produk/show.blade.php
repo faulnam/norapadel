@@ -30,12 +30,21 @@
                         <span class="badge" style="background: var(--gray-light); color: var(--gray);">
                             {{ $product->formatted_weight }}
                         </span>
+                        @if($product->hasActiveDiscount())
+                            <span class="badge bg-danger">-{{ $product->formatted_discount_percent }}</span>
+                        @endif
                     </div>
                     
                     <h1 class="product-name">{{ $product->name }}</h1>
                     
                     <div class="product-price-box mb-4">
-                        <span class="price">{{ $product->formatted_price }}</span>
+                        @if($product->hasActiveDiscount())
+                            <span class="price">{{ $product->formatted_discounted_price }}</span>
+                            <span class="text-decoration-line-through text-muted">{{ $product->formatted_price }}</span>
+                            <span class="badge bg-danger">Hemat {{ $product->formatted_savings_amount }}</span>
+                        @else
+                            <span class="price">{{ $product->formatted_price }}</span>
+                        @endif
                         @if($product->stock > 0)
                             <span class="stock text-success"><i class="fas fa-check-circle me-1"></i>Stok tersedia</span>
                         @else
@@ -52,19 +61,19 @@
                         <h6>Keunggulan Produk</h6>
                         <div class="features-grid">
                             <div class="feature-item">
-                                <i class="fas fa-leaf text-primary"></i>
+                                
                                 <span>Tanpa Pengawet</span>
                             </div>
                             <div class="feature-item">
-                                <i class="fas fa-ban text-danger"></i>
+                                
                                 <span>Tanpa MSG</span>
                             </div>
                             <div class="feature-item">
-                                <i class="fas fa-seedling text-success"></i>
+                                
                                 <span>Bahan Alami</span>
                             </div>
                             <div class="feature-item">
-                                <i class="fas fa-certificate text-warning"></i>
+                                
                                 <span>Halal</span>
                             </div>
                         </div>
@@ -113,12 +122,24 @@
                         <div class="product-image">
                             <img src="{{ $related->image ? asset('storage/' . $related->image) : 'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=400' }}" 
                                  alt="{{ $related->name }}">
+                            @if($related->hasActiveDiscount())
+                                <div class="position-absolute top-0 end-0 m-2">
+                                    <span class="badge bg-danger">-{{ $related->formatted_discount_percent }}</span>
+                                </div>
+                            @endif
                         </div>
                         <div class="product-body">
                             <h6 class="product-title mb-1">{{ $related->name }}</h6>
                             <span class="product-weight d-inline-block mb-2">{{ $related->formatted_weight }}</span>
                             <div class="d-flex justify-content-between align-items-center">
-                                <span class="product-price">{{ $related->formatted_price }}</span>
+                                @if($related->hasActiveDiscount())
+                                    <div>
+                                        <span class="product-price">{{ $related->formatted_discounted_price }}</span>
+                                        <small class="text-decoration-line-through text-muted d-block">{{ $related->formatted_price }}</small>
+                                    </div>
+                                @else
+                                    <span class="product-price">{{ $related->formatted_price }}</span>
+                                @endif
                                 <a href="{{ route('produk.show', $related) }}" class="btn btn-sm btn-outline-primary">Detail</a>
                             </div>
                         </div>

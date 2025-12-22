@@ -128,10 +128,27 @@
                         </div>
                         @endif
                     @elseif($order->status === \App\Models\Order::STATUS_DELIVERED || $order->status === \App\Models\Order::STATUS_COMPLETED)
-                        <div class="alert mb-0" style="background: rgba(37, 99, 235, 0.1); border: none; color: var(--primary);">
-                            <i class="fas fa-trophy me-2"></i>
-                            Pengiriman selesai! Terima kasih.
-                        </div>
+                        @if($order->canVerifyCod())
+                            <!-- COD Verification Needed -->
+                            <div class="alert mb-3" style="background: rgba(245, 158, 11, 0.1); border: 2px solid #f59e0b; color: #92400e;">
+                                <strong><i class="fas fa-money-bill-wave me-2"></i>Konfirmasi Pembayaran COD</strong>
+                                <p class="mb-2 mt-2">Barang sudah diterima customer. Pastikan pembayaran <strong>Rp {{ number_format($order->total, 0, ',', '.') }}</strong> sudah diterima.</p>
+                                <form action="{{ route('courier.deliveries.verify-cod', $order) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin pembayaran COD sudah diterima?');">
+                                    @csrf
+                                    <button type="submit" class="btn btn-warning btn-lg w-100">
+                                        <i class="fas fa-check-circle me-2"></i>Konfirmasi COD Diterima
+                                    </button>
+                                </form>
+                            </div>
+                        @else
+                            <div class="alert mb-0" style="background: rgba(37, 99, 235, 0.1); border: none; color: var(--primary);">
+                                <i class="fas fa-trophy me-2"></i>
+                                Pengiriman selesai! Terima kasih.
+                                @if($order->isCod() && $order->cod_verified)
+                                    <br><small class="text-muted"><i class="fas fa-check-circle text-success me-1"></i>Pembayaran COD sudah dikonfirmasi pada {{ $order->cod_verified_at->format('d/m/Y H:i') }}</small>
+                                @endif
+                            </div>
+                        @endif
                         
                         <!-- Show Photos -->
                         <div class="row mt-3 text-start">

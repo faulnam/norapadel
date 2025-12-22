@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\HistoryController as AdminHistory;
 use App\Http\Controllers\Admin\GalleryController as AdminGallery;
 use App\Http\Controllers\Admin\ProfileController as AdminProfile;
 use App\Http\Controllers\Admin\UserManagementController as AdminStaff;
+use App\Http\Controllers\Admin\ShippingDiscountController;
 use App\Http\Controllers\Customer\ProductController as CustomerProduct;
 use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Customer\OrderController as CustomerOrder;
@@ -111,6 +112,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::put('/staff/{user}', [AdminStaff::class, 'update'])->name('staff.update');
     Route::patch('/staff/{user}/toggle-active', [AdminStaff::class, 'toggleActive'])->name('staff.toggle-active');
     Route::delete('/staff/{user}', [AdminStaff::class, 'destroy'])->name('staff.destroy');
+
+    // Shipping Discounts
+    Route::resource('shipping-discounts', ShippingDiscountController::class)->except(['show']);
+    Route::patch('/shipping-discounts/{shipping_discount}/toggle', [ShippingDiscountController::class, 'toggleActive'])->name('shipping-discounts.toggle');
 });
 
 // Courier Routes
@@ -125,6 +130,7 @@ Route::prefix('courier')->name('courier.')->middleware(['auth', 'courier'])->gro
     Route::post('/deliveries/{order}/pickup', [CourierDelivery::class, 'pickUp'])->name('deliveries.pickup');
     Route::post('/deliveries/{order}/start', [CourierDelivery::class, 'startDelivery'])->name('deliveries.start');
     Route::post('/deliveries/{order}/delivered', [CourierDelivery::class, 'markDelivered'])->name('deliveries.delivered');
+    Route::post('/deliveries/{order}/verify-cod', [CourierDelivery::class, 'verifyCod'])->name('deliveries.verify-cod');
     
     // Profile
     Route::get('/profile', [CourierProfile::class, 'show'])->name('profile');
@@ -155,6 +161,7 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'customer'])->
     Route::post('/checkout', [CustomerOrder::class, 'processCheckout'])->name('checkout.process');
     Route::get('/orders', [CustomerOrder::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [CustomerOrder::class, 'show'])->name('orders.show');
+    Route::get('/orders/{order}/receipt', [CustomerOrder::class, 'receipt'])->name('orders.receipt');
     Route::post('/orders/{order}/payment', [CustomerOrder::class, 'uploadPayment'])->name('orders.upload-payment');
     Route::patch('/orders/{order}/cancel', [CustomerOrder::class, 'cancel'])->name('orders.cancel');
     Route::patch('/orders/{order}/confirm', [CustomerOrder::class, 'confirmReceived'])->name('orders.confirm');

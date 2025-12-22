@@ -24,7 +24,7 @@
                 <h2 class="section-title">Cerita Kami</h2>
                 <p class="text-gray mb-4">
                     PATAH (Pakcoy dan Tahu) lahir dari mimpi sederhana: menghadirkan camilan yang tidak hanya enak, 
-                    tetapi juga menyehatkan. Berawal dari dapur rumah di Surabaya pada tahun 2019, 
+                    tetapi juga menyehatkan. Berawal dari dapur rumah di Sidoarjo pada tahun 2019, 
                     kami mulai bereksperimen menggabungkan sayuran pakcoy yang kaya nutrisi dengan tahu premium.
                 </p>
                 <p class="text-gray mb-4">
@@ -38,11 +38,11 @@
                         <span class="stat-label">Tahun Berdiri</span>
                     </div>
                     <div class="story-stat">
-                        <span class="stat-number">500+</span>
+                        <span class="stat-number">100+</span>
                         <span class="stat-label">Pelanggan</span>
                     </div>
                     <div class="story-stat">
-                        <span class="stat-number">10+</span>
+                        <span class="stat-number">5+</span>
                         <span class="stat-label">Varian Produk</span>
                     </div>
                 </div>

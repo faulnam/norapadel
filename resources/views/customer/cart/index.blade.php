@@ -27,14 +27,24 @@
                         @foreach($cartItems as $item)
                             <div class="cart-item p-3 border-bottom">
                                 <div class="d-flex">
-                                    <img src="{{ $item->product->image ? asset('storage/' . $item->product->image) : 'https://via.placeholder.com/80' }}" 
-                                         alt="{{ $item->product->name }}" class="cart-item-img rounded me-3">
+                                    <div class="position-relative me-3">
+                                        <img src="{{ $item->product->image ? asset('storage/' . $item->product->image) : 'https://via.placeholder.com/80' }}" 
+                                             alt="{{ $item->product->name }}" class="cart-item-img rounded">
+                                        @if($item->product->hasActiveDiscount())
+                                            <span class="position-absolute top-0 start-0 badge bg-danger" style="font-size: 10px;">-{{ $item->product->formatted_discount_percent }}</span>
+                                        @endif
+                                    </div>
                                     
                                     <div class="flex-grow-1">
                                         <div class="d-flex justify-content-between align-items-start">
                                             <div>
                                                 <h6 class="mb-1 cart-item-name">{{ $item->product->name }}</h6>
-                                                <p class="text-success mb-1 small">{{ $item->product->formatted_price }}</p>
+                                                @if($item->product->hasActiveDiscount())
+                                                    <p class="text-success mb-0 small">{{ $item->product->formatted_discounted_price }}</p>
+                                                    <small class="text-decoration-line-through text-muted">{{ $item->product->formatted_price }}</small>
+                                                @else
+                                                    <p class="text-success mb-1 small">{{ $item->product->formatted_price }}</p>
+                                                @endif
                                             </div>
                                             <form action="{{ route('customer.cart.remove', $item) }}" method="POST" class="d-md-none">
                                                 @csrf
@@ -91,6 +101,20 @@
                             <span>Total Item</span>
                             <span>{{ $cartItems->sum('quantity') }} pcs</span>
                         </div>
+                        @php
+                            $totalDiscount = $cartItems->sum('discount_amount');
+                            $originalTotal = $cartItems->sum('original_subtotal');
+                        @endphp
+                        @if($totalDiscount > 0)
+                            <div class="d-flex justify-content-between mb-2 small">
+                                <span>Harga Normal</span>
+                                <span class="text-decoration-line-through text-muted">Rp {{ number_format($originalTotal, 0, ',', '.') }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-3 small text-danger">
+                                <span>Diskon Produk</span>
+                                <span>-Rp {{ number_format($totalDiscount, 0, ',', '.') }}</span>
+                            </div>
+                        @endif
                         <div class="d-flex justify-content-between mb-3 small">
                             <span>Subtotal</span>
                             <span>Rp {{ number_format($total, 0, ',', '.') }}</span>

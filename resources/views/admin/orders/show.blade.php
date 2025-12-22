@@ -543,10 +543,22 @@
                     <span>Subtotal</span>
                     <span>{{ $order->formatted_subtotal }}</span>
                 </div>
+                @if($order->product_discount > 0)
+                    <div class="summary-row text-danger">
+                        <span>Diskon Produk</span>
+                        <span>-{{ $order->formatted_product_discount }}</span>
+                    </div>
+                @endif
                 <div class="summary-row">
-                    <span>Ongkir @if($order->delivery_distance_minutes)<small style="color: var(--text-muted);">({{ $order->delivery_distance_minutes }} menit)</small>@endif</span>
+                    <span>Ongkir @if($order->delivery_distance_km)<small style="color: var(--text-muted);">({{ number_format($order->delivery_distance_km, 1) }} km)</small>@elseif($order->delivery_distance_minutes)<small style="color: var(--text-muted);">({{ $order->delivery_distance_minutes }} menit)</small>@endif</span>
                     <span>{{ $order->formatted_shipping_cost }}</span>
                 </div>
+                @if($order->shipping_discount > 0)
+                    <div class="summary-row text-danger">
+                        <span>Diskon Ongkir</span>
+                        <span>-{{ $order->formatted_shipping_discount }}</span>
+                    </div>
+                @endif
                 <div class="summary-row total">
                     <span>Total</span>
                     <span>{{ $order->formatted_total }}</span>
@@ -592,9 +604,8 @@
                 <div class="detail-card-body">
                     <div class="courier-card mb-3">
                         <div class="d-flex align-items-center gap-3">
-                            <div class="courier-avatar">
-                                {{ strtoupper(substr($order->courier->name, 0, 1)) }}
-                            </div>
+                            <img src="{{ $order->courier->avatar_url }}" alt="{{ $order->courier->name }}" 
+                                 class="courier-avatar" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
                             <div>
                                 <div style="font-weight: 600; color: var(--text-primary);">{{ $order->courier->name }}</div>
                                 <div style="font-size: 13px; color: var(--text-muted);">{{ $order->courier->phone ?? '-' }}</div>

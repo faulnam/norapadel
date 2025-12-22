@@ -69,7 +69,20 @@ return [
 
     'email' => env('BRAND_EMAIL', 'hello@patah.id'),
     'phone' => env('BRAND_PHONE', '+62 812 3456 7890'),
-    'address' => env('BRAND_ADDRESS', 'Surabaya, Jawa Timur'),
+    'address' => env('BRAND_ADDRESS', 'Kec. Tarik, Sidoarjo, Jawa Timur 61265'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Store Location
+    |--------------------------------------------------------------------------
+    |
+    | Koordinat lokasi toko untuk perhitungan ongkos kirim
+    | Lokasi: Kec. Tarik, Kab. Sidoarjo, Jawa Timur
+    |
+    */
+
+    'store_latitude' => env('STORE_LATITUDE', -7.4674),
+    'store_longitude' => env('STORE_LONGITUDE', 112.5274),
 
     /*
     |--------------------------------------------------------------------------

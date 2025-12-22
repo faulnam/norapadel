@@ -7,6 +7,7 @@ use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\User;
+use App\Models\ShippingDiscount;
 use App\Notifications\NewOrderNotification;
 use App\Notifications\PaymentUploadedNotification;
 use Illuminate\Http\Request;
@@ -27,11 +28,21 @@ class OrderController extends Controller
                 ->with('error', 'Keranjang belanja kosong.');
         }
 
-        $subtotal = $cartItems->sum(function ($item) {
-            return $item->product->price * $item->quantity;
-        });
+        // Calculate subtotal with product discounts
+        $subtotal = 0;
+        $productDiscount = 0;
+        
+        foreach ($cartItems as $item) {
+            $originalPrice = $item->product->price * $item->quantity;
+            $discountedPrice = $item->product->discounted_price * $item->quantity;
+            $subtotal += $originalPrice;
+            $productDiscount += ($originalPrice - $discountedPrice);
+        }
 
-        return view('customer.orders.checkout', compact('cartItems', 'subtotal'));
+        // Get active shipping discount
+        $shippingDiscountInfo = ShippingDiscount::active()->first();
+
+        return view('customer.orders.checkout', compact('cartItems', 'subtotal', 'productDiscount', 'shippingDiscountInfo'));
     }
 
     /**
@@ -45,6 +56,7 @@ class OrderController extends Controller
             'shipping_address' => 'required|string|max:500',
             'shipping_latitude' => 'required|numeric',
             'shipping_longitude' => 'required|numeric',
+            'delivery_distance_km' => 'nullable|numeric|min:0',
             'delivery_distance_minutes' => 'required|numeric|min:1',
             'shipping_cost' => 'required|numeric|min:0',
             'delivery_date' => 'required|date',
@@ -81,17 +93,35 @@ class OrderController extends Controller
         try {
             DB::beginTransaction();
 
-            $subtotal = $cartItems->sum(function ($item) {
-                return $item->product->price * $item->quantity;
-            });
+            // Calculate subtotal with product discounts
+            $subtotal = 0;
+            $productDiscount = 0;
+            
+            foreach ($cartItems as $item) {
+                $originalPrice = $item->product->price * $item->quantity;
+                $discountedPrice = $item->product->discounted_price * $item->quantity;
+                $subtotal += $originalPrice;
+                $productDiscount += ($originalPrice - $discountedPrice);
+            }
 
             $shippingCost = (int) $validated['shipping_cost'];
-            $total = $subtotal + $shippingCost;
+            
+            // Calculate shipping discount
+            $shippingDiscount = 0;
+            $activeShippingDiscount = ShippingDiscount::active()->first();
+            if ($activeShippingDiscount) {
+                $shippingDiscount = $activeShippingDiscount->calculateDiscount($shippingCost, $subtotal - $productDiscount);
+            }
+
+            // Calculate final total
+            $total = $subtotal - $productDiscount + $shippingCost - $shippingDiscount;
 
             // Create order
             $order = Order::create([
                 'user_id' => auth()->id(),
                 'subtotal' => $subtotal,
+                'product_discount' => $productDiscount,
+                'shipping_discount' => $shippingDiscount,
                 'shipping_cost' => $shippingCost,
                 'total' => $total,
                 'shipping_name' => $validated['shipping_name'],
@@ -99,6 +129,7 @@ class OrderController extends Controller
                 'shipping_address' => $validated['shipping_address'],
                 'shipping_latitude' => $validated['shipping_latitude'],
                 'shipping_longitude' => $validated['shipping_longitude'],
+                'delivery_distance_km' => $validated['delivery_distance_km'] ?? null,
                 'delivery_distance_minutes' => $validated['delivery_distance_minutes'],
                 'delivery_date' => $validated['delivery_date'],
                 'delivery_time_slot' => $validated['delivery_time_slot'],
@@ -113,9 +144,9 @@ class OrderController extends Controller
                     'order_id' => $order->id,
                     'product_id' => $item->product_id,
                     'product_name' => $item->product->name,
-                    'product_price' => $item->product->price,
+                    'product_price' => $item->product->discounted_price, // Use discounted price
                     'quantity' => $item->quantity,
-                    'subtotal' => $item->product->price * $item->quantity,
+                    'subtotal' => $item->product->discounted_price * $item->quantity,
                 ]);
 
                 // Reduce stock
@@ -176,6 +207,32 @@ class OrderController extends Controller
         $order->load('items.product');
 
         return view('customer.orders.show', compact('order'));
+    }
+
+    /**
+     * Show receipt/invoice for order
+     */
+    public function receipt(Order $order)
+    {
+        if ($order->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        // Only show receipt for paid orders
+        if (!in_array($order->status, [
+            Order::STATUS_PAID,
+            Order::STATUS_ASSIGNED,
+            Order::STATUS_PICKED_UP,
+            Order::STATUS_ON_DELIVERY,
+            Order::STATUS_DELIVERED,
+            Order::STATUS_COMPLETED
+        ])) {
+            return back()->with('error', 'Resi belum tersedia. Silakan lakukan pembayaran terlebih dahulu.');
+        }
+
+        $order->load('items.product', 'user');
+
+        return view('customer.orders.receipt', compact('order'));
     }
 
     /**

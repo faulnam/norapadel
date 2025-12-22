@@ -141,7 +141,7 @@
         </div>
         
         <div class="row g-4">
-            <div class="col-md-6 col-lg-3">
+            <div class="col-6 col-md-6 col-lg-3">
                 <div class="why-card" data-aos="fade-up">
                     <div class="why-icon">
                         <img src="images/ngemilsantairb.png">
@@ -150,7 +150,7 @@
                     <p class="text-gray small mb-0">Lagi rebahan, nonton drama, atau main game, Kerupuk Patah siap nemenin!</p>
                 </div>
             </div>
-            <div class="col-md-6 col-lg-3">
+            <div class="col-6 col-md-6 col-lg-3">
                 <div class="why-card" data-aos="fade-up" data-aos-delay="100">
                      <div class="why-icon">
                         <img src="images/temankerjarb.png">
@@ -159,7 +159,7 @@
                     <p class="text-gray small mb-0">Butuh camilan biar kerja makin semangat? Cukup buka bungkus Kerupuk Patah.</p>
                 </div>
             </div>
-            <div class="col-md-6 col-lg-3">
+            <div class="col-6 col-md-6 col-lg-3">
                 <div class="why-card" data-aos="fade-up" data-aos-delay="200">
                      <div class="why-icon">
                         <img src="images/oleh2maskotrb.png">
@@ -168,7 +168,7 @@
                     <p class="text-gray small mb-0">Mau bawa pulang sesuatu yang beda buat keluarga atau teman? Kerupuk Patah aja!</p>
                 </div>
             </div>
-            <div class="col-md-6 col-lg-3">
+            <div class="col-6 col-md-6 col-lg-3">
                 <div class="why-card" data-aos="fade-up" data-aos-delay="300">
                     <div class="why-icon">
                         <img src="images/maskot2.png">
@@ -205,6 +205,9 @@
                                 <span class="badge badge-{{ $product->category == 'original' ? 'primary' : 'accent' }}">
                                     {{ $product->category_label }}
                                 </span>
+                                @if($product->hasActiveDiscount())
+                                    <span class="badge bg-danger ms-1">-{{ $product->formatted_discount_percent }}</span>
+                                @endif
                             </div>
                         </div>
                         <div class="product-body">
@@ -214,7 +217,14 @@
                             </div>
                             <p class="product-desc text-gray small d-none d-md-block">{{ Str::limit($product->description, 60) }}</p>
                             <div class="d-flex justify-content-between align-items-center">
-                                <span class="product-price">{{ $product->formatted_price }}</span>
+                                <div>
+                                    @if($product->hasActiveDiscount())
+                                        <span class="product-price">{{ $product->formatted_discounted_price }}</span>
+                                        <small class="text-decoration-line-through text-muted d-block d-sm-inline">{{ $product->formatted_price }}</small>
+                                    @else
+                                        <span class="product-price">{{ $product->formatted_price }}</span>
+                                    @endif
+                                </div>
                                 @auth
                                     <a href="{{ route('customer.products.show', $product) }}" class="btn btn-sm btn-primary">
                                         <i class="fas fa-shopping-cart me-1 d-none d-sm-inline"></i>Beli
@@ -307,9 +317,7 @@
                     </div>
                     <p class="testimonial-content">"{{ Str::limit($testimonial->content, 120) }}"</p>
                     <div class="testimonial-author">
-                        <div class="author-avatar">
-                            {{ strtoupper(substr($testimonial->user->name, 0, 1)) }}
-                        </div>
+                        <img src="{{ $testimonial->user->avatar_url }}" alt="{{ $testimonial->user->name }}" class="author-avatar-img">
                         <div>
                             <h6 class="mb-0">{{ $testimonial->user->name }}</h6>
                             <small class="text-gray">{{ $testimonial->created_at->diffForHumans() }}</small>
@@ -654,12 +662,13 @@
         position: relative;
         height: 200px;
         overflow: hidden;
+        background: var(--gray-light);
     }
     
     .product-image img {
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        object-fit: contain;
         transition: var(--transition);
     }
     
@@ -722,12 +731,13 @@
         overflow: hidden;
         position: relative;
         scroll-snap-align: start;
+        background: var(--gray-light);
     }
     
     .gallery-item img {
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        object-fit: contain;
         transition: var(--transition);
     }
     
@@ -812,6 +822,14 @@
         align-items: center;
         justify-content: center;
         font-weight: 700;
+    }
+    
+    .author-avatar-img {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--primary);
     }
     
     /* CTA Section */
@@ -1027,7 +1045,7 @@
         }
         
         .hero-image-mobile .hero-image {
-            max-width: 220px;
+            max-width: 250px;
         }
         
         .hero-image-mobile .floating-card {
@@ -1215,7 +1233,7 @@
         }
         
         .hero-image-mobile .hero-image {
-            max-width: 180px;
+            max-width: 200px;
         }
         
         .hero-image-mobile .floating-card {

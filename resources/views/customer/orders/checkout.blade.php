@@ -417,6 +417,7 @@
                                 </div>
                             </div>
 
+                            <input type="hidden" name="delivery_distance_km" id="delivery_distance_km" value="{{ old('delivery_distance_km', '0') }}">
                             <input type="hidden" name="delivery_distance_minutes" id="delivery_distance_minutes" value="{{ old('delivery_distance_minutes', '0') }}">
                             <input type="hidden" name="shipping_cost" id="shipping_cost_input" value="{{ old('shipping_cost', '0') }}">
 
@@ -452,35 +453,30 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Payment Information -->
-                    <div class="checkout-card">
-                        <div class="checkout-card-header">
-                            <i class="fas fa-credit-card"></i>
-                            Metode Pembayaran
-                        </div>
-                        <div class="checkout-card-body">
-                            <div class="payment-info">
-                                <p class="small text-muted mb-3">Transfer ke salah satu rekening berikut:</p>
-                                <div class="bank-item">
-                                    <span>Bank BCA</span>
-                                    <strong>1234567890</strong>
-                                </div>
-                                <div class="bank-item">
-                                    <span>Bank Mandiri</span>
-                                    <strong>0987654321</strong>
-                                </div>
-                                <p class="small text-muted mt-3 mb-0">a.n. PATAH Store</p>
-                            </div>
-                            <p class="text-muted small mt-3 mb-0">
-                                <i class="fas fa-info-circle me-1"></i>
-                                Upload bukti transfer setelah pesanan dibuat.
-                            </p>
-                        </div>
-                    </div>
                 </div>
                 
                 <div class="col-lg-5">
+                    <!-- Shipping Discount Promo Banner -->
+                    @if($shippingDiscountInfo)
+                        <div class="alert alert-success mb-3" style="border-radius: 12px; font-size: 13px;">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-tag me-2"></i>
+                                <div>
+                                    <strong>{{ $shippingDiscountInfo->name }}</strong>
+                                    <div class="mt-1">
+                                        Diskon {{ $shippingDiscountInfo->formatted_discount }} ongkir
+                                        @if($shippingDiscountInfo->max_discount)
+                                            (maks. {{ $shippingDiscountInfo->formatted_max_discount }})
+                                        @endif
+                                        @if($shippingDiscountInfo->min_subtotal > 0)
+                                            <br><small class="text-success">Min. belanja Rp {{ number_format($shippingDiscountInfo->min_subtotal, 0, ',', '.') }}</small>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                    
                     <!-- Order Summary -->
                     <div class="checkout-card summary-sticky">
                         <div class="checkout-card-header">
@@ -490,27 +486,52 @@
                         <div class="checkout-card-body">
                             @foreach($cartItems as $item)
                                 <div class="summary-item">
-                                    <span>{{ $item->product->name }} <span class="text-muted">x{{ $item->quantity }}</span></span>
+                                    <span>
+                                        {{ $item->product->name }} <span class="text-muted">x{{ $item->quantity }}</span>
+                                        @if($item->product->hasActiveDiscount())
+                                            <span class="badge bg-danger ms-1" style="font-size: 10px;">-{{ $item->product->formatted_discount_percent }}</span>
+                                        @endif
+                                    </span>
                                     <span>{{ $item->formatted_subtotal }}</span>
                                 </div>
                             @endforeach
                             
                             <div class="summary-divider"></div>
                             
+                            @php
+                                $totalDiscount = $cartItems->sum('discount_amount');
+                                $originalTotal = $cartItems->sum('original_subtotal');
+                                $actualSubtotal = $originalTotal - $totalDiscount;
+                            @endphp
+                            @if($totalDiscount > 0)
+                                <div class="summary-item">
+                                    <span>Harga Normal</span>
+                                    <span class="text-decoration-line-through text-muted">Rp {{ number_format($originalTotal, 0, ',', '.') }}</span>
+                                </div>
+                                <div class="summary-item text-danger">
+                                    <span>Diskon Produk</span>
+                                    <span>-Rp {{ number_format($totalDiscount, 0, ',', '.') }}</span>
+                                </div>
+                            @endif
                             <div class="summary-item">
                                 <span>Subtotal</span>
-                                <span>Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
+                                <span>Rp {{ number_format($actualSubtotal, 0, ',', '.') }}</span>
                             </div>
                             <div class="summary-item">
                                 <span>Ongkos Kirim</span>
                                 <span id="displayShippingCost" class="text-muted">Belum dihitung</span>
                             </div>
                             
+                            <div class="summary-item text-success" id="shippingDiscountRow" style="display: none;">
+                                <span>Diskon Ongkir</span>
+                                <span id="displayShippingDiscount">-Rp 0</span>
+                            </div>
+                            
                             <div class="summary-divider"></div>
                             
                             <div class="summary-total">
                                 <span>Total</span>
-                                <span id="displayTotal">Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
+                                <span id="displayTotal">Rp {{ number_format($actualSubtotal, 0, ',', '.') }}</span>
                             </div>
 
                             <div class="warning-box mb-3" id="warningShipping">
@@ -536,19 +557,33 @@
 <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
-    // Koordinat Toko PATAH (Surabaya - sesuaikan dengan lokasi sebenarnya)
-    const STORE_LAT = -7.250445;
-    const STORE_LNG = 112.768845;
-    const SUBTOTAL = {{ $subtotal }};
+    // Koordinat Toko PATAH (Kec. Tarik, Sidoarjo)
+    const STORE_LAT = {{ config('branding.store_latitude', -7.4674) }};
+    const STORE_LNG = {{ config('branding.store_longitude', 112.5274) }};
+    // Subtotal setelah diskon produk
+    const SUBTOTAL = {{ $subtotal - $productDiscount }};
+    const SHIPPING_RATE_PER_KM = 2500; // Rp 2.500 per KM
+    
+    // Shipping Discount Info
+    @if($shippingDiscountInfo)
+    const SHIPPING_DISCOUNT = {
+        percent: {{ $shippingDiscountInfo->discount_percent }},
+        maxDiscount: {{ $shippingDiscountInfo->max_discount ?? 'null' }},
+        minSubtotal: {{ $shippingDiscountInfo->min_subtotal ?? 0 }},
+        name: "{{ $shippingDiscountInfo->name }}"
+    };
+    @else
+    const SHIPPING_DISCOUNT = null;
+    @endif
     
     // Initialize map
     let map;
     let marker;
     let storeMarker;
     
-    // Default center (Surabaya)
-    const defaultLat = {{ old('shipping_latitude') ?: '-7.250445' }};
-    const defaultLng = {{ old('shipping_longitude') ?: '112.768845' }};
+    // Default center (Sidoarjo)
+    const defaultLat = {{ old('shipping_latitude') ?: config('branding.store_latitude', -7.4674) }};
+    const defaultLng = {{ old('shipping_longitude') ?: config('branding.store_longitude', 112.5274) }};
     
     document.addEventListener('DOMContentLoaded', function() {
         initMap();
@@ -721,32 +756,54 @@
         // Calculate distance using Haversine formula
         const distance = haversineDistance(STORE_LAT, STORE_LNG, lat, lng);
         
-        // Convert to minutes (assuming 30 km/h average speed)
-        let minutes = Math.ceil((distance / 30) * 60);
-        minutes = Math.max(10, minutes); // Minimum 10 minutes
+        // Round up to nearest km (minimum 1 km)
+        const distanceKm = Math.max(1, Math.ceil(distance));
 
-        // Calculate shipping cost (10 minutes = Rp 10.000)
-        const units = Math.ceil(minutes / 10);
-        const shippingCost = units * 10000;
+        // Calculate shipping cost (1 KM = Rp 2.500)
+        const shippingCost = distanceKm * SHIPPING_RATE_PER_KM;
+        
+        // Calculate shipping discount
+        let shippingDiscount = 0;
+        if (SHIPPING_DISCOUNT && SUBTOTAL >= SHIPPING_DISCOUNT.minSubtotal) {
+            shippingDiscount = shippingCost * (SHIPPING_DISCOUNT.percent / 100);
+            
+            // Apply max discount cap
+            if (SHIPPING_DISCOUNT.maxDiscount && shippingDiscount > SHIPPING_DISCOUNT.maxDiscount) {
+                shippingDiscount = SHIPPING_DISCOUNT.maxDiscount;
+            }
+        }
+
+        // Calculate final total
+        const finalTotal = SUBTOTAL + shippingCost - shippingDiscount;
 
         // Update UI
-        document.getElementById('distanceText').textContent = minutes + ' menit';
+        document.getElementById('distanceText').textContent = distanceKm + ' km';
         document.getElementById('shippingCostText').textContent = formatRupiah(shippingCost);
         document.getElementById('shippingInfo').style.display = 'block';
 
         document.getElementById('displayShippingCost').textContent = formatRupiah(shippingCost);
         document.getElementById('displayShippingCost').classList.remove('text-muted');
-        document.getElementById('displayTotal').textContent = formatRupiah(SUBTOTAL + shippingCost);
+        
+        // Show shipping discount if applicable
+        if (shippingDiscount > 0) {
+            document.getElementById('shippingDiscountRow').style.display = 'flex';
+            document.getElementById('displayShippingDiscount').textContent = '-' + formatRupiah(shippingDiscount);
+        } else {
+            document.getElementById('shippingDiscountRow').style.display = 'none';
+        }
+        
+        document.getElementById('displayTotal').textContent = formatRupiah(finalTotal);
 
         // Set hidden inputs
-        document.getElementById('delivery_distance_minutes').value = minutes;
+        document.getElementById('delivery_distance_km').value = distanceKm;
+        document.getElementById('delivery_distance_minutes').value = Math.ceil((distance / 30) * 60); // For backward compatibility
         document.getElementById('shipping_cost_input').value = shippingCost;
 
         // Enable submit button
         document.getElementById('submitBtn').disabled = false;
         document.getElementById('warningShipping').style.display = 'none';
         
-        console.log('Shipping calculated:', { minutes, shippingCost, distance: distance.toFixed(2) + ' km' });
+        console.log('Shipping calculated:', { distanceKm, shippingCost, shippingDiscount, finalTotal, distance: distance.toFixed(2) + ' km' });
     }
 
     function haversineDistance(lat1, lon1, lat2, lon2) {
@@ -770,17 +827,17 @@
 
     // Form validation before submit
     document.getElementById('checkoutForm').addEventListener('submit', function(e) {
-        const distanceMinutes = document.getElementById('delivery_distance_minutes').value;
+        const distanceKm = document.getElementById('delivery_distance_km').value;
         const shippingCost = document.getElementById('shipping_cost_input').value;
         
-        if (!distanceMinutes || distanceMinutes == '0' || !shippingCost || shippingCost == '0') {
+        if (!distanceKm || distanceKm == '0' || !shippingCost || shippingCost == '0') {
             e.preventDefault();
             alert('Silakan pilih lokasi pengiriman di peta dan hitung ongkos kirim terlebih dahulu.');
             return false;
         }
         
         console.log('Submitting form with:', {
-            distanceMinutes,
+            distanceKm,
             shippingCost,
             lat: document.getElementById('shipping_latitude').value,
             lng: document.getElementById('shipping_longitude').value

@@ -193,6 +193,27 @@
                             <i class="fas fa-credit-card me-2"></i>Pilih Metode Pembayaran
                         </div>
                         <div class="payment-card-body">
+                            <!-- COD Option -->
+                            <label class="payment-method-card d-flex align-items-center gap-3" style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-color: #34d399;">
+                                <input type="radio" name="payment_method" value="cod" required>
+                                <div class="payment-method-icon" style="background: #34d399; color: white;">
+                                    <i class="fas fa-hand-holding-usd"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="payment-method-name">
+                                        <span class="badge bg-success me-1">Rekomendasi</span>
+                                        COD (Bayar di Tempat)
+                                    </div>
+                                    <div class="payment-method-desc">Bayar tunai saat barang diterima dari kurir</div>
+                                </div>
+                                <i class="fas fa-check-circle text-success d-none check-icon"></i>
+                            </label>
+
+                            <hr class="my-3">
+                            <div class="text-muted small mb-3">
+                                <i class="fas fa-credit-card me-1"></i>Atau bayar online:
+                            </div>
+
                             <!-- QRIS -->
                             <label class="payment-method-card d-flex align-items-center gap-3">
                                 <input type="radio" name="payment_method" value="qris" required>

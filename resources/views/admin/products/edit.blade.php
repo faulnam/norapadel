@@ -57,6 +57,60 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Diskon Produk -->
+                    <div class="card border-warning mb-3">
+                        <div class="card-header bg-warning bg-opacity-10">
+                            <i class="fas fa-percent me-1"></i>Diskon Produk (Opsional)
+                            @if($product->hasActiveDiscount())
+                                <span class="badge bg-success ms-2">Aktif</span>
+                            @endif
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="discount_percent" class="form-label">Diskon</label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control @error('discount_percent') is-invalid @enderror" 
+                                                   id="discount_percent" name="discount_percent" value="{{ old('discount_percent', $product->discount_percent) }}" min="0" max="100" step="0.01">
+                                            <span class="input-group-text">%</span>
+                                        </div>
+                                        @error('discount_percent')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="discount_start" class="form-label">Mulai</label>
+                                        <input type="datetime-local" class="form-control @error('discount_start') is-invalid @enderror" 
+                                               id="discount_start" name="discount_start" value="{{ old('discount_start', $product->discount_start?->format('Y-m-d\TH:i')) }}">
+                                        @error('discount_start')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="discount_end" class="form-label">Berakhir</label>
+                                        <input type="datetime-local" class="form-control @error('discount_end') is-invalid @enderror" 
+                                               id="discount_end" name="discount_end" value="{{ old('discount_end', $product->discount_end?->format('Y-m-d\TH:i')) }}">
+                                        @error('discount_end')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+                            @if($product->hasActiveDiscount())
+                                <div class="alert alert-success mb-0">
+                                    <small><strong>Harga setelah diskon:</strong> {{ $product->formatted_discounted_price }} <del class="text-muted">{{ $product->formatted_price }}</del></small>
+                                </div>
+                            @else
+                                <small class="text-muted">Kosongkan tanggal jika diskon berlaku selamanya. Set diskon 0 untuk menonaktifkan.</small>
+                            @endif
+                        </div>
+                    </div>
                     
                     <div class="row">
                         <div class="col-md-6">

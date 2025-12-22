@@ -216,9 +216,8 @@
                             </div>
                             <p class="card-text text-muted mb-4">"{{ $testimonial->content }}"</p>
                             <div class="d-flex align-items-center">
-                                <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
-                                    {{ strtoupper(substr($testimonial->user->name, 0, 1)) }}
-                                </div>
+                                <img src="{{ $testimonial->user->avatar_url }}" alt="{{ $testimonial->user->name }}" 
+                                     class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;">
                                 <div>
                                     <h6 class="mb-0">{{ $testimonial->user->name }}</h6>
                                     <small class="text-muted">{{ $testimonial->created_at->diffForHumans() }}</small>

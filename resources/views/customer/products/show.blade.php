@@ -26,11 +26,20 @@
             <div class="mb-2">
                 <span class="badge bg-{{ $product->category == 'original' ? 'success' : 'danger' }} me-1 product-badge">{{ $product->category_label }}</span>
                 <span class="badge bg-secondary product-badge">{{ $product->formatted_weight }}</span>
+                @if($product->hasActiveDiscount())
+                    <span class="badge bg-danger product-badge">-{{ $product->formatted_discount_percent }}</span>
+                @endif
             </div>
             <h2 class="mb-3 product-title">{{ $product->name }}</h2>
             
             <div class="mb-3 mb-lg-4">
-                <span class="product-price text-success">{{ $product->formatted_price }}</span>
+                @if($product->hasActiveDiscount())
+                    <span class="product-price text-success">{{ $product->formatted_discounted_price }}</span>
+                    <span class="text-decoration-line-through text-muted ms-2">{{ $product->formatted_price }}</span>
+                    <span class="badge bg-danger ms-2">Hemat {{ $product->formatted_savings_amount }}</span>
+                @else
+                    <span class="product-price text-success">{{ $product->formatted_price }}</span>
+                @endif
             </div>
             
             <div class="mb-3 mb-lg-4">
@@ -104,12 +113,22 @@
             @foreach($relatedProducts as $related)
                 <div class="col-6 col-md-6 col-lg-3">
                     <div class="card h-100 product-card">
-                        <img src="{{ $related->image ? asset('storage/' . $related->image) : 'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=400' }}" 
-                             class="card-img-top related-product-img" alt="{{ $related->name }}">
+                        <div class="position-relative">
+                            <img src="{{ $related->image ? asset('storage/' . $related->image) : 'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=400' }}" 
+                                 class="card-img-top related-product-img" alt="{{ $related->name }}">
+                            @if($related->hasActiveDiscount())
+                                <span class="position-absolute top-0 end-0 m-2 badge bg-danger">-{{ $related->formatted_discount_percent }}</span>
+                            @endif
+                        </div>
                         <div class="card-body p-2 p-lg-3">
                             <h6 class="card-title related-product-title">{{ $related->name }}</h6>
-                            <p class="text-success fw-bold related-product-price mb-2">{{ $related->formatted_price }}</p>
-                            <a href="{{ route('customer.products.show', $related) }}" class="btn btn-outline-success btn-sm w-100">
+                            @if($related->hasActiveDiscount())
+                                <p class="text-success fw-bold related-product-price mb-0">{{ $related->formatted_discounted_price }}</p>
+                                <small class="text-decoration-line-through text-muted">{{ $related->formatted_price }}</small>
+                            @else
+                                <p class="text-success fw-bold related-product-price mb-2">{{ $related->formatted_price }}</p>
+                            @endif
+                            <a href="{{ route('customer.products.show', $related) }}" class="btn btn-outline-success btn-sm w-100 mt-2">
                                 Detail
                             </a>
                         </div>

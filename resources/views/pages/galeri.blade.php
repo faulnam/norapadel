@@ -116,12 +116,13 @@
         border-radius: var(--radius);
         overflow: hidden;
         cursor: pointer;
+        background: var(--gray-light);
     }
     
     .gallery-item img {
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        object-fit: contain;
         transition: var(--transition);
     }
     
