@@ -257,19 +257,6 @@
                         </button>
                     @endif
 
-                    @if(config('services.pakasir.sandbox'))
-                    <!-- Sandbox Mode: Simulate Payment Button -->
-                    <div class="mt-3 p-3 bg-warning bg-opacity-10 border border-warning rounded">
-                        <p class="text-warning small mb-2">
-                            <i class="fas fa-exclamation-triangle me-1"></i>
-                            <strong>Mode Sandbox</strong> - QR code tidak dapat di-scan dengan e-wallet sungguhan
-                        </p>
-                        <button type="button" class="btn btn-warning btn-sm" id="simulatePaymentBtn" onclick="simulatePayment()">
-                            <i class="fas fa-play me-1"></i>Simulasi Pembayaran Berhasil
-                        </button>
-                    </div>
-                    @endif
-
                     <div class="checking-status">
                         <i class="fas fa-sync-alt"></i>
                         Memeriksa status pembayaran...
