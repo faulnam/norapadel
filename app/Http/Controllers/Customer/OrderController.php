@@ -136,7 +136,8 @@ class OrderController extends Controller
 
             DB::commit();
 
-            return redirect()->route('customer.orders.show', $order)
+            // Redirect to payment page instead of order detail
+            return redirect()->route('customer.payment.show', $order)
                 ->with('success', 'Pesanan berhasil dibuat. Silakan lakukan pembayaran.');
 
         } catch (\Exception $e) {

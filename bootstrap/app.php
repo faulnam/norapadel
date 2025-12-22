@@ -17,6 +17,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'courier' => \App\Http\Middleware\CourierMiddleware::class,
             'active' => \App\Http\Middleware\CheckActiveUser::class,
         ]);
+        
+        // Exclude webhook from CSRF verification
+        $middleware->validateCsrfTokens(except: [
+            'webhook/pakasir',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

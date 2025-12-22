@@ -14,12 +14,14 @@ use App\Http\Controllers\Admin\UserManagementController as AdminStaff;
 use App\Http\Controllers\Customer\ProductController as CustomerProduct;
 use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Customer\OrderController as CustomerOrder;
+use App\Http\Controllers\Customer\PaymentController;
 use App\Http\Controllers\Customer\ProfileController;
 use App\Http\Controllers\Customer\TestimonialController as CustomerTestimonial;
 use App\Http\Controllers\Courier\DashboardController as CourierDashboard;
 use App\Http\Controllers\Courier\DeliveryController as CourierDelivery;
 use App\Http\Controllers\Courier\ProfileController as CourierProfile;
 use App\Http\Controllers\Courier\NotificationController as CourierNotification;
+use App\Http\Controllers\PakasirWebhookController;
 use Illuminate\Support\Facades\Route;
 
 // Public Pages (Guest)
@@ -39,6 +41,9 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
+
+// Pakasir Webhook (no auth required)
+Route::post('/webhook/pakasir', [PakasirWebhookController::class, 'handleWebhook'])->name('webhook.pakasir');
 
 // Admin Routes
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
@@ -153,6 +158,15 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'customer'])->
     Route::post('/orders/{order}/payment', [CustomerOrder::class, 'uploadPayment'])->name('orders.upload-payment');
     Route::patch('/orders/{order}/cancel', [CustomerOrder::class, 'cancel'])->name('orders.cancel');
     Route::patch('/orders/{order}/confirm', [CustomerOrder::class, 'confirmReceived'])->name('orders.confirm');
+    
+    // Payment Gateway (Pakasir)
+    Route::get('/payment/{order}', [PaymentController::class, 'show'])->name('payment.show');
+    Route::post('/payment/{order}/process', [PaymentController::class, 'process'])->name('payment.process');
+    Route::get('/payment/{order}/waiting', [PaymentController::class, 'waiting'])->name('payment.waiting');
+    Route::get('/payment/{order}/check-status', [PaymentController::class, 'checkStatus'])->name('payment.check-status');
+    Route::post('/payment/{order}/simulate', [PaymentController::class, 'simulatePayment'])->name('payment.simulate');
+    Route::get('/payment/{order}/redirect', [PaymentController::class, 'redirect'])->name('payment.redirect');
+    Route::get('/payment/{order}/callback', [PakasirWebhookController::class, 'handleCallback'])->name('payment.callback');
     
     // Testimonials
     Route::post('/orders/{order}/testimonial', [CustomerTestimonial::class, 'store'])->name('testimonials.store');

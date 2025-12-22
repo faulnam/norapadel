@@ -734,9 +734,27 @@
                 @if($order->canUploadPaymentProof())
                     <div class="detail-card">
                         <div class="detail-card-body p-0">
-                            <div class="upload-box" style="border-radius: 12px;">
+                            <!-- Payment Gateway Option -->
+                            <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 1px solid #bbf7d0; border-radius: 12px 12px 0 0; padding: 1rem 1.25rem;">
+                                <div style="font-size: 14px; font-weight: 600; color: #166534; margin-bottom: 8px;">
+                                    <i class="fas fa-bolt me-1"></i>Bayar Online (Lebih Cepat)
+                                </div>
+                                <p style="font-size: 13px; color: #166534; margin-bottom: 12px;">
+                                    Bayar langsung via QRIS atau Virtual Account
+                                </p>
+                                <a href="{{ route('customer.payment.show', $order) }}" class="btn btn-success w-100">
+                                    <i class="fas fa-credit-card me-2"></i>Bayar Sekarang
+                                </a>
+                            </div>
+                            
+                            <div class="text-center py-2" style="background: #f9fafb; font-size: 12px; color: #6b7280;">
+                                atau
+                            </div>
+                            
+                            <!-- Manual Transfer Option -->
+                            <div class="upload-box" style="border-radius: 0 0 12px 12px; border-top: none;">
                                 <div style="font-size: 14px; font-weight: 600; color: #92400e; margin-bottom: 12px;">
-                                    <i class="fas fa-upload me-1"></i>Upload Bukti Pembayaran
+                                    <i class="fas fa-upload me-1"></i>Upload Bukti Transfer Manual
                                 </div>
                                 <div class="bank-info">
                                     <div style="font-size: 12px; color: #6b7280; margin-bottom: 8px;">Transfer ke:</div>
@@ -754,8 +772,8 @@
                                 <form action="{{ route('customer.orders.upload-payment', $order) }}" method="POST" enctype="multipart/form-data">
                                     @csrf
                                     <input type="file" class="form-control mb-2" name="payment_proof" accept="image/*" required style="font-size: 13px;">
-                                    <button type="submit" class="btn btn-action btn-primary-custom w-100">
-                                        <i class="fas fa-upload me-1"></i>Upload
+                                    <button type="submit" class="btn btn-action btn-outline-custom w-100">
+                                        <i class="fas fa-upload me-1"></i>Upload Bukti
                                     </button>
                                 </form>
                             </div>
