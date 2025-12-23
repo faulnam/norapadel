@@ -649,6 +649,19 @@
                 display: none !important;
             }
             
+            /* Fixed top navbar on mobile */
+            .top-navbar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 1040;
+            }
+            
+            .main-content {
+                padding-top: 60px;
+            }
+            
             body {
                 padding-bottom: 70px;
             }

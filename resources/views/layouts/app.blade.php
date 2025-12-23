@@ -459,6 +459,17 @@
         @media (max-width: 991.98px) {
             .navbar {
                 padding: 0.625rem 0;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 1040;
+                background: var(--white);
+            }
+            
+            /* Add padding to body to account for fixed navbar */
+            body {
+                padding-top: 60px;
             }
             
             .navbar-brand img {
@@ -477,6 +488,8 @@
                 margin-top: 0.75rem;
                 box-shadow: var(--shadow-lg);
                 border: 1px solid var(--gray-light);
+                max-height: calc(100vh - 80px);
+                overflow-y: auto;
             }
             
             .navbar-nav {
