@@ -132,6 +132,9 @@ Route::prefix('courier')->name('courier.')->middleware(['auth', 'courier'])->gro
     Route::post('/deliveries/{order}/delivered', [CourierDelivery::class, 'markDelivered'])->name('deliveries.delivered');
     Route::post('/deliveries/{order}/verify-cod', [CourierDelivery::class, 'verifyCod'])->name('deliveries.verify-cod');
     
+    // Location Tracking
+    Route::post('/location/update', [CourierDelivery::class, 'updateLocation'])->name('location.update');
+    
     // Profile
     Route::get('/profile', [CourierProfile::class, 'show'])->name('profile');
     Route::put('/profile', [CourierProfile::class, 'update'])->name('profile.update');
@@ -177,6 +180,10 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'customer'])->
     
     // Testimonials
     Route::post('/orders/{order}/testimonial', [CustomerTestimonial::class, 'store'])->name('testimonials.store');
+    Route::put('/testimonials/{testimonial}', [CustomerTestimonial::class, 'update'])->name('testimonials.update');
+    
+    // Order Tracking
+    Route::get('/orders/{order}/tracking', [CustomerOrder::class, 'getTracking'])->name('orders.tracking');
     
     // Profile
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');

@@ -534,6 +534,104 @@
                 padding: 1px 4px;
             }
         }
+        
+        /* Mobile Bottom Navigation */
+        .mobile-bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            border-top: 1px solid #e5e7eb;
+            padding: 0.5rem 0;
+            padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
+            z-index: 1050;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+        }
+        
+        .mobile-bottom-nav-inner {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .mobile-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--gray);
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            transition: var(--transition);
+            position: relative;
+            min-width: 60px;
+        }
+        
+        .mobile-nav-item:hover,
+        .mobile-nav-item.active {
+            color: var(--primary);
+        }
+        
+        .mobile-nav-item.active {
+            background: var(--primary-light);
+        }
+        
+        .mobile-nav-item i {
+            font-size: 1.25rem;
+            margin-bottom: 0.125rem;
+        }
+        
+        .mobile-nav-item span {
+            font-size: 0.625rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        
+        .mobile-nav-badge {
+            position: absolute;
+            top: -2px;
+            right: 8px;
+            background: var(--accent);
+            color: white;
+            font-size: 0.55rem;
+            min-width: 16px;
+            height: 16px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+        
+        @media (max-width: 991.98px) {
+            .mobile-bottom-nav {
+                display: block;
+            }
+            
+            /* Hide default navbar toggler menu on mobile */
+            .navbar-toggler {
+                display: none !important;
+            }
+            
+            .navbar-collapse {
+                display: none !important;
+            }
+            
+            /* Add padding to body to account for bottom nav */
+            body {
+                padding-bottom: 70px;
+            }
+            
+            /* Hide footer on mobile for cleaner look */
+            .footer {
+                padding-bottom: 80px;
+            }
+        }
     </style>
     
     @stack('styles')
@@ -740,6 +838,79 @@
             <hr style="border-color: rgba(255,255,255,0.1); margin: 2rem 0 1rem;">
         </div>
     </footer>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <div class="mobile-bottom-nav-inner">
+            <a href="{{ route('home') }}" class="mobile-nav-item {{ request()->routeIs('home') ? 'active' : '' }}">
+                <i class="fas fa-home"></i>
+                
+            </a>
+            <a href="{{ route('produk.index') }}" class="mobile-nav-item {{ request()->routeIs('produk.*') ? 'active' : '' }}">
+                <i class="fas fa-box"></i>
+               
+            </a>
+            @auth
+                @if(auth()->user()->isCustomer())
+                    <a href="{{ route('customer.cart.index') }}" class="mobile-nav-item {{ request()->routeIs('customer.cart.*') ? 'active' : '' }}">
+                        <i class="fas fa-shopping-cart"></i>
+                        
+                        @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
+                        @if($cartCount > 0)
+                            <span class="mobile-nav-badge">{{ $cartCount > 99 ? '99+' : $cartCount }}</span>
+                        @endif
+                    </a>
+                    <a href="{{ route('customer.orders.index') }}" class="mobile-nav-item {{ request()->routeIs('customer.orders.*') ? 'active' : '' }}">
+                        <i class="fas fa-receipt"></i>
+                       
+                    </a>
+                    <a href="{{ route('customer.profile.index') }}" class="mobile-nav-item {{ request()->routeIs('customer.profile.*') ? 'active' : '' }}">
+                        <i class="fas fa-user"></i>
+                        
+                    </a>
+                @elseif(auth()->user()->isAdmin())
+                    <a href="{{ route('admin.dashboard') }}" class="mobile-nav-item">
+                        <i class="fas fa-tachometer-alt"></i>
+                        
+                    </a>
+                    <a href="{{ route('galeri') }}" class="mobile-nav-item {{ request()->routeIs('galeri') ? 'active' : '' }}">
+                        <i class="fas fa-images"></i>
+                        
+                    </a>
+                    <a href="{{ route('testimoni') }}" class="mobile-nav-item {{ request()->routeIs('testimoni') ? 'active' : '' }}">
+                        <i class="fas fa-star"></i>
+                        
+                    </a>
+                @elseif(auth()->user()->isCourier())
+                    <a href="{{ route('courier.dashboard') }}" class="mobile-nav-item">
+                        <i class="fas fa-motorcycle"></i>
+                        
+                    </a>
+                    <a href="{{ route('galeri') }}" class="mobile-nav-item {{ request()->routeIs('galeri') ? 'active' : '' }}">
+                        <i class="fas fa-images"></i>
+                        
+                    </a>
+                    <a href="{{ route('testimoni') }}" class="mobile-nav-item {{ request()->routeIs('testimoni') ? 'active' : '' }}">
+                        <i class="fas fa-star"></i>
+                        
+                    </a>
+                @endif
+            @else
+                <a href="{{ route('galeri') }}" class="mobile-nav-item {{ request()->routeIs('galeri') ? 'active' : '' }}">
+                    <i class="fas fa-images"></i>
+                    
+                </a>
+                <a href="{{ route('testimoni') }}" class="mobile-nav-item {{ request()->routeIs('testimoni') ? 'active' : '' }}">
+                    <i class="fas fa-star"></i>
+                    
+                </a>
+                <a href="{{ route('login') }}" class="mobile-nav-item {{ request()->routeIs('login') ? 'active' : '' }}">
+                    <i class="fas fa-sign-in-alt"></i>
+                    
+                </a>
+            @endauth
+        </div>
+    </nav>
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

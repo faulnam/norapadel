@@ -662,5 +662,90 @@ document.getElementById('deliveredModal')?.addEventListener('hidden.bs.modal', f
     document.getElementById('startDeliveryCamera').classList.remove('d-none');
     document.getElementById('captureDeliveryPhoto').classList.add('d-none');
 });
+
+// ==========================================
+// REAL-TIME LOCATION TRACKING FOR COURIER
+// ==========================================
+@if($order->status === \App\Models\Order::STATUS_ON_DELIVERY)
+let locationWatchId = null;
+let lastLocationUpdate = 0;
+const UPDATE_INTERVAL = 5000; // Update every 5 seconds
+
+function startLocationTracking() {
+    if (!navigator.geolocation) {
+        console.log('Geolocation is not supported by this browser.');
+        return;
+    }
+    
+    // Request permission and start watching position
+    locationWatchId = navigator.geolocation.watchPosition(
+        function(position) {
+            const now = Date.now();
+            // Only send update every 5 seconds to reduce server load
+            if (now - lastLocationUpdate >= UPDATE_INTERVAL) {
+                sendLocationUpdate(position);
+                lastLocationUpdate = now;
+            }
+        },
+        function(error) {
+            console.log('Geolocation error:', error.message);
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+        }
+    );
+    
+    console.log('Location tracking started for order #{{ $order->order_number }}');
+}
+
+function sendLocationUpdate(position) {
+    const data = {
+        order_id: {{ $order->id }},
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+        heading: position.coords.heading || 0,
+        speed: position.coords.speed || 0
+    };
+    
+    fetch('{{ route("courier.location.update") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            console.log('Location updated:', data.latitude, data.longitude);
+        }
+    })
+    .catch(error => {
+        console.log('Failed to send location:', error);
+    });
+}
+
+function stopLocationTracking() {
+    if (locationWatchId !== null) {
+        navigator.geolocation.clearWatch(locationWatchId);
+        locationWatchId = null;
+        console.log('Location tracking stopped');
+    }
+}
+
+// Start tracking when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    startLocationTracking();
+});
+
+// Stop tracking when page is closed
+window.addEventListener('beforeunload', function() {
+    stopLocationTracking();
+});
+@endif
 </script>
 @endpush

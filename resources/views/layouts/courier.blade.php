@@ -639,6 +639,19 @@
             .sidebar-backdrop.show {
                 display: block;
             }
+            
+            /* Hide sidebar completely on mobile, use bottom nav instead */
+            .sidebar {
+                display: none;
+            }
+            
+            .sidebar-toggle {
+                display: none !important;
+            }
+            
+            body {
+                padding-bottom: 70px;
+            }
         }
         
         /* Toggle Button */
@@ -651,8 +664,87 @@
             font-size: 1.25rem;
         }
         
-        @media (max-width: 991.98px) {
+        @media (min-width: 992px) {
             .sidebar-toggle {
+                display: none;
+            }
+        }
+        
+        /* Mobile Bottom Navigation */
+        .mobile-bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            border-top: 1px solid var(--border-color);
+            padding: 0.5rem 0;
+            padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
+            z-index: 1050;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+        }
+        
+        .mobile-bottom-nav-inner {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .mobile-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--gray);
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            transition: var(--transition);
+            position: relative;
+            min-width: 60px;
+        }
+        
+        .mobile-nav-item:hover,
+        .mobile-nav-item.active {
+            color: var(--primary);
+        }
+        
+        .mobile-nav-item.active {
+            background: var(--primary-light);
+        }
+        
+        .mobile-nav-item i {
+            font-size: 1.25rem;
+            margin-bottom: 0.125rem;
+        }
+        
+        .mobile-nav-item span {
+            font-size: 0.625rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        
+        .mobile-nav-badge {
+            position: absolute;
+            top: -2px;
+            right: 8px;
+            background: #dc2626;
+            color: white;
+            font-size: 0.55rem;
+            min-width: 16px;
+            height: 16px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+        
+        @media (max-width: 991.98px) {
+            .mobile-bottom-nav {
                 display: block;
             }
         }
@@ -816,6 +908,34 @@
             @yield('content')
         </div>
     </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <div class="mobile-bottom-nav-inner">
+            <a href="{{ route('courier.dashboard') }}" class="mobile-nav-item {{ request()->routeIs('courier.dashboard') ? 'active' : '' }}">
+                <i class="fas fa-home"></i>
+                
+            </a>
+            <a href="{{ route('courier.deliveries.index') }}" class="mobile-nav-item {{ request()->routeIs('courier.deliveries.index') || request()->routeIs('courier.deliveries.show') ? 'active' : '' }}">
+                <i class="fas fa-truck"></i>
+                
+                @php
+                    $activeDeliveries = auth()->user()->activeDeliveries()->count();
+                @endphp
+                @if($activeDeliveries > 0)
+                    <span class="mobile-nav-badge">{{ $activeDeliveries }}</span>
+                @endif
+            </a>
+            <a href="{{ route('courier.deliveries.history') }}" class="mobile-nav-item {{ request()->routeIs('courier.deliveries.history') ? 'active' : '' }}">
+                <i class="fas fa-history"></i>
+                
+            </a>
+            <a href="{{ route('courier.profile') }}" class="mobile-nav-item {{ request()->routeIs('courier.profile') ? 'active' : '' }}">
+                <i class="fas fa-user"></i>
+                
+            </a>
+        </div>
+    </nav>
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

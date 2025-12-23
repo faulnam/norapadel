@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Courier;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\User;
+use App\Models\CourierLocation;
 use App\Notifications\OrderStatusChanged;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
@@ -239,6 +240,53 @@ class DeliveryController extends Controller
         $totalEarnings = $stats->sum('shipping_cost');
 
         return view('courier.deliveries.history', compact('deliveries', 'totalDelivered', 'totalEarnings'));
+    }
+
+    /**
+     * Update courier location
+     */
+    public function updateLocation(Request $request)
+    {
+        $validated = $request->validate([
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+            'accuracy' => 'nullable|numeric',
+            'speed' => 'nullable|numeric',
+            'heading' => 'nullable|numeric',
+            'order_id' => 'nullable|exists:orders,id',
+        ]);
+
+        $user = auth()->user();
+
+        // If order_id provided, verify courier is assigned to that order
+        if (isset($validated['order_id'])) {
+            $order = Order::find($validated['order_id']);
+            if (!$order || $order->courier_id !== $user->id) {
+                return response()->json(['error' => 'Not assigned to this order'], 403);
+            }
+        }
+
+        // Deactivate old locations for this courier
+        CourierLocation::where('user_id', $user->id)
+            ->where('is_active', true)
+            ->update(['is_active' => false]);
+
+        // Create new location record
+        $location = CourierLocation::create([
+            'user_id' => $user->id,
+            'order_id' => $validated['order_id'] ?? null,
+            'latitude' => $validated['latitude'],
+            'longitude' => $validated['longitude'],
+            'accuracy' => $validated['accuracy'] ?? null,
+            'speed' => $validated['speed'] ?? null,
+            'heading' => $validated['heading'] ?? null,
+            'is_active' => true,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'location' => $location,
+        ]);
     }
     
     /**

@@ -67,6 +67,15 @@
                         <small class="text-muted">Total Ditugaskan</small>
                     </div>
                 </div>
+                <!-- Tombol Logout Mobile -->
+                <div class="mt-4 d-lg-none">
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-danger w-100">
+                            <i class="fas fa-sign-out-alt me-2"></i>Keluar
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

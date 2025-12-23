@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\User;
 use App\Models\ShippingDiscount;
+use App\Models\CourierLocation;
 use App\Notifications\NewOrderNotification;
 use App\Notifications\PaymentUploadedNotification;
 use Illuminate\Http\Request;
@@ -316,5 +317,78 @@ class OrderController extends Controller
         $order->completeOrder();
 
         return back()->with('success', 'Pesanan dikonfirmasi selesai. Terima kasih telah berbelanja!');
+    }
+
+    /**
+     * Get tracking data for order (AJAX)
+     */
+    public function getTracking(Order $order)
+    {
+        // Check if user is the order owner
+        if ($order->user_id !== auth()->id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        // Only allow tracking when order is being delivered
+        if (!in_array($order->status, [Order::STATUS_ON_DELIVERY])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tracking hanya tersedia saat pesanan sedang dikirim',
+            ]);
+        }
+
+        if (!$order->courier_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Belum ada kurir yang ditugaskan',
+            ]);
+        }
+
+        $location = CourierLocation::where('order_id', $order->id)
+            ->where('is_active', true)
+            ->latest()
+            ->first();
+
+        if (!$location) {
+            // Try to get courier's last known location
+            $location = CourierLocation::where('user_id', $order->courier_id)
+                ->where('is_active', true)
+                ->latest()
+                ->first();
+        }
+
+        if (!$location) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lokasi kurir belum tersedia',
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'location' => [
+                'latitude' => $location->latitude,
+                'longitude' => $location->longitude,
+                'accuracy' => $location->accuracy,
+                'speed' => $location->speed,
+                'heading' => $location->heading,
+                'updated_at' => $location->updated_at->toISOString(),
+                'updated_ago' => $location->updated_at->diffForHumans(),
+            ],
+            'destination' => [
+                'latitude' => (float) $order->shipping_latitude,
+                'longitude' => (float) $order->shipping_longitude,
+                'address' => $order->shipping_address,
+            ],
+            'store' => [
+                'latitude' => (float) config('branding.store_latitude', -7.4674),
+                'longitude' => (float) config('branding.store_longitude', 112.5274),
+            ],
+            'courier' => [
+                'name' => $order->courier->name,
+                'phone' => $order->courier->phone,
+                'avatar' => $order->courier->avatar_url,
+            ],
+        ]);
     }
 }

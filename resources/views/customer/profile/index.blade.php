@@ -59,6 +59,15 @@
                         <span>{{ $user->created_at->format('d M Y') }}</span>
                     </li>
                 </ul>
+                <!-- Tombol Logout Mobile -->
+                <div class="card-body d-lg-none">
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-danger w-100">
+                            <i class="fas fa-sign-out-alt me-2"></i>Keluar
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
         

@@ -545,8 +545,10 @@
                                     @endif
                                 </div>
                                 @if($order->status === \App\Models\Order::STATUS_ON_DELIVERY)
-                                    <div class="mt-2 pt-2 border-top" style="border-color: #bbf7d0 !important; font-size: 13px; color: #166534;">
-                                        <i class="fas fa-truck me-1"></i> Pesanan sedang dalam perjalanan
+                                    <div class="mt-2 pt-2 border-top" style="border-color: #bbf7d0 !important;">
+                                        <button type="button" class="btn btn-success btn-sm w-100" id="btnOpenTracking">
+                                            <i class="fas fa-map-marker-alt me-1"></i> Lacak Posisi Kurir
+                                        </button>
                                     </div>
                                 @endif
                             </div>
@@ -695,15 +697,54 @@
                     <div class="detail-card">
                         <div class="detail-card-header">
                             <span><i class="fas fa-star"></i>Testimoni Anda</span>
+                            <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#editTestimonial">
+                                <i class="fas fa-edit me-1"></i>Edit
+                            </button>
                         </div>
                         <div class="detail-card-body">
-                            <div class="mb-2">{!! $order->testimonial->stars !!}</div>
-                            <p class="mb-2" style="font-size: 14px;">{{ $order->testimonial->content }}</p>
-                            @if($order->testimonial->is_approved)
-                                <small style="color: #16a34a;"><i class="fas fa-check me-1"></i>Ditampilkan di website</small>
-                            @else
-                                <small class="text-muted"><i class="fas fa-clock me-1"></i>Menunggu persetujuan</small>
-                            @endif
+                            <!-- Display existing testimonial -->
+                            <div id="showTestimonial">
+                                <div class="mb-2">{!! $order->testimonial->stars !!}</div>
+                                <p class="mb-2" style="font-size: 14px;">{{ $order->testimonial->content }}</p>
+                                @if($order->testimonial->is_approved)
+                                    <small style="color: #16a34a;"><i class="fas fa-check me-1"></i>Ditampilkan di website</small>
+                                @else
+                                    <small class="text-muted"><i class="fas fa-clock me-1"></i>Menunggu persetujuan</small>
+                                @endif
+                            </div>
+                            
+                            <!-- Edit form (collapsed) -->
+                            <div class="collapse mt-3" id="editTestimonial">
+                                <hr class="my-3">
+                                <form action="{{ route('customer.testimonials.update', $order->testimonial) }}" method="POST">
+                                    @csrf
+                                    @method('PUT')
+                                    <div class="mb-3">
+                                        <label class="form-label" style="font-size: 13px; font-weight: 500;">Rating</label>
+                                        <div class="rating">
+                                            @for($i = 5; $i >= 1; $i--)
+                                                <input type="radio" name="rating" value="{{ $i }}" id="editStar{{ $i }}" {{ $order->testimonial->rating == $i ? 'checked' : '' }}>
+                                                <label for="editStar{{ $i }}"><i class="fas fa-star"></i></label>
+                                            @endfor
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" style="font-size: 13px; font-weight: 500;">Testimoni</label>
+                                        <textarea class="form-control" name="content" rows="3" style="font-size: 14px;" required>{{ $order->testimonial->content }}</textarea>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <button type="submit" class="btn btn-action btn-primary-custom">
+                                            <i class="fas fa-save me-1"></i>Simpan Perubahan
+                                        </button>
+                                        <button type="button" class="btn btn-action btn-outline-custom" data-bs-toggle="collapse" data-bs-target="#editTestimonial">
+                                            Batal
+                                        </button>
+                                    </div>
+                                    <div class="alert alert-warning mt-3 py-2" style="font-size: 12px;">
+                                        <i class="fas fa-info-circle me-1"></i>Testimoni yang diedit akan membutuhkan persetujuan admin ulang.
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 @endif
@@ -814,4 +855,420 @@
         </div>
     </div>
 </div>
+
+<!-- Tracking Popup -->
+@if($order->status === \App\Models\Order::STATUS_ON_DELIVERY && $order->courier)
+<div id="trackingPopup" class="tracking-popup" style="display: none;">
+    <div class="tracking-popup-content">
+        <!-- Header -->
+        <div class="tracking-popup-header">
+            <div class="d-flex align-items-center gap-2">
+                <i class="fas fa-motorcycle"></i>
+                <span class="fw-bold">Lacak Kurir</span>
+            </div>
+            <button type="button" class="tracking-popup-close" id="btnCloseTracking">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <!-- Map -->
+        <div id="trackingMap"></div>
+        
+        <!-- Info -->
+        <div class="tracking-popup-info">
+            <div class="tracking-stats">
+                <div class="tracking-stat">
+                    <i class="fas fa-route"></i>
+                    <span id="distanceText">-- km</span>
+                </div>
+                <div class="tracking-stat">
+                    <i class="fas fa-clock"></i>
+                    <span id="etaText">-- mnt</span>
+                </div>
+            </div>
+            <div class="tracking-courier">
+                <img src="{{ $order->courier->avatar_url }}" alt="{{ $order->courier->name }}">
+                <div class="tracking-courier-info">
+                    <div class="fw-semibold">{{ $order->courier->name }}</div>
+                    <small id="lastUpdateText">Memuat...</small>
+                </div>
+                @if($order->courier->phone)
+                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $order->courier->phone) }}" class="tracking-wa-btn" target="_blank">
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+                @endif
+            </div>
+        </div>
+    </div>
+</div>
+@endif
 @endsection
+
+@if($order->status === \App\Models\Order::STATUS_ON_DELIVERY && $order->courier)
+@push('styles')
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+    /* Tracking Popup Styles */
+    .tracking-popup {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1050;
+        animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .tracking-popup-content {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        overflow: hidden;
+        width: 340px;
+    }
+    .tracking-popup-header {
+        background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+        color: white;
+        padding: 12px 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .tracking-popup-close {
+        background: rgba(255,255,255,0.2);
+        border: none;
+        color: white;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .tracking-popup-close:hover {
+        background: rgba(255,255,255,0.3);
+    }
+    #trackingMap {
+        height: 200px;
+        width: 100%;
+    }
+    .tracking-popup-info {
+        padding: 12px;
+        background: #f9fafb;
+    }
+    .tracking-stats {
+        display: flex;
+        justify-content: center;
+        gap: 24px;
+        margin-bottom: 12px;
+    }
+    .tracking-stat {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #16a34a;
+    }
+    .tracking-stat i {
+        color: #9ca3af;
+        font-size: 12px;
+    }
+    .tracking-courier {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: white;
+        padding: 10px 12px;
+        border-radius: 10px;
+    }
+    .tracking-courier img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #16a34a;
+    }
+    .tracking-courier-info {
+        flex: 1;
+        font-size: 13px;
+    }
+    .tracking-courier-info small {
+        color: #6b7280;
+        font-size: 11px;
+    }
+    .tracking-wa-btn {
+        width: 36px;
+        height: 36px;
+        background: #25d366;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    .tracking-wa-btn:hover {
+        background: #128c7e;
+        color: white;
+        transform: scale(1.1);
+    }
+    
+    /* Map Markers */
+    .leaflet-control-attribution {
+        font-size: 8px !important;
+    }
+    .courier-marker, .destination-marker {
+        background: none;
+        border: none;
+    }
+    .courier-marker-inner {
+        background: #16a34a;
+        color: white;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        box-shadow: 0 3px 12px rgba(22, 163, 74, 0.4);
+        border: 2px solid white;
+        animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.4); }
+        70% { box-shadow: 0 0 0 12px rgba(22, 163, 74, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
+    }
+    .destination-marker-inner {
+        background: #dc2626;
+        color: white;
+        width: 28px;
+        height: 28px;
+        border-radius: 50% 50% 50% 0;
+        transform: rotate(-45deg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        box-shadow: 0 3px 10px rgba(220, 38, 38, 0.3);
+    }
+    .destination-marker-inner i {
+        transform: rotate(45deg);
+    }
+    
+    /* Mobile */
+    @media (max-width: 575.98px) {
+        .tracking-popup {
+            bottom: 70px;
+            right: 10px;
+            left: 10px;
+        }
+        .tracking-popup-content {
+            width: 100%;
+        }
+        #trackingMap {
+            height: 180px;
+        }
+    }
+</style>
+@endpush
+
+@push('scripts')
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+let trackingMap = null;
+let courierMarker = null;
+let destinationMarker = null;
+let routeLine = null;
+let trackingInterval = null;
+let isPopupOpen = false;
+
+const ORDER_ID = {{ $order->id }};
+const DESTINATION = {
+    lat: {{ $order->shipping_latitude ?? -7.4674 }},
+    lng: {{ $order->shipping_longitude ?? 112.5274 }}
+};
+
+// Open tracking popup
+document.getElementById('btnOpenTracking').addEventListener('click', function() {
+    document.getElementById('trackingPopup').style.display = 'block';
+    isPopupOpen = true;
+    
+    setTimeout(() => {
+        if (!trackingMap) {
+            initTrackingMap();
+        } else {
+            trackingMap.invalidateSize();
+        }
+        startTracking();
+    }, 100);
+});
+
+// Close tracking popup
+document.getElementById('btnCloseTracking').addEventListener('click', function() {
+    document.getElementById('trackingPopup').style.display = 'none';
+    isPopupOpen = false;
+    stopTracking();
+});
+
+function initTrackingMap() {
+    trackingMap = L.map('trackingMap', {
+        zoomControl: false
+    }).setView([DESTINATION.lat, DESTINATION.lng], 15);
+    
+    // Add zoom control to bottom right
+    L.control.zoom({ position: 'bottomright' }).addTo(trackingMap);
+    
+    // Use cleaner map tiles
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '© OSM',
+        maxZoom: 19
+    }).addTo(trackingMap);
+    
+    // Destination marker (customer location)
+    const destIcon = L.divIcon({
+        html: '<div class="destination-marker-inner"><i class="fas fa-home"></i></div>',
+        className: 'destination-marker',
+        iconSize: [28, 28],
+        iconAnchor: [14, 28]
+    });
+    destinationMarker = L.marker([DESTINATION.lat, DESTINATION.lng], { icon: destIcon }).addTo(trackingMap);
+}
+
+function startTracking() {
+    fetchLocation();
+    trackingInterval = setInterval(fetchLocation, 5000);
+}
+
+function stopTracking() {
+    if (trackingInterval) {
+        clearInterval(trackingInterval);
+        trackingInterval = null;
+    }
+}
+
+function fetchLocation() {
+    if (!isPopupOpen) return;
+    
+    fetch('{{ route("customer.orders.tracking", $order) }}')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.location) {
+                updateCourierPosition(data.location);
+                document.getElementById('lastUpdateText').textContent = 'Aktif • ' + data.location.updated_ago;
+            } else {
+                document.getElementById('lastUpdateText').textContent = data.message || 'Menunggu lokasi...';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('lastUpdateText').textContent = 'Gagal memuat';
+        });
+}
+
+function updateCourierPosition(location) {
+    const lat = parseFloat(location.latitude);
+    const lng = parseFloat(location.longitude);
+    
+    // Create courier marker icon
+    const courierIcon = L.divIcon({
+        html: '<div class="courier-marker-inner"><i class="fas fa-motorcycle"></i></div>',
+        className: 'courier-marker',
+        iconSize: [32, 32],
+        iconAnchor: [16, 16]
+    });
+    
+    if (courierMarker) {
+        courierMarker.setLatLng([lat, lng]);
+    } else {
+        courierMarker = L.marker([lat, lng], { icon: courierIcon }).addTo(trackingMap);
+    }
+    
+    // Get route from OSRM
+    getRoute(lat, lng);
+}
+
+function getRoute(courierLat, courierLng) {
+    const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${courierLng},${courierLat};${DESTINATION.lng},${DESTINATION.lat}?overview=full&geometries=geojson`;
+    
+    fetch(osrmUrl)
+        .then(response => response.json())
+        .then(data => {
+            if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
+                const route = data.routes[0];
+                const coords = route.geometry.coordinates.map(c => [c[1], c[0]]);
+                
+                if (routeLine) {
+                    trackingMap.removeLayer(routeLine);
+                }
+                
+                routeLine = L.polyline(coords, {
+                    color: '#16a34a',
+                    weight: 4,
+                    opacity: 0.8,
+                    lineCap: 'round',
+                    lineJoin: 'round'
+                }).addTo(trackingMap);
+                
+                const distanceKm = (route.distance / 1000).toFixed(1);
+                const durationMin = Math.round(route.duration / 60);
+                
+                document.getElementById('distanceText').textContent = distanceKm + ' km';
+                document.getElementById('etaText').textContent = durationMin + ' mnt';
+                
+                const bounds = L.latLngBounds(coords);
+                trackingMap.fitBounds(bounds, { padding: [30, 30] });
+            } else {
+                drawStraightLine(courierLat, courierLng);
+            }
+        })
+        .catch(error => {
+            drawStraightLine(courierLat, courierLng);
+        });
+}
+
+function drawStraightLine(courierLat, courierLng) {
+    if (routeLine) {
+        trackingMap.removeLayer(routeLine);
+    }
+    
+    routeLine = L.polyline([
+        [courierLat, courierLng],
+        [DESTINATION.lat, DESTINATION.lng]
+    ], {
+        color: '#16a34a',
+        weight: 3,
+        opacity: 0.6,
+        dashArray: '6, 6'
+    }).addTo(trackingMap);
+    
+    const distance = calculateDistance(courierLat, courierLng, DESTINATION.lat, DESTINATION.lng);
+    document.getElementById('distanceText').textContent = distance.toFixed(1) + ' km';
+    document.getElementById('etaText').textContent = '~' + Math.round(distance * 3) + ' mnt';
+    
+    const bounds = L.latLngBounds([
+        [courierLat, courierLng],
+        [DESTINATION.lat, DESTINATION.lng]
+    ]);
+    trackingMap.fitBounds(bounds, { padding: [30, 30] });
+}
+
+function calculateDistance(lat1, lng1, lat2, lng2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLng = (lng2 - lng1) * Math.PI / 180;
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+              Math.sin(dLng/2) * Math.sin(dLng/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+}
+</script>
+@endpush
+@endif
