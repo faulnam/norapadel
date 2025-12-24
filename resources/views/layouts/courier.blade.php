@@ -927,11 +927,11 @@
         <div class="mobile-bottom-nav-inner">
             <a href="{{ route('courier.dashboard') }}" class="mobile-nav-item {{ request()->routeIs('courier.dashboard') ? 'active' : '' }}">
                 <i class="fas fa-home"></i>
-                
+                <br>
             </a>
             <a href="{{ route('courier.deliveries.index') }}" class="mobile-nav-item {{ request()->routeIs('courier.deliveries.index') || request()->routeIs('courier.deliveries.show') ? 'active' : '' }}">
                 <i class="fas fa-truck"></i>
-                
+                <br>
                 @php
                     $activeDeliveries = auth()->user()->activeDeliveries()->count();
                 @endphp
@@ -941,11 +941,11 @@
             </a>
             <a href="{{ route('courier.deliveries.history') }}" class="mobile-nav-item {{ request()->routeIs('courier.deliveries.history') ? 'active' : '' }}">
                 <i class="fas fa-history"></i>
-                
+                <br>
             </a>
             <a href="{{ route('courier.profile') }}" class="mobile-nav-item {{ request()->routeIs('courier.profile') ? 'active' : '' }}">
                 <i class="fas fa-user"></i>
-                
+                <br>
             </a>
         </div>
     </nav>

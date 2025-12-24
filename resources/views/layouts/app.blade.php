@@ -747,7 +747,7 @@
                             <hr class="my-2">
                             @if(auth()->user()->isAdmin())
                                 <a class="nav-link" href="{{ route('admin.dashboard') }}">
-                                    <i class="fas fa-tachometer-alt me-2 text-primary"></i>Dashboard
+                                    <i class="fas fa-tachometer-alt me- text-primary"></i>Dashboard
                                 </a>
                             @elseif(auth()->user()->isCourier())
                                 <a class="nav-link" href="{{ route('courier.dashboard') }}">
@@ -857,17 +857,17 @@
         <div class="mobile-bottom-nav-inner">
             <a href="{{ route('home') }}" class="mobile-nav-item {{ request()->routeIs('home') ? 'active' : '' }}">
                 <i class="fas fa-home"></i>
-                
+                <br>
             </a>
             <a href="{{ route('produk.index') }}" class="mobile-nav-item {{ request()->routeIs('produk.*') ? 'active' : '' }}">
                 <i class="fas fa-box"></i>
-               
+               <br>
             </a>
             @auth
                 @if(auth()->user()->isCustomer())
                     <a href="{{ route('customer.cart.index') }}" class="mobile-nav-item {{ request()->routeIs('customer.cart.*') ? 'active' : '' }}">
                         <i class="fas fa-shopping-cart"></i>
-                        
+                        <br>
                         @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
                         @if($cartCount > 0)
                             <span class="mobile-nav-badge">{{ $cartCount > 99 ? '99+' : $cartCount }}</span>
@@ -875,51 +875,51 @@
                     </a>
                     <a href="{{ route('customer.orders.index') }}" class="mobile-nav-item {{ request()->routeIs('customer.orders.*') ? 'active' : '' }}">
                         <i class="fas fa-receipt"></i>
-                       
+                       <br>
                     </a>
                     <a href="{{ route('customer.profile.index') }}" class="mobile-nav-item {{ request()->routeIs('customer.profile.*') ? 'active' : '' }}">
                         <i class="fas fa-user"></i>
-                        
+                        <br>
                     </a>
                 @elseif(auth()->user()->isAdmin())
                     <a href="{{ route('admin.dashboard') }}" class="mobile-nav-item">
                         <i class="fas fa-tachometer-alt"></i>
-                        
+                        <br>
                     </a>
                     <a href="{{ route('galeri') }}" class="mobile-nav-item {{ request()->routeIs('galeri') ? 'active' : '' }}">
                         <i class="fas fa-images"></i>
-                        
+                        <br>
                     </a>
                     <a href="{{ route('testimoni') }}" class="mobile-nav-item {{ request()->routeIs('testimoni') ? 'active' : '' }}">
                         <i class="fas fa-star"></i>
-                        
+                        <br>
                     </a>
                 @elseif(auth()->user()->isCourier())
                     <a href="{{ route('courier.dashboard') }}" class="mobile-nav-item">
                         <i class="fas fa-motorcycle"></i>
-                        
+                        <br>
                     </a>
                     <a href="{{ route('galeri') }}" class="mobile-nav-item {{ request()->routeIs('galeri') ? 'active' : '' }}">
                         <i class="fas fa-images"></i>
-                        
+                        <br>
                     </a>
                     <a href="{{ route('testimoni') }}" class="mobile-nav-item {{ request()->routeIs('testimoni') ? 'active' : '' }}">
                         <i class="fas fa-star"></i>
-                        
+                        <br>
                     </a>
                 @endif
             @else
                 <a href="{{ route('galeri') }}" class="mobile-nav-item {{ request()->routeIs('galeri') ? 'active' : '' }}">
                     <i class="fas fa-images"></i>
-                    
+                    <br>
                 </a>
                 <a href="{{ route('testimoni') }}" class="mobile-nav-item {{ request()->routeIs('testimoni') ? 'active' : '' }}">
                     <i class="fas fa-star"></i>
-                    
+                    <br>
                 </a>
                 <a href="{{ route('login') }}" class="mobile-nav-item {{ request()->routeIs('login') ? 'active' : '' }}">
                     <i class="fas fa-sign-in-alt"></i>
-                    
+                    <br>
                 </a>
             @endauth
         </div>

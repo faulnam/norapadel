@@ -70,19 +70,7 @@
     </div>
 </section>
 
-<!-- Instagram CTA -->
-<section class="py-5 bg-gray-light">
-    <div class="container">
-        <div class="text-center">
-            <i class="fab fa-instagram fa-3x text-primary mb-3"></i>
-            <h4>Follow Instagram Kami</h4>
-            <p class="text-gray mb-3">Lihat update terbaru dan konten menarik lainnya</p>
-            <a href="#" class="btn btn-dark">
-                <i class="fab fa-instagram me-2"></i>@patah.id
-            </a>
-        </div>
-    </div>
-</section>
+
 @endsection
 
 @push('styles')
