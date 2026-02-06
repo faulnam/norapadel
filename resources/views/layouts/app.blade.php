@@ -940,6 +940,11 @@
         });
     </script>
     
+    {{-- Notification Sound Component for Customer --}}
+    @auth
+        <x-notification-sound role="customer" />
+    @endauth
+    
     @stack('scripts')
 </body>
 </html>

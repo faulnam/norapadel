@@ -26,6 +26,12 @@ class CourierAssigned extends Notification
 
     public function toDatabase(object $notifiable): array
     {
+        // Determine URL based on user role
+        $url = route('courier.orders.show', $this->order);
+        if ($notifiable->role === 'customer') {
+            $url = route('customer.orders.show', $this->order);
+        }
+
         return [
             'order_id' => $this->order->id,
             'order_number' => $this->order->order_number,
@@ -35,6 +41,8 @@ class CourierAssigned extends Notification
             'delivery_address' => $this->order->delivery_address,
             'delivery_date' => $this->order->delivery_date->format('d M Y'),
             'delivery_time' => $this->order->delivery_time,
+            'type' => 'courier_assigned',
+            'url' => $url,
         ];
     }
 

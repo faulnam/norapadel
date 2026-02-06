@@ -974,6 +974,9 @@
         }
     </script>
     
+    {{-- Notification Sound Component --}}
+    <x-notification-sound role="courier" />
+    
     @stack('scripts')
 </body>
 </html>

@@ -833,6 +833,9 @@
         }
     </script>
     
+    {{-- Notification Sound Component --}}
+    <x-notification-sound role="admin" />
+    
     @stack('scripts')
 </body>
 </html>

@@ -379,6 +379,12 @@
                                     <input type="text" id="searchAddress" placeholder="Cari alamat atau tempat..." autocomplete="off">
                                 </div>
                                 
+                                <!-- Area Layanan Warning -->
+                                <div class="alert alert-info py-2 mb-3" style="font-size: 13px; border-radius: 10px;">
+                                    <i class="fas fa-map-marker-alt me-1"></i>
+                                    <strong>Area Layanan:</strong> Sidoarjo, Mojokerto & Surabaya (maks. 40 km dari Tarik)
+                                </div>
+                                
                                 <!-- Leaflet Map -->
                                 <div id="map-container">
                                     <div id="map"></div>
@@ -415,28 +421,62 @@
                                     Jarak: <strong id="distanceText">-</strong> • 
                                     Ongkir: <strong id="shippingCostText">-</strong>
                                 </div>
+                                
+                                <!-- Out of Range Warning -->
+                                <div class="alert alert-danger py-3 mt-3" id="outOfRangeWarning" style="display: none; border-radius: 12px;">
+                                    <div class="d-flex align-items-start">
+                                        <i class="fas fa-exclamation-triangle me-2 mt-1" style="font-size: 18px;"></i>
+                                        <div>
+                                            <strong>Lokasi Di Luar Jangkauan</strong>
+                                            <p class="mb-2 mt-1" style="font-size: 13px;">
+                                                Maaf, lokasi Anda (<span id="outOfRangeDistance">0</span> km) melebihi batas area layanan kami (maks. 40 km dari Tarik, Sidoarjo).
+                                                Kami hanya melayani pengiriman di area <strong>Sidoarjo, Mojokerto, dan Surabaya</strong>.
+                                            </p>
+                                            <div class="d-flex flex-wrap gap-2">
+                                                <a href="https://shopee.co.id/kerupuk_patah" target="_blank" class="btn btn-sm btn-outline-danger">
+                                                    <i class="fab fa-shopee me-1"></i>Beli di Shopee
+                                                </a>
+                                                <a href="https://tokopedia.com/kerupukpatah" target="_blank" class="btn btn-sm btn-outline-success">
+                                                    <img src="https://assets.tokopedia.net/assets-tokopedia-lite/v2/arael/kratos/36c1015e.png" alt="Tokopedia" style="height: 14px; margin-right: 4px;">Beli di Tokopedia
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <input type="hidden" name="delivery_distance_km" id="delivery_distance_km" value="{{ old('delivery_distance_km', '0') }}">
                             <input type="hidden" name="delivery_distance_minutes" id="delivery_distance_minutes" value="{{ old('delivery_distance_minutes', '0') }}">
                             <input type="hidden" name="shipping_cost" id="shipping_cost_input" value="{{ old('shipping_cost', '0') }}">
 
-                            <!-- Info Pengiriman -->
+                            <!-- Info Pengiriman Pre-Order -->
                             @php
                                 $deliveryInfo = \App\Models\Order::calculateDeliveryDate();
+                                // Estimasi: 5 hari proses + 1 hari kirim
+                                $estimasiProses = now()->addDays(5);
+                                $estimasiSampai = now()->addDays(6);
                             @endphp
-                            <div class="schedule-box mb-3">
-                                <div class="schedule-title">
-                                    <i class="fas fa-truck me-1"></i>Informasi Pengiriman
+                            <div class="schedule-box mb-3" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-color: #f59e0b;">
+                                <div class="schedule-title" style="color: #92400e;">
+                                    <i class="fas fa-box me-1"></i>Sistem Pre-Order
                                 </div>
-                                <p class="small mb-2" style="color: #166534;">
-                                    <i class="fas fa-info-circle me-1"></i>
-                                    Pantau status pesanan Anda di halaman <strong>Pesanan Saya</strong>
-                                </p>
-                                <div class="small" style="color: #166534;">
-                                    <i class="fas fa-bell me-1"></i>
-                                    Anda akan mendapat notifikasi saat kurir ditugaskan dan pesanan dalam pengiriman
+                                <div class="small mb-2" style="color: #92400e;">
+                                    <i class="fas fa-clock me-1"></i>
+                                    <strong>Estimasi Proses:</strong> 5 hari kerja setelah pembayaran
                                 </div>
+                                <div class="small mb-2" style="color: #92400e;">
+                                    <i class="fas fa-truck me-1"></i>
+                                    <strong>Estimasi Pengiriman:</strong> 1 hari setelah proses selesai
+                                </div>
+                                <div class="small" style="color: #78350f; background: rgba(255,255,255,0.5); padding: 8px; border-radius: 8px; margin-top: 8px;">
+                                    <i class="fas fa-calendar-check me-1"></i>
+                                    <strong>Perkiraan Sampai:</strong> {{ $estimasiSampai->translatedFormat('l, d F Y') }}
+                                </div>
+                            </div>
+                            
+                            <div class="alert alert-light py-2 mb-3" style="font-size: 12px; border-radius: 10px; border: 1px solid #e5e7eb;">
+                                <i class="fas fa-bell me-1 text-success"></i>
+                                Pantau status pesanan di halaman <strong>Pesanan Saya</strong>. Anda akan mendapat notifikasi saat ada update.
                             </div>
                             <input type="hidden" name="delivery_date" value="{{ $deliveryInfo['date'] }}">
                             <input type="hidden" name="delivery_time_slot" value="{{ $deliveryInfo['time_slot'] }}">
@@ -557,6 +597,7 @@
     // Subtotal setelah diskon produk
     const SUBTOTAL = {{ $subtotal - $productDiscount }};
     const SHIPPING_RATE_PER_KM = 1500; // Rp 1.500 per KM
+    const MAX_DELIVERY_DISTANCE = 40; // Maksimal 40 KM (Sidoarjo, Mojokerto, Surabaya)
     
     // Shipping Discount Info
     @if($shippingDiscountInfo)
@@ -752,6 +793,30 @@
         
         // Round up to nearest km (minimum 1 km)
         const distanceKm = Math.max(1, Math.ceil(distance));
+
+        // Check if distance exceeds maximum delivery range
+        if (distanceKm > MAX_DELIVERY_DISTANCE) {
+            // Show out of range warning
+            document.getElementById('outOfRangeDistance').textContent = distanceKm;
+            document.getElementById('outOfRangeWarning').style.display = 'block';
+            document.getElementById('shippingInfo').style.display = 'none';
+            
+            // Disable submit button
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('warningShipping').style.display = 'block';
+            document.getElementById('warningShipping').innerHTML = '<i class="fas fa-times-circle me-1"></i>Lokasi di luar jangkauan pengiriman';
+            
+            // Reset shipping display
+            document.getElementById('displayShippingCost').textContent = '-';
+            document.getElementById('displayShippingCost').classList.add('text-muted');
+            document.getElementById('shippingDiscountRow').style.display = 'none';
+            
+            console.log('Out of range:', { distanceKm, maxDistance: MAX_DELIVERY_DISTANCE });
+            return;
+        }
+
+        // Hide out of range warning if within range
+        document.getElementById('outOfRangeWarning').style.display = 'none';
 
         // Calculate shipping cost (1 KM = Rp 1.500)
         const shippingCost = distanceKm * SHIPPING_RATE_PER_KM;

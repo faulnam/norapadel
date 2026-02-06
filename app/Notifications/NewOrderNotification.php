@@ -38,13 +38,16 @@ class NewOrderNotification extends Notification
         $isAdmin = $notifiable->isAdmin();
 
         return [
-            'title' => $isAdmin ? 'Pesanan Baru' : 'Pesanan Berhasil Dibuat',
+            'title' => $isAdmin ? '🛒 Pesanan Baru!' : 'Pesanan Berhasil Dibuat',
             'message' => $isAdmin 
-                ? "Pesanan baru #{$this->order->order_number} dari {$this->order->user->name}"
+                ? "Pesanan #{$this->order->order_number} dari {$this->order->user->name} - " . $this->order->formatted_total
                 : "Pesanan #{$this->order->order_number} berhasil dibuat. Silakan lakukan pembayaran.",
             'order_id' => $this->order->id,
             'order_number' => $this->order->order_number,
-            'type' => 'new_order',
+            'type' => 'order',
+            'url' => $isAdmin 
+                ? route('admin.orders.show', $this->order)
+                : route('customer.orders.show', $this->order),
         ];
     }
 }

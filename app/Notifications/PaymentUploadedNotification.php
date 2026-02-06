@@ -41,6 +41,7 @@ class PaymentUploadedNotification extends Notification
             'order_id' => $this->order->id,
             'order_number' => $this->order->order_number,
             'type' => 'payment_uploaded',
+            'url' => route('admin.orders.show', $this->order),
         ];
     }
 }
