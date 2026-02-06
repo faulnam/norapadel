@@ -421,28 +421,22 @@
                             <input type="hidden" name="delivery_distance_minutes" id="delivery_distance_minutes" value="{{ old('delivery_distance_minutes', '0') }}">
                             <input type="hidden" name="shipping_cost" id="shipping_cost_input" value="{{ old('shipping_cost', '0') }}">
 
-                            <!-- Jadwal Pengiriman -->
+                            <!-- Info Pengiriman -->
                             @php
                                 $deliveryInfo = \App\Models\Order::calculateDeliveryDate();
                             @endphp
                             <div class="schedule-box mb-3">
                                 <div class="schedule-title">
-                                    <i class="fas fa-clock me-1"></i>Jadwal Pengiriman
+                                    <i class="fas fa-truck me-1"></i>Informasi Pengiriman
                                 </div>
                                 <p class="small mb-2" style="color: #166534;">
-                                    Pengiriman dilakukan pukul <strong>10:00 - 16:00 WIB</strong>
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Pantau status pesanan Anda di halaman <strong>Pesanan Saya</strong>
                                 </p>
-                                @if($deliveryInfo['is_today'])
-                                    <div class="small" style="color: #166534;">
-                                        <i class="fas fa-check-circle me-1"></i>
-                                        Diantar <strong>hari ini</strong> ({{ $deliveryInfo['formatted'] }})
-                                    </div>
-                                @else
-                                    <div class="small" style="color: #166534;">
-                                        <i class="fas fa-calendar-alt me-1"></i>
-                                        Diantar <strong>besok</strong> ({{ $deliveryInfo['formatted'] }})
-                                    </div>
-                                @endif
+                                <div class="small" style="color: #166534;">
+                                    <i class="fas fa-bell me-1"></i>
+                                    Anda akan mendapat notifikasi saat kurir ditugaskan dan pesanan dalam pengiriman
+                                </div>
                             </div>
                             <input type="hidden" name="delivery_date" value="{{ $deliveryInfo['date'] }}">
                             <input type="hidden" name="delivery_time_slot" value="{{ $deliveryInfo['time_slot'] }}">

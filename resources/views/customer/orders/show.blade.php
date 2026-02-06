@@ -603,21 +603,20 @@
                     </div>
                 </div>
 
-                <!-- Jadwal Pengiriman -->
-                @if($order->delivery_date)
+                <!-- Info Pengiriman -->
                 <div class="detail-card">
                     <div class="detail-card-body p-0">
                         <div class="schedule-box" style="border-radius: 12px;">
-                            <div style="font-size: 13px; font-weight: 600; color: #92400e; margin-bottom: 8px;">
-                                <i class="fas fa-calendar-alt me-1"></i>Jadwal Pengiriman
+                            <div style="font-size: 13px; font-weight: 600; color: #166534; margin-bottom: 8px;">
+                                <i class="fas fa-truck me-1"></i>Informasi Pengiriman
                             </div>
-                            <div style="font-size: 14px; color: #78350f;">
-                                <strong>{{ $order->formatted_delivery_date }}</strong> • {{ $order->delivery_time_slot ?? '10:00 - 16:00' }} WIB
+                            <div style="font-size: 13px; color: #166534;">
+                                <i class="fas fa-bell me-1"></i>
+                                Pantau status pesanan di halaman ini. Notifikasi akan dikirim saat ada update.
                             </div>
                         </div>
                     </div>
                 </div>
-                @endif
                 
                 <!-- Order Items -->
                 <div class="detail-card">
