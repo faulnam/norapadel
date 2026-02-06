@@ -11,6 +11,7 @@ use App\Models\ShippingDiscount;
 use App\Models\CourierLocation;
 use App\Notifications\NewOrderNotification;
 use App\Notifications\PaymentUploadedNotification;
+use App\Services\WebPushService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
@@ -264,9 +265,22 @@ class OrderController extends Controller
             'payment_status' => Order::PAYMENT_PENDING,
         ]);
 
-        // Notify admin
+        // Notify admin (database notification)
         $admins = User::where('role', 'admin')->get();
         Notification::send($admins, new PaymentUploadedNotification($order));
+
+        // Send push notification to admins
+        try {
+            $webPush = app(WebPushService::class);
+            $webPush->sendToAdmins(
+                '💳 Bukti Pembayaran Baru',
+                "Customer {$order->user->name} mengupload bukti pembayaran untuk pesanan #{$order->order_number}",
+                route('admin.orders.show', $order),
+                'payment_uploaded'
+            );
+        } catch (\Exception $e) {
+            \Log::error('Push notification failed: ' . $e->getMessage());
+        }
 
         return back()->with('success', 'Bukti pembayaran berhasil diupload. Menunggu verifikasi admin.');
     }

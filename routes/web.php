@@ -94,6 +94,29 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         return back()->with('success', 'Semua notifikasi telah ditandai dibaca.');
     })->name('notifications.mark-read');
 
+    // Test Push Notification
+    Route::get('/test-notification', function () {
+        return view('admin.test-notification');
+    })->name('test-notification');
+    
+    Route::post('/test-push', function () {
+        $user = auth()->user();
+        $webPush = app(\App\Services\WebPushService::class);
+        
+        $result = $webPush->send(
+            $user,
+            '🔔 Test Push Notification',
+            'Ini adalah test push notification dari server. Jika Anda melihat ini, push notification berfungsi!',
+            route('admin.dashboard'),
+            'new_order'
+        );
+        
+        return response()->json([
+            'success' => $result,
+            'message' => $result ? 'Push notification terkirim!' : 'Tidak ada subscription aktif untuk user ini'
+        ]);
+    })->name('test-push');
+
     // Galleries
     Route::resource('galleries', AdminGallery::class);
     Route::patch('/galleries/{gallery}/toggle', [AdminGallery::class, 'toggle'])->name('galleries.toggle');
