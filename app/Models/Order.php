@@ -445,12 +445,12 @@ class Order extends Model
 
     /**
      * Calculate shipping cost based on distance in minutes
-     * 10 minutes = Rp 10.000
+     * 1 KM = Rp 1.500
      */
     public static function calculateShippingCost(float $distanceKm): int
     {
-        // Setiap 1 KM = Rp 2.500
-        return (int) ceil($distanceKm) * 2500;
+        // Setiap 1 KM = Rp 1.500
+        return (int) ceil($distanceKm) * 1500;
     }
 
     /**

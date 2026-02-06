@@ -562,7 +562,7 @@
     const STORE_LNG = {{ config('branding.store_longitude', 112.5274) }};
     // Subtotal setelah diskon produk
     const SUBTOTAL = {{ $subtotal - $productDiscount }};
-    const SHIPPING_RATE_PER_KM = 2500; // Rp 2.500 per KM
+    const SHIPPING_RATE_PER_KM = 1500; // Rp 1.500 per KM
     
     // Shipping Discount Info
     @if($shippingDiscountInfo)
@@ -759,7 +759,7 @@
         // Round up to nearest km (minimum 1 km)
         const distanceKm = Math.max(1, Math.ceil(distance));
 
-        // Calculate shipping cost (1 KM = Rp 2.500)
+        // Calculate shipping cost (1 KM = Rp 1.500)
         const shippingCost = distanceKm * SHIPPING_RATE_PER_KM;
         
         // Calculate shipping discount
