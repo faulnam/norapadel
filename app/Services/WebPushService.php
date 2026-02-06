@@ -170,9 +170,3 @@ class WebPushService
         return $this->send($customer, $title, $message, $url, $type);
     }
 }
-            }
-        }
-        
-        return $sent;
-    }
-}
