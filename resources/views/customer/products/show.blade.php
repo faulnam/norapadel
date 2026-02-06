@@ -169,10 +169,18 @@ function increaseQty() {
         transform: translateY(-5px);
         box-shadow: 0 10px 30px rgba(0,0,0,0.15);
     }
-    .product-main-img {
-        max-height: 400px;
-        object-fit: cover;
+    
+    /* Product Image - Rasio 4:5 seperti Instagram */
+    .product-image-card {
+        overflow: hidden;
+        border-radius: 12px;
     }
+    .product-main-img {
+        aspect-ratio: 4 / 5;
+        object-fit: cover;
+        width: 100%;
+    }
+    
     .product-price {
         font-size: 1.75rem;
         font-weight: 700;
@@ -183,15 +191,17 @@ function increaseQty() {
     .add-cart-btn {
         padding: 0.5rem 1.5rem;
     }
+    
+    /* Related Products - Rasio 4:5 */
     .related-product-img {
-        height: 150px;
+        aspect-ratio: 4 / 5;
         object-fit: cover;
     }
     
     /* Mobile Responsive */
     @media (max-width: 991.98px) {
         .product-main-img {
-            max-height: 350px;
+            aspect-ratio: 4 / 5;
         }
     }
     
@@ -200,7 +210,7 @@ function increaseQty() {
             font-size: 0.8rem;
         }
         .product-main-img {
-            max-height: 280px;
+            aspect-ratio: 4 / 5;
         }
         .product-title {
             font-size: 1.4rem;
@@ -247,7 +257,8 @@ function increaseQty() {
             font-size: 1.1rem;
         }
         .related-product-img {
-            height: 120px;
+            /* Rasio 4:5 tetap untuk mobile */
+            aspect-ratio: 4 / 5;
         }
         .related-product-title {
             font-size: 0.85rem;
@@ -267,7 +278,8 @@ function increaseQty() {
     
     @media (max-width: 575.98px) {
         .product-main-img {
-            max-height: 220px;
+            /* Rasio 4:5 tetap untuk small mobile */
+            aspect-ratio: 4 / 5;
         }
         .product-title {
             font-size: 1.2rem;
@@ -276,7 +288,8 @@ function increaseQty() {
             font-size: 1.25rem;
         }
         .related-product-img {
-            height: 100px;
+            /* Rasio 4:5 tetap */
+            aspect-ratio: 4 / 5;
         }
         .related-product-title {
             font-size: 0.8rem;

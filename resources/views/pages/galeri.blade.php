@@ -100,7 +100,8 @@
     
     .gallery-item {
         position: relative;
-        aspect-ratio: 1/1;
+        /* Rasio 4:5 seperti Instagram */
+        aspect-ratio: 4 / 5;
         border-radius: 12px;
         overflow: hidden;
         cursor: pointer;

@@ -69,17 +69,6 @@
                 <div class="col-lg-6 hero-visual d-none d-lg-block">
                     <div class="hero-image-float">
                         <img src="images/beranda.png" alt="Kerupuk PATAH" class="main-product-img" id="heroImage">
-
-                        <div class="float-badge float-badge-1">
-                            <img src="images/ngemilsantairb.png" alt="Ngemil Santai">
-                        </div>
-                        <div class="float-badge float-badge-2">
-                            <img src="images/temankerjarb.png" alt="Teman Kerja">
-                        </div>
-                        <div class="float-badge float-badge-3">
-                            <img src="images/oleh2maskotrb.png" alt="Oleh-oleh">
-                        </div>
-
                         <div class="deco-circle deco-1"></div>
                         <div class="deco-circle deco-2"></div>
                     </div>
@@ -107,7 +96,7 @@
                 <div class="col-lg-5 d-none d-lg-block">
                     <div class="about-visual">
                         <div class="about-img-wrapper">
-                            <img src="images/promo.png" alt="Proses Pembuatan" class="about-main-img">
+                            <img src="images/Patah.png" alt="Proses Pembuatan" class="about-main-img">
                             <div class="about-pattern"></div>
                         </div>
                     </div>
@@ -908,7 +897,8 @@
 
         .product-img-wrap {
             position: relative;
-            height: 200px;
+            /* Rasio 4:5 seperti Instagram */
+            aspect-ratio: 4 / 5;
             background: linear-gradient(135deg, #f8fafc, #f1f5f9);
             overflow: hidden;
         }
@@ -916,8 +906,7 @@
         .product-img-wrap img {
             width: 100%;
             height: 100%;
-            object-fit: contain;
-            padding: 1rem;
+            object-fit: cover;
             transition: transform 0.4s ease;
         }
 
@@ -1426,7 +1415,8 @@
             }
 
             .product-img-wrap {
-                height: 140px;
+                /* Rasio 4:5 tetap untuk mobile */
+                aspect-ratio: 4 / 5;
             }
 
             .product-info {
@@ -1518,7 +1508,8 @@
             }
 
             .product-img-wrap {
-                height: 120px;
+                /* Rasio 4:5 tetap untuk small mobile */
+                aspect-ratio: 4 / 5;
             }
 
             .product-info {

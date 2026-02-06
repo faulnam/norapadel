@@ -12,6 +12,7 @@ use App\Models\CourierLocation;
 use App\Notifications\NewOrderNotification;
 use App\Notifications\PaymentUploadedNotification;
 use App\Services\WebPushService;
+use App\Services\PakasirService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
@@ -287,6 +288,8 @@ class OrderController extends Controller
 
     /**
      * Cancel order
+     * Customer can only cancel within 5 minutes after order is created
+     * and only if courier hasn't picked up the order yet
      */
     public function cancel(Request $request, Order $order)
     {
@@ -294,8 +297,35 @@ class OrderController extends Controller
             abort(403);
         }
 
+        // Check if order can be cancelled (within 5 minutes and not picked up)
         if (!$order->canBeCancelled()) {
+            // Check specific reason
+            if (in_array($order->status, [Order::STATUS_PICKED_UP, Order::STATUS_ON_DELIVERY, Order::STATUS_DELIVERED])) {
+                return back()->with('error', 'Pesanan tidak dapat dibatalkan karena kurir sudah mengambil barang.');
+            }
+            
+            if (in_array($order->status, [Order::STATUS_CANCELLED, Order::STATUS_COMPLETED])) {
+                return back()->with('error', 'Pesanan sudah dibatalkan atau selesai.');
+            }
+            
+            // Check if more than 5 minutes
+            $minutesSinceCreated = now()->diffInMinutes($order->created_at);
+            if ($minutesSinceCreated > Order::CANCEL_WAIT_MINUTES) {
+                return back()->with('error', 'Pesanan tidak dapat dibatalkan karena sudah lebih dari 5 menit sejak pemesanan.');
+            }
+
             return back()->with('error', 'Pesanan tidak dapat dibatalkan.');
+        }
+
+        $reason = $request->input('cancel_reason', 'Dibatalkan oleh customer');
+
+        // Process refund if paid via payment gateway
+        if ($order->isPaidViaGateway()) {
+            $refundResult = $this->processRefund($order);
+            
+            if (!$refundResult['success']) {
+                return back()->with('error', 'Gagal memproses pengembalian dana. Silakan hubungi admin.');
+            }
         }
 
         // Restore stock
@@ -305,12 +335,101 @@ class OrderController extends Controller
             }
         }
 
+        // Finalize cancellation
         $order->update([
             'status' => Order::STATUS_CANCELLED,
-            'cancel_reason' => 'Dibatalkan oleh customer',
+            'cancel_reason' => $reason,
         ]);
 
-        return back()->with('success', 'Pesanan berhasil dibatalkan.');
+        $message = 'Pesanan berhasil dibatalkan.';
+        if ($order->refund_status === Order::REFUND_COMPLETED) {
+            $message .= ' Dana sebesar ' . 'Rp ' . number_format($order->refund_amount, 0, ',', '.') . ' akan dikembalikan ke saldo Pakasir Anda.';
+        }
+
+        return back()->with('success', $message);
+    }
+
+    /**
+     * Process refund for cancelled order
+     */
+    protected function processRefund(Order $order): array
+    {
+        try {
+            $pakasir = app(PakasirService::class);
+            $refundAmount = (int) $order->getRefundAmount();
+
+            // Update order with pending refund
+            $order->update([
+                'refund_status' => Order::REFUND_PROCESSING,
+                'refund_amount' => $refundAmount,
+            ]);
+
+            // Call Pakasir API to cancel/refund
+            $result = $pakasir->cancelTransaction($order->order_number, $refundAmount);
+
+            if ($result) {
+                $order->update([
+                    'refund_status' => Order::REFUND_COMPLETED,
+                    'refund_at' => now(),
+                ]);
+
+                \Log::info("Refund completed for order #{$order->order_number}", [
+                    'amount' => $refundAmount
+                ]);
+
+                return ['success' => true, 'message' => 'Refund berhasil diproses'];
+            } else {
+                $order->update([
+                    'refund_status' => Order::REFUND_FAILED,
+                ]);
+
+                \Log::error("Refund failed for order #{$order->order_number}");
+
+                return ['success' => false, 'message' => 'Refund gagal'];
+            }
+        } catch (\Exception $e) {
+            \Log::error("Refund error for order #{$order->order_number}: " . $e->getMessage());
+
+            $order->update([
+                'refund_status' => Order::REFUND_FAILED,
+            ]);
+
+            return ['success' => false, 'message' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Check cancel status (AJAX)
+     * Returns info about whether order can still be cancelled
+     */
+    public function checkCancelStatus(Order $order)
+    {
+        if ($order->user_id !== auth()->id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $canCancel = $order->canBeCancelled();
+        $countdownSeconds = $order->getCancelCountdownSeconds();
+        
+        // Reason why cannot cancel
+        $reason = null;
+        if (!$canCancel) {
+            if (in_array($order->status, [Order::STATUS_PICKED_UP, Order::STATUS_ON_DELIVERY, Order::STATUS_DELIVERED])) {
+                $reason = 'Kurir sudah mengambil barang';
+            } elseif (in_array($order->status, [Order::STATUS_CANCELLED, Order::STATUS_COMPLETED])) {
+                $reason = 'Pesanan sudah dibatalkan atau selesai';
+            } elseif ($countdownSeconds <= 0) {
+                $reason = 'Waktu pembatalan sudah habis';
+            }
+        }
+
+        return response()->json([
+            'can_cancel' => $canCancel,
+            'countdown_seconds' => $countdownSeconds,
+            'requires_refund' => $order->isPaidViaGateway(),
+            'refund_amount' => $order->isPaidViaGateway() ? $order->getRefundAmount() : 0,
+            'reason' => $reason,
+        ]);
     }
 
     /**

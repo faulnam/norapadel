@@ -263,6 +263,98 @@
         background: #f3f4f6;
     }
     
+    /* Cancel Countdown Card */
+    .cancel-countdown-card {
+        background: linear-gradient(135deg, #fef3c7, #fde68a);
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 12px;
+        border: 1px solid #f59e0b;
+    }
+    .cancel-countdown-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-weight: 600;
+        padding: 10px;
+        background: #f59e0b;
+        color: white;
+    }
+    .cancel-countdown-header.bg-warning {
+        background: #f59e0b !important;
+    }
+    .cancel-countdown-header.bg-secondary {
+        background: #6b7280 !important;
+    }
+    .cancel-countdown-header i {
+        font-size: 16px;
+    }
+    .cancel-countdown-body {
+        text-align: center;
+        padding: 16px;
+    }
+    .cancel-countdown-body p {
+        font-size: 13px;
+        color: #78350f;
+    }
+    .countdown-timer {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin: 12px 0;
+    }
+    .countdown-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .countdown-number {
+        background: #1f2937;
+        color: white;
+        font-size: 32px;
+        font-weight: 700;
+        padding: 10px 16px;
+        border-radius: 8px;
+        min-width: 70px;
+        text-align: center;
+    }
+    .countdown-label {
+        font-size: 11px;
+        color: #78350f;
+        margin-top: 4px;
+        text-transform: uppercase;
+        font-weight: 500;
+    }
+    .countdown-separator {
+        font-size: 32px;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 20px;
+    }
+    .countdown-urgent .countdown-number {
+        background: #dc2626;
+        animation: pulse-urgent 1s infinite;
+    }
+    @keyframes pulse-urgent {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+    .btn-danger {
+        background: #dc2626;
+        color: white;
+        border: none;
+    }
+    .btn-danger:hover {
+        background: #b91c1c;
+        color: white;
+    }
+    .btn-danger:disabled {
+        background: #9ca3af;
+        cursor: not-allowed;
+    }
+    
     .rating {
         display: flex;
         flex-direction: row-reverse;
@@ -837,13 +929,76 @@
                     @endif
                     
                     @if($order->canBeCancelled())
-                        <form action="{{ route('customer.orders.cancel', $order) }}" method="POST">
-                            @csrf
-                            @method('PATCH')
-                            <button type="submit" class="btn btn-action btn-outline-custom w-100 text-danger" onclick="return confirm('Yakin ingin membatalkan pesanan?')">
-                                <i class="fas fa-times me-1"></i>Batalkan Pesanan
-                            </button>
-                        </form>
+                        {{-- Show countdown timer - time remaining to cancel --}}
+                        <div class="cancel-countdown-card" id="cancelCountdownCard">
+                            <div class="cancel-countdown-header bg-warning text-dark">
+                                <i class="fas fa-clock"></i>
+                                <span>Batas Waktu Pembatalan</span>
+                            </div>
+                            <div class="cancel-countdown-body">
+                                <p class="mb-2">Anda dapat membatalkan pesanan dalam:</p>
+                                <div class="countdown-timer" id="cancelCountdown">
+                                    <div class="countdown-item">
+                                        <span class="countdown-number" id="countdownMinutes">05</span>
+                                        <span class="countdown-label">Menit</span>
+                                    </div>
+                                    <span class="countdown-separator">:</span>
+                                    <div class="countdown-item">
+                                        <span class="countdown-number" id="countdownSeconds">00</span>
+                                        <span class="countdown-label">Detik</span>
+                                    </div>
+                                </div>
+                                @if($order->isPaidViaGateway())
+                                <p class="text-muted small mt-2 mb-0">
+                                    <i class="fas fa-info-circle me-1"></i>Dana sebesar <strong>Rp {{ number_format($order->total, 0, ',', '.') }}</strong> akan dikembalikan
+                                </p>
+                                @endif
+                            </div>
+                            <form action="{{ route('customer.orders.cancel', $order) }}" method="POST" id="cancelForm">
+                                @csrf
+                                @method('PATCH')
+                                <input type="hidden" name="cancel_reason" value="Dibatalkan oleh customer">
+                                <button type="submit" class="btn btn-action btn-danger w-100" id="btnCancelOrder" onclick="return confirm('Yakin ingin membatalkan pesanan?{{ $order->isPaidViaGateway() ? ' Dana akan dikembalikan ke saldo Pakasir Anda.' : '' }}')">
+                                    <i class="fas fa-times me-1"></i>Batalkan Pesanan
+                                </button>
+                            </form>
+                        </div>
+                    @elseif(!in_array($order->status, [\App\Models\Order::STATUS_CANCELLED, \App\Models\Order::STATUS_COMPLETED, \App\Models\Order::STATUS_DELIVERED]))
+                        {{-- Cannot cancel anymore --}}
+                        @if(in_array($order->status, [\App\Models\Order::STATUS_PICKED_UP, \App\Models\Order::STATUS_ON_DELIVERY]))
+                            <div class="alert alert-secondary py-2 mb-0" style="font-size: 13px; border-radius: 10px;">
+                                <i class="fas fa-truck me-1"></i>Pesanan tidak dapat dibatalkan karena kurir sudah mengambil barang
+                            </div>
+                        @elseif($order->getCancelCountdownSeconds() <= 0)
+                            <div class="alert alert-secondary py-2 mb-0" style="font-size: 13px; border-radius: 10px;">
+                                <i class="fas fa-clock me-1"></i>Batas waktu pembatalan sudah habis (lebih dari 5 menit)
+                            </div>
+                        @endif
+                    @endif
+                    
+                    {{-- Show refund status if applicable --}}
+                    @if($order->refund_status)
+                        <div class="refund-status-card mt-2">
+                            @if($order->refund_status === 'completed')
+                                <div class="alert alert-success py-2 mb-0" style="font-size: 13px; border-radius: 10px;">
+                                    <i class="fas fa-check-circle me-1"></i>
+                                    <strong>Refund Berhasil!</strong><br>
+                                    Dana Rp {{ number_format($order->refund_amount, 0, ',', '.') }} telah dikembalikan ke saldo Pakasir Anda.
+                                </div>
+                            @elseif($order->refund_status === 'processing')
+                                <div class="alert alert-info py-2 mb-0" style="font-size: 13px; border-radius: 10px;">
+                                    <i class="fas fa-spinner fa-spin me-1"></i>
+                                    <strong>Refund Diproses</strong><br>
+                                    Dana sedang dalam proses pengembalian.
+                                </div>
+                            @elseif($order->refund_status === 'failed')
+                                <div class="alert alert-danger py-2 mb-0" style="font-size: 13px; border-radius: 10px;">
+                                    <i class="fas fa-exclamation-circle me-1"></i>
+                                    <strong>Refund Gagal</strong><br>
+                                    Silakan hubungi admin untuk bantuan.
+                                </div>
+                            @endif
+                        </div>
                     @endif
                     
                     <a href="{{ route('customer.orders.index') }}" class="btn btn-action btn-outline-custom">
@@ -1268,6 +1423,106 @@ function calculateDistance(lat1, lng1, lat2, lng2) {
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     return R * c;
 }
+</script>
+@endpush
+@endif
+
+{{-- Countdown Timer Script for Cancel Window --}}
+@if($order->canBeCancelled())
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const countdownContainer = document.getElementById('cancelCountdown');
+    const minutesEl = document.getElementById('countdownMinutes');
+    const secondsEl = document.getElementById('countdownSeconds');
+    const countdownCard = document.getElementById('cancelCountdownCard');
+    const btnCancelOrder = document.getElementById('btnCancelOrder');
+    
+    if (!countdownContainer || !minutesEl || !secondsEl) return;
+    
+    // Get countdown from server (in seconds) - time remaining to cancel
+    let countdown = {{ $order->cancel_countdown }};
+    
+    function updateDisplay() {
+        const minutes = Math.floor(countdown / 60);
+        const seconds = countdown % 60;
+        
+        minutesEl.textContent = minutes.toString().padStart(2, '0');
+        secondsEl.textContent = seconds.toString().padStart(2, '0');
+        
+        // Update color based on remaining time
+        if (countdown <= 60) {
+            countdownContainer.classList.add('countdown-urgent');
+        }
+    }
+    
+    function disableCancelButton() {
+        // Cancel window expired - cannot cancel anymore
+        if (countdownCard) {
+            countdownCard.innerHTML = `
+                <div class="cancel-countdown-header bg-secondary text-white">
+                    <i class="fas fa-times-circle"></i>
+                    <span>Waktu Pembatalan Habis</span>
+                </div>
+                <div class="cancel-countdown-body text-center py-3">
+                    <i class="fas fa-clock text-muted" style="font-size: 32px;"></i>
+                    <p class="mt-2 mb-0 text-muted">Batas waktu pembatalan sudah habis.<br>Pesanan tidak dapat dibatalkan lagi.</p>
+                </div>
+            `;
+        }
+    }
+    
+    function tick() {
+        if (countdown <= 0) {
+            disableCancelButton();
+            return;
+        }
+        
+        countdown--;
+        updateDisplay();
+        
+        setTimeout(tick, 1000);
+    }
+    
+    // Initial display
+    updateDisplay();
+    
+    // Start countdown
+    if (countdown > 0) {
+        setTimeout(tick, 1000);
+    } else {
+        disableCancelButton();
+    }
+    
+    // Also poll server to check if courier picked up
+    setInterval(function() {
+        fetch('{{ route("customer.orders.cancel-status", $order) }}')
+            .then(response => response.json())
+            .then(data => {
+                if (!data.can_cancel) {
+                    // Cannot cancel anymore (maybe courier picked up)
+                    if (data.reason) {
+                        if (countdownCard) {
+                            countdownCard.innerHTML = `
+                                <div class="cancel-countdown-header bg-secondary text-white">
+                                    <i class="fas fa-times-circle"></i>
+                                    <span>Tidak Dapat Dibatalkan</span>
+                                </div>
+                                <div class="cancel-countdown-body text-center py-3">
+                                    <i class="fas fa-info-circle text-muted" style="font-size: 32px;"></i>
+                                    <p class="mt-2 mb-0 text-muted">${data.reason}</p>
+                                </div>
+                            `;
+                        }
+                    }
+                } else {
+                    // Sync countdown with server
+                    countdown = data.countdown_seconds;
+                }
+            })
+            .catch(error => console.log('Status check failed'));
+    }, 10000); // Check every 10 seconds
+});
 </script>
 @endpush
 @endif

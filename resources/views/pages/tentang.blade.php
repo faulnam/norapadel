@@ -17,7 +17,7 @@
     <div class="container">
         <div class="row align-items-center g-5">
             <div class="col-lg-6">
-                <img src="images/beranda.png"
+                <img src="images/Patah.png"
                      alt="Tim PATAH" class="img-fluid rounded-4">
             </div>
             <div class="col-lg-6">

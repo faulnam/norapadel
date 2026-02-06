@@ -155,10 +155,10 @@
         box-shadow: 0 10px 30px rgba(0,0,0,0.12);
     }
     
-    /* Product Image */
+    /* Product Image - Rasio 4:5 seperti Instagram */
     .product-img {
-        height: 200px;
-        object-fit: contain;
+        aspect-ratio: 4 / 5;
+        object-fit: cover;
         background: #f8f9fa;
     }
     
@@ -207,14 +207,16 @@
     /* Tablet */
     @media (min-width: 768px) and (max-width: 991.98px) {
         .product-img {
-            height: 180px;
+            /* Rasio 4:5 tetap untuk tablet */
+            aspect-ratio: 4 / 5;
         }
     }
     
     /* Mobile */
     @media (max-width: 767.98px) {
         .product-img {
-            height: 140px;
+            /* Rasio 4:5 tetap untuk mobile */
+            aspect-ratio: 4 / 5;
         }
         .product-title {
             font-size: 0.85rem;
@@ -238,7 +240,8 @@
     /* Small Mobile */
     @media (max-width: 575.98px) {
         .product-img {
-            height: 120px;
+            /* Rasio 4:5 tetap untuk small mobile */
+            aspect-ratio: 4 / 5;
         }
         .product-card:hover {
             transform: none;

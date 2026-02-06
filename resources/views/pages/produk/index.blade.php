@@ -151,7 +151,8 @@
     
     .product-image {
         position: relative;
-        height: 200px;
+        /* Rasio 4:5 seperti Instagram */
+        aspect-ratio: 4 / 5;
         overflow: hidden;
         background: var(--gray-light);
     }
@@ -159,7 +160,7 @@
     .product-image img {
         width: 100%;
         height: 100%;
-        object-fit: contain;
+        object-fit: cover;
         transition: var(--transition);
     }
     
@@ -256,7 +257,8 @@
         }
         
         .product-image {
-            height: 130px;
+            /* Rasio 4:5 tetap untuk tablet */
+            aspect-ratio: 4 / 5;
         }
         
         .product-body {
@@ -308,7 +310,8 @@
         }
         
         .product-image {
-            height: 110px;
+            /* Rasio 4:5 tetap untuk mobile */
+            aspect-ratio: 4 / 5;
         }
         
         .product-body {

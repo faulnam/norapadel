@@ -45,6 +45,9 @@ class Order extends Model
         'delivery_photo',
         'notes',
         'cancel_reason',
+        'refund_at',
+        'refund_amount',
+        'refund_status',
     ];
 
     protected $casts = [
@@ -53,6 +56,7 @@ class Order extends Model
         'shipping_discount' => 'decimal:2',
         'shipping_cost' => 'decimal:2',
         'total' => 'decimal:2',
+        'refund_amount' => 'decimal:2',
         'shipping_latitude' => 'decimal:8',
         'shipping_longitude' => 'decimal:8',
         'delivery_distance_minutes' => 'integer',
@@ -67,7 +71,17 @@ class Order extends Model
         'on_delivery_at' => 'datetime',
         'delivered_at' => 'datetime',
         'completed_at' => 'datetime',
+        'refund_at' => 'datetime',
     ];
+
+    // Waktu tunggu pembatalan (dalam menit) - customer punya 5 menit untuk membatalkan setelah order
+    const CANCEL_WAIT_MINUTES = 5;
+
+    // Refund status
+    const REFUND_PENDING = 'pending';
+    const REFUND_PROCESSING = 'processing';
+    const REFUND_COMPLETED = 'completed';
+    const REFUND_FAILED = 'failed';
 
     // Jam operasional pengiriman
     const DELIVERY_START_HOUR = 10; // 10:00
@@ -312,13 +326,101 @@ class Order extends Model
 
     /**
      * Check if order can be cancelled
+     * Rules:
+     * 1. Cannot cancel if already cancelled or completed
+     * 2. Cannot cancel if courier has picked up the order (picked_up, on_delivery, delivered)
+     * 3. Can only cancel within 5 minutes after order is created
      */
     public function canBeCancelled(): bool
     {
-        return in_array($this->status, [
-            self::STATUS_PENDING_PAYMENT,
-            self::STATUS_PAID
+        // Cannot cancel if already cancelled or completed
+        if (in_array($this->status, [self::STATUS_CANCELLED, self::STATUS_COMPLETED])) {
+            return false;
+        }
+
+        // Cannot cancel if already picked up or being delivered by courier
+        if (in_array($this->status, [self::STATUS_PICKED_UP, self::STATUS_ON_DELIVERY, self::STATUS_DELIVERED])) {
+            return false;
+        }
+
+        // Check if within 5 minutes window from order creation
+        $minutesSinceCreated = now()->diffInMinutes($this->created_at);
+        if ($minutesSinceCreated > self::CANCEL_WAIT_MINUTES) {
+            return false; // More than 5 minutes, cannot cancel
+        }
+
+        return true;
+    }
+
+    /**
+     * Check if order was paid via payment gateway
+     */
+    public function isPaidViaGateway(): bool
+    {
+        return $this->payment_method === 'payment_gateway' 
+            && $this->payment_status === self::PAYMENT_PAID
+            && $this->paid_at !== null;
+    }
+
+    /**
+     * Get remaining seconds before cancel window expires
+     * Returns 0 if cancel window has expired
+     */
+    public function getCancelCountdownSeconds(): int
+    {
+        $targetTime = $this->created_at->addMinutes(self::CANCEL_WAIT_MINUTES);
+        $remaining = now()->diffInSeconds($targetTime, false);
+
+        return max(0, (int) $remaining);
+    }
+
+    /**
+     * Get cancel countdown as attribute (for blade)
+     */
+    public function getCancelCountdownAttribute(): int
+    {
+        return $this->getCancelCountdownSeconds();
+    }
+
+    /**
+     * Check if cancel window is still open
+     */
+    public function isCancelWindowOpen(): bool
+    {
+        return $this->getCancelCountdownSeconds() > 0;
+    }
+
+    /**
+     * Cancel order
+     */
+    public function cancelOrder(string $reason = null): bool
+    {
+        if (!$this->canBeCancelled()) {
+            return false;
+        }
+
+        $this->update([
+            'status' => self::STATUS_CANCELLED,
+            'cancel_reason' => $reason ?? 'Dibatalkan oleh customer',
         ]);
+
+        return true;
+    }
+
+    /**
+     * Check if order requires refund on cancellation
+     */
+    public function requiresRefund(): bool
+    {
+        return $this->isPaidViaGateway() && $this->total > 0;
+    }
+
+    /**
+     * Get refund amount (full refund)
+     */
+    public function getRefundAmount(): float
+    {
+        return (float) $this->total;
     }
 
     /**

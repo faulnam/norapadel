@@ -433,11 +433,8 @@
                                                 Kami hanya melayani pengiriman di area <strong>Sidoarjo, Mojokerto, dan Surabaya</strong>.
                                             </p>
                                             <div class="d-flex flex-wrap gap-2">
-                                                <a href="https://shopee.co.id/kerupuk_patah" target="_blank" class="btn btn-sm btn-outline-danger">
+                                                <a href="https://shopee.co.id/kerupukpatah" target="_blank" class="btn btn-sm btn-outline-danger">
                                                     <i class="fab fa-shopee me-1"></i>Beli di Shopee
-                                                </a>
-                                                <a href="https://tokopedia.com/kerupukpatah" target="_blank" class="btn btn-sm btn-outline-success">
-                                                    <img src="https://assets.tokopedia.net/assets-tokopedia-lite/v2/arael/kratos/36c1015e.png" alt="Tokopedia" style="height: 14px; margin-right: 4px;">Beli di Tokopedia
                                                 </a>
                                             </div>
                                         </div>
