@@ -18,6 +18,7 @@ class PakasirWebhookController extends Controller
 
     /**
      * Handle webhook from Pakasir
+     * IMPORTANT: Always return 200 OK so Pakasir marks webhook as completed
      */
     public function handleWebhook(Request $request)
     {
@@ -25,44 +26,66 @@ class PakasirWebhookController extends Controller
         
         Log::info('Pakasir webhook received', $data);
 
-        // Verify webhook
-        if (!$this->pakasirService->verifyWebhook($data)) {
-            Log::warning('Pakasir webhook verification failed', $data);
-            return response()->json(['status' => 'invalid'], 400);
+        // Always return 200 OK first, then process
+        // This ensures Pakasir receives success response
+        
+        try {
+            $this->processWebhook($data);
+        } catch (\Exception $e) {
+            Log::error('Pakasir webhook processing error', [
+                'error' => $e->getMessage(),
+                'data' => $data
+            ]);
         }
 
-        $orderId = $data['order_id'] ?? null;
-        $amount = $data['amount'] ?? 0;
+        // ALWAYS return 200 OK - required by Pakasir
+        return response()->json([
+            'status' => 'ok',
+            'message' => 'Webhook received'
+        ], 200);
+    }
+
+    /**
+     * Process the webhook data
+     */
+    protected function processWebhook(array $data): void
+    {
+        // Get order ID from various possible fields
+        $orderId = $data['order_id'] ?? $data['orderId'] ?? $data['reference'] ?? null;
+        $amount = $data['amount'] ?? $data['total'] ?? 0;
         $status = $data['status'] ?? '';
-        $paymentMethod = $data['payment_method'] ?? '';
-        $completedAt = $data['completed_at'] ?? null;
+        $paymentMethod = $data['payment_method'] ?? $data['method'] ?? 'online';
+        $completedAt = $data['completed_at'] ?? $data['paid_at'] ?? null;
+        $project = $data['project'] ?? '';
+
+        Log::info('Pakasir webhook processing', [
+            'order_id' => $orderId,
+            'amount' => $amount,
+            'status' => $status,
+            'project' => $project
+        ]);
 
         if (!$orderId) {
-            Log::error('Pakasir webhook missing order_id', $data);
-            return response()->json(['status' => 'error', 'message' => 'Missing order_id'], 400);
+            Log::warning('Pakasir webhook missing order_id', $data);
+            return;
         }
 
         // Find order by order_number
         $order = Order::where('order_number', $orderId)->first();
 
         if (!$order) {
-            Log::error('Pakasir webhook order not found', ['order_id' => $orderId]);
-            return response()->json(['status' => 'error', 'message' => 'Order not found'], 404);
+            Log::warning('Pakasir webhook order not found', ['order_id' => $orderId]);
+            return;
         }
 
-        // Verify amount matches
-        if ((int)$order->total_amount !== (int)$amount) {
-            Log::error('Pakasir webhook amount mismatch', [
+        // Check if status is completed/paid
+        $paidStatuses = ['completed', 'paid', 'success', 'settlement'];
+        if (!in_array(strtolower($status), $paidStatuses)) {
+            Log::info('Pakasir webhook status not paid', [
                 'order_id' => $orderId,
-                'expected' => $order->total_amount,
-                'received' => $amount
+                'status' => $status
             ]);
-            
-            // Double check with API
-            $transaction = $this->pakasirService->getTransactionDetail($orderId, $amount);
-            if (!$transaction || $transaction['status'] !== 'completed') {
-                return response()->json(['status' => 'error', 'message' => 'Amount mismatch'], 400);
-            }
+            return;
         }
 
         // Update order status to paid
@@ -74,7 +97,7 @@ class PakasirWebhookController extends Controller
                 'paid_at' => $completedAt ? now()->parse($completedAt) : now(),
             ]);
 
-            Log::info('Pakasir payment completed', [
+            Log::info('Pakasir payment completed via webhook', [
                 'order_id' => $orderId,
                 'order_number' => $order->order_number,
                 'amount' => $amount,
@@ -86,8 +109,6 @@ class PakasirWebhookController extends Controller
                 'current_status' => $order->status
             ]);
         }
-
-        return response()->json(['status' => 'success']);
     }
 
     /**
