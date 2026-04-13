@@ -35,7 +35,78 @@ class PageController extends Controller
         // Statistik realtime
         $stats = $this->getStats();
 
-        return view('pages.home', compact('products', 'testimonials', 'galleries', 'stats'));
+    return view('pages.home_luxury', compact('products', 'testimonials', 'galleries', 'stats'));
+    }
+
+    /**
+     * Show racket landing and product list page
+     */
+    public function racket(Request $request)
+    {
+        $query = Product::active()
+            ->inStock()
+            ->where('category', Product::CATEGORY_ORIGINAL);
+
+        if ($request->filled('q')) {
+            $keyword = trim((string) $request->q);
+            $query->where(function ($q) use ($keyword) {
+                $q->where('name', 'like', "%{$keyword}%")
+                    ->orWhere('description', 'like', "%{$keyword}%");
+            });
+        }
+
+        $products = $query->latest()->paginate(12)->withQueryString();
+
+        return view('pages.racket', [
+            'products' => $products,
+            'search' => $request->q,
+        ]);
+    }
+
+    /**
+     * Show shoes landing and product list page
+     */
+    public function shoes(Request $request)
+    {
+        $query = Product::active()->inStock();
+
+        if ($request->filled('q')) {
+            $keyword = trim((string) $request->q);
+            $query->where(function ($q) use ($keyword) {
+                $q->where('name', 'like', "%{$keyword}%")
+                    ->orWhere('description', 'like', "%{$keyword}%");
+            });
+        }
+
+        $products = $query->latest()->paginate(12)->withQueryString();
+
+        return view('pages.shoes', [
+            'products' => $products,
+            'search' => $request->q,
+        ]);
+    }
+
+    /**
+     * Show apparel landing and product list page
+     */
+    public function apparel(Request $request)
+    {
+        $query = Product::active()->inStock();
+
+        if ($request->filled('q')) {
+            $keyword = trim((string) $request->q);
+            $query->where(function ($q) use ($keyword) {
+                $q->where('name', 'like', "%{$keyword}%")
+                    ->orWhere('description', 'like', "%{$keyword}%");
+            });
+        }
+
+        $products = $query->latest()->paginate(12)->withQueryString();
+
+        return view('pages.apparel', [
+            'products' => $products,
+            'search' => $request->q,
+        ]);
     }
 
     /**

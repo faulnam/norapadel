@@ -2,11 +2,258 @@
 
 @section('title', 'Nora Padel - Performa Maksimal, Game Makin Total')
 
+@if(false)
 @section('content')
+    <section class="relative min-h-screen overflow-hidden bg-linear-to-br from-slate-950 via-slate-900 to-emerald-950 text-white">
+        <div class="pointer-events-none absolute inset-0">
+            <div class="absolute -top-24 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-emerald-400/20 blur-3xl"></div>
+            <div class="absolute bottom-0 right-0 h-80 w-80 rounded-full bg-cyan-400/10 blur-3xl"></div>
+        </div>
+
+        <div class="relative mx-auto flex min-h-screen w-full max-w-7xl flex-col px-4 py-6 sm:px-6 lg:px-8">
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-3 backdrop-blur-xl">
+                <div class="flex items-center justify-between gap-4">
+                    <a href="{{ route('home') }}" class="text-lg font-extrabold tracking-tight sm:text-xl">
+                        Nora <span class="text-emerald-400">Padel</span>
+                    </a>
+                    <nav class="hidden items-center gap-1 lg:flex">
+                        <a href="{{ route('home') }}" class="rounded-full px-4 py-2 text-sm font-semibold text-white/80 transition hover:bg-white/10 hover:text-white">Home</a>
+                        <a href="{{ route('produk.index') }}" class="rounded-full px-4 py-2 text-sm font-semibold text-white/80 transition hover:bg-white/10 hover:text-white">Shop</a>
+                        <a href="{{ route('galeri') }}" class="rounded-full px-4 py-2 text-sm font-semibold text-white/80 transition hover:bg-white/10 hover:text-white">Collections</a>
+                        <a href="{{ route('testimoni') }}" class="rounded-full px-4 py-2 text-sm font-semibold text-white/80 transition hover:bg-white/10 hover:text-white">Review</a>
+                    </nav>
+                    <div class="flex items-center gap-2">
+                        @auth
+                            <a href="{{ route('customer.cart.index') }}" class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white/90 transition hover:bg-white/20">
+                                <i class="fas fa-shopping-basket text-sm"></i>
+                            </a>
+                            <a href="{{ route('customer.products.index') }}" class="inline-flex items-center rounded-full bg-white px-4 py-2 text-sm font-bold text-slate-900 transition hover:bg-emerald-100">
+                                Belanja
+                            </a>
+                        @else
+                            <a href="{{ route('login') }}" class="inline-flex items-center rounded-full bg-white px-4 py-2 text-sm font-bold text-slate-900 transition hover:bg-emerald-100">
+                                Login
+                            </a>
+                        @endauth
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid flex-1 items-center gap-10 py-10 lg:grid-cols-2 lg:py-16">
+                <div>
+                    <span class="inline-flex items-center rounded-full border border-emerald-400/30 bg-emerald-400/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-300">
+                        Saas-grade sport commerce
+                    </span>
+                    <h1 class="mt-6 text-4xl font-black leading-tight tracking-tight sm:text-5xl lg:text-7xl">
+                        Experience premium
+                        <span class="bg-linear-to-r from-emerald-300 via-green-400 to-cyan-300 bg-clip-text text-transparent">
+                            padel gear
+                        </span>
+                        in one modern platform.
+                    </h1>
+                    <p class="mt-6 max-w-2xl text-base leading-relaxed text-slate-300 sm:text-lg">
+                        Nora Padel menghadirkan pengalaman belanja alat padel kelas premium: cepat, elegan, dan terkurasi untuk pemula hingga profesional.
+                    </p>
+
+                    <div class="mt-8 flex flex-wrap items-center gap-3">
+                        @auth
+                            <a href="{{ route('customer.products.index') }}" class="inline-flex items-center rounded-full bg-emerald-400 px-6 py-3 text-sm font-extrabold text-slate-900 shadow-[0_16px_40px_-14px_rgba(52,211,153,0.8)] transition hover:bg-emerald-300">
+                                Belanja Sekarang
+                                <i class="fas fa-arrow-right ms-2"></i>
+                            </a>
+                        @else
+                            <a href="{{ route('login') }}" class="inline-flex items-center rounded-full bg-emerald-400 px-6 py-3 text-sm font-extrabold text-slate-900 shadow-[0_16px_40px_-14px_rgba(52,211,153,0.8)] transition hover:bg-emerald-300">
+                                Belanja Sekarang
+                                <i class="fas fa-arrow-right ms-2"></i>
+                            </a>
+                        @endauth
+                        <a href="{{ route('produk.index') }}" class="inline-flex items-center rounded-full border border-white/25 bg-white/5 px-6 py-3 text-sm font-bold text-white transition hover:bg-white/10">
+                            Lihat Produk
+                        </a>
+                    </div>
+
+                    <div class="mt-10 grid grid-cols-3 gap-3 sm:gap-4">
+                        <div class="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
+                            <p class="text-2xl font-black text-white sm:text-3xl">{{ $stats['total_customers'] }}+</p>
+                            <p class="mt-1 text-xs font-medium text-slate-300 sm:text-sm">Pelanggan</p>
+                        </div>
+                        <div class="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
+                            <p class="text-2xl font-black text-white sm:text-3xl">{{ $stats['total_reviews'] }}+</p>
+                            <p class="mt-1 text-xs font-medium text-slate-300 sm:text-sm">Review</p>
+                        </div>
+                        <div class="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
+                            <p class="text-2xl font-black text-white sm:text-3xl">{{ $stats['avg_rating'] }}</p>
+                            <p class="mt-1 text-xs font-medium text-slate-300 sm:text-sm">Rating ⭐</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative">
+                    <div class="absolute -inset-6 rounded-4xl bg-linear-to-tr from-emerald-400/20 to-cyan-300/10 blur-2xl"></div>
+                    <div class="relative rounded-4xl border border-white/15 bg-white/10 p-4 shadow-2xl backdrop-blur-xl sm:p-6">
+                        <img
+                            src="https://images.unsplash.com/photo-1593766827228-8737b4534aa6?w=1200"
+                            alt="Perlengkapan Nora Padel"
+                            class="h-[360px] w-full rounded-2xl object-cover sm:h-[460px]"
+                        >
+                        <div class="mt-4 rounded-xl border border-emerald-300/20 bg-emerald-400/10 p-4">
+                            <p class="text-sm font-semibold uppercase tracking-[0.15em] text-emerald-300">Nora Insight</p>
+                            <p class="mt-2 text-sm text-slate-100 sm:text-base">"Build your game with curated rackets, shoes, and accessories engineered for consistency."</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-white py-20">
+        <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="mb-10 flex items-end justify-between gap-4">
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-[0.2em] text-emerald-600">Featured product</p>
+                    <h2 class="mt-3 text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">Produk Unggulan</h2>
+                </div>
+                <a href="{{ route('produk.index') }}" class="text-sm font-bold text-slate-700 transition hover:text-emerald-600">
+                    Lihat semua
+                </a>
+            </div>
+
+            <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                @forelse($products->take(6) as $product)
+                    <article class="group overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_15px_45px_-25px_rgba(15,23,42,0.25)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_20px_55px_-25px_rgba(15,23,42,0.35)]">
+                        <div class="relative">
+                            <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=1000' }}" alt="{{ $product->name }}" class="h-56 w-full object-cover">
+                            <div class="absolute left-3 top-3 flex flex-wrap gap-2">
+                                <span class="rounded-full bg-slate-900/85 px-3 py-1 text-xs font-bold text-white">{{ $product->category_label }}</span>
+                                @if($product->hasActiveDiscount())
+                                    <span class="rounded-full bg-rose-500 px-3 py-1 text-xs font-bold text-white">-{{ $product->formatted_discount_percent }}</span>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="p-5">
+                            <h3 class="line-clamp-1 text-lg font-black tracking-tight text-slate-900">{{ $product->name }}</h3>
+                            <p class="mt-2 line-clamp-2 text-sm text-slate-600">{{ Str::limit($product->description, 88) }}</p>
+                            <div class="mt-4 flex items-center justify-between gap-3">
+                                <div>
+                                    @if($product->hasActiveDiscount())
+                                        <p class="text-lg font-black text-emerald-600">{{ $product->formatted_discounted_price }}</p>
+                                        <p class="text-xs font-semibold text-slate-400 line-through">{{ $product->formatted_price }}</p>
+                                    @else
+                                        <p class="text-lg font-black text-emerald-600">{{ $product->formatted_price }}</p>
+                                    @endif
+                                </div>
+                                @auth
+                                    <a href="{{ route('customer.products.show', $product) }}" class="inline-flex items-center rounded-full bg-slate-900 px-4 py-2 text-xs font-bold uppercase tracking-wide text-white transition hover:bg-emerald-600">
+                                        Beli
+                                    </a>
+                                @else
+                                    <a href="{{ route('produk.show', $product) }}" class="inline-flex items-center rounded-full border border-slate-300 px-4 py-2 text-xs font-bold uppercase tracking-wide text-slate-700 transition hover:border-emerald-500 hover:text-emerald-600">
+                                        Detail
+                                    </a>
+                                @endauth
+                            </div>
+                        </div>
+                    </article>
+                @empty
+                    <div class="col-span-full rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-10 text-center">
+                        <i class="fas fa-box-open text-3xl text-slate-400"></i>
+                        <p class="mt-3 font-semibold text-slate-500">Produk segera hadir!</p>
+                    </div>
+                @endforelse
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-slate-50 py-20">
+        <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="mb-10 text-center">
+                <p class="text-xs font-bold uppercase tracking-[0.2em] text-emerald-600">Testimonials</p>
+                <h2 class="mt-3 text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">Dipercaya pemain di seluruh Indonesia</h2>
+                <p class="mx-auto mt-3 max-w-2xl text-sm text-slate-600 sm:text-base">Review real customer dengan pengalaman belanja yang cepat, nyaman, dan profesional.</p>
+            </div>
+
+            <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                @forelse($testimonials->take(6) as $testimonial)
+                    <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_14px_36px_-24px_rgba(15,23,42,0.35)] transition hover:shadow-[0_20px_40px_-22px_rgba(15,23,42,0.4)]">
+                        <div class="mb-4 flex items-center gap-1 text-amber-400">
+                            @for($i = 1; $i <= 5; $i++)
+                                <i class="fas fa-star text-sm {{ $i <= $testimonial->rating ? 'opacity-100' : 'opacity-30' }}"></i>
+                            @endfor
+                        </div>
+                        <p class="text-sm leading-relaxed text-slate-700">"{{ Str::limit($testimonial->content, 130) }}"</p>
+                        <div class="mt-5 flex items-center gap-3">
+                            <img src="{{ $testimonial->user->avatar_url }}" alt="{{ $testimonial->user->name }}" class="h-11 w-11 rounded-full object-cover ring-2 ring-emerald-100">
+                            <div>
+                                <p class="text-sm font-black text-slate-900">{{ $testimonial->user->name }}</p>
+                                <p class="text-xs font-medium text-slate-500">{{ $testimonial->created_at->diffForHumans() }}</p>
+                            </div>
+                        </div>
+                    </article>
+                @empty
+                    <div class="col-span-full rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center">
+                        <i class="fas fa-comments text-3xl text-slate-400"></i>
+                        <p class="mt-3 font-semibold text-slate-500">Belum ada testimoni.</p>
+                    </div>
+                @endforelse
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-slate-950 py-16 text-white">
+        <div class="mx-auto flex w-full max-w-7xl flex-col items-center justify-between gap-6 px-4 text-center sm:px-6 lg:flex-row lg:px-8 lg:text-left">
+            <div>
+                <h3 class="text-2xl font-black tracking-tight sm:text-3xl">Siap upgrade gear padel kamu?</h3>
+                <p class="mt-2 text-sm text-slate-300 sm:text-base">Belanja sekarang dan rasakan pengalaman e-commerce olahraga yang premium.</p>
+            </div>
+            @auth
+                <a href="{{ route('customer.products.index') }}" class="inline-flex items-center rounded-full bg-emerald-400 px-7 py-3 text-sm font-extrabold text-slate-900 transition hover:bg-emerald-300">
+                    Mulai Belanja
+                    <i class="fas fa-arrow-right ms-2"></i>
+                </a>
+            @else
+                <a href="{{ route('login') }}" class="inline-flex items-center rounded-full bg-emerald-400 px-7 py-3 text-sm font-extrabold text-slate-900 transition hover:bg-emerald-300">
+                    Login untuk Belanja
+                    <i class="fas fa-arrow-right ms-2"></i>
+                </a>
+            @endauth
+        </div>
+    </section>
+@endsection
+
+@push('styles')
+    <script src="https://cdn.tailwindcss.com"></script>
+@endpush
+
+@if(false)
     <!-- Hero Banner Section - Full Width -->
     <section class="hero-banner">
         <div class="hero-banner-overlay"></div>
         <div class="container position-relative">
+            <div class="hero-topbar">
+                <div class="hero-topbar-left">
+                    <a href="{{ route('home') }}" class="hero-brand">Nora<span>Padel</span></a>
+                    <nav class="hero-mini-nav d-none d-lg-flex">
+                        <a href="{{ route('home') }}">Home</a>
+                        <a href="{{ route('produk.index') }}">Shop</a>
+                        <a href="{{ route('galeri') }}">Collections</a>
+                        <a href="{{ route('testimoni') }}">Review</a>
+                    </nav>
+                </div>
+                <div class="hero-topbar-right">
+                    <a href="{{ route('produk.index') }}" class="icon-btn d-none d-md-inline-flex" aria-label="Cari Produk">
+                        <i class="fas fa-search"></i>
+                    </a>
+                    @auth
+                        <a href="{{ route('customer.cart.index') }}" class="icon-btn d-none d-md-inline-flex" aria-label="Keranjang">
+                            <i class="fas fa-shopping-basket"></i>
+                        </a>
+                        <a href="{{ route('customer.products.index') }}" class="hero-login-btn">Belanja</a>
+                    @else
+                        <a href="{{ route('login') }}" class="hero-login-btn">Log In</a>
+                    @endauth
+                </div>
+            </div>
+
             <div class="row align-items-center min-vh-hero">
                 <div class="col-lg-6 hero-content">
                     <div class="hero-badge-wrapper">
@@ -84,6 +331,33 @@
                     d="M0 120L60 105C120 90 240 60 360 45C480 30 600 30 720 37.5C840 45 960 60 1080 67.5C1200 75 1320 75 1380 75L1440 75V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z"
                     fill="#fafafa" />
             </svg>
+        </div>
+    </section>
+
+    <section class="quick-categories-section">
+        <div class="container">
+            <div class="quick-categories-grid">
+                <a href="{{ route('produk.index') }}" class="quick-category-card">
+                    <h4>Raket</h4>
+                    <img src="https://images.unsplash.com/photo-1599058917212-d750089bc07e?w=320" alt="Raket Padel">
+                    <span><i class="fas fa-arrow-up-right-from-square"></i></span>
+                </a>
+                <a href="{{ route('produk.index') }}" class="quick-category-card">
+                    <h4>Bola</h4>
+                    <img src="https://images.unsplash.com/photo-1517649763962-0c623066013b?w=320" alt="Bola Padel">
+                    <span><i class="fas fa-arrow-up-right-from-square"></i></span>
+                </a>
+                <a href="{{ route('produk.index') }}" class="quick-category-card">
+                    <h4>Tas</h4>
+                    <img src="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=320" alt="Tas Padel">
+                    <span><i class="fas fa-arrow-up-right-from-square"></i></span>
+                </a>
+                <a href="{{ route('produk.index') }}" class="quick-category-card">
+                    <h4>Aksesori</h4>
+                    <img src="https://images.unsplash.com/photo-1547347298-4074fc3086f0?w=320" alt="Aksesori Padel">
+                    <span><i class="fas fa-arrow-up-right-from-square"></i></span>
+                </a>
+            </div>
         </div>
     </section>
 
@@ -350,7 +624,7 @@
     </section>
 
     
-@endsection
+
 
 @push('styles')
     <style>
@@ -381,8 +655,195 @@
             z-index: 2;
         }
 
+        .hero-topbar {
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 1rem;
+            padding: 0.875rem 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            position: relative;
+            z-index: 3;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+        }
+
+        .hero-topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .hero-brand {
+            font-weight: 800;
+            font-size: 1.15rem;
+            color: #0f172a;
+            text-decoration: none;
+            letter-spacing: -0.3px;
+        }
+
+        .hero-brand span {
+            color: var(--primary);
+            margin-left: 2px;
+        }
+
+        .hero-mini-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .hero-mini-nav a {
+            text-decoration: none;
+            color: #334155;
+            font-weight: 600;
+            font-size: 0.86rem;
+            padding: 0.45rem 0.8rem;
+            border-radius: 999px;
+            transition: all .2s ease;
+        }
+
+        .hero-mini-nav a:hover {
+            background: #ecfdf5;
+            color: var(--primary);
+        }
+
+        .hero-topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .icon-btn {
+            width: 2.2rem;
+            height: 2.2rem;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #334155;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            transition: all .2s ease;
+        }
+
+        .icon-btn:hover {
+            color: var(--primary);
+            background: #ecfdf5;
+            border-color: #bbf7d0;
+        }
+
+        .hero-login-btn {
+            border-radius: 999px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: .85rem;
+            padding: .58rem 1rem;
+            color: #fff;
+            background: linear-gradient(135deg, var(--primary), #22c55e);
+            transition: all .2s ease;
+            box-shadow: 0 8px 18px rgba(22, 163, 74, .3);
+        }
+
+        .hero-login-btn:hover {
+            transform: translateY(-1px);
+            color: #fff;
+        }
+
+        .quick-categories-section {
+            margin-top: -2rem;
+            position: relative;
+            z-index: 5;
+            margin-bottom: 3rem;
+        }
+
+        .quick-categories-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1rem;
+        }
+
+        .quick-category-card {
+            position: relative;
+            background: linear-gradient(160deg, #ffffff, #f1f5f9);
+            border: 1px solid #e5e7eb;
+            border-radius: 1.25rem;
+            padding: 1.1rem;
+            min-height: 180px;
+            overflow: hidden;
+            text-decoration: none;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, .08);
+            transition: all .28s ease;
+        }
+
+        .quick-category-card h4 {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: .75rem;
+        }
+
+        .quick-category-card img {
+            width: 100%;
+            height: 105px;
+            object-fit: cover;
+            border-radius: .9rem;
+            opacity: .95;
+            transition: transform .3s ease;
+        }
+
+        .quick-category-card span {
+            position: absolute;
+            right: .75rem;
+            bottom: .75rem;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 999px;
+            background: #0f172a;
+            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .7rem;
+        }
+
+        .quick-category-card:hover {
+            transform: translateY(-5px);
+            border-color: #bbf7d0;
+        }
+
+        .quick-category-card:hover img {
+            transform: scale(1.04);
+        }
+
         .hero-badge-wrapper {
             margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 991.98px) {
+            .hero-topbar {
+                padding: .8rem;
+                margin-bottom: .5rem;
+            }
+
+            .quick-categories-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .quick-categories-section {
+                margin-top: -1rem;
+                margin-bottom: 2rem;
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .quick-categories-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         .hero-badge-new {
@@ -1590,5 +2051,229 @@
             }
         </style>
     `);
+    </script>
+@endpush
+
+@endif
+
+@endif
+
+@section('title', 'NoraPadel — Precision. Power. Performance.')
+
+@section('content')
+    <div class="bg-white text-black antialiased">
+    <header class="sticky top-0 z-50 border-b border-black/6 bg-white/80 backdrop-blur-xl">
+            <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-10 lg:px-12">
+                <a href="{{ route('home') }}" class="text-xl font-semibold tracking-tight text-black">NoraPadel</a>
+
+                <nav class="hidden items-center gap-8 md:flex">
+                    <a href="{{ route('home') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Home</a>
+                    <a href="{{ route('produk.index') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Racket</a>
+                    <a href="{{ route('produk.index') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Shoes</a>
+                    <a href="{{ route('produk.index') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Apparel</a>
+                    <a href="{{ route('produk.index') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Accessories</a>
+                </nav>
+
+                <div class="flex items-center gap-4 text-black/80">
+                    <a href="{{ route('produk.index') }}" class="transition duration-300 hover:text-black" aria-label="Search">
+                        <i class="fas fa-search text-sm"></i>
+                    </a>
+                    @auth
+                        <a href="{{ route('customer.cart.index') }}" class="transition duration-300 hover:text-black" aria-label="Cart">
+                            <i class="fas fa-shopping-bag text-sm"></i>
+                        </a>
+                    @else
+                        <a href="{{ route('login') }}" class="transition duration-300 hover:text-black" aria-label="Cart">
+                            <i class="fas fa-shopping-bag text-sm"></i>
+                        </a>
+                    @endauth
+                </div>
+            </div>
+        </header>
+
+        <x-landing.hero-product
+            id="racket"
+            title="NoraPadel Racket"
+            subtitle="Precision. Power. Performance."
+            image="https://images.unsplash.com/photo-1547941126-3d5322b218b0?auto=format&fit=crop&w=1400&q=80"
+            alt="NoraPadel Racket"
+            primary-text="Explore"
+            primary-href="{{ route('produk.index') }}"
+            secondary-text="Buy Now"
+            secondary-href="{{ auth()->check() ? route('customer.products.index') : route('login') }}"
+            section-class="bg-[#f5f5f7]"
+        />
+
+        <x-landing.hero-product
+            id="shoes"
+            title="NoraPadel Shoes"
+            subtitle="Move faster. Play smarter."
+            image="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1400&q=80"
+            alt="NoraPadel Shoes"
+            primary-text="Explore"
+            primary-href="{{ route('produk.index') }}"
+            secondary-text="Buy Now"
+            secondary-href="{{ auth()->check() ? route('customer.products.index') : route('login') }}"
+            section-class="bg-white"
+        />
+
+        <x-landing.hero-product
+            id="apparel"
+            title="NoraPadel Apparel"
+            subtitle="Comfort meets performance."
+            image="https://images.unsplash.com/photo-1518459031867-a89b944bffe4?auto=format&fit=crop&w=1400&q=80"
+            alt="NoraPadel Apparel"
+            primary-text="Explore"
+            primary-href="{{ route('produk.index') }}"
+            secondary-text="Buy Now"
+            secondary-href="{{ auth()->check() ? route('customer.products.index') : route('login') }}"
+            section-class="bg-[#f5f5f7]"
+        />
+
+        <section class="np-fade-section bg-[#f5f5f7] py-20 lg:py-24">
+            <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
+                <h2 class="text-center text-4xl font-semibold tracking-tight text-black sm:text-5xl">Featured Products</h2>
+                <p class="mx-auto mt-3 max-w-2xl text-center text-zinc-600">Curated essentials for serious athletes and premium performance lifestyle.</p>
+
+                <div class="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-2">
+                    <x-landing.featured-card
+                        title="Racket Pro Series"
+                        subtitle="Lightweight carbon frame with elite-level control."
+                        image="https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=900&q=80"
+                        href="{{ route('produk.index') }}"
+                    />
+                    <x-landing.featured-card
+                        title="Shoes Elite"
+                        subtitle="Explosive traction and responsive cushioning."
+                        image="https://images.unsplash.com/photo-1491553895911-0055eca6402d?auto=format&fit=crop&w=900&q=80"
+                        href="{{ route('produk.index') }}"
+                    />
+                    <x-landing.featured-card
+                        title="Apparel Set"
+                        subtitle="Breathable fit engineered for long rallies."
+                        image="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=80"
+                        href="{{ route('produk.index') }}"
+                    />
+                    <x-landing.featured-card
+                        title="Accessories Kit"
+                        subtitle="Everything you need to dominate each matchday."
+                        image="https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=900&q=80"
+                        href="{{ route('produk.index') }}"
+                    />
+                </div>
+            </div>
+        </section>
+
+        <section class="np-fade-section bg-white py-16 lg:py-20">
+            <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
+                <div class="rounded-3xl border border-black/5 bg-linear-to-r from-zinc-100 to-white px-8 py-14 text-center shadow-[0_8px_34px_rgba(0,0,0,0.04)] lg:px-12">
+                    <h2 class="text-3xl font-semibold tracking-tight text-black sm:text-4xl lg:text-5xl">Level up your game with NoraPadel</h2>
+                    <p class="mx-auto mt-4 max-w-2xl text-zinc-600">Designed for players who expect precision craftsmanship and world-class performance in every detail.</p>
+                    <a href="{{ auth()->check() ? route('customer.products.index') : route('login') }}"
+                       class="mt-8 inline-flex rounded-full bg-[#0071e3] px-8 py-3 text-sm font-medium text-white transition duration-300 hover:scale-[1.02] hover:bg-[#0077ED]">
+                        Shop Collection
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <footer class="border-t border-black/10 bg-white py-14 text-sm text-zinc-500">
+            <div class="mx-auto grid w-full max-w-7xl grid-cols-2 gap-8 px-6 md:grid-cols-4 md:px-10 lg:px-12">
+                <div>
+                    <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">Shop</h3>
+                    <ul class="space-y-2">
+                        <li><a href="{{ route('produk.index') }}" class="hover:underline">Racket</a></li>
+                        <li><a href="{{ route('produk.index') }}" class="hover:underline">Shoes</a></li>
+                        <li><a href="{{ route('produk.index') }}" class="hover:underline">Apparel</a></li>
+                        <li><a href="{{ route('produk.index') }}" class="hover:underline">Accessories</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">Support</h3>
+                    <ul class="space-y-2">
+                        <li><a href="{{ route('tentang') }}" class="hover:underline">Help Center</a></li>
+                        <li><a href="{{ route('tentang') }}" class="hover:underline">Shipping</a></li>
+                        <li><a href="{{ route('tentang') }}" class="hover:underline">Returns</a></li>
+                        <li><a href="{{ route('tentang') }}" class="hover:underline">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">Account</h3>
+                    <ul class="space-y-2">
+                        @auth
+                            <li><a href="{{ route('customer.profile.index') }}" class="hover:underline">Dashboard</a></li>
+                            <li><a href="{{ route('customer.orders.index') }}" class="hover:underline">Orders</a></li>
+                        @else
+                            <li><a href="{{ route('login') }}" class="hover:underline">Sign In</a></li>
+                            <li><a href="{{ route('register') }}" class="hover:underline">Create Account</a></li>
+                        @endauth
+                        <li><a href="{{ route('customer.notifications.index') }}" class="hover:underline">Notifications</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">About NoraPadel</h3>
+                    <ul class="space-y-2">
+                        <li><a href="{{ route('tentang') }}" class="hover:underline">Our Story</a></li>
+                        <li><a href="{{ route('galeri') }}" class="hover:underline">Gallery</a></li>
+                        <li><a href="{{ route('testimoni') }}" class="hover:underline">Testimonials</a></li>
+                        <li><a href="{{ route('tentang') }}" class="hover:underline">Careers</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mx-auto mt-10 w-full max-w-7xl border-t border-black/10 px-6 pt-5 text-xs text-zinc-400 md:px-10 lg:px-12">
+                © {{ now()->year }} NoraPadel. All rights reserved.
+            </div>
+        </footer>
+    </div>
+@endsection
+
+@push('styles')
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .np-fade-section {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .np-fade-section.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+@endpush
+
+@push('scripts')
+    <script>
+        (function () {
+            const revealEls = document.querySelectorAll('.np-fade-section');
+            const heroImages = document.querySelectorAll('.np-parallax-image');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    }
+                });
+            }, { threshold: 0.12 });
+
+            revealEls.forEach((el) => observer.observe(el));
+
+            const applyParallax = () => {
+                const scrollTop = window.scrollY || window.pageYOffset;
+                heroImages.forEach((img, index) => {
+                    const intensity = 0.04 + (index * 0.005);
+                    img.style.transform = `translate3d(0, ${scrollTop * intensity}px, 0)`;
+                });
+            };
+
+            window.addEventListener('scroll', applyParallax, { passive: true });
+            applyParallax();
+        })();
     </script>
 @endpush
