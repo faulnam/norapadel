@@ -629,6 +629,20 @@
                 display: block;
             }
         }
+
+        [data-auto-parallax] {
+            --np-parallax-shift: 0px;
+            transform: translate3d(0, var(--np-parallax-shift), 0);
+            will-change: transform;
+            transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            [data-auto-parallax] {
+                transition: none !important;
+                transform: none !important;
+            }
+        }
     </style>
     
     @stack('styles')
@@ -831,6 +845,72 @@
                 sidebarBackdrop.classList.remove('show');
             });
         }
+    </script>
+
+    <script>
+        (function () {
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (prefersReducedMotion) return;
+
+            const selector = [
+                '.page-content > .row',
+                '.page-content > .container',
+                '.page-content > .container-fluid',
+                '.page-content > .card',
+                '.page-content > form',
+                '.page-content > section',
+                '.page-content > table'
+            ].join(', ');
+
+            const candidates = Array.from(document.querySelectorAll(selector)).filter((el) => {
+                if (el.hasAttribute('data-auto-parallax') || el.hasAttribute('data-parallax')) return false;
+                if (!el.offsetParent || el.offsetHeight < 48) return false;
+
+                const style = window.getComputedStyle(el);
+                if (style.position === 'fixed' || style.position === 'sticky') return false;
+                if (el.closest('.sidebar, .top-navbar, .mobile-bottom-nav')) return false;
+
+                return true;
+            });
+
+            if (!candidates.length) return;
+
+            candidates.forEach((el) => {
+                const speed = el.matches('.page-content > .row, .page-content > .container, .page-content > .container-fluid') ? 0.013 : 0.01;
+                el.dataset.autoParallax = '1';
+                el.dataset.autoParallaxSpeed = String(speed);
+            });
+
+            let ticking = false;
+
+            const updateParallax = () => {
+                const viewportH = window.innerHeight || document.documentElement.clientHeight;
+
+                candidates.forEach((el) => {
+                    const speed = Number.parseFloat(el.dataset.autoParallaxSpeed || '0.01') || 0.01;
+                    const rect = el.getBoundingClientRect();
+                    const centerY = rect.top + (rect.height / 2);
+                    const offsetFromCenter = centerY - (viewportH / 2);
+                    const rawShift = -offsetFromCenter * speed;
+                    const maxShift = 10;
+                    const shift = Math.max(-maxShift, Math.min(maxShift, rawShift));
+                    el.style.setProperty('--np-parallax-shift', `${shift.toFixed(2)}px`);
+                });
+
+                ticking = false;
+            };
+
+            const requestTick = () => {
+                if (!ticking) {
+                    window.requestAnimationFrame(updateParallax);
+                    ticking = true;
+                }
+            };
+
+            window.addEventListener('scroll', requestTick, { passive: true });
+            window.addEventListener('resize', requestTick);
+            requestTick();
+        })();
     </script>
     
     {{-- Notification Sound Component --}}

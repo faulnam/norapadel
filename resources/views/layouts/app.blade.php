@@ -651,12 +651,181 @@
                 padding-bottom: 80px;
             }
         }
+
+        [data-auto-parallax] {
+            --np-parallax-shift: 0px;
+            transform: translate3d(0, var(--np-parallax-shift), 0);
+            will-change: transform;
+            transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            [data-auto-parallax] {
+                transition: none !important;
+                transform: none !important;
+            }
+        }
+
+        .np-product-modal .modal-dialog {
+            max-width: 880px;
+        }
+
+        .np-product-modal .modal-content {
+            border: 0;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 28px 70px rgba(0, 0, 0, 0.22);
+        }
+
+        .np-product-modal .modal-header {
+            position: absolute;
+            top: 0;
+            right: 0;
+            z-index: 6;
+            border: 0;
+            padding: 0.75rem;
+        }
+
+        .np-product-modal .btn-close {
+            background-color: rgba(255, 255, 255, 0.92);
+            border-radius: 999px;
+            opacity: 1;
+            box-shadow: 0 8px 22px rgba(15, 23, 42, 0.18);
+        }
+
+        .np-product-modal-body {
+            padding: 0;
+        }
+
+        .np-product-media {
+            background: #f5f7fb;
+            min-height: 340px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            height: 100%;
+        }
+
+        .np-product-media img {
+            width: 100%;
+            height: 100%;
+            min-height: 340px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .np-product-content {
+            padding: 1.5rem;
+        }
+
+        .np-product-category {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+        }
+
+        .np-product-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 0.75rem;
+            color: #111827;
+        }
+
+        .np-product-description {
+            color: #4b5563;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .np-product-price {
+            font-size: 1.55rem;
+            font-weight: 800;
+            color: #52525b;
+            line-height: 1.1;
+        }
+
+        .np-product-price-old {
+            font-size: 0.875rem;
+            color: #94a3b8;
+            text-decoration: line-through;
+            margin-top: 0.15rem;
+        }
+
+        .np-product-actions {
+            margin-top: 1.25rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.625rem;
+        }
+
+        .np-product-buy-btn {
+            background: #18181b;
+            color: #ffffff;
+            border: 1px solid #18181b;
+            font-weight: 600;
+            font-size: 0.8125rem;
+            padding: 0.45rem 0.8rem;
+            line-height: 1.2;
+        }
+
+        .np-product-buy-btn:hover {
+            background: #27272a;
+            border-color: #27272a;
+            color: #ffffff;
+        }
+
+        .np-product-cart-btn {
+            background: transparent;
+            color: #3f3f46;
+            border: 1px solid #d4d4d8;
+            width: 34px;
+            height: 34px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            padding: 0;
+        }
+
+        .np-product-cart-btn:hover {
+            background: #f4f4f5;
+            color: #18181b;
+            border-color: #a1a1aa;
+        }
+
+        @media (max-width: 767.98px) {
+            .np-product-modal .modal-dialog {
+                margin: 0.75rem;
+            }
+
+            .np-product-media {
+                min-height: 220px;
+            }
+
+            .np-product-media img {
+                min-height: 220px;
+            }
+
+            .np-product-title {
+                font-size: 1.25rem;
+            }
+
+            .np-product-price {
+                font-size: 1.25rem;
+            }
+        }
     </style>
     
     @stack('styles')
 </head>
 <body>
-    @unless(request()->routeIs('home', 'racket', 'shoes', 'apparel'))
+    @unless(request()->routeIs('home', 'racket', 'shoes', 'apparel', 'shop'))
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg sticky-top" id="mainNavbar">
         <div class="container">
@@ -685,8 +854,13 @@
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('testimoni') ? 'active' : '' }}" href="{{ route('testimoni') }}">Testimoni</a>
                     </li>
-                    
+
                     @guest
+                        <li class="nav-item ms-lg-1 d-none d-lg-block">
+                            <a class="nav-link" href="{{ route('login') }}" aria-label="Keranjang (login terlebih dahulu)">
+                                <i class="fas fa-shopping-cart"></i>
+                            </a>
+                        </li>
                         <li class="nav-item ms-lg-3">
                             <a class="btn-nav-login" href="{{ route('login') }}">Masuk</a>
                         </li>
@@ -821,7 +995,61 @@
         @yield('content')
     </main>
 
-    @unless(request()->routeIs('home', 'racket', 'shoes', 'apparel'))
+    <div class="modal fade np-product-modal" id="npProductModal" tabindex="-1" aria-labelledby="npProductModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body np-product-modal-body">
+                    <div class="row g-0">
+                        <div class="col-md-5">
+                            <div class="np-product-media">
+                                <img id="npModalImage" src="" alt="Product image">
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <div class="np-product-content">
+                                <div id="npModalCategory" class="np-product-category">Produk</div>
+                                <h3 id="npProductModalTitle" class="np-product-title">Detail Produk</h3>
+                                <p id="npModalDescription" class="np-product-description">Deskripsi produk akan ditampilkan di sini.</p>
+
+                                <div>
+                                    <div id="npModalPrice" class="np-product-price">-</div>
+                                    <div id="npModalOldPrice" class="np-product-price-old d-none"></div>
+                                </div>
+
+                                <div class="np-product-actions">
+                                    @auth
+                                        @if(auth()->user()->isCustomer())
+                                            <form id="npModalCartForm" action="{{ route('customer.cart.add', ['product' => 1]) }}" data-action-template="{{ route('customer.cart.add', ['product' => '__PRODUCT_ID__']) }}" method="POST" class="d-flex gap-2 align-items-center">
+                                                @csrf
+                                                <input type="hidden" name="quantity" value="1">
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="fas fa-cart-plus me-2"></i>Beli Sekarang
+                                                </button>
+                                            </form>
+                                        @else
+                                            <span class="badge bg-secondary">Akun ini tidak dapat melakukan pembelian</span>
+                                        @endif
+                                    @else
+                                        <a href="{{ route('login') }}" class="btn np-product-buy-btn">
+                                            <i class="fas fa-shopping-bag me-2"></i>Beli
+                                        </a>
+                                        <a href="{{ route('login') }}" class="btn np-product-cart-btn" aria-label="Keranjang (login terlebih dahulu)">
+                                            <i class="fas fa-shopping-cart"></i>
+                                        </a>
+                                    @endauth
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @unless(request()->routeIs('home', 'racket', 'shoes', 'apparel', 'shop'))
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
@@ -862,7 +1090,7 @@
     </footer>
     @endunless
 
-    @unless(request()->routeIs('home', 'racket', 'shoes', 'apparel'))
+    @unless(request()->routeIs('home', 'racket', 'shoes', 'apparel', 'shop'))
     <!-- Mobile Bottom Navigation -->
     <nav class="mobile-bottom-nav">
         <div class="mobile-bottom-nav-inner">
@@ -951,6 +1179,145 @@
                 navbar.classList.remove('scrolled');
             }
         });
+    </script>
+
+    <script>
+        (function () {
+            const modalEl = document.getElementById('npProductModal');
+            if (!modalEl || typeof bootstrap === 'undefined') return;
+
+            const modal = new bootstrap.Modal(modalEl);
+            const modalImage = document.getElementById('npModalImage');
+            const modalCategory = document.getElementById('npModalCategory');
+            const modalTitle = document.getElementById('npProductModalTitle');
+            const modalDescription = document.getElementById('npModalDescription');
+            const modalPrice = document.getElementById('npModalPrice');
+            const modalOldPrice = document.getElementById('npModalOldPrice');
+            const cartForm = document.getElementById('npModalCartForm');
+            const fallbackImage = '{{ asset(config('branding.logo', 'images/nora-padel-logo.svg')) }}';
+
+            const toText = (value, fallback = '') => {
+                const clean = (value || '').toString().trim();
+                return clean.length ? clean : fallback;
+            };
+
+            const openProductModal = (trigger) => {
+                const dataset = trigger.dataset;
+
+                const productId = toText(dataset.productId);
+                const name = toText(dataset.productName, 'Produk NoraPadel');
+                const category = toText(dataset.productCategory, 'Produk');
+                const description = toText(dataset.productDescription, 'Detail produk belum tersedia.');
+                const image = toText(dataset.productImage, fallbackImage);
+                const price = toText(dataset.productPrice, '-');
+                const oldPrice = toText(dataset.productOldPrice);
+
+                modalImage.src = image;
+                modalImage.alt = name;
+                modalCategory.textContent = category;
+                modalTitle.textContent = name;
+                modalDescription.textContent = description;
+                modalPrice.textContent = price;
+
+                if (oldPrice && oldPrice !== price) {
+                    modalOldPrice.textContent = oldPrice;
+                    modalOldPrice.classList.remove('d-none');
+                } else {
+                    modalOldPrice.textContent = '';
+                    modalOldPrice.classList.add('d-none');
+                }
+
+                if (cartForm && productId) {
+                    const actionTemplate = cartForm.dataset.actionTemplate || '';
+                    cartForm.action = actionTemplate.replace('__PRODUCT_ID__', productId);
+                }
+
+                modal.show();
+            };
+
+            document.addEventListener('click', function (event) {
+                const trigger = event.target.closest('[data-product-trigger]');
+                if (!trigger) return;
+
+                event.preventDefault();
+                openProductModal(trigger);
+            });
+        })();
+    </script>
+
+    <script>
+        (function () {
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (prefersReducedMotion) return;
+
+            const selector = [
+                'section',
+                'footer',
+                '.page-hero',
+                '.hero-section',
+                '.checkout-page',
+                '.payment-page',
+                '.payment-waiting-page',
+                '.order-detail-page',
+                '.receipt-wrapper',
+                '.quick-categories-section',
+                '.about-section',
+                '.why-section',
+                '.products-section',
+                '.gallery-section',
+                '.testimonials-section'
+            ].join(', ');
+
+            const candidates = Array.from(document.querySelectorAll(selector)).filter((el) => {
+                if (el.hasAttribute('data-parallax') || el.hasAttribute('data-auto-parallax')) return false;
+                if (el.classList.contains('np-fade-section')) return false;
+                if (!el.offsetParent || el.offsetHeight < 56) return false;
+
+                const style = window.getComputedStyle(el);
+                if (style.position === 'fixed' || style.position === 'sticky') return false;
+                if (el.closest('.navbar, .mobile-bottom-nav, [data-slide-track], .top-navbar, .sidebar')) return false;
+
+                return true;
+            });
+
+            if (!candidates.length) return;
+
+            candidates.forEach((el) => {
+                const speed = el.matches('.page-hero, .hero-section, .checkout-page, .payment-page, .order-detail-page') ? 0.018 : (el.matches('footer') ? 0.01 : 0.014);
+                el.dataset.autoParallax = '1';
+                el.dataset.autoParallaxSpeed = String(speed);
+            });
+
+            let ticking = false;
+
+            const updateParallax = () => {
+                const viewportH = window.innerHeight || document.documentElement.clientHeight;
+
+                candidates.forEach((el) => {
+                    const speed = Number.parseFloat(el.dataset.autoParallaxSpeed || '0.014') || 0.014;
+                    const rect = el.getBoundingClientRect();
+                    const centerY = rect.top + (rect.height / 2);
+                    const offsetFromCenter = centerY - (viewportH / 2);
+                    const rawShift = -offsetFromCenter * speed;
+                    const maxShift = 14;
+                    const shift = Math.max(-maxShift, Math.min(maxShift, rawShift));
+                    el.style.setProperty('--np-parallax-shift', `${shift.toFixed(2)}px`);
+                });
+
+                ticking = false;
+            };
+
+            const requestTick = () => {
+                if (!ticking) {
+                    window.requestAnimationFrame(updateParallax);
+                    ticking = true;
+                }
+            };
+
+            window.addEventListener('scroll', requestTick, { passive: true });
+            window.addEventListener('resize', requestTick);
+            requestTick();
+        })();
     </script>
     
     {{-- Notification Sound Component for Customer --}}

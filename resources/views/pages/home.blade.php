@@ -240,9 +240,6 @@
                     </nav>
                 </div>
                 <div class="hero-topbar-right">
-                    <a href="{{ route('produk.index') }}" class="icon-btn d-none d-md-inline-flex" aria-label="Cari Produk">
-                        <i class="fas fa-search"></i>
-                    </a>
                     @auth
                         <a href="{{ route('customer.cart.index') }}" class="icon-btn d-none d-md-inline-flex" aria-label="Keranjang">
                             <i class="fas fa-shopping-basket"></i>
@@ -2075,9 +2072,6 @@
                 </nav>
 
                 <div class="flex items-center gap-4 text-black/80">
-                    <a href="{{ route('produk.index') }}" class="transition duration-300 hover:text-black" aria-label="Search">
-                        <i class="fas fa-search text-sm"></i>
-                    </a>
                     @auth
                         <a href="{{ route('customer.cart.index') }}" class="transition duration-300 hover:text-black" aria-label="Cart">
                             <i class="fas fa-shopping-bag text-sm"></i>

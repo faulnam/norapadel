@@ -31,6 +31,7 @@ Route::get('/tentang', [PageController::class, 'tentang'])->name('tentang');
 Route::get('/racket', [PageController::class, 'racket'])->name('racket');
 Route::get('/shoes', [PageController::class, 'shoes'])->name('shoes');
 Route::get('/apparel', [PageController::class, 'apparel'])->name('apparel');
+Route::get('/shop', [PageController::class, 'shop'])->name('shop');
 Route::get('/produk', [PageController::class, 'produkIndex'])->name('produk.index');
 Route::get('/produk/{product}', [PageController::class, 'produkShow'])->name('produk.show');
 Route::get('/galeri', [PageController::class, 'galeri'])->name('galeri');

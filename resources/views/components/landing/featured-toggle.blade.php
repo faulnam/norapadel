@@ -5,14 +5,7 @@
 ])
 
 @php
-    $fallbackImages = [
-        'https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=900&q=80',
-        'https://images.unsplash.com/photo-1491553895911-0055eca6402d?auto=format&fit=crop&w=900&q=80',
-        'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=80',
-        'https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=900&q=80',
-        'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80',
-        'https://images.unsplash.com/photo-1582588678413-dbf45f4823e9?auto=format&fit=crop&w=900&q=80',
-    ];
+    $cardFallbackImage = 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80';
 @endphp
 
 <section class="np-fade-section bg-[#f5f5f7] py-20 lg:py-24" data-featured-toggle>
@@ -30,15 +23,23 @@
 
         <div class="np-layout-grid mt-10 flex flex-col space-y-4" data-grid>
             @forelse($products as $index => $product)
-                <a
-                    href="{{ auth()->check() ? route('customer.products.show', $product) : route('produk.show', $product) }}"
-                    class="np-layout-item group flex h-full flex-col overflow-hidden rounded-sm border border-black/5 bg-white pb-6 shadow-[0_8px_26px_rgba(0,0,0,0.05)] transition duration-300 hover:scale-[1.02] hover:shadow-[0_14px_34px_rgba(0,0,0,0.1)]"
+                <button
+                    type="button"
+                    class="np-layout-item group flex h-full w-full flex-col overflow-hidden rounded-sm border border-black/5 bg-white pb-6 text-start shadow-[0_8px_26px_rgba(0,0,0,0.05)] transition duration-300 hover:scale-[1.02] hover:shadow-[0_14px_34px_rgba(0,0,0,0.1)]"
+                    data-product-trigger
+                    data-product-id="{{ $product->id }}"
+                    data-product-name="{{ e($product->name) }}"
+                    data-product-category="{{ e($product->category_label) }}"
+                    data-product-description="{{ e(\Illuminate\Support\Str::limit(strip_tags($product->description ?? ''), 180)) }}"
+                    data-product-image="{{ $product->image ? asset('storage/' . $product->image) : $cardFallbackImage }}"
+                    data-product-price="{{ $product->hasActiveDiscount() ? $product->formatted_discounted_price : $product->formatted_price }}"
+                    data-product-old-price="{{ $product->hasActiveDiscount() ? $product->formatted_price : '' }}"
                 >
-                    <div class="relative flex h-72 items-center justify-center px-6 pt-6">
+                    <div class="relative aspect-4/5 overflow-hidden bg-zinc-50">
                         <img
-                            src="{{ $product->image ? asset('storage/' . $product->image) : $fallbackImages[$index % count($fallbackImages)] }}"
+                            src="{{ $product->image ? asset('storage/' . $product->image) : $cardFallbackImage }}"
                             alt="{{ $product->name }}"
-                            class="mx-auto h-auto max-h-56 w-auto max-w-[75%] object-contain"
+                            class="h-full w-full object-cover"
                             loading="lazy"
                         >
                         <div class="absolute inset-0 z-10 bg-slate-950/5 transition duration-300 group-hover:bg-slate-950/0"></div>
@@ -56,7 +57,7 @@
                             @endif
                         </p>
                     </div>
-                </a>
+                </button>
             @empty
                 <div class="rounded-xl border border-dashed border-zinc-300 bg-white p-10 text-center text-zinc-500">Produk belum tersedia.</div>
             @endforelse

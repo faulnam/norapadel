@@ -110,6 +110,51 @@ class PageController extends Controller
     }
 
     /**
+     * Show shop page with grouped manual sliders
+     */
+    public function shop()
+    {
+        $baseQuery = Product::active()->inStock();
+
+        $buildSection = function (string $title, array $keywords = [], ?string $category = null) use ($baseQuery) {
+            $query = (clone $baseQuery);
+
+            if ($category) {
+                $query->where('category', $category);
+            }
+
+            if (!empty($keywords)) {
+                $query->where(function ($q) use ($keywords) {
+                    foreach ($keywords as $word) {
+                        $q->orWhere('name', 'like', "%{$word}%")
+                            ->orWhere('description', 'like', "%{$word}%");
+                    }
+                });
+            }
+
+            $items = $query->latest()->take(8)->get();
+
+            if ($items->isEmpty()) {
+                $items = (clone $baseQuery)->latest()->take(8)->get();
+            }
+
+            return [
+                'title' => $title,
+                'latest' => $items->first(),
+                'others' => $items->slice(1)->values(),
+            ];
+        };
+
+        $sections = [
+            $buildSection('Racket Terbaru', [], Product::CATEGORY_ORIGINAL),
+            $buildSection('Shoes Terbaru', ['shoe', 'sepatu', 'nike', 'adidas', 'new balance', 'brooks', 'salomon']),
+            $buildSection('Apparel Terbaru', ['apparel', 'jersey', 'shirt', 'kaos', 'wear', 'outfit']),
+        ];
+
+        return view('pages.shop', compact('sections'));
+    }
+
+    /**
      * Get realtime statistics
      */
     private function getStats()
@@ -159,6 +204,14 @@ class PageController extends Controller
     {
         $query = Product::active()->inStock();
 
+        if ($request->filled('q')) {
+            $keyword = trim((string) $request->q);
+            $query->where(function ($q) use ($keyword) {
+                $q->where('name', 'like', "%{$keyword}%")
+                    ->orWhere('description', 'like', "%{$keyword}%");
+            });
+        }
+
         if ($request->filled('category')) {
             $query->where('category', $request->category);
         }
@@ -179,7 +232,7 @@ class PageController extends Controller
             $query->latest();
         }
 
-        $products = $query->paginate(12);
+        $products = $query->paginate(12)->withQueryString();
 
         return view('pages.produk.index', compact('products'));
     }

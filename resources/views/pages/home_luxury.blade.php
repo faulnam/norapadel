@@ -13,13 +13,16 @@
                     <a href="{{ route('racket') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Racket</a>
                     <a href="{{ route('shoes') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Shoes</a>
                     <a href="{{ route('apparel') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Apparel</a>
-                    <a href="{{ route('produk.index') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Shop</a>
+                    <a href="{{ route('shop') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Shop</a>
                 </nav>
 
                 <div class="flex items-center gap-4 text-black/80">
-                    <a href="{{ route('produk.index') }}" class="transition duration-300 hover:text-black" aria-label="Search">
-                        <i class="fas fa-search text-sm"></i>
-                    </a>
+                    @guest
+                        <a href="{{ route('login') }}" class="inline-flex items-center gap-1 rounded-full border border-black/15 px-3 py-1.5 text-xs font-medium text-black/80 transition duration-300 hover:border-black/30 hover:text-black" aria-label="Masuk">
+                            <i class="fas fa-sign-in-alt text-[11px]"></i>
+                            <span>Masuk</span>
+                        </a>
+                    @endguest
                     @auth
                         <a href="{{ route('customer.cart.index') }}" class="transition duration-300 hover:text-black" aria-label="Cart">
                             <i class="fas fa-shopping-bag text-sm"></i>
@@ -164,7 +167,7 @@
                         <li><a href="{{ route('produk.index') }}" class="hover:underline">Racket</a></li>
                         <li><a href="{{ route('produk.index') }}" class="hover:underline">Shoes</a></li>
                         <li><a href="{{ route('produk.index') }}" class="hover:underline">Apparel</a></li>
-                        <li><a href="{{ route('produk.index') }}" class="hover:underline">Shop</a></li>
+                        <li><a href="{{ route('shop') }}" class="hover:underline">Shop</a></li>
                     </ul>
                 </div>
                 <div>

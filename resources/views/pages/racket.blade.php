@@ -13,13 +13,16 @@
                     <a href="{{ route('racket') }}" class="border-b border-black text-sm text-black transition duration-300">Racket</a>
                     <a href="{{ route('shoes') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Shoes</a>
                     <a href="{{ route('apparel') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Apparel</a>
-                    <a href="{{ route('produk.index') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Shop</a>
+                    <a href="{{ route('shop') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Shop</a>
                 </nav>
 
                 <div class="flex items-center gap-4 text-black/80">
-                    <a href="{{ route('racket') }}" class="transition duration-300 hover:text-black" aria-label="Search Racket">
-                        <i class="fas fa-search text-sm"></i>
-                    </a>
+                    @guest
+                        <a href="{{ route('login') }}" class="inline-flex items-center gap-1 rounded-full border border-black/15 px-3 py-1.5 text-xs font-medium text-black/80 transition duration-300 hover:border-black/30 hover:text-black" aria-label="Masuk">
+                            <i class="fas fa-sign-in-alt text-[11px]"></i>
+                            <span>Masuk</span>
+                        </a>
+                    @endguest
                     @auth
                         <a href="{{ route('customer.cart.index') }}" class="transition duration-300 hover:text-black" aria-label="Cart">
                             <i class="fas fa-shopping-bag text-sm"></i>
@@ -73,15 +76,23 @@
 
                 <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     @forelse($products as $product)
-                        <a
-                            href="{{ auth()->check() ? route('customer.products.show', $product) : route('produk.show', $product) }}"
-                            class="group flex h-full flex-col overflow-hidden rounded-2xl border border-black/6 bg-white shadow-[0_8px_26px_rgba(0,0,0,0.05)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(0,0,0,0.09)]"
+                        <button
+                            type="button"
+                            class="group flex h-full w-full flex-col overflow-hidden rounded-2xl border border-black/6 bg-white text-start shadow-[0_8px_26px_rgba(0,0,0,0.05)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(0,0,0,0.09)]"
+                            data-product-trigger
+                            data-product-id="{{ $product->id }}"
+                            data-product-name="{{ e($product->name) }}"
+                            data-product-category="{{ e($product->category_label) }}"
+                            data-product-description="{{ e(\Illuminate\Support\Str::limit(strip_tags($product->description ?? ''), 180)) }}"
+                            data-product-image="{{ $product->image ? asset('storage/' . $product->image) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}"
+                            data-product-price="{{ $product->hasActiveDiscount() ? $product->formatted_discounted_price : $product->formatted_price }}"
+                            data-product-old-price="{{ $product->hasActiveDiscount() ? $product->formatted_price : '' }}"
                         >
-                            <div class="relative flex h-60 items-center justify-center bg-zinc-50 p-6">
+                            <div class="relative aspect-4/5 overflow-hidden bg-zinc-50">
                                 <img
-                                    src="{{ $product->image ? asset('storage/' . $product->image) : 'https://images.unsplash.com/photo-1547941126-3d5322b218b0?auto=format&fit=crop&w=900&q=80' }}"
+                                    src="{{ $product->image ? asset('storage/' . $product->image) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}"
                                     alt="{{ $product->name }}"
-                                    class="max-h-full w-auto max-w-full object-contain transition duration-500 group-hover:scale-105"
+                                    class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                                     loading="lazy"
                                 >
                                 @if($product->hasActiveDiscount())
@@ -102,7 +113,7 @@
                                     @endif
                                 </div>
                             </div>
-                        </a>
+                        </button>
                     @empty
                         <div class="col-span-full rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 p-12 text-center">
                             <i class="fas fa-box-open text-3xl text-zinc-400"></i>
@@ -127,7 +138,7 @@
                         <li><a href="{{ route('racket') }}" class="hover:underline">Racket</a></li>
                         <li><a href="{{ route('shoes') }}" class="hover:underline">Shoes</a></li>
                         <li><a href="{{ route('apparel') }}" class="hover:underline">Apparel</a></li>
-                        <li><a href="{{ route('produk.index') }}" class="hover:underline">Shop</a></li>
+                        <li><a href="{{ route('shop') }}" class="hover:underline">Shop</a></li>
                     </ul>
                 </div>
                 <div>

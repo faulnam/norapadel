@@ -18,6 +18,15 @@
         <!-- Filter -->
         <div class="filter-bar mb-4">
             <form action="{{ route('produk.index') }}" method="GET" class="d-flex flex-wrap gap-3">
+                <div class="filter-item grow">
+                    <input
+                        type="text"
+                        name="q"
+                        value="{{ request('q') }}"
+                        class="form-control"
+                        placeholder="Cari semua produk..."
+                    >
+                </div>
                 <div class="filter-item">
                     <select name="category" class="form-select" onchange="this.form.submit()">
                         <option value="">Semua Kategori</option>
@@ -34,7 +43,8 @@
                         <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Terbaru</option>
                     </select>
                 </div>
-                @if(request()->hasAny(['category', 'sort']))
+                <button type="submit" class="btn btn-primary">Cari</button>
+                @if(request()->hasAny(['q', 'category', 'sort']))
                     <a href="{{ route('produk.index') }}" class="btn btn-outline-secondary">Reset</a>
                 @endif
             </form>
@@ -45,7 +55,7 @@
                 <div class="col-6 col-md-4 col-lg-3">
                     <div class="product-card">
                         <div class="product-image">
-                            <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=400' }}" 
+                       <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}" 
                                  alt="{{ $product->name }}">
                             <div class="product-badges">
                                 <span class="badge badge-{{ $product->category == 'original' ? 'primary' : 'accent' }}">
@@ -72,10 +82,21 @@
                                     @endif
                                 </div>
                                 @if($product->stock > 0)
-                                    <a href="{{ route('produk.show', $product) }}" class="btn btn-sm btn-primary">
+                                    <button
+                                        type="button"
+                                        class="btn btn-sm btn-primary"
+                                        data-product-trigger
+                                        data-product-id="{{ $product->id }}"
+                                        data-product-name="{{ e($product->name) }}"
+                                        data-product-category="{{ e($product->category_label) }}"
+                                        data-product-description="{{ e(\Illuminate\Support\Str::limit(strip_tags($product->description ?? ''), 180)) }}"
+                                        data-product-image="{{ $product->image ? asset('storage/' . $product->image) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}"
+                                        data-product-price="{{ $product->hasActiveDiscount() ? $product->formatted_discounted_price : $product->formatted_price }}"
+                                        data-product-old-price="{{ $product->hasActiveDiscount() ? $product->formatted_price : '' }}"
+                                    >
                                         <i class="fas fa-eye d-md-none"></i>
                                         <span class="d-none d-md-inline">Detail</span>
-                                    </a>
+                                    </button>
                                 @else
                                     <span class="badge bg-secondary">Habis</span>
                                 @endif
