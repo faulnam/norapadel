@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'PATAH - Kerupuk Pakcoy & Tahu')
+@section('title', 'Nora Padel - Performa Maksimal, Game Makin Total')
 
 @section('content')
 <!-- Hero Section -->
@@ -8,17 +8,17 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6 text-white">
-                <h1 class="display-4 fw-bold mb-4">Kerupuk PATAH</h1>
-                <h2 class="h4 mb-4">Pakcoy & Tahu</h2>
-                <p class="lead mb-4">Camilan sehat, gurih, dan inovatif dari bahan alami pakcoy dan tahu. Tanpa pengawet, tanpa MSG, 100% alami!</p>
+                <h1 class="display-4 fw-bold mb-4">Nora Padel</h1>
+                <h2 class="h4 mb-4">Perlengkapan Padel Premium</h2>
+                <p class="lead mb-4">Raket, bola, tas, sepatu, dan aksesori padel berkualitas untuk pemula hingga profesional.</p>
                 <div class="d-flex gap-3 mb-4">
                     @auth
                         <a href="{{ route('customer.products.index') }}" class="btn btn-warning btn-lg px-4">
-                            <i class="fas fa-shopping-cart me-2"></i>Pesan Sekarang
+                            <i class="fas fa-shopping-cart me-2"></i>Belanja Sekarang
                         </a>
                     @else
                         <a href="{{ route('login') }}" class="btn btn-warning btn-lg px-4">
-                            <i class="fas fa-shopping-cart me-2"></i>Pesan Sekarang
+                            <i class="fas fa-shopping-cart me-2"></i>Belanja Sekarang
                         </a>
                     @endauth
                     <a href="#about" class="btn btn-outline-light btn-lg px-4">Pelajari Lebih</a>
@@ -40,7 +40,7 @@
                 </div>
             </div>
             <div class="col-lg-6 text-center mt-5 mt-lg-0">
-                <img src="https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=500" alt="Kerupuk PATAH" class="img-fluid rounded-4 shadow-lg" style="max-height: 400px; object-fit: cover;">
+                <img src="https://images.unsplash.com/photo-1593766827228-8737b4534aa6?w=900" alt="Nora Padel" class="img-fluid rounded-4 shadow-lg" style="max-height: 400px; object-fit: cover;">
             </div>
         </div>
     </div>
@@ -50,8 +50,8 @@
 <section class="py-5" id="about" style="background: linear-gradient(180deg, #F1F8E9 0%, #fff 100%);">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="fw-bold">Mengapa Memilih PATAH?</h2>
-            <p class="text-muted">Keunggulan produk kerupuk kami</p>
+            <h2 class="fw-bold">Mengapa Memilih Nora Padel?</h2>
+            <p class="text-muted">Keunggulan perlengkapan padel kami</p>
         </div>
         
         <div class="row g-4">
@@ -61,8 +61,8 @@
                         <div class="rounded-circle bg-success bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
                             <i class="fas fa-leaf fa-2x text-success"></i>
                         </div>
-                        <h5 class="card-title">100% Alami</h5>
-                        <p class="card-text text-muted">Terbuat dari bahan alami pilihan tanpa pengawet dan pewarna buatan.</p>
+                        <h5 class="card-title">Kualitas Teruji</h5>
+                        <p class="card-text text-muted">Produk dipilih dari material premium yang tahan lama dan nyaman digunakan.</p>
                     </div>
                 </div>
             </div>
@@ -72,8 +72,8 @@
                         <div class="rounded-circle bg-warning bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
                             <i class="fas fa-heart fa-2x text-warning"></i>
                         </div>
-                        <h5 class="card-title">Sehat & Bergizi</h5>
-                        <p class="card-text text-muted">Mengandung nutrisi dari pakcoy dan protein dari tahu untuk camilan yang menyehatkan.</p>
+                        <h5 class="card-title">Untuk Semua Level</h5>
+                        <p class="card-text text-muted">Pilihan gear lengkap untuk pemain pemula, intermediate, hingga kompetitif.</p>
                     </div>
                 </div>
             </div>
@@ -81,10 +81,10 @@
                 <div class="card h-100 text-center p-4">
                     <div class="card-body">
                         <div class="rounded-circle bg-info bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
-                            <i class="fas fa-cookie-bite fa-2x text-info"></i>
+                            <i class="fas fa-table-tennis fa-2x text-info"></i>
                         </div>
-                        <h5 class="card-title">Renyah & Gurih</h5>
-                        <p class="card-text text-muted">Tekstur renyah sempurna dengan rasa gurih yang nikmat di setiap gigitan.</p>
+                        <h5 class="card-title">Performa Maksimal</h5>
+                        <p class="card-text text-muted">Bantu kontrol, power, dan kenyamanan bermain di setiap sesi latihan maupun match.</p>
                     </div>
                 </div>
             </div>
@@ -97,7 +97,7 @@
     <div class="container">
         <div class="text-center mb-5">
             <h2 class="fw-bold">Produk Kami</h2>
-            <p class="text-muted">Pilihan kerupuk sehat dan lezat</p>
+            <p class="text-muted">Pilihan perlengkapan padel yang lengkap</p>
         </div>
         
         <div class="row g-4">
@@ -157,39 +157,39 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6 mb-4 mb-lg-0">
-                <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600" alt="Tentang PATAH" class="img-fluid rounded-4 shadow">
+                <img src="https://images.unsplash.com/photo-1599058917212-d750089bc07e?w=900" alt="Tentang Nora Padel" class="img-fluid rounded-4 shadow">
             </div>
             <div class="col-lg-6">
-                <h2 class="fw-bold mb-4">Tentang PATAH</h2>
+                <h2 class="fw-bold mb-4">Tentang Nora Padel</h2>
                 <p class="text-muted mb-4">
-                    PATAH (Pakcoy dan Tahu) adalah produk inovatif dari UMKM lokal yang menghadirkan kerupuk sehat berbahan dasar sayuran pakcoy dan tahu berkualitas tinggi.
+                    Nora Padel adalah brand perlengkapan olahraga yang fokus menyediakan gear padel berkualitas untuk pasar Indonesia.
                 </p>
                 <p class="text-muted mb-4">
-                    Kami berkomitmen untuk menyediakan camilan yang tidak hanya lezat, tetapi juga menyehatkan. Setiap produk kami dibuat dengan standar kebersihan tinggi dan menggunakan bahan-bahan alami tanpa pengawet.
+                    Kami berkomitmen memberikan pengalaman belanja yang cepat, aman, dan profesional dengan produk yang relevan untuk kebutuhan pemain modern.
                 </p>
                 <div class="row g-3">
                     <div class="col-6">
                         <div class="d-flex align-items-center">
                             <i class="fas fa-check-circle text-success me-2"></i>
-                            <span>Tanpa Pengawet</span>
+                            <span>Kualitas Original</span>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="d-flex align-items-center">
                             <i class="fas fa-check-circle text-success me-2"></i>
-                            <span>Tanpa MSG</span>
+                            <span>Garansi Produk</span>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="d-flex align-items-center">
                             <i class="fas fa-check-circle text-success me-2"></i>
-                            <span>Halal</span>
+                            <span>Konsultasi Gear</span>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="d-flex align-items-center">
                             <i class="fas fa-check-circle text-success me-2"></i>
-                            <span>BPOM</span>
+                            <span>Support Komunitas</span>
                         </div>
                     </div>
                 </div>
@@ -307,15 +307,15 @@
 <!-- CTA Section -->
 <section class="py-5" style="background: linear-gradient(135deg, #1B5E20 0%, #43A047 100%);">
     <div class="container text-center text-white">
-        <h2 class="fw-bold mb-4">Siap Mencoba Kerupuk PATAH?</h2>
-        <p class="lead mb-4">Pesan sekarang dan rasakan sensasi camilan sehat yang lezat!</p>
+    <h2 class="fw-bold mb-4">Siap Upgrade Gear Padel Kamu?</h2>
+    <p class="lead mb-4">Belanja sekarang dan tingkatkan performa permainanmu bersama Nora Padel!</p>
         @auth
             <a href="{{ route('customer.products.index') }}" class="btn btn-warning btn-lg px-5">
-                <i class="fas fa-shopping-cart me-2"></i>Pesan Sekarang
+                <i class="fas fa-shopping-cart me-2"></i>Belanja Sekarang
             </a>
         @else
             <a href="{{ route('register') }}" class="btn btn-warning btn-lg px-5">
-                <i class="fas fa-user-plus me-2"></i>Daftar & Pesan
+                <i class="fas fa-user-plus me-2"></i>Daftar & Belanja
             </a>
         @endauth
     </div>

@@ -24,7 +24,7 @@ class WebPushService
     {
         $publicKey = config('services.webpush.public_key');
         $privateKey = config('services.webpush.private_key');
-        $subject = config('services.webpush.subject', 'mailto:admin@kerupukpatah.com');
+    $subject = config('services.webpush.subject', 'mailto:admin@norapadel.id');
 
         if (!$publicKey || !$privateKey) {
             Log::warning('WebPush: VAPID keys not configured');
@@ -108,8 +108,8 @@ class WebPushService
             'title' => $title,
             'body' => $message,
             'message' => $message,
-            'icon' => '/images/logo.png',
-            'badge' => '/images/badge.png',
+            'icon' => '/images/nora-padel-logo.svg',
+            'badge' => '/images/nora-padel-favicon.svg',
             'url' => $url ?? '/',
             'type' => $type,
             'timestamp' => now()->toISOString(),

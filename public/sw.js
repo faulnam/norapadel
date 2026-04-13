@@ -1,9 +1,9 @@
 /**
  * Service Worker for Push Notifications
- * Kerupuk Patah - Push Notification System
+ * Nora Padel - Push Notification System
  */
 
-const CACHE_NAME = 'kerupuk-patah-v1';
+const CACHE_NAME = 'nora-padel-v1';
 
 // Install event
 self.addEventListener('install', (event) => {
@@ -22,10 +22,10 @@ self.addEventListener('push', (event) => {
     console.log('Service Worker: Push received');
     
     let data = {
-        title: 'Kerupuk Patah',
+        title: 'Nora Padel',
         body: 'Anda memiliki notifikasi baru',
-        icon: '/images/logo.png',
-        badge: '/images/badge.png',
+        icon: '/images/nora-padel-logo.svg',
+        badge: '/images/nora-padel-favicon.svg',
         url: '/',
         type: 'default'
     };
@@ -40,8 +40,8 @@ self.addEventListener('push', (event) => {
     
     const options = {
         body: data.body || data.message,
-        icon: data.icon || '/images/logo.png',
-        badge: data.badge || '/images/badge.png',
+    icon: data.icon || '/images/nora-padel-logo.svg',
+    badge: data.badge || '/images/nora-padel-favicon.svg',
         vibrate: [200, 100, 200, 100, 200],
         tag: data.tag || 'notification-' + Date.now(),
         renotify: true,
@@ -121,8 +121,8 @@ async function checkForNotifications() {
                 for (const notif of data.notifications) {
                     await self.registration.showNotification(notif.title, {
                         body: notif.message,
-                        icon: '/images/logo.png',
-                        badge: '/images/badge.png',
+                        icon: '/images/nora-padel-logo.svg',
+                        badge: '/images/nora-padel-favicon.svg',
                         vibrate: [200, 100, 200],
                         tag: 'notif-' + notif.id,
                         renotify: true,

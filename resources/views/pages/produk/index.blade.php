@@ -1,14 +1,14 @@
 @extends('layouts.app')
 
-@section('title', 'Produk - PATAH')
+@section('title', 'Produk - Nora Padel')
 
 @section('content')
 <!-- Hero -->
 <section class="page-hero">
     <div class="container">
         <span class="section-badge">Produk Kami</span>
-        <h1 class="page-title">Pilihan Kerupuk <span class="text-primary">Sehat</span></h1>
-        <p class="page-subtitle">Temukan varian kerupuk PATAH favoritmu</p>
+        <h1 class="page-title">Pilihan Gear <span class="text-primary">Padel</span></h1>
+        <p class="page-subtitle">Temukan raket dan aksesori Nora Padel favoritmu</p>
     </div>
 </section>
 

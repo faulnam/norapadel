@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'PATAH - Kerupuk Sehat Pakcoy & Tahu')
+@section('title', 'Nora Padel - Performa Maksimal, Game Makin Total')
 
 @section('content')
     <!-- Hero Banner Section - Full Width -->
@@ -11,26 +11,26 @@
                 <div class="col-lg-6 hero-content">
                     <div class="hero-badge-wrapper">
                         <span class="hero-badge-new">
-                            <i class="fas fa-leaf me-2"></i>100% Alami & Sehat
+                            <i class="fas fa-bolt me-2"></i>Gear Padel Original & Bergaransi
                         </span>
                     </div>
 
                     <h1 class="hero-title-new">
-                        Kerupuk <span class="highlight">PATAH</span>
+                        <span class="highlight">Nora Padel</span>
                     </h1>
 
-                    <p class="hero-tagline">Renyah • Sehat • Lezat</p>
+                    <p class="hero-tagline">Performa Maksimal • Game Makin Total</p>
 
                     <!-- HERO IMAGE MOBILE ONLY -->
                     <div class="hero-image-mobile d-block d-lg-none text-center my-4">
-                        <img src="images/beranda.png" alt="Kerupuk PATAH" class="img-fluid">
+                        <img src="https://images.unsplash.com/photo-1648341248072-e8f8d3dcef7b?w=900" alt="Nora Padel Gear" class="img-fluid">
                     </div>
 
 
 
                     <p class="hero-desc">
-                        Nikmati sensasi kerupuk sehat dari pakcoy dan tahu berkualitas.
-                        Tanpa pengawet, tanpa MSG, cocok untuk semua usia!
+                        Temukan raket, bola, tas, sepatu, dan aksesori padel pilihan untuk latihan harian hingga turnamen.
+                        Kualitas premium, harga kompetitif, siap kirim cepat ke seluruh Indonesia.
                     </p>
 
                     <div class="hero-cta">
@@ -43,8 +43,8 @@
                                 <i class="fas fa-shopping-bag me-2"></i>Belanja Sekarang
                             </a>
                         @endauth
-                        <a href="{{ route('tentang') }}" class="btn btn-hero-outline">
-                            <i class="fas fa-play-circle me-2"></i>Pelajari Lebih
+                        <a href="{{ route('produk.index') }}" class="btn btn-hero-outline">
+                            <i class="fas fa-play-circle me-2"></i>Lihat Produk
                         </a>
                     </div>
 
@@ -68,7 +68,7 @@
                 <!-- ❌ DESKTOP TIDAK DIUBAH -->
                 <div class="col-lg-6 hero-visual d-none d-lg-block">
                     <div class="hero-image-float">
-                        <img src="images/beranda.png" alt="Kerupuk PATAH" class="main-product-img" id="heroImage">
+                        <img src="https://images.unsplash.com/photo-1593766827228-8737b4534aa6?w=900" alt="Perlengkapan Nora Padel" class="main-product-img" id="heroImage">
                         <div class="deco-circle deco-1"></div>
                         <div class="deco-circle deco-2"></div>
                     </div>
@@ -96,7 +96,7 @@
                 <div class="col-lg-5 d-none d-lg-block">
                     <div class="about-visual">
                         <div class="about-img-wrapper">
-                            <img src="images/Patah.png" alt="Proses Pembuatan" class="about-main-img">
+                            <img src="https://images.unsplash.com/photo-1599058917212-d750089bc07e?w=900" alt="Nora Padel Team" class="about-main-img">
                             <div class="about-pattern"></div>
                         </div>
                     </div>
@@ -105,13 +105,13 @@
                     <div class="about-content">
                         <span class="section-label">Tentang Kami</span>
                         <h2 class="section-heading">
-                            Cerita di Balik <span class="text-accent">PATAH</span>
+                            Cerita di Balik <span class="text-accent">Nora Padel</span>
                         </h2>
                         <p class="about-text">
-                            PATAH lahir dari keinginan untuk menghadirkan camilan yang tidak hanya lezat, tetapi juga
-                            menyehatkan.
-                            Kami menggabungkan sayuran pakcoy yang kaya nutrisi dengan tahu berkualitas tinggi untuk
-                            menciptakan kerupuk yang unik.
+                            Nora Padel hadir untuk menjawab kebutuhan pemain padel Indonesia akan perlengkapan yang
+                            andal, modern, dan nyaman digunakan.
+                            Kami memilih produk dengan standar kualitas tinggi agar pemula hingga profesional bisa bermain
+                            lebih percaya diri di setiap pertandingan.
                         </p>
 
                         <div class="feature-grid">
@@ -120,8 +120,8 @@
                                     <i class="fas fa-seedling"></i>
                                 </div>
                                 <div class="feature-text">
-                                    <h6>Bahan Pilihan</h6>
-                                    <p>Pakcoy segar & tahu premium</p>
+                                    <h6>Produk Terkurasi</h6>
+                                    <p>Raket, bola, sepatu & aksesori terbaik</p>
                                 </div>
                             </div>
                             <div class="feature-item">
@@ -129,8 +129,8 @@
                                     <i class="fas fa-hand-holding-heart"></i>
                                 </div>
                                 <div class="feature-text">
-                                    <h6>Dibuat dengan Cinta</h6>
-                                    <p>Proses higienis & berkualitas</p>
+                                    <h6>Layanan Profesional</h6>
+                                    <p>Rekomendasi gear sesuai level permainan</p>
                                 </div>
                             </div>
                         </div>
@@ -149,38 +149,38 @@
         <div class="container">
             <div class="section-header text-center">
                 <span class="section-label">Keunggulan</span>
-                <h2 class="section-heading">Mengapa Memilih PATAH?</h2>
-                <p class="section-subtext">Alasan mengapa ribuan orang menyukai kerupuk kami</p>
+                <h2 class="section-heading">Mengapa Memilih Nora Padel?</h2>
+                <p class="section-subtext">Alasan pemain padel memilih perlengkapan dari Nora Padel</p>
             </div>
 
             <div class="why-grid">
                 <div class="why-item">
                     <div class="why-icon-wrap">
-                        <img src="images/ngemilsantairb.png" alt="Ngemil Santai">
+                        <img src="https://images.unsplash.com/photo-1599058917212-d750089bc07e?w=320" alt="Performa Stabil">
                     </div>
-                    <h5>Ngemil Santai</h5>
-                    <p>Lagi rebahan, nonton drama, atau main game, Kerupuk Patah siap nemenin!</p>
+                    <h5>Performa Stabil</h5>
+                    <p>Gear dengan material berkualitas membantu kontrol dan power tetap konsisten sepanjang game.</p>
                 </div>
                 <div class="why-item">
                     <div class="why-icon-wrap">
-                        <img src="images/temankerjarb.png" alt="Teman Kerja">
+                        <img src="https://images.unsplash.com/photo-1517649763962-0c623066013b?w=320" alt="Untuk Semua Level">
                     </div>
-                    <h5>Teman Kerja</h5>
-                    <p>Butuh camilan biar kerja makin semangat? Cukup buka bungkus Kerupuk Patah.</p>
+                    <h5>Untuk Semua Level</h5>
+                    <p>Mulai dari beginner sampai tournament player, ada pilihan produk yang tepat untuk kebutuhanmu.</p>
                 </div>
                 <div class="why-item">
                     <div class="why-icon-wrap">
-                        <img src="images/oleh2maskotrb.png" alt="Oleh-Oleh Sidoarjo">
+                        <img src="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=320" alt="Koleksi Lengkap">
                     </div>
-                    <h5>Oleh-Oleh Sidoarjo</h5>
-                    <p>Mau bawa pulang sesuatu yang beda buat keluarga atau teman? Kerupuk Patah aja!</p>
+                    <h5>Koleksi Lengkap</h5>
+                    <p>Raket padel, bola, tas, sepatu, hingga grip tersedia dalam satu tempat belanja praktis.</p>
                 </div>
                 <div class="why-item">
                     <div class="why-icon-wrap">
-                        <img src="images/maskot2.png" alt="Pengiriman Cepat">
+                        <img src="https://images.unsplash.com/photo-1547347298-4074fc3086f0?w=320" alt="Pengiriman Cepat">
                     </div>
                     <h5>Pengiriman Cepat</h5>
-                    <p>Sampai di rumah dengan kondisi fresh dan renyah</p>
+                    <p>Pesanan diproses cepat dengan packing aman agar gear sampai dalam kondisi prima.</p>
                 </div>
             </div>
         </div>

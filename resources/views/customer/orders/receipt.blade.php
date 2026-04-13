@@ -438,10 +438,10 @@
             <!-- Header -->
             <div class="header">
                 <div class="brand">
-                    <img src="{{ asset('images/logo.png') }}" alt="PATAH" class="brand-logo" style="width: 60px; height: 60px; object-fit: contain;">
+                    <img src="{{ asset(config('branding.logo', 'images/nora-padel-logo.svg')) }}" alt="Nora Padel" class="brand-logo" style="width: 60px; height: 60px; object-fit: contain;">
                     <div class="brand-info">
-                        <h1>{{ config('branding.name', 'PATAH') }}</h1>
-                        <p>Kerupuk Pakcoy & Tahu Sehat</p>
+                        <h1>{{ config('branding.name', 'Nora Padel') }}</h1>
+                        <p>Perlengkapan Padel Premium</p>
                         <p>{{ config('branding.address', 'Kec. Tarik, Sidoarjo, Jawa Timur 61265') }}</p>
                     </div>
                 </div>
@@ -471,7 +471,7 @@
             <div class="address-section">
                 <div class="address-box">
                     <h3>Pengirim</h3>
-                    <p class="name">PATAH Store</p>
+                    <p class="name">Nora Padel Store</p>
                     <p class="detail">Kec. Tarik, Kab. Sidoarjo</p>
                     <p class="detail">Jawa Timur 61265</p>
                     <p class="detail">Telp: {{ config('branding.phone', '+62 812 3456 7890') }}</p>
@@ -570,8 +570,8 @@
             
             <!-- Footer -->
             <div class="footer">
-                <p>Terima kasih telah berbelanja di PATAH</p>
-                <p class="thanks">Selamat menikmati kerupuk sehat kami! 🥬</p>
+                <p>Terima kasih telah berbelanja di Nora Padel</p>
+                <p class="thanks">Semoga perlengkapan barunya bikin game kamu makin total! 🎾</p>
             </div>
         </div>
     </div>

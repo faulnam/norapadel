@@ -11,7 +11,7 @@ return [
     |
     */
 
-    'name' => env('BRAND_NAME', 'PATAH'),
+    'name' => env('BRAND_NAME', 'Nora Padel'),
 
     /*
     |--------------------------------------------------------------------------
@@ -22,7 +22,7 @@ return [
     |
     */
 
-    'tagline' => env('BRAND_TAGLINE', 'Kerupuk Pakcoy & Tahu'),
+    'tagline' => env('BRAND_TAGLINE', 'Performa Maksimal, Game Makin Total'),
 
     /*
     |--------------------------------------------------------------------------
@@ -37,13 +37,13 @@ return [
     |
     */
 
-    'logo' => env('BRAND_LOGO', 'images/logo.png'),
+    'logo' => env('BRAND_LOGO', 'images/nora-padel-logo.svg'),
     
-    'logo_dark' => env('BRAND_LOGO_DARK', 'images/logo-dark.png'),
+    'logo_dark' => env('BRAND_LOGO_DARK', 'images/nora-padel-logo.svg'),
     
-    'logo_white' => env('BRAND_LOGO_WHITE', 'images/logo-white.png'),
+    'logo_white' => env('BRAND_LOGO_WHITE', 'images/nora-padel-logo.svg'),
     
-    'favicon' => env('BRAND_FAVICON', 'images/favicon.ico'),
+    'favicon' => env('BRAND_FAVICON', 'images/nora-padel-favicon.svg'),
 
     /*
     |--------------------------------------------------------------------------
@@ -67,9 +67,9 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'email' => env('BRAND_EMAIL', 'hello@patah.id'),
-    'phone' => env('BRAND_PHONE', '+62 812 3456 7890'),
-    'address' => env('BRAND_ADDRESS', 'Kec. Tarik, Sidoarjo, Jawa Timur 61265'),
+    'email' => env('BRAND_EMAIL', 'hello@norapadel.id'),
+    'phone' => env('BRAND_PHONE', '+62 812 7788 9900'),
+    'address' => env('BRAND_ADDRESS', 'Jl. Padel Arena No. 21, Surabaya'),
 
     /*
     |--------------------------------------------------------------------------
@@ -91,9 +91,9 @@ return [
     */
 
     'social' => [
-        'instagram' => env('BRAND_INSTAGRAM', '@patah.id'),
+        'instagram' => env('BRAND_INSTAGRAM', '@norapadel.id'),
         'facebook' => env('BRAND_FACEBOOK', ''),
-        'whatsapp' => env('BRAND_WHATSAPP', '6281234567890'),
+        'whatsapp' => env('BRAND_WHATSAPP', '6281277889900'),
     ],
 
 ];

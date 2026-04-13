@@ -161,7 +161,7 @@ class DeliveryController extends Controller
             $order->updateDeliveryStatus(Order::STATUS_COMPLETED);
             
             // Notify customer
-            $order->user->notify(new OrderStatusChanged($order, 'Pesanan Anda sudah sampai dan selesai! Terima kasih telah berbelanja di PATAH.'));
+            $order->user->notify(new OrderStatusChanged($order, 'Pesanan Anda sudah sampai dan selesai! Terima kasih telah berbelanja di Nora Padel.'));
         } else {
             // For COD, notify to pay
             $order->user->notify(new OrderStatusChanged($order, 'Pesanan Anda sudah sampai! Silakan bayar kepada kurir.'));
@@ -194,7 +194,7 @@ class DeliveryController extends Controller
         $order->updateDeliveryStatus(Order::STATUS_COMPLETED);
 
         // Notify customer
-        $order->user->notify(new OrderStatusChanged($order, 'Pembayaran COD sudah diterima. Pesanan selesai! Terima kasih telah berbelanja di PATAH.'));
+    $order->user->notify(new OrderStatusChanged($order, 'Pembayaran COD sudah diterima. Pesanan selesai! Terima kasih telah berbelanja di Nora Padel.'));
 
         // Notify admin
         $admins = User::where('role', 'admin')->get();

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Daftar - PATAH')
+@section('title', 'Daftar - Nora Padel')
 
 @section('content')
 <div class="container py-5">
@@ -9,8 +9,8 @@
             <div class="card shadow-sm">
                 <div class="card-body p-5">
                     <div class="text-center mb-4">
-                        <img src="{{ asset('images/logo.png') }}" alt="{{ config('branding.name', 'PATAH') }}" height="60" class="mb-3">
-                        <h3 class="fw-bold text-success">{{ config('branding.name', 'PATAH') }}</h3>
+                        <img src="{{ asset(config('branding.logo', 'images/nora-padel-logo.svg')) }}" alt="{{ config('branding.name', 'Nora Padel') }}" height="60" class="mb-3">
+                        <h3 class="fw-bold text-success">{{ config('branding.name', 'Nora Padel') }}</h3>
                         <p class="text-muted">Daftar akun baru</p>
                     </div>
 

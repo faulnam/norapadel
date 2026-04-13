@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $product->name . ' - PATAH')
+@section('title', $product->name . ' - Nora Padel')
 
 @section('content')
 <section class="py-5">
@@ -62,19 +62,19 @@
                         <div class="features-grid">
                             <div class="feature-item">
                                 
-                                <span>Tanpa Pengawet</span>
+                                <span>Material Premium</span>
                             </div>
                             <div class="feature-item">
                                 
-                                <span>Tanpa MSG</span>
+                                <span>Durabilitas Tinggi</span>
                             </div>
                             <div class="feature-item">
                                 
-                                <span>Bahan Alami</span>
+                                <span>Nyaman Digunakan</span>
                             </div>
                             <div class="feature-item">
                                 
-                                <span>Halal</span>
+                                <span>Cocok Semua Level</span>
                             </div>
                         </div>
                     </div>

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Tulis Testimoni - PATAH')
+@section('title', 'Tulis Testimoni - Nora Padel')
 
 @section('content')
 <div class="container py-4 py-lg-5">
@@ -23,7 +23,7 @@
                 <div class="card-body p-3 p-lg-4">
                     <div class="alert alert-info py-2 alert-mobile">
                         <i class="fas fa-info-circle me-2"></i>
-                        <span class="d-none d-sm-inline">Terima kasih telah berbelanja di PATAH! </span>Bagikan pengalaman Anda.
+                        <span class="d-none d-sm-inline">Terima kasih telah berbelanja di Nora Padel! </span>Bagikan pengalaman Anda.
                     </div>
 
                     <!-- Order Info -->

@@ -4,7 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'PATAH - Kerupuk Pakcoy & Tahu')</title>
+    <meta name="description" content="{{ config('branding.name', 'Nora Padel') }} - {{ config('branding.tagline', 'Performa Maksimal, Game Makin Total') }}. Toko perlengkapan padel premium untuk pemula hingga profesional.">
+    <meta property="og:title" content="@yield('title', config('branding.name', 'Nora Padel'))">
+    <meta property="og:description" content="{{ config('branding.tagline', 'Performa Maksimal, Game Makin Total') }}">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="{{ asset(config('branding.logo', 'images/nora-padel-logo.svg')) }}">
+    <link rel="icon" type="image/svg+xml" href="{{ asset(config('branding.favicon', 'images/nora-padel-favicon.svg')) }}">
+    <title>@yield('title', 'Nora Padel - Performa Maksimal, Game Makin Total')</title>
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -654,7 +660,7 @@
     <nav class="navbar navbar-expand-lg sticky-top" id="mainNavbar">
         <div class="container">
             <a class="navbar-brand" href="{{ route('home') }}">
-                <img src="{{ asset('images/logo.png') }}" alt="{{ config('branding.name', 'PATAH') }}" height="40" class="brand-logo">
+                <img src="{{ asset(config('branding.logo', 'images/nora-padel-logo.svg')) }}" alt="{{ config('branding.name', 'Nora Padel') }}" height="40" class="brand-logo">
             </a>
             
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -819,13 +825,13 @@
             <div class="row g-4">
                 <div class="col-lg-4 col-12">
                     <h5>
-                        <img src="{{ asset('images/logo.png') }}" alt="{{ config('branding.name', 'PATAH') }}" height="30" class="me-2">
-                        {{ config('branding.name', 'PATAH') }}
+                        <img src="{{ asset(config('branding.logo', 'images/nora-padel-logo.svg')) }}" alt="{{ config('branding.name', 'Nora Padel') }}" height="30" class="me-2">
+                        {{ config('branding.name', 'Nora Padel') }}
                     </h5>
-                    <p class="text-white-50 mb-3">Kerupuk sehat dari pakcoy & tahu. Renyah, gurih, tanpa pengawet ✨</p>
+                    <p class="text-white-50 mb-3">Perlengkapan padel premium untuk latihan dan turnamen. Siap main, siap menang 🎾</p>
                     <div class="footer-social">
-                        <a href="https://www.instagram.com/kriptasticpatah?igsh=MWNtODJibzczbWVwbQ=="><i class="fab fa-instagram"></i></a>
-                        <a href="https://www.tiktok.com/@kerupukpatah?_r=1&_t=ZS-92QzZHimGYi"><i class="fab fa-tiktok"></i></a>
+                        <a href="https://instagram.com/norapadel.id"><i class="fab fa-instagram"></i></a>
+                        <a href="https://tiktok.com/@norapadel.id"><i class="fab fa-tiktok"></i></a>
                     </div>
                 </div>
                 <!-- Menu & Lainnya - hidden di mobile -->
@@ -844,8 +850,8 @@
                 </div>
                 <div class="col-lg-4 col-12">
                     <h6 class="text-white-50 mb-3">Kontak</h6>
-                    <p class="text-white-50 mb-2"><i class="fas fa-phone me-2"></i>+62 858 0620 5829</p>
-                    <p class="text-white-50"><i class="fas fa-map-marker-alt me-2"></i>Mojokerto, Jawa Timur</p>
+                    <p class="text-white-50 mb-2"><i class="fas fa-phone me-2"></i>{{ config('branding.phone', '+62 812 7788 9900') }}</p>
+                    <p class="text-white-50"><i class="fas fa-map-marker-alt me-2"></i>{{ config('branding.address', 'Jl. Padel Arena No. 21, Surabaya') }}</p>
                 </div>
             </div>
             <hr style="border-color: rgba(255,255,255,0.1); margin: 2rem 0 1rem;">

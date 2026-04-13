@@ -1,14 +1,14 @@
 @extends('layouts.app')
 
-@section('title', 'Tentang Kami - PATAH')
+@section('title', 'Tentang Kami - Nora Padel')
 
 @section('content')
 <!-- Hero -->
 <section class="page-hero">
     <div class="container">
         <span class="section-badge">Tentang Kami</span>
-        <h1 class="page-title">Kenali Lebih Dekat <span class="text-primary">PATAH</span></h1>
-        <p class="page-subtitle">Cerita perjalanan kami menghadirkan camilan sehat untuk Indonesia</p>
+    <h1 class="page-title">Kenali Lebih Dekat <span class="text-primary">Nora Padel</span></h1>
+    <p class="page-subtitle">Partner perlengkapan padel berkualitas untuk permainan yang lebih maksimal</p>
     </div>
 </section>
 
@@ -17,20 +17,20 @@
     <div class="container">
         <div class="row align-items-center g-5">
             <div class="col-lg-6">
-                <img src="images/Patah.png"
-                     alt="Tim PATAH" class="img-fluid rounded-4">
+             <img src="https://images.unsplash.com/photo-1599058917212-d750089bc07e?w=900"
+                 alt="Tim Nora Padel" class="img-fluid rounded-4">
             </div>
             <div class="col-lg-6">
                 <h2 class="section-title">Cerita Kami</h2>
                 <p class="text-gray mb-4">
-                    PATAH (Pakcoy dan Tahu) lahir dari mimpi sederhana: menghadirkan camilan yang tidak hanya enak, 
-                    tetapi juga menyehatkan. Berawal dari dapur rumah di Sidoarjo pada tahun 2019, 
-                    kami mulai bereksperimen menggabungkan sayuran pakcoy yang kaya nutrisi dengan tahu premium.
+                    Nora Padel lahir dari semangat menghadirkan perlengkapan padel berkualitas yang mudah diakses 
+                    pemain Indonesia. Berawal dari komunitas kecil di Surabaya pada tahun 2023,
+                    kami fokus mengkurasi produk yang benar-benar menunjang performa di lapangan.
                 </p>
                 <p class="text-gray mb-4">
-                    Nama "PATAH" sendiri merupakan singkatan dari <strong>Pa</strong>kcoy dan <strong>Tah</strong>u, 
-                    dua bahan utama yang menjadi keunikan produk kami. Kami percaya bahwa camilan sehat tidak harus 
-                    membosankan - itulah mengapa kami terus berinovasi untuk menciptakan rasa yang disukai semua kalangan.
+                    Nama "Nora Padel" merepresentasikan energi modern, sportivitas, dan konsistensi kualitas.
+                    Kami percaya setiap pemain—dari pemula hingga profesional—berhak mendapatkan gear terbaik
+                    agar proses belajar, latihan, dan bertanding terasa lebih nyaman dan menyenangkan.
                 </p>
                 <div class="story-stats">
                     <div class="story-stat">
@@ -60,8 +60,8 @@
                     
                     <h3>Visi Kami</h3>
                     <p class="text-gray mb-0">
-                        Menjadi produsen camilan sehat terdepan di Indonesia yang menginspirasi 
-                        masyarakat untuk hidup lebih sehat tanpa mengorbankan kenikmatan.
+                        Menjadi toko perlengkapan padel terpercaya di Indonesia yang mendukung pertumbuhan
+                        komunitas padel dari level pemula hingga profesional.
                     </p>
                 </div>
             </div>
@@ -70,10 +70,10 @@
                     
                     <h3>Misi Kami</h3>
                     <ul class="text-gray mb-0 ps-3">
-                        <li>Menghasilkan produk berkualitas tinggi dengan bahan alami</li>
-                        <li>Memberikan pelayanan terbaik kepada pelanggan</li>
-                        <li>Mendukung petani lokal dengan membeli bahan baku berkualitas</li>
-                        <li>Terus berinovasi dalam menciptakan varian rasa baru</li>
+                        <li>Menyediakan raket, bola, sepatu, tas, dan aksesori padel berkualitas tinggi</li>
+                        <li>Memberikan konsultasi produk yang sesuai gaya bermain pelanggan</li>
+                        <li>Menghadirkan pengalaman belanja cepat, aman, dan transparan</li>
+                        <li>Mendukung ekosistem padel lewat edukasi dan event komunitas</li>
                     </ul>
                 </div>
             </div>
@@ -88,43 +88,43 @@
     <div class="container">
         <div class="text-center mb-5">
             <span class="section-badge">Proses</span>
-            <h2 class="section-title">Dari Bahan Segar ke Meja Anda</h2>
+            <h2 class="section-title">Dari Seleksi Produk ke Tangan Anda</h2>
         </div>
         
         <div class="process-timeline">
             <div class="process-item">
                 <div class="process-number">1</div>
                 <div class="process-content">
-                    <h5>Seleksi Bahan</h5>
-                    <p class="small text-gray mb-0">Pakcoy dan tahu segar dipilih langsung dari petani lokal</p>
+                    <h5>Kurasi Produk</h5>
+                    <p class="small text-gray mb-0">Kami memilih brand dan spesifikasi gear yang sudah teruji kualitasnya</p>
                 </div>
             </div>
             <div class="process-item">
                 <div class="process-number">2</div>
                 <div class="process-content">
-                    <h5>Pengolahan</h5>
-                    <p class="small text-gray mb-0">Dicuci bersih dan diolah dengan standar higienis</p>
+                    <h5>Quality Check</h5>
+                    <p class="small text-gray mb-0">Setiap produk dicek kondisi fisik dan kelengkapannya sebelum dipajang</p>
                 </div>
             </div>
             <div class="process-item">
                 <div class="process-number">3</div>
                 <div class="process-content">
-                    <h5>Pencampuran</h5>
-                    <p class="small text-gray mb-0">Dicampur dengan bumbu rahasia khas PATAH</p>
+                    <h5>Rekomendasi Produk</h5>
+                    <p class="small text-gray mb-0">Tim kami membantu memilih gear sesuai level, posisi, dan kebutuhan bermain</p>
                 </div>
             </div>
             <div class="process-item">
                 <div class="process-number">4</div>
                 <div class="process-content">
-                    <h5>Pengeringan</h5>
-                    <p class="small text-gray mb-0">Dikeringkan dengan suhu optimal untuk tekstur renyah</p>
+                    <h5>Packaging Aman</h5>
+                    <p class="small text-gray mb-0">Produk dipacking rapi agar tetap aman selama proses pengiriman</p>
                 </div>
             </div>
             <div class="process-item">
                 <div class="process-number">5</div>
                 <div class="process-content">
-                    <h5>Pengemasan</h5>
-                    <p class="small text-gray mb-0">Dikemas rapi dan siap dikirim ke rumah Anda</p>
+                    <h5>Delivery Cepat</h5>
+                    <p class="small text-gray mb-0">Pesanan dikirim tepat waktu agar Anda bisa segera turun ke lapangan</p>
                 </div>
             </div>
         </div>

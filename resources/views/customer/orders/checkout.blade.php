@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Checkout - PATAH')
+@section('title', 'Checkout - Nora Padel')
 
 @push('styles')
 <!-- Leaflet CSS -->
@@ -433,7 +433,7 @@
                                                 Kami hanya melayani pengiriman di area <strong>Sidoarjo, Mojokerto, dan Surabaya</strong>.
                                             </p>
                                             <div class="d-flex flex-wrap gap-2">
-                                                <a href="https://shopee.co.id/kerupukpatah" target="_blank" class="btn btn-sm btn-outline-danger">
+                                                <a href="https://shopee.co.id/norapadel" target="_blank" class="btn btn-sm btn-outline-danger">
                                                     <i class="fab fa-shopee me-1"></i>Beli di Shopee
                                                 </a>
                                             </div>
@@ -588,7 +588,7 @@
 <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
-    // Koordinat Toko PATAH (Kec. Tarik, Sidoarjo)
+    // Koordinat Nora Padel Store
     const STORE_LAT = {{ config('branding.store_latitude', -7.4674) }};
     const STORE_LNG = {{ config('branding.store_longitude', 112.5274) }};
     // Subtotal setelah diskon produk
@@ -640,7 +640,7 @@
         });
         
         storeMarker = L.marker([STORE_LAT, STORE_LNG], { icon: storeIcon }).addTo(map);
-        storeMarker.bindPopup('<strong>Toko PATAH</strong><br>Lokasi pengambilan barang').openPopup();
+    storeMarker.bindPopup('<strong>Nora Padel Store</strong><br>Lokasi pengambilan barang').openPopup();
         
         // Delivery marker (red/draggable)
         const deliveryIcon = L.divIcon({

@@ -779,7 +779,7 @@ class NotificationManager {
     showBrowserNotification(notif) {
         // Use Service Worker for persistent notifications
         if (this.pushManager && this.pushManager.swRegistration) {
-            this.pushManager.showLocalNotification(notif.title || 'Kerupuk Patah', {
+            this.pushManager.showLocalNotification(notif.title || 'Nora Padel', {
                 body: notif.message,
                 message: notif.message,
                 icon: '/images/logo.png',
@@ -789,7 +789,7 @@ class NotificationManager {
             });
         } else if ('Notification' in window && Notification.permission === 'granted') {
             // Fallback to regular browser notification
-            const browserNotif = new Notification(notif.title || 'Kerupuk Patah', {
+            const browserNotif = new Notification(notif.title || 'Nora Padel', {
                 body: notif.message,
                 icon: '/images/logo.png',
                 badge: '/images/logo.png',

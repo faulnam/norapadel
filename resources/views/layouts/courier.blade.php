@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Kurir') - PATAH</title>
+    <title>@yield('title', 'Kurir') - Nora Padel</title>
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -772,9 +772,9 @@
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-brand">
-            <img src="{{ asset('images/logo.png') }}" alt="{{ config('branding.name', 'PATAH') }}" height="40" class="brand-logo">
+            <img src="{{ asset(config('branding.logo', 'images/nora-padel-logo.svg')) }}" alt="{{ config('branding.name', 'Nora Padel') }}" height="40" class="brand-logo">
             <div class="sidebar-brand-text">
-                {{ config('branding.name', 'PATAH') }}
+                {{ config('branding.name', 'Nora Padel') }}
                 <span>Panel Kurir</span>
             </div>
         </div>

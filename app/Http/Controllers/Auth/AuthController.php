@@ -96,7 +96,7 @@ class AuthController extends Controller
         Auth::login($user);
 
         return redirect()->route('customer.products.index')
-            ->with('success', 'Registrasi berhasil! Selamat datang di PATAH.');
+            ->with('success', 'Registrasi berhasil! Selamat datang di Nora Padel.');
     }
 
     /**

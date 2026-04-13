@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $product->name . ' - PATAH')
+@section('title', $product->name . ' - Nora Padel')
 
 @section('content')
 <div class="container py-4 py-lg-5">

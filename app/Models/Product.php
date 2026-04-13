@@ -41,8 +41,8 @@ class Product extends Model
     public static function categories(): array
     {
         return [
-            self::CATEGORY_ORIGINAL => 'Original',
-            self::CATEGORY_PEDAS => 'Pedas',
+            self::CATEGORY_ORIGINAL => 'Raket Padel',
+            self::CATEGORY_PEDAS => 'Aksesori Padel',
         ];
     }
 
@@ -50,11 +50,11 @@ class Product extends Model
     public static function weightOptions(): array
     {
         return [
-            50 => '50 gram',
-            100 => '100 gram',
-            250 => '250 gram',
+            300 => '300 gram',
             500 => '500 gram',
+            800 => '800 gram',
             1000 => '1 kg',
+            1500 => '1.5 kg',
         ];
     }
 

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Testimoni - PATAH')
+@section('title', 'Testimoni - Nora Padel')
 
 @section('content')
 <!-- Hero -->
@@ -8,7 +8,7 @@
     <div class="container">
         <span class="section-badge">Testimoni</span>
         <h1 class="page-title">Apa Kata <span class="text-primary">Mereka?</span></h1>
-        <p class="page-subtitle">Review jujur dari pelanggan setia PATAH</p>
+    <p class="page-subtitle">Review jujur dari pelanggan Nora Padel</p>
     </div>
 </section>
 
