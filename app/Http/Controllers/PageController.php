@@ -35,7 +35,9 @@ class PageController extends Controller
         // Statistik realtime
         $stats = $this->getStats();
 
-    return view('pages.home_luxury', compact('products', 'testimonials', 'galleries', 'stats'));
+        $sections = $this->getShopSections();
+
+    return view('pages.home_luxury', compact('products', 'testimonials', 'galleries', 'stats', 'sections'));
     }
 
     /**
@@ -114,6 +116,14 @@ class PageController extends Controller
      */
     public function shop()
     {
+        return redirect()->route('home');
+    }
+
+    /**
+     * Build grouped sections for shop showcase
+     */
+    private function getShopSections(): array
+    {
         $baseQuery = Product::active()->inStock();
 
         $buildSection = function (string $title, array $keywords = [], ?string $category = null) use ($baseQuery) {
@@ -145,13 +155,11 @@ class PageController extends Controller
             ];
         };
 
-        $sections = [
+        return [
             $buildSection('Racket Terbaru', [], Product::CATEGORY_ORIGINAL),
             $buildSection('Shoes Terbaru', ['shoe', 'sepatu', 'nike', 'adidas', 'new balance', 'brooks', 'salomon']),
-            $buildSection('Apparel Terbaru', ['apparel', 'jersey', 'shirt', 'kaos', 'wear', 'outfit']),
+            $buildSection('Accessories Terbaru', ['apparel', 'jersey', 'shirt', 'kaos', 'wear', 'outfit']),
         ];
-
-        return view('pages.shop', compact('sections'));
     }
 
     /**

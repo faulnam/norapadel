@@ -43,6 +43,8 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/register/request-otp', [AuthController::class, 'requestRegisterOtp'])->name('register.request-otp')->middleware('throttle:3,1');
+    Route::post('/register/verify-otp', [AuthController::class, 'verifyRegisterOtp'])->name('register.verify-otp')->middleware('throttle:5,1');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');

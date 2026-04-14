@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'NoraPadel Apparel — Comfort meets performance.')
+@section('title', 'NoraPadel Accessories — Comfort meets performance.')
 
 @section('content')
     <div class="bg-white text-black antialiased">
@@ -12,11 +12,10 @@
                     <a href="{{ route('home') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Home</a>
                     <a href="{{ route('racket') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Racket</a>
                     <a href="{{ route('shoes') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Shoes</a>
-                    <a href="{{ route('apparel') }}" class="border-b border-black text-sm text-black transition duration-300">Apparel</a>
-                    <a href="{{ route('shop') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Shop</a>
+                    <a href="{{ route('apparel') }}" class="border-b border-black text-sm text-black transition duration-300">Accessories</a>
                 </nav>
 
-                <div class="flex items-center gap-4 text-black/80">
+                <div class="flex items-center gap-3 text-black/80">
                     @guest
                         <a href="{{ route('login') }}" class="inline-flex items-center gap-1 rounded-full border border-black/15 px-3 py-1.5 text-xs font-medium text-black/80 transition duration-300 hover:border-black/30 hover:text-black" aria-label="Masuk">
                             <i class="fas fa-sign-in-alt text-[11px]"></i>
@@ -32,29 +31,49 @@
                             <i class="fas fa-shopping-bag text-sm"></i>
                         </a>
                     @endauth
+                    <button
+                        type="button"
+                        class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-black transition duration-300 hover:border-black/35 md:hidden"
+                        data-mobile-menu-toggle
+                        aria-label="Toggle navigation"
+                        aria-expanded="false"
+                    >
+                        <i class="fas fa-bars text-sm"></i>
+                    </button>
                 </div>
+            </div>
+
+            <div class="hidden border-t border-black/10 bg-white/95 px-6 py-4 md:hidden" data-mobile-menu>
+                <nav class="flex flex-col gap-3 text-sm font-medium text-black/85">
+                    <a href="{{ route('home') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Home</a>
+                    <a href="{{ route('racket') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Racket</a>
+                    <a href="{{ route('shoes') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Shoes</a>
+                    <a href="{{ route('apparel') }}" class="rounded-lg bg-black/5 px-2 py-1.5 text-black">Accessories</a>
+                </nav>
             </div>
         </header>
 
         <x-landing.hero-product
             id="apparel"
-            title="NoraPadel Apparel"
+            title="NoraPadel Accessories"
             subtitle="Comfort meets performance."
-            image="https://images.unsplash.com/photo-1518459031867-a89b944bffe4?auto=format&fit=crop&w=1400&q=80"
-            alt="NoraPadel Apparel"
+            image="{{ asset('storage/aparell.png') }}"
+            alt="NoraPadel Accessories"
             primary-text="Explore"
-            :primary-href="route('produk.index')"
+            primary-href="{{ route('produk.index') }}"
             secondary-text="Buy Now"
-            :secondary-href="auth()->check() ? route('customer.products.index') : route('login')"
-            section-class="bg-[#f5f5f7]"
+            secondary-href="{{ auth()->check() ? route('customer.products.index') : route('login') }}"
+            cta-class="!mt-4 md:!mt-5"
+            image-wrapper-class="-mt-6 md:-mt-8"
+            section-class="bg-[#f5f5f7] border-b-[14px] border-white np-apparel-gradient-bg"
         />
 
         <section class="np-fade-section bg-white py-16 lg:py-20">
             <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
                 <div class="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                     <div>
-                        <h2 class="text-3xl font-semibold tracking-tight text-black sm:text-4xl">Apparel Collection</h2>
-                        <p class="mt-2 text-zinc-600">Pilih apparel olahraga premium dengan material nyaman, ringan, dan siap mendukung performa terbaikmu.</p>
+                        <h2 class="text-3xl font-semibold tracking-tight text-black sm:text-4xl">Accessories Collection</h2>
+                        <p class="mt-2 text-zinc-600">Pilih accessories olahraga premium dengan material nyaman, ringan, dan siap mendukung performa terbaikmu.</p>
                     </div>
 
                     <form action="{{ route('apparel') }}" method="GET" class="flex w-full max-w-md items-center gap-2 rounded-full border border-black/10 bg-white p-1.5 shadow-[0_8px_24px_rgba(0,0,0,0.06)]">
@@ -65,7 +84,7 @@
                             type="text"
                             name="q"
                             value="{{ $search }}"
-                            placeholder="Cari produk apparel..."
+                            placeholder="Cari produk accessories..."
                             class="h-10 w-full border-0 bg-transparent px-1 text-sm text-zinc-800 outline-none placeholder:text-zinc-400 focus:ring-0"
                         >
                         <button type="submit" class="inline-flex h-10 shrink-0 items-center rounded-full bg-zinc-900 px-4 text-sm font-medium text-white transition duration-300 hover:bg-zinc-800">
@@ -74,7 +93,7 @@
                     </form>
                 </div>
 
-                <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                <div class="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     @forelse($products as $product)
                         <button
                             type="button"
@@ -117,7 +136,7 @@
                     @empty
                         <div class="col-span-full rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 p-12 text-center">
                             <i class="fas fa-box-open text-3xl text-zinc-400"></i>
-                            <p class="mt-3 font-medium text-zinc-500">Produk apparel belum tersedia.</p>
+                            <p class="mt-3 font-medium text-zinc-500">Produk accessories belum tersedia.</p>
                         </div>
                     @endforelse
                 </div>
@@ -131,46 +150,94 @@
         </section>
 
         <footer class="border-t border-black/10 bg-white py-14 text-sm text-zinc-500">
-            <div class="mx-auto grid w-full max-w-7xl grid-cols-2 gap-8 px-6 md:grid-cols-4 md:px-10 lg:px-12">
-                <div>
-                    <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">Shop</h3>
-                    <ul class="space-y-2">
-                        <li><a href="{{ route('racket') }}" class="hover:underline">Racket</a></li>
-                        <li><a href="{{ route('shoes') }}" class="hover:underline">Shoes</a></li>
-                        <li><a href="{{ route('apparel') }}" class="hover:underline">Apparel</a></li>
-                        <li><a href="{{ route('shop') }}" class="hover:underline">Shop</a></li>
-                    </ul>
+            <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
+                <div class="space-y-3 md:hidden">
+                    <details class="rounded-xl border border-black/10 px-4 py-3">
+                        <summary class="cursor-pointer list-none text-xs font-semibold uppercase tracking-wide text-black">Shop</summary>
+                        <ul class="mt-3 space-y-2 text-sm">
+                            <li><a href="{{ route('racket') }}" class="hover:underline">Racket</a></li>
+                            <li><a href="{{ route('shoes') }}" class="hover:underline">Shoes</a></li>
+                            <li><a href="{{ route('apparel') }}" class="hover:underline">Accessories</a></li>
+                            <li><a href="{{ route('produk.index') }}" class="hover:underline">Shop</a></li>
+                        </ul>
+                    </details>
+
+                    <details class="rounded-xl border border-black/10 px-4 py-3">
+                        <summary class="cursor-pointer list-none text-xs font-semibold uppercase tracking-wide text-black">Support</summary>
+                        <ul class="mt-3 space-y-2 text-sm">
+                            <li><a href="{{ route('tentang') }}" class="hover:underline">Help Center</a></li>
+                            <li><a href="{{ route('tentang') }}" class="hover:underline">Shipping</a></li>
+                            <li><a href="{{ route('tentang') }}" class="hover:underline">Returns</a></li>
+                            <li><a href="{{ route('tentang') }}" class="hover:underline">Contact</a></li>
+                        </ul>
+                    </details>
+
+                    <details class="rounded-xl border border-black/10 px-4 py-3">
+                        <summary class="cursor-pointer list-none text-xs font-semibold uppercase tracking-wide text-black">Account</summary>
+                        <ul class="mt-3 space-y-2 text-sm">
+                            @auth
+                                <li><a href="{{ route('customer.profile.index') }}" class="hover:underline">Dashboard</a></li>
+                                <li><a href="{{ route('customer.orders.index') }}" class="hover:underline">Orders</a></li>
+                                <li><a href="{{ route('customer.notifications.index') }}" class="hover:underline">Notifications</a></li>
+                            @else
+                                <li><a href="{{ route('login') }}" class="hover:underline">Sign In</a></li>
+                                <li><a href="{{ route('register') }}" class="hover:underline">Create Account</a></li>
+                            @endauth
+                        </ul>
+                    </details>
+
+                    <details class="rounded-xl border border-black/10 px-4 py-3">
+                        <summary class="cursor-pointer list-none text-xs font-semibold uppercase tracking-wide text-black">About NoraPadel</summary>
+                        <ul class="mt-3 space-y-2 text-sm">
+                            <li><a href="{{ route('tentang') }}" class="hover:underline">Our Story</a></li>
+                            <li><a href="{{ route('galeri') }}" class="hover:underline">Gallery</a></li>
+                            <li><a href="{{ route('testimoni') }}" class="hover:underline">Testimonials</a></li>
+                            <li><a href="{{ route('tentang') }}" class="hover:underline">Careers</a></li>
+                        </ul>
+                    </details>
                 </div>
-                <div>
-                    <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">Support</h3>
-                    <ul class="space-y-2">
-                        <li><a href="{{ route('tentang') }}" class="hover:underline">Help Center</a></li>
-                        <li><a href="{{ route('tentang') }}" class="hover:underline">Shipping</a></li>
-                        <li><a href="{{ route('tentang') }}" class="hover:underline">Returns</a></li>
-                        <li><a href="{{ route('tentang') }}" class="hover:underline">Contact</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">Account</h3>
-                    <ul class="space-y-2">
-                        @auth
-                            <li><a href="{{ route('customer.profile.index') }}" class="hover:underline">Dashboard</a></li>
-                            <li><a href="{{ route('customer.orders.index') }}" class="hover:underline">Orders</a></li>
-                            <li><a href="{{ route('customer.notifications.index') }}" class="hover:underline">Notifications</a></li>
-                        @else
-                            <li><a href="{{ route('login') }}" class="hover:underline">Sign In</a></li>
-                            <li><a href="{{ route('register') }}" class="hover:underline">Create Account</a></li>
-                        @endauth
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">About NoraPadel</h3>
-                    <ul class="space-y-2">
-                        <li><a href="{{ route('tentang') }}" class="hover:underline">Our Story</a></li>
-                        <li><a href="{{ route('galeri') }}" class="hover:underline">Gallery</a></li>
-                        <li><a href="{{ route('testimoni') }}" class="hover:underline">Testimonials</a></li>
-                        <li><a href="{{ route('tentang') }}" class="hover:underline">Careers</a></li>
-                    </ul>
+
+                <div class="hidden grid-cols-2 gap-8 md:grid md:grid-cols-4">
+                    <div>
+                        <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">Shop</h3>
+                        <ul class="space-y-2">
+                            <li><a href="{{ route('racket') }}" class="hover:underline">Racket</a></li>
+                            <li><a href="{{ route('shoes') }}" class="hover:underline">Shoes</a></li>
+                            <li><a href="{{ route('apparel') }}" class="hover:underline">Accessories</a></li>
+                            <li><a href="{{ route('produk.index') }}" class="hover:underline">Shop</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">Support</h3>
+                        <ul class="space-y-2">
+                            <li><a href="{{ route('tentang') }}" class="hover:underline">Help Center</a></li>
+                            <li><a href="{{ route('tentang') }}" class="hover:underline">Shipping</a></li>
+                            <li><a href="{{ route('tentang') }}" class="hover:underline">Returns</a></li>
+                            <li><a href="{{ route('tentang') }}" class="hover:underline">Contact</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">Account</h3>
+                        <ul class="space-y-2">
+                            @auth
+                                <li><a href="{{ route('customer.profile.index') }}" class="hover:underline">Dashboard</a></li>
+                                <li><a href="{{ route('customer.orders.index') }}" class="hover:underline">Orders</a></li>
+                                <li><a href="{{ route('customer.notifications.index') }}" class="hover:underline">Notifications</a></li>
+                            @else
+                                <li><a href="{{ route('login') }}" class="hover:underline">Sign In</a></li>
+                                <li><a href="{{ route('register') }}" class="hover:underline">Create Account</a></li>
+                            @endauth
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">About NoraPadel</h3>
+                        <ul class="space-y-2">
+                            <li><a href="{{ route('tentang') }}" class="hover:underline">Our Story</a></li>
+                            <li><a href="{{ route('galeri') }}" class="hover:underline">Gallery</a></li>
+                            <li><a href="{{ route('testimoni') }}" class="hover:underline">Testimonials</a></li>
+                            <li><a href="{{ route('tentang') }}" class="hover:underline">Careers</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
             <div class="mx-auto mt-10 w-full max-w-7xl border-t border-black/10 px-6 pt-5 text-xs text-zinc-400 md:px-10 lg:px-12">
@@ -194,6 +261,15 @@
             opacity: 1;
             transform: translateY(0);
         }
+
+        .np-apparel-gradient-bg {
+            background-image:
+                linear-gradient(rgba(245, 245, 247, 0.7), rgba(245, 245, 247, 0.7)),
+                url("{{ asset('storage/bg.png') }}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
     </style>
 @endpush
 
@@ -202,6 +278,8 @@
         (function () {
             const revealEls = document.querySelectorAll('.np-fade-section');
             const heroImages = document.querySelectorAll('.np-parallax-image');
+            const mobileMenuToggle = document.querySelector('[data-mobile-menu-toggle]');
+            const mobileMenu = document.querySelector('[data-mobile-menu]');
 
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach((entry) => {
@@ -223,6 +301,13 @@
 
             window.addEventListener('scroll', applyParallax, { passive: true });
             applyParallax();
+
+            if (mobileMenuToggle && mobileMenu) {
+                mobileMenuToggle.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                    mobileMenuToggle.setAttribute('aria-expanded', String(!mobileMenu.classList.contains('hidden')));
+                });
+            }
         })();
     </script>
 @endpush

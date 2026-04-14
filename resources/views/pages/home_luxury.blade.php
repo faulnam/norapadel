@@ -12,11 +12,10 @@
                     <a href="{{ route('home') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Home</a>
                     <a href="{{ route('racket') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Racket</a>
                     <a href="{{ route('shoes') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Shoes</a>
-                    <a href="{{ route('apparel') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Apparel</a>
-                    <a href="{{ route('shop') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Shop</a>
+                    <a href="{{ route('apparel') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Accessories</a>
                 </nav>
 
-                <div class="flex items-center gap-4 text-black/80">
+                <div class="flex items-center gap-3 text-black/80">
                     @guest
                         <a href="{{ route('login') }}" class="inline-flex items-center gap-1 rounded-full border border-black/15 px-3 py-1.5 text-xs font-medium text-black/80 transition duration-300 hover:border-black/30 hover:text-black" aria-label="Masuk">
                             <i class="fas fa-sign-in-alt text-[11px]"></i>
@@ -32,50 +31,147 @@
                             <i class="fas fa-shopping-bag text-sm"></i>
                         </a>
                     @endauth
+                    <button
+                        type="button"
+                        class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-black transition duration-300 hover:border-black/35 md:hidden"
+                        data-mobile-menu-toggle
+                        aria-label="Toggle navigation"
+                        aria-expanded="false"
+                    >
+                        <i class="fas fa-bars text-sm"></i>
+                    </button>
                 </div>
+            </div>
+
+            <div class="hidden border-t border-black/10 bg-white/95 px-6 py-4 md:hidden" data-mobile-menu>
+                <nav class="flex flex-col gap-3 text-sm font-medium text-black/85">
+                    <a href="{{ route('home') }}" class="rounded-lg bg-black/5 px-2 py-1.5 text-black">Home</a>
+                    <a href="{{ route('racket') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Racket</a>
+                    <a href="{{ route('shoes') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Shoes</a>
+                    <a href="{{ route('apparel') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Accessories</a>
+                </nav>
             </div>
         </header>
 
-        <x-landing.hero-product
+         <x-landing.hero-product
             id="racket"
-            title="NoraPadel Racket"
+            title="NoraPadel"
             subtitle="Precision. Power. Performance."
-            image="https://images.unsplash.com/photo-1547941126-3d5322b218b0?auto=format&fit=crop&w=1400&q=80"
+            image="{{ asset('storage/2.png') }}"
             alt="NoraPadel Racket"
             primary-text="Explore"
-            :primary-href="route('produk.index')"
+            primary-href="{{ route('produk.index') }}"
             secondary-text="Buy Now"
-            :secondary-href="auth()->check() ? route('customer.products.index') : route('login')"
-            section-class="bg-[#f5f5f7]"
+            secondary-href="{{ auth()->check() ? route('customer.products.index') : route('login') }}"
+            content-class="pb-0 md:pb-0 lg:pb-0 np-container-scroll-content"
+            image-wrapper-class="-mb-[14px] np-container-scroll-card"
+            section-class="bg-[#f5f5f7] border-b-[14px] border-white"
         />
 
-        <x-landing.hero-product
-            id="shoes"
-            title="NoraPadel Shoes"
-            subtitle="Move faster. Play smarter."
-            image="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1400&q=80"
-            alt="NoraPadel Shoes"
-            primary-text="Explore"
-            :primary-href="route('produk.index')"
-            secondary-text="Buy Now"
-            :secondary-href="auth()->check() ? route('customer.products.index') : route('login')"
-            section-class="bg-white"
-        />
+    <section class="np-fade-section bg-white pt-6 pb-6 lg:pt-8 lg:pb-8">
+            <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
+                
 
-        <x-landing.hero-product
-            id="apparel"
-            title="NoraPadel Apparel"
-            subtitle="Comfort meets performance."
-            image="https://images.unsplash.com/photo-1518459031867-a89b944bffe4?auto=format&fit=crop&w=1400&q=80"
-            alt="NoraPadel Apparel"
-            primary-text="Explore"
-            :primary-href="route('produk.index')"
-            secondary-text="Buy Now"
-            :secondary-href="auth()->check() ? route('customer.products.index') : route('login')"
-            section-class="bg-[#f5f5f7]"
-        />
+                @php
+                    $section = $sections[0] ?? null;
+                @endphp
 
-        <x-landing.featured-toggle :products="$products" />
+                @if($section)
+                    <section class="mb-14 last:mb-0 rounded-3xl border border-black/6 bg-zinc-50/40 p-3 md:p-4" data-shop-showcase>
+                        
+
+                        @if($section['latest'])
+                            <button
+                                type="button"
+                                class="group relative block w-full overflow-hidden rounded-2xl border border-black/8 bg-white text-start shadow-[0_12px_34px_rgba(0,0,0,0.08)]"
+                                data-product-trigger
+                                data-product-id="{{ $section['latest']->id }}"
+                                data-product-name="{{ e($section['latest']->name) }}"
+                                data-product-category="{{ e($section['latest']->category_label) }}"
+                                data-product-description="{{ e(\Illuminate\Support\Str::limit(strip_tags($section['latest']->description ?? ''), 180)) }}"
+                                data-product-image="{{ $section['latest']->image ? asset('storage/' . $section['latest']->image) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}"
+                                data-product-price="{{ $section['latest']->hasActiveDiscount() ? $section['latest']->formatted_discounted_price : $section['latest']->formatted_price }}"
+                                data-product-old-price="{{ $section['latest']->hasActiveDiscount() ? $section['latest']->formatted_price : '' }}"
+                            >
+                                <img
+                                    src="{{ $section['latest']->image ? asset('storage/' . $section['latest']->image) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}"
+                                    alt="{{ $section['latest']->name }}"
+                                    class="h-80 w-full object-cover transition duration-500 group-hover:scale-105 md:h-96"
+                                    loading="lazy"
+                                >
+                                <div class="absolute inset-0 bg-linear-to-t from-black/65 via-black/20 to-transparent"></div>
+                                <div class="absolute bottom-0 left-0 right-0 p-4 text-white md:p-6">
+                                    <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/80">Produk Terbaru</p>
+                                    <h3 class="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">{{ $section['latest']->name }}</h3>
+                                    <p class="mt-2 text-sm text-white/85 md:text-base">{{ \Illuminate\Support\Str::limit($section['latest']->description, 120) }}</p>
+                                </div>
+                            </button>
+                        @endif
+
+                        <div class="relative mt-5">
+                            <div class="pointer-events-none absolute inset-y-0 left-0 z-10 w-10 bg-linear-to-r from-zinc-50 to-transparent"></div>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 bg-linear-to-l from-zinc-50 to-transparent"></div>
+
+                            <button
+                                type="button"
+                                class="shop-slide-btn absolute left-2 top-1/2 z-20 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-black/10 bg-white/90 text-zinc-700 shadow transition hover:bg-white"
+                                data-slide-prev
+                                aria-label="Geser kiri"
+                            >
+                                <i class="fas fa-chevron-left text-xs"></i>
+                            </button>
+
+                            <div class="overflow-x-auto scroll-smooth px-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" data-slide-container>
+                                <div class="flex gap-4 py-1" data-slide-track>
+                                    @forelse($section['others'] as $product)
+                                        <button
+                                            type="button"
+                                            class="group block w-56 shrink-0 overflow-hidden rounded-xl border border-black/6 bg-white text-start shadow-[0_6px_22px_rgba(0,0,0,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(0,0,0,0.1)]"
+                                            data-product-trigger
+                                            data-product-id="{{ $product->id }}"
+                                            data-product-name="{{ e($product->name) }}"
+                                            data-product-category="{{ e($product->category_label) }}"
+                                            data-product-description="{{ e(\Illuminate\Support\Str::limit(strip_tags($product->description ?? ''), 180)) }}"
+                                            data-product-image="{{ $product->image ? asset('storage/' . $product->image) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}"
+                                            data-product-price="{{ $product->hasActiveDiscount() ? $product->formatted_discounted_price : $product->formatted_price }}"
+                                            data-product-old-price="{{ $product->hasActiveDiscount() ? $product->formatted_price : '' }}"
+                                        >
+                                            <img
+                                                src="{{ $product->image ? asset('storage/' . $product->image) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}"
+                                                alt="{{ $product->name }}"
+                                                class="aspect-4/5 w-full object-cover transition duration-500 group-hover:scale-105"
+                                                loading="lazy"
+                                            >
+                                            <div class="p-3">
+                                                <p class="line-clamp-1 text-sm font-semibold tracking-tight text-zinc-800">{{ $product->name }}</p>
+                                                <p class="mt-1 text-xs text-zinc-500">{{ $product->category_label }}</p>
+                                            </div>
+                                        </button>
+                                    @empty
+                                        <div class="w-full rounded-xl border border-dashed border-zinc-300 bg-white p-6 text-center text-zinc-500">Belum ada produk tambahan untuk kategori ini.</div>
+                                    @endforelse
+                                </div>
+                            </div>
+
+                            <button
+                                type="button"
+                                class="shop-slide-btn absolute right-2 top-1/2 z-20 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-black/10 bg-white/90 text-zinc-700 shadow transition hover:bg-white"
+                                data-slide-next
+                                aria-label="Geser kanan"
+                            >
+                                <i class="fas fa-chevron-right text-xs"></i>
+                            </button>
+                        </div>
+                    </section>
+                @endif
+            </div>
+        </section>
+
+
+        <x-landing.featured-toggle
+            :products="$products"
+            section-class="bg-[#f5f5f7] pt-3 pb-20 lg:pt-5 lg:pb-24"
+        />
 
         <section class="np-fade-section bg-white py-18 lg:py-22" data-gallery-showcase>
             <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
@@ -133,8 +229,8 @@
                                 @php
                                     $thumbImage = $gallery->image_url ?: $galleryFallback[$index % count($galleryFallback)];
                                 @endphp
-                                <a href="{{ route('galeri') }}" class="group block w-55 shrink-0 overflow-hidden rounded-xl border border-black/6 bg-white shadow-[0_6px_24px_rgba(0,0,0,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(0,0,0,0.1)]">
-                                    <img src="{{ $thumbImage }}" alt="{{ $gallery->title }}" class="h-28 w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy">
+                                <a href="{{ route('galeri') }}" class="group block w-40 shrink-0 overflow-hidden rounded-xl border border-black/6 bg-white shadow-[0_6px_24px_rgba(0,0,0,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(0,0,0,0.1)] sm:w-48 md:w-55">
+                                    <img src="{{ $thumbImage }}" alt="{{ $gallery->title }}" class="h-24 w-full object-cover transition duration-500 group-hover:scale-105 sm:h-28" loading="lazy">
                                     <div class="px-3 py-2.5">
                                         <p class="line-clamp-1 text-xs font-semibold tracking-tight text-zinc-800">{{ $gallery->title }}</p>
                                     </div>
@@ -160,46 +256,94 @@
         </section>
 
         <footer class="border-t border-black/10 bg-white py-14 text-sm text-zinc-500">
-            <div class="mx-auto grid w-full max-w-7xl grid-cols-2 gap-8 px-6 md:grid-cols-4 md:px-10 lg:px-12">
-                <div>
-                    <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">Shop</h3>
-                    <ul class="space-y-2">
-                        <li><a href="{{ route('produk.index') }}" class="hover:underline">Racket</a></li>
-                        <li><a href="{{ route('produk.index') }}" class="hover:underline">Shoes</a></li>
-                        <li><a href="{{ route('produk.index') }}" class="hover:underline">Apparel</a></li>
-                        <li><a href="{{ route('shop') }}" class="hover:underline">Shop</a></li>
-                    </ul>
+            <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
+                <div class="space-y-3 md:hidden">
+                    <details class="rounded-xl border border-black/10 px-4 py-3">
+                        <summary class="cursor-pointer list-none text-xs font-semibold uppercase tracking-wide text-black">Shop</summary>
+                        <ul class="mt-3 space-y-2 text-sm">
+                            <li><a href="{{ route('produk.index') }}" class="hover:underline">Racket</a></li>
+                            <li><a href="{{ route('produk.index') }}" class="hover:underline">Shoes</a></li>
+                            <li><a href="{{ route('produk.index') }}" class="hover:underline">Accessories</a></li>
+                            <li><a href="{{ route('produk.index') }}" class="hover:underline">Shop</a></li>
+                        </ul>
+                    </details>
+
+                    <details class="rounded-xl border border-black/10 px-4 py-3">
+                        <summary class="cursor-pointer list-none text-xs font-semibold uppercase tracking-wide text-black">Support</summary>
+                        <ul class="mt-3 space-y-2 text-sm">
+                            <li><a href="{{ route('tentang') }}" class="hover:underline">Help Center</a></li>
+                            <li><a href="{{ route('tentang') }}" class="hover:underline">Shipping</a></li>
+                            <li><a href="{{ route('tentang') }}" class="hover:underline">Returns</a></li>
+                            <li><a href="{{ route('tentang') }}" class="hover:underline">Contact</a></li>
+                        </ul>
+                    </details>
+
+                    <details class="rounded-xl border border-black/10 px-4 py-3">
+                        <summary class="cursor-pointer list-none text-xs font-semibold uppercase tracking-wide text-black">Account</summary>
+                        <ul class="mt-3 space-y-2 text-sm">
+                            @auth
+                                <li><a href="{{ route('customer.profile.index') }}" class="hover:underline">Dashboard</a></li>
+                                <li><a href="{{ route('customer.orders.index') }}" class="hover:underline">Orders</a></li>
+                                <li><a href="{{ route('customer.notifications.index') }}" class="hover:underline">Notifications</a></li>
+                            @else
+                                <li><a href="{{ route('login') }}" class="hover:underline">Sign In</a></li>
+                                <li><a href="{{ route('register') }}" class="hover:underline">Create Account</a></li>
+                            @endauth
+                        </ul>
+                    </details>
+
+                    <details class="rounded-xl border border-black/10 px-4 py-3">
+                        <summary class="cursor-pointer list-none text-xs font-semibold uppercase tracking-wide text-black">About NoraPadel</summary>
+                        <ul class="mt-3 space-y-2 text-sm">
+                            <li><a href="{{ route('tentang') }}" class="hover:underline">Our Story</a></li>
+                            <li><a href="{{ route('galeri') }}" class="hover:underline">Gallery</a></li>
+                            <li><a href="{{ route('testimoni') }}" class="hover:underline">Testimonials</a></li>
+                            <li><a href="{{ route('tentang') }}" class="hover:underline">Careers</a></li>
+                        </ul>
+                    </details>
                 </div>
-                <div>
-                    <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">Support</h3>
-                    <ul class="space-y-2">
-                        <li><a href="{{ route('tentang') }}" class="hover:underline">Help Center</a></li>
-                        <li><a href="{{ route('tentang') }}" class="hover:underline">Shipping</a></li>
-                        <li><a href="{{ route('tentang') }}" class="hover:underline">Returns</a></li>
-                        <li><a href="{{ route('tentang') }}" class="hover:underline">Contact</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">Account</h3>
-                    <ul class="space-y-2">
-                        @auth
-                            <li><a href="{{ route('customer.profile.index') }}" class="hover:underline">Dashboard</a></li>
-                            <li><a href="{{ route('customer.orders.index') }}" class="hover:underline">Orders</a></li>
-                            <li><a href="{{ route('customer.notifications.index') }}" class="hover:underline">Notifications</a></li>
-                        @else
-                            <li><a href="{{ route('login') }}" class="hover:underline">Sign In</a></li>
-                            <li><a href="{{ route('register') }}" class="hover:underline">Create Account</a></li>
-                        @endauth
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">About NoraPadel</h3>
-                    <ul class="space-y-2">
-                        <li><a href="{{ route('tentang') }}" class="hover:underline">Our Story</a></li>
-                        <li><a href="{{ route('galeri') }}" class="hover:underline">Gallery</a></li>
-                        <li><a href="{{ route('testimoni') }}" class="hover:underline">Testimonials</a></li>
-                        <li><a href="{{ route('tentang') }}" class="hover:underline">Careers</a></li>
-                    </ul>
+
+                <div class="hidden grid-cols-2 gap-8 md:grid md:grid-cols-4">
+                    <div>
+                        <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">Shop</h3>
+                        <ul class="space-y-2">
+                            <li><a href="{{ route('produk.index') }}" class="hover:underline">Racket</a></li>
+                            <li><a href="{{ route('produk.index') }}" class="hover:underline">Shoes</a></li>
+                            <li><a href="{{ route('produk.index') }}" class="hover:underline">Accessories</a></li>
+                            <li><a href="{{ route('produk.index') }}" class="hover:underline">Shop</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">Support</h3>
+                        <ul class="space-y-2">
+                            <li><a href="{{ route('tentang') }}" class="hover:underline">Help Center</a></li>
+                            <li><a href="{{ route('tentang') }}" class="hover:underline">Shipping</a></li>
+                            <li><a href="{{ route('tentang') }}" class="hover:underline">Returns</a></li>
+                            <li><a href="{{ route('tentang') }}" class="hover:underline">Contact</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">Account</h3>
+                        <ul class="space-y-2">
+                            @auth
+                                <li><a href="{{ route('customer.profile.index') }}" class="hover:underline">Dashboard</a></li>
+                                <li><a href="{{ route('customer.orders.index') }}" class="hover:underline">Orders</a></li>
+                                <li><a href="{{ route('customer.notifications.index') }}" class="hover:underline">Notifications</a></li>
+                            @else
+                                <li><a href="{{ route('login') }}" class="hover:underline">Sign In</a></li>
+                                <li><a href="{{ route('register') }}" class="hover:underline">Create Account</a></li>
+                            @endauth
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">About NoraPadel</h3>
+                        <ul class="space-y-2">
+                            <li><a href="{{ route('tentang') }}" class="hover:underline">Our Story</a></li>
+                            <li><a href="{{ route('galeri') }}" class="hover:underline">Gallery</a></li>
+                            <li><a href="{{ route('testimoni') }}" class="hover:underline">Testimonials</a></li>
+                            <li><a href="{{ route('tentang') }}" class="hover:underline">Careers</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
             <div class="mx-auto mt-10 w-full max-w-7xl border-t border-black/10 px-6 pt-5 text-xs text-zinc-400 md:px-10 lg:px-12">
@@ -259,6 +403,29 @@
             animation-play-state: paused;
         }
 
+        .np-container-scroll-content h2,
+        .np-container-scroll-content p,
+        .np-container-scroll-content .mt-7 {
+            transition: transform 120ms linear;
+            will-change: transform;
+        }
+
+        .np-container-scroll-card {
+            transform-style: preserve-3d;
+            transform-origin: center top;
+            transition: transform 120ms linear, box-shadow 120ms linear;
+            will-change: transform;
+        }
+
+        .np-apparel-gradient-bg {
+            background-image:
+                linear-gradient(rgba(245, 245, 247, 0.7), rgba(245, 245, 247, 0.7)),
+                url("{{ asset('storage/bg.png') }}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
         @keyframes npMarquee {
             0% {
                 transform: translateX(0);
@@ -277,6 +444,14 @@
             const heroImages = document.querySelectorAll('.np-parallax-image');
             const layoutSections = document.querySelectorAll('[data-featured-toggle]');
             const galleryShowcase = document.querySelector('[data-gallery-showcase]');
+            const mobileMenuToggle = document.querySelector('[data-mobile-menu-toggle]');
+            const mobileMenu = document.querySelector('[data-mobile-menu]');
+            const racketSection = document.querySelector('#racket');
+            const racketContent = racketSection?.querySelector('.np-container-scroll-content');
+            const racketCard = racketSection?.querySelector('.np-container-scroll-card');
+            const racketTitle = racketSection?.querySelector('.np-container-scroll-content h2');
+            const racketSubtitle = racketSection?.querySelector('.np-container-scroll-content p');
+            const racketCta = racketSection?.querySelector('.np-container-scroll-content .mt-7');
 
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach((entry) => {
@@ -287,6 +462,31 @@
             }, { threshold: 0.12 });
 
             revealEls.forEach((el) => observer.observe(el));
+
+            document.querySelectorAll('[data-shop-showcase]').forEach((section) => {
+                const container = section.querySelector('[data-slide-container]');
+                const track = section.querySelector('[data-slide-track]');
+                const prevBtn = section.querySelector('[data-slide-prev]');
+                const nextBtn = section.querySelector('[data-slide-next]');
+
+                if (!container || !track || !prevBtn || !nextBtn) return;
+
+                const getStep = () => {
+                    const firstCard = track.firstElementChild;
+                    if (!firstCard) return 280;
+                    const style = window.getComputedStyle(track);
+                    const gap = parseFloat(style.columnGap || style.gap || '16') || 16;
+                    return firstCard.getBoundingClientRect().width + gap;
+                };
+
+                prevBtn.addEventListener('click', () => {
+                    container.scrollBy({ left: -getStep(), behavior: 'smooth' });
+                });
+
+                nextBtn.addEventListener('click', () => {
+                    container.scrollBy({ left: getStep(), behavior: 'smooth' });
+                });
+            });
 
             const applyParallax = () => {
                 const scrollTop = window.scrollY || window.pageYOffset;
@@ -299,9 +499,34 @@
             window.addEventListener('scroll', applyParallax, { passive: true });
             applyParallax();
 
+            const applyContainerScroll = () => {
+                if (!racketSection || !racketCard) return;
+
+                const rect = racketSection.getBoundingClientRect();
+                const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+                const rawProgress = (viewportHeight - rect.top) / (viewportHeight + rect.height);
+                const progress = Math.max(0, Math.min(1, rawProgress));
+                const isMobile = window.innerWidth <= 768;
+
+                const rotateX = 20 - (20 * progress);
+                const startScale = isMobile ? 0.9 : 1.05;
+                const scale = startScale + ((1 - startScale) * progress);
+                const translateY = -100 * progress;
+
+                racketCard.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
+
+                if (racketTitle) racketTitle.style.transform = `translate3d(0, ${translateY.toFixed(2)}px, 0)`;
+                if (racketSubtitle) racketSubtitle.style.transform = `translate3d(0, ${translateY.toFixed(2)}px, 0)`;
+                if (racketCta) racketCta.style.transform = `translate3d(0, ${translateY.toFixed(2)}px, 0)`;
+            };
+
+            window.addEventListener('scroll', applyContainerScroll, { passive: true });
+            window.addEventListener('resize', applyContainerScroll);
+            applyContainerScroll();
+
             const layoutClasses = {
                 list: ['flex', 'flex-col', 'space-y-4'],
-                '2col': ['grid', 'grid-cols-1', 'gap-4', 'md:grid-cols-2'],
+                '2col': ['grid', 'grid-cols-2', 'gap-4'],
                 '4col': ['grid', 'grid-cols-1', 'gap-4', 'sm:grid-cols-2', 'lg:grid-cols-4'],
             };
 
@@ -393,6 +618,13 @@
 
                     window.addEventListener('resize', () => setActiveSlide(currentSlide));
                 }
+            }
+
+            if (mobileMenuToggle && mobileMenu) {
+                mobileMenuToggle.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                    mobileMenuToggle.setAttribute('aria-expanded', String(!mobileMenu.classList.contains('hidden')));
+                });
             }
         })();
     </script>

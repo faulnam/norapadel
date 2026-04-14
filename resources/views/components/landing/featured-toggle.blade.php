@@ -2,13 +2,14 @@
     'products' => collect(),
     'title' => 'Featured Products',
     'subtitle' => 'Curated essentials for serious athletes and premium performance lifestyle.',
+    'sectionClass' => 'bg-[#f5f5f7] py-20 lg:py-24',
 ])
 
 @php
     $cardFallbackImage = 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80';
 @endphp
 
-<section class="np-fade-section bg-[#f5f5f7] py-20 lg:py-24" data-featured-toggle>
+<section class="np-fade-section {{ $sectionClass }}" data-featured-toggle>
     <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
         <h2 class="text-center text-4xl font-semibold tracking-tight text-black sm:text-5xl">{{ $title }}</h2>
         <p class="mx-auto mt-3 max-w-2xl text-center text-zinc-600">{{ $subtitle }}</p>
@@ -21,7 +22,7 @@
             </div>
         </div>
 
-        <div class="np-layout-grid mt-10 flex flex-col space-y-4" data-grid>
+    <div class="np-layout-grid mt-10 grid grid-cols-2 gap-4" data-grid>
             @forelse($products as $index => $product)
                 <button
                     type="button"

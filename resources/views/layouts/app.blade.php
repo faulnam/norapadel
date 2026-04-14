@@ -825,7 +825,7 @@
     @stack('styles')
 </head>
 <body>
-    @unless(request()->routeIs('home', 'racket', 'shoes', 'apparel', 'shop'))
+    @unless(request()->routeIs('home', 'racket', 'shoes', 'apparel', 'shop', 'login', 'register'))
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg sticky-top" id="mainNavbar">
         <div class="container">
@@ -1049,7 +1049,7 @@
         </div>
     </div>
 
-    @unless(request()->routeIs('home', 'racket', 'shoes', 'apparel', 'shop'))
+    @unless(request()->routeIs('home', 'racket', 'shoes', 'apparel', 'shop', 'login', 'register'))
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
@@ -1090,7 +1090,7 @@
     </footer>
     @endunless
 
-    @unless(request()->routeIs('home', 'racket', 'shoes', 'apparel', 'shop'))
+    @unless(request()->routeIs('home', 'racket', 'shoes', 'apparel', 'shop', 'login', 'register'))
     <!-- Mobile Bottom Navigation -->
     <nav class="mobile-bottom-nav">
         <div class="mobile-bottom-nav-inner">

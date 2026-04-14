@@ -6,7 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
@@ -65,6 +68,14 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
+        return $this->requestRegisterOtp($request);
+    }
+
+    /**
+     * Request OTP for registration
+     */
+    public function requestRegisterOtp(Request $request)
+    {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
@@ -83,20 +94,145 @@ class AuthController extends Controller
             'password.min' => 'Password minimal 8 karakter.',
         ]);
 
-        $user = User::create([
+        $defaultMailer = config('mail.default');
+        if (in_array($defaultMailer, ['log', 'array'], true)) {
+            return response()->json([
+                'message' => 'Layanan email belum aktif. Silakan konfigurasi Gmail SMTP terlebih dahulu.',
+            ], 422);
+        }
+
+        $otpCode = (string) random_int(100000, 999999);
+        $cacheKey = $this->registrationOtpCacheKey($validated['email']);
+        $ttlMinutes = 10;
+
+        Cache::put($cacheKey, [
+            'otp_hash' => Hash::make($otpCode),
             'name' => $validated['name'],
             'email' => $validated['email'],
             'phone' => $validated['phone'],
             'address' => $validated['address'],
             'password' => Hash::make($validated['password']),
+            'attempts' => 0,
+        ], now()->addMinutes($ttlMinutes));
+
+        try {
+            Mail::raw(
+                "Kode OTP registrasi NoraPadel Anda adalah: {$otpCode}\n\nKode berlaku {$ttlMinutes} menit. Jangan bagikan kode ini ke siapa pun.",
+                function ($message) use ($validated) {
+                    $message->to($validated['email'])
+                        ->subject('Kode OTP Registrasi NoraPadel');
+                }
+            );
+        } catch (\Throwable $exception) {
+            Cache::forget($cacheKey);
+
+            Log::error('Gagal mengirim OTP registrasi via SMTP.', [
+                'email' => $validated['email'],
+                'mailer' => config('mail.default'),
+                'host' => config('mail.mailers.smtp.host'),
+                'port' => config('mail.mailers.smtp.port'),
+                'username' => config('mail.mailers.smtp.username'),
+                'scheme' => config('mail.mailers.smtp.scheme'),
+                'error' => $exception->getMessage(),
+            ]);
+
+            $message = 'Gagal mengirim OTP ke email. Periksa konfigurasi SMTP Gmail Anda.';
+
+            $errorText = strtolower($exception->getMessage());
+
+            if (str_contains($errorText, '535') || str_contains($errorText, 'username and password not accepted')) {
+                $message = 'Autentikasi Gmail gagal. Gunakan App Password 16 digit (bukan password login Gmail biasa).';
+            } elseif (str_contains($errorText, 'connection could not be established') || str_contains($errorText, 'timed out')) {
+                $message = 'Koneksi ke server Gmail gagal. Periksa koneksi internet atau firewall.';
+            } elseif (str_contains($errorText, 'expected response code') && str_contains($errorText, '530')) {
+                $message = 'SMTP menolak request. Pastikan akun Gmail mengizinkan App Password dan 2-Step Verification aktif.';
+            }
+
+            return response()->json([
+                'message' => $message,
+            ], 500);
+        }
+
+        return response()->json([
+            'message' => 'Kode OTP sudah dikirim ke email Anda.',
+            'email' => $validated['email'],
+            'ttl_minutes' => $ttlMinutes,
+        ]);
+    }
+
+    /**
+     * Verify OTP and complete registration
+     */
+    public function verifyRegisterOtp(Request $request)
+    {
+        $validated = $request->validate([
+            'email' => 'required|email',
+            'otp' => 'required|digits:6',
+        ], [
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'otp.required' => 'Kode OTP wajib diisi.',
+            'otp.digits' => 'Kode OTP harus 6 digit.',
+        ]);
+
+        $cacheKey = $this->registrationOtpCacheKey($validated['email']);
+        $otpData = Cache::get($cacheKey);
+
+        if (!$otpData) {
+            return response()->json([
+                'message' => 'Kode OTP tidak ditemukan atau sudah kadaluarsa. Silakan daftar ulang.',
+            ], 422);
+        }
+
+        if (($otpData['attempts'] ?? 0) >= 5) {
+            Cache::forget($cacheKey);
+
+            return response()->json([
+                'message' => 'Terlalu banyak percobaan OTP. Silakan daftar ulang.',
+            ], 429);
+        }
+
+        if (!Hash::check($validated['otp'], $otpData['otp_hash'])) {
+            $otpData['attempts'] = ($otpData['attempts'] ?? 0) + 1;
+            Cache::put($cacheKey, $otpData, now()->addMinutes(10));
+
+            return response()->json([
+                'message' => 'Kode OTP tidak valid.',
+            ], 422);
+        }
+
+        if (User::where('email', $validated['email'])->exists()) {
+            Cache::forget($cacheKey);
+
+            return response()->json([
+                'message' => 'Email sudah terdaftar. Silakan login.',
+            ], 422);
+        }
+
+        $user = User::create([
+            'name' => $otpData['name'],
+            'email' => $otpData['email'],
+            'phone' => $otpData['phone'],
+            'address' => $otpData['address'],
+            'password' => $otpData['password'],
             'role' => 'customer',
             'is_active' => true,
+            'email_verified_at' => now(),
         ]);
+
+        Cache::forget($cacheKey);
 
         Auth::login($user);
 
-        return redirect()->route('customer.products.index')
-            ->with('success', 'Registrasi berhasil! Selamat datang di Nora Padel.');
+        return response()->json([
+            'message' => 'Registrasi berhasil! Akun Anda sudah aktif.',
+            'redirect' => route('customer.products.index'),
+        ]);
+    }
+
+    private function registrationOtpCacheKey(string $email): string
+    {
+        return 'register_otp:' . sha1(strtolower($email));
     }
 
     /**
