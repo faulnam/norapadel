@@ -56,7 +56,7 @@
 
                 <div class="rounded-3xl border border-black/8 bg-white p-6 shadow-[0_16px_42px_rgba(0,0,0,0.08)] sm:p-8 lg:p-9">
                     <div class="mb-6 text-center">
-                        <img src="{{ asset(config('branding.logo', 'images/nora-padel-logo.svg')) }}" alt="{{ config('branding.name', 'Nora Padel') }}" class="mx-auto h-12 w-auto">
+                        <img src="{{ asset(config('branding.logo', 'storage/logo.png')) }}" alt="{{ config('branding.name', 'Nora Padel') }}" class="mx-auto h-12 w-auto">
                         <h2 class="mt-4 text-2xl font-semibold tracking-tight text-black">Masuk ke akun Anda</h2>
                         <p class="mt-2 text-sm text-zinc-600">Gunakan email dan password untuk melanjutkan.</p>
                     </div>

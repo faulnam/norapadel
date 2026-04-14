@@ -449,7 +449,7 @@
             <!-- Header -->
             <div class="header">
                 <div class="brand">
-                    <img src="{{ asset(config('branding.logo', 'images/nora-padel-logo.svg')) }}" alt="Nora Padel" class="brand-logo" style="width: 60px; height: 60px; object-fit: contain;">
+                    <img src="{{ asset(config('branding.logo', 'storage/logo.png')) }}" alt="Nora Padel" class="brand-logo" style="width: 60px; height: 60px; object-fit: contain;">
                     <div class="brand-info">
                         <h1>{{ config('branding.name', 'Nora Padel') }}</h1>
                         <p>Perlengkapan Padel Premium</p>

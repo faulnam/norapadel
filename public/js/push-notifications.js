@@ -181,7 +181,7 @@ class PushNotificationManager {
 
         return this.swRegistration.showNotification(title, {
             body: options.body || options.message,
-            icon: options.icon || '/images/nora-padel-logo.svg',
+            icon: options.icon || '/storage/logo.png',
             badge: '/images/nora-padel-favicon.svg',
             vibrate: [200, 100, 200],
             tag: options.tag || 'local-' + Date.now(),

@@ -654,7 +654,7 @@
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-brand">
-            <img src="{{ asset(config('branding.logo', 'images/nora-padel-logo.svg')) }}" alt="{{ config('branding.name', 'Nora Padel') }}" height="40" class="brand-logo">
+            <img src="{{ asset(config('branding.logo', 'storage/logo.png')) }}" alt="{{ config('branding.name', 'Nora Padel') }}" height="40" class="brand-logo">
             <div class="sidebar-brand-text">
                 {{ config('branding.name', 'Nora Padel') }}
                 <span>Admin Panel</span>

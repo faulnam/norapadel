@@ -108,7 +108,7 @@ class WebPushService
             'title' => $title,
             'body' => $message,
             'message' => $message,
-            'icon' => '/images/nora-padel-logo.svg',
+            'icon' => '/storage/logo.png',
             'badge' => '/images/nora-padel-favicon.svg',
             'url' => $url ?? '/',
             'type' => $type,

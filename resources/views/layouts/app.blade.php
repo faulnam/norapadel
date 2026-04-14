@@ -8,8 +8,8 @@
     <meta property="og:title" content="@yield('title', config('branding.name', 'Nora Padel'))">
     <meta property="og:description" content="{{ config('branding.tagline', 'Performa Maksimal, Game Makin Total') }}">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="{{ asset(config('branding.logo', 'images/nora-padel-logo.svg')) }}">
-    <link rel="icon" type="image/svg+xml" href="{{ asset(config('branding.favicon', 'images/nora-padel-favicon.svg')) }}">
+    <meta property="og:image" content="{{ asset(config('branding.logo', 'storage/logo.png')) }}">
+    <link rel="icon" type="image/svg+xml" href="{{ asset(config('branding.favicon', 'storage/logo.png')) }}">
     <title>@yield('title', 'Nora Padel - Performa Maksimal, Game Makin Total')</title>
     
     <!-- Bootstrap 5 CSS -->
@@ -830,7 +830,7 @@
     <nav class="navbar navbar-expand-lg sticky-top" id="mainNavbar">
         <div class="container">
             <a class="navbar-brand" href="{{ route('home') }}">
-                <img src="{{ asset(config('branding.logo', 'images/nora-padel-logo.svg')) }}" alt="{{ config('branding.name', 'Nora Padel') }}" height="40" class="brand-logo">
+                <img src="{{ asset(config('branding.logo', 'storage/logo.png')) }}" alt="{{ config('branding.name', 'Nora Padel') }}" height="40" class="brand-logo">
             </a>
             
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -1056,7 +1056,7 @@
             <div class="row g-4">
                 <div class="col-lg-4 col-12">
                     <h5>
-                        <img src="{{ asset(config('branding.logo', 'images/nora-padel-logo.svg')) }}" alt="{{ config('branding.name', 'Nora Padel') }}" height="30" class="me-2">
+                        <img src="{{ asset(config('branding.logo', 'storage/logo.png')) }}" alt="{{ config('branding.name', 'Nora Padel') }}" height="30" class="me-2">
                         {{ config('branding.name', 'Nora Padel') }}
                     </h5>
                     <p class="text-white-50 mb-3">Perlengkapan padel premium untuk latihan dan turnamen. Siap main, siap menang 🎾</p>
@@ -1194,7 +1194,7 @@
             const modalPrice = document.getElementById('npModalPrice');
             const modalOldPrice = document.getElementById('npModalOldPrice');
             const cartForm = document.getElementById('npModalCartForm');
-            const fallbackImage = '{{ asset(config('branding.logo', 'images/nora-padel-logo.svg')) }}';
+            const fallbackImage = '{{ asset(config('branding.logo', 'storage/logo.png')) }}';
 
             const toText = (value, fallback = '') => {
                 const clean = (value || '').toString().trim();

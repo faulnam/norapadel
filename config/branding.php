@@ -37,11 +37,11 @@ return [
     |
     */
 
-    'logo' => env('BRAND_LOGO', 'images/nora-padel-logo.svg'),
+    'logo' => env('BRAND_LOGO', 'storage/logo.png'),
     
-    'logo_dark' => env('BRAND_LOGO_DARK', 'images/nora-padel-logo.svg'),
+    'logo_dark' => env('BRAND_LOGO_DARK', 'storage/logo.png'),
     
-    'logo_white' => env('BRAND_LOGO_WHITE', 'images/nora-padel-logo.svg'),
+    'logo_white' => env('BRAND_LOGO_WHITE', 'storage/logo.png'),
     
     'favicon' => env('BRAND_FAVICON', 'images/nora-padel-favicon.svg'),
 

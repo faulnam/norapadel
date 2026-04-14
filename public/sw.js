@@ -24,7 +24,7 @@ self.addEventListener('push', (event) => {
     let data = {
         title: 'Nora Padel',
         body: 'Anda memiliki notifikasi baru',
-        icon: '/images/nora-padel-logo.svg',
+    icon: '/storage/logo.png',
         badge: '/images/nora-padel-favicon.svg',
         url: '/',
         type: 'default'
@@ -40,7 +40,7 @@ self.addEventListener('push', (event) => {
     
     const options = {
         body: data.body || data.message,
-    icon: data.icon || '/images/nora-padel-logo.svg',
+    icon: data.icon || '/storage/logo.png',
     badge: data.badge || '/images/nora-padel-favicon.svg',
         vibrate: [200, 100, 200, 100, 200],
         tag: data.tag || 'notification-' + Date.now(),
@@ -121,7 +121,7 @@ async function checkForNotifications() {
                 for (const notif of data.notifications) {
                     await self.registration.showNotification(notif.title, {
                         body: notif.message,
-                        icon: '/images/nora-padel-logo.svg',
+                        icon: '/storage/logo.png',
                         badge: '/images/nora-padel-favicon.svg',
                         vibrate: [200, 100, 200],
                         tag: 'notif-' + notif.id,

@@ -193,7 +193,7 @@ async function sendTestNotification() {
     if (registration) {
         await registration.showNotification(title, {
             body: message,
-            icon: '/images/nora-padel-logo.svg',
+            icon: '/storage/logo.png',
             badge: '/images/nora-padel-favicon.svg',
             vibrate: [200, 100, 200],
             tag: 'test-' + Date.now(),
