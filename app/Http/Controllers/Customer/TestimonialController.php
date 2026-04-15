@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Testimonial;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class TestimonialController extends Controller
 {
@@ -25,6 +26,7 @@ class TestimonialController extends Controller
         $validated = $request->validate([
             'rating' => 'required|integer|min:1|max:5',
             'content' => 'required|string|min:10|max:500',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ], [
             'rating.required' => 'Rating wajib dipilih.',
             'rating.min' => 'Rating minimal 1 bintang.',
@@ -32,15 +34,24 @@ class TestimonialController extends Controller
             'content.required' => 'Testimoni wajib diisi.',
             'content.min' => 'Testimoni minimal 10 karakter.',
             'content.max' => 'Testimoni maksimal 500 karakter.',
+            'image.image' => 'File harus berupa gambar.',
+            'image.mimes' => 'Format gambar: jpeg, png, jpg, webp.',
+            'image.max' => 'Ukuran gambar maksimal 2MB.',
         ]);
 
-        Testimonial::create([
+        $data = [
             'user_id' => auth()->id(),
             'order_id' => $order->id,
             'rating' => $validated['rating'],
             'content' => $validated['content'],
             'is_approved' => false,
-        ]);
+        ];
+
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('testimonials', 'public');
+        }
+
+        Testimonial::create($data);
 
         return back()->with('success', 'Terima kasih atas testimoni Anda. Testimoni akan ditampilkan setelah disetujui admin.');
     }
@@ -58,6 +69,7 @@ class TestimonialController extends Controller
         $validated = $request->validate([
             'rating' => 'required|integer|min:1|max:5',
             'content' => 'required|string|min:10|max:500',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ], [
             'rating.required' => 'Rating wajib dipilih.',
             'rating.min' => 'Rating minimal 1 bintang.',
@@ -65,13 +77,26 @@ class TestimonialController extends Controller
             'content.required' => 'Testimoni wajib diisi.',
             'content.min' => 'Testimoni minimal 10 karakter.',
             'content.max' => 'Testimoni maksimal 500 karakter.',
+            'image.image' => 'File harus berupa gambar.',
+            'image.mimes' => 'Format gambar: jpeg, png, jpg, webp.',
+            'image.max' => 'Ukuran gambar maksimal 2MB.',
         ]);
 
-        $testimonial->update([
+        $data = [
             'rating' => $validated['rating'],
             'content' => $validated['content'],
             'is_approved' => false, // Reset approval when edited
-        ]);
+        ];
+
+        if ($request->hasFile('image')) {
+            // Delete old image if exists
+            if ($testimonial->image) {
+                Storage::disk('public')->delete($testimonial->image);
+            }
+            $data['image'] = $request->file('image')->store('testimonials', 'public');
+        }
+
+        $testimonial->update($data);
 
         return back()->with('success', 'Testimoni berhasil diperbarui. Testimoni akan ditampilkan setelah disetujui admin.');
     }

@@ -9,21 +9,28 @@
                 <a href="{{ route('home') }}" class="text-xl font-semibold tracking-tight text-black">NoraPadel</a>
 
                 <nav class="hidden items-center gap-8 md:flex">
-                    <a href="{{ route('home') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Home</a>
-                    <a href="{{ route('racket') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Racket</a>
-                    <a href="{{ route('shoes') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Shoes</a>
-                    <a href="{{ route('apparel') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Accessories</a>
+                    <a href="{{ route('home') }}"
+                        class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Home</a>
+                    <a href="{{ route('racket') }}"
+                        class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Racket</a>
+                    <a href="{{ route('shoes') }}"
+                        class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Shoes</a>
+                    <a href="{{ route('apparel') }}"
+                        class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Accessories</a>
                 </nav>
 
                 <div class="flex items-center gap-3 text-black/80">
                     @guest
-                        <a href="{{ route('login') }}" class="inline-flex items-center gap-1 rounded-full border border-black/15 px-3 py-1.5 text-xs font-medium text-black/80 transition duration-300 hover:border-black/30 hover:text-black" aria-label="Masuk">
+                        <a href="{{ route('login') }}"
+                            class="inline-flex items-center gap-1 rounded-full border border-black/15 px-3 py-1.5 text-xs font-medium text-black/80 transition duration-300 hover:border-black/30 hover:text-black"
+                            aria-label="Masuk">
                             <i class="fas fa-sign-in-alt text-[11px]"></i>
                             <span>Masuk</span>
                         </a>
                     @endguest
                     @auth
-                        <a href="{{ route('customer.cart.index') }}" class="transition duration-300 hover:text-black" aria-label="Cart">
+                        <a href="{{ route('customer.cart.index') }}" class="transition duration-300 hover:text-black"
+                            aria-label="Cart">
                             <i class="fas fa-shopping-bag text-sm"></i>
                         </a>
                     @else
@@ -31,13 +38,9 @@
                             <i class="fas fa-shopping-bag text-sm"></i>
                         </a>
                     @endauth
-                    <button
-                        type="button"
+                    <button type="button"
                         class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-black transition duration-300 hover:border-black/35 md:hidden"
-                        data-mobile-menu-toggle
-                        aria-label="Toggle navigation"
-                        aria-expanded="false"
-                    >
+                        data-mobile-menu-toggle aria-label="Toggle navigation" aria-expanded="false">
                         <i class="fas fa-bars text-sm"></i>
                     </button>
                 </div>
@@ -48,117 +51,115 @@
                     <a href="{{ route('home') }}" class="rounded-lg bg-black/5 px-2 py-1.5 text-black">Home</a>
                     <a href="{{ route('racket') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Racket</a>
                     <a href="{{ route('shoes') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Shoes</a>
-                    <a href="{{ route('apparel') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Accessories</a>
+                    <a href="{{ route('apparel') }}"
+                        class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Accessories</a>
                 </nav>
             </div>
         </header>
-
-         <x-landing.hero-product
-            id="racket"
-            title="NoraPadel"
-            subtitle="Precision. Power. Performance."
-            image="{{ asset('storage/2.png') }}"
-            alt="NoraPadel Racket"
-            primary-text="Explore"
-            primary-href="{{ route('produk.index') }}"
-            secondary-text="Buy Now"
+        <x-landing.hero-product id="racket" title="NoraDynamicSport" subtitle="Precision. Power. Performance."
+            image="{{ asset('storage/banner.png') }}" alt="NoraPadel Racket" primary-text="Explore"
+            primary-href="{{ route('produk.index') }}" secondary-text="Buy Now"
             secondary-href="{{ auth()->check() ? route('customer.products.index') : route('login') }}"
-            content-class="pb-0 md:pb-0 lg:pb-0 np-container-scroll-content"
-            image-wrapper-class="-mb-[14px] np-container-scroll-card"
-            section-class="bg-[#f5f5f7] border-b-[14px] border-white"
-        />
+            section-class="bg-[#f5f5f7] border-b-[14px] border-white" />
 
-    <section class="np-fade-section bg-white pt-6 pb-6 lg:pt-8 lg:pb-8">
+        <section class="np-fade-section bg-white pt-16 pb-6 lg:pt-20 lg:pb-8">
             <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
-                
-
                 @php
                     $section = $sections[0] ?? null;
                 @endphp
 
-                @if($section)
-                    <section class="mb-14 last:mb-0 rounded-3xl border border-black/6 bg-zinc-50/40 p-3 md:p-4" data-shop-showcase>
-                        
+                @if ($section)
+                    <section class="mb-14 last:mb-0 rounded-3xl border border-black/6 bg-zinc-50/40 p-3 md:p-4"
+                        data-shop-showcase>
 
-                        @if($section['latest'])
-                            <button
-                                type="button"
+
+                        @if ($section['latest'])
+                            <button type="button"
                                 class="group relative block w-full overflow-hidden rounded-2xl border border-black/8 bg-white text-start shadow-[0_12px_34px_rgba(0,0,0,0.08)]"
-                                data-product-trigger
-                                data-product-id="{{ $section['latest']->id }}"
+                                data-product-trigger data-product-id="{{ $section['latest']->id }}"
                                 data-product-name="{{ e($section['latest']->name) }}"
                                 data-product-category="{{ e($section['latest']->category_label) }}"
                                 data-product-description="{{ e(\Illuminate\Support\Str::limit(strip_tags($section['latest']->description ?? ''), 180)) }}"
-                                data-product-image="{{ $section['latest']->image ? asset('storage/' . $section['latest']->image) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}"
+                                data-product-image="{{ $section['latest']->image_url }}"
                                 data-product-price="{{ $section['latest']->hasActiveDiscount() ? $section['latest']->formatted_discounted_price : $section['latest']->formatted_price }}"
-                                data-product-old-price="{{ $section['latest']->hasActiveDiscount() ? $section['latest']->formatted_price : '' }}"
-                            >
-                                <img
-                                    src="{{ $section['latest']->image ? asset('storage/' . $section['latest']->image) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}"
-                                    alt="{{ $section['latest']->name }}"
-                                    class="h-80 w-full object-cover transition duration-500 group-hover:scale-105 md:h-96"
-                                    loading="lazy"
-                                >
-                                <div class="absolute inset-0 bg-linear-to-t from-black/65 via-black/20 to-transparent"></div>
+                                data-product-old-price="{{ $section['latest']->hasActiveDiscount() ? $section['latest']->formatted_price : '' }}">
+                                <div class="relative">
+                                    <img src="{{ $section['latest']->image_url }}"
+                                        alt="{{ $section['latest']->name }}"
+                                        class="h-[500px] w-full object-cover transition duration-500 group-hover:scale-105 md:h-[600px] lg:h-[700px]"
+                                        onerror="this.onerror=null;this.src='/images/logo.png';"
+                                        loading="lazy">
+                                    @if($section['latest']->hasActiveDiscount())
+                                        <span class="absolute left-3 top-3 rounded-full bg-rose-500 px-2.5 py-1 text-[11px] font-semibold text-white">-{{ $section['latest']->formatted_discount_percent }}</span>
+                                    @endif
+                                </div>
+                                <div class="absolute inset-0 bg-linear-to-t from-black/65 via-black/20 to-transparent">
+                                </div>
                                 <div class="absolute bottom-0 left-0 right-0 p-4 text-white md:p-6">
-                                    <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/80">Produk Terbaru</p>
-                                    <h3 class="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">{{ $section['latest']->name }}</h3>
-                                    <p class="mt-2 text-sm text-white/85 md:text-base">{{ \Illuminate\Support\Str::limit($section['latest']->description, 120) }}</p>
+                                    <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/80">Produk
+                                        Terbaru</p>
+                                    <h3 class="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">
+                                        {{ $section['latest']->name }}</h3>
+                                    <p class="mt-2 text-sm text-white/85 md:text-base">
+                                        {{ \Illuminate\Support\Str::limit($section['latest']->description, 120) }}</p>
                                 </div>
                             </button>
                         @endif
 
                         <div class="relative mt-5">
-                            <div class="pointer-events-none absolute inset-y-0 left-0 z-10 w-10 bg-linear-to-r from-zinc-50 to-transparent"></div>
-                            <div class="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 bg-linear-to-l from-zinc-50 to-transparent"></div>
+                            <div
+                                class="pointer-events-none absolute inset-y-0 left-0 z-10 w-10 bg-linear-to-r from-zinc-50 to-transparent">
+                            </div>
+                            <div
+                                class="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 bg-linear-to-l from-zinc-50 to-transparent">
+                            </div>
 
-                            <button
-                                type="button"
+                            <button type="button"
                                 class="shop-slide-btn absolute left-2 top-1/2 z-20 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-black/10 bg-white/90 text-zinc-700 shadow transition hover:bg-white"
-                                data-slide-prev
-                                aria-label="Geser kiri"
-                            >
+                                data-slide-prev aria-label="Geser kiri">
                                 <i class="fas fa-chevron-left text-xs"></i>
                             </button>
 
-                            <div class="overflow-x-auto scroll-smooth px-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" data-slide-container>
+                            <div class="overflow-x-scroll scroll-smooth px-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                                data-slide-container>
                                 <div class="flex gap-4 py-1" data-slide-track>
                                     @forelse($section['others'] as $product)
-                                        <button
-                                            type="button"
+                                        <button type="button"
                                             class="group block w-56 shrink-0 overflow-hidden rounded-xl border border-black/6 bg-white text-start shadow-[0_6px_22px_rgba(0,0,0,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(0,0,0,0.1)]"
-                                            data-product-trigger
-                                            data-product-id="{{ $product->id }}"
+                                            data-product-trigger data-product-id="{{ $product->id }}"
                                             data-product-name="{{ e($product->name) }}"
                                             data-product-category="{{ e($product->category_label) }}"
                                             data-product-description="{{ e(\Illuminate\Support\Str::limit(strip_tags($product->description ?? ''), 180)) }}"
-                                            data-product-image="{{ $product->image ? asset('storage/' . $product->image) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}"
+                                            data-product-image="{{ $product->image_url }}"
                                             data-product-price="{{ $product->hasActiveDiscount() ? $product->formatted_discounted_price : $product->formatted_price }}"
-                                            data-product-old-price="{{ $product->hasActiveDiscount() ? $product->formatted_price : '' }}"
-                                        >
-                                            <img
-                                                src="{{ $product->image ? asset('storage/' . $product->image) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}"
-                                                alt="{{ $product->name }}"
-                                                class="aspect-4/5 w-full object-cover transition duration-500 group-hover:scale-105"
-                                                loading="lazy"
-                                            >
+                                            data-product-old-price="{{ $product->hasActiveDiscount() ? $product->formatted_price : '' }}">
+                                            <div class="relative">
+                                                <img src="{{ $product->image_url }}"
+                                                    alt="{{ $product->name }}"
+                                                    class="aspect-4/5 w-full object-cover transition duration-500 group-hover:scale-105"
+                                                    onerror="this.onerror=null;this.src='/images/logo.png';"
+                                                    loading="lazy">
+                                                @if($product->hasActiveDiscount())
+                                                    <span class="absolute left-3 top-3 rounded-full bg-rose-500 px-2.5 py-1 text-[11px] font-semibold text-white">-{{ $product->formatted_discount_percent }}</span>
+                                                @endif
+                                            </div>
                                             <div class="p-3">
-                                                <p class="line-clamp-1 text-sm font-semibold tracking-tight text-zinc-800">{{ $product->name }}</p>
+                                                <p class="line-clamp-1 text-sm font-semibold tracking-tight text-zinc-800">
+                                                    {{ $product->name }}</p>
                                                 <p class="mt-1 text-xs text-zinc-500">{{ $product->category_label }}</p>
                                             </div>
                                         </button>
                                     @empty
-                                        <div class="w-full rounded-xl border border-dashed border-zinc-300 bg-white p-6 text-center text-zinc-500">Belum ada produk tambahan untuk kategori ini.</div>
+                                        <div
+                                            class="w-full rounded-xl border border-dashed border-zinc-300 bg-white p-6 text-center text-zinc-500">
+                                            Belum ada produk tambahan untuk kategori ini.</div>
                                     @endforelse
                                 </div>
                             </div>
 
-                            <button
-                                type="button"
+                            <button type="button"
                                 class="shop-slide-btn absolute right-2 top-1/2 z-20 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-black/10 bg-white/90 text-zinc-700 shadow transition hover:bg-white"
-                                data-slide-next
-                                aria-label="Geser kanan"
-                            >
+                                data-slide-next aria-label="Geser kanan">
                                 <i class="fas fa-chevron-right text-xs"></i>
                             </button>
                         </div>
@@ -168,73 +169,116 @@
         </section>
 
 
-        <x-landing.featured-toggle
-            :products="$products"
-            section-class="bg-[#f5f5f7] pt-3 pb-20 lg:pt-5 lg:pb-24"
-        />
+        <x-landing.featured-toggle :products="$products" section-class="bg-[#f5f5f7] pt-3 pb-20 lg:pt-5 lg:pb-24" />
 
         <section class="np-fade-section bg-white py-18 lg:py-22" data-gallery-showcase>
             <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
                 <div class="mb-8 text-center"><br><br>
-                    <h2 class="text-3xl font-semibold tracking-tight text-black sm:text-4xl lg:text-5xl">NoraPadel Gallery</h2>
-                    <p class="mx-auto mt-3 max-w-2xl text-zinc-600">Momen latihan, matchday, dan lifestyle premium NoraPadel dalam satu showcase yang bergerak dinamis.</p>
+                    <h2 class="text-3xl font-semibold tracking-tight text-black sm:text-4xl lg:text-5xl">NoraPadel Gallery
+                    </h2>
+                    <p class="mx-auto mt-3 max-w-2xl text-zinc-600">Momen latihan, matchday, dan lifestyle premium
+                        NoraPadel dalam satu showcase yang bergerak dinamis.</p>
                 </div>
 
                 @php
                     $galleryItems = $galleries->take(8);
                     $smallGalleryItems = $galleryItems->take(4)->values();
                     $marqueeItems = $smallGalleryItems->concat($smallGalleryItems);
-                    $galleryFallback = [
-                        'https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=1600&q=80',
-                        'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&w=1600&q=80',
-                        'https://images.unsplash.com/photo-1517963879433-6ad2b056d712?auto=format&fit=crop&w=1600&q=80',
-                        'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=1600&q=80',
-                    ];
                 @endphp
 
-                @if($galleryItems->count() > 0)
-                    <div class="relative overflow-hidden rounded-3xl border border-black/6 bg-zinc-50/40 px-2 py-2 shadow-[0_12px_38px_rgba(0,0,0,0.08)] md:px-4 md:py-4" data-gallery-hero>
+                @if ($galleryItems->count() > 0)
+                    <div class="relative overflow-hidden rounded-3xl border border-black/6 bg-zinc-50/40 px-2 py-2 shadow-[0_12px_38px_rgba(0,0,0,0.08)] md:px-4 md:py-4"
+                        data-gallery-hero>
                         <div class="np-gallery-hero-track" data-gallery-track>
-                            @foreach($galleryItems as $index => $gallery)
-                                @php
-                                    $heroImage = $gallery->image_url ?: $galleryFallback[$index % count($galleryFallback)];
-                                @endphp
+                            @foreach ($galleryItems as $index => $gallery)
                                 <article class="np-gallery-hero-slide">
-                                    <img src="{{ $heroImage }}" alt="{{ $gallery->title }}" class="h-76 w-full object-cover md:h-96" loading="lazy">
-                                    <div class="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent"></div>
+                                    <img src="{{ $gallery->image_url }}" alt="{{ $gallery->title }}"
+                                        class="h-[500px] w-full object-cover md:h-[600px] lg:h-[700px]" loading="lazy">
+                                    <div class="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent">
+                                    </div>
                                     <div class="absolute bottom-0 left-0 right-0 p-4 text-white md:p-6">
-                                        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/80">Gallery Highlight</p>
-                                        <h3 class="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">{{ $gallery->title }}</h3>
-                                        @if($gallery->description)
-                                            <p class="mt-2 max-w-2xl text-sm text-white/85 md:text-base">{{ \Illuminate\Support\Str::limit($gallery->description, 120) }}</p>
+                                        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/80">
+                                            Gallery Highlight</p>
+                                        <h3 class="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">
+                                            {{ $gallery->title }}</h3>
+                                        @if ($gallery->description)
+                                            <p class="mt-2 max-w-2xl text-sm text-white/85 md:text-base">
+                                                {{ \Illuminate\Support\Str::limit($gallery->description, 120) }}</p>
                                         @endif
                                     </div>
                                 </article>
                             @endforeach
                         </div>
 
-                        <div class="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/35 px-3 py-2 backdrop-blur" data-gallery-dots>
-                            @foreach($galleryItems as $index => $gallery)
-                                <button type="button" class="np-gallery-dot h-2.5 w-2.5 rounded-full bg-white/45 transition duration-300" data-slide-to="{{ $index }}" aria-label="Slide {{ $index + 1 }}"></button>
+                        <div class="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/35 px-3 py-2 backdrop-blur"
+                            data-gallery-dots>
+                            @foreach ($galleryItems as $index => $gallery)
+                                <button type="button"
+                                    class="np-gallery-dot h-2.5 w-2.5 rounded-full bg-white/45 transition duration-300"
+                                    data-slide-to="{{ $index }}" aria-label="Slide {{ $index + 1 }}"></button>
                             @endforeach
                         </div>
                     </div>
 
                     <div class="relative mt-6 overflow-hidden">
-                        <div class="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-linear-to-r from-white to-transparent"></div>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-linear-to-l from-white to-transparent"></div>
+                        <div
+                            class="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-linear-to-r from-white to-transparent">
+                        </div>
+                        <div
+                            class="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-linear-to-l from-white to-transparent">
+                        </div>
+
+                        @php
+                            // Collect gallery thumbnails
+                            $marqueeCards = collect();
+                            foreach ($smallGalleryItems as $idx => $gi) {
+                                $marqueeCards->push([
+                                    'type' => 'gallery',
+                                    'image' => $gi->image_url,
+                                    'title' => $gi->title,
+                                    'link' => route('galeri'),
+                                ]);
+                            }
+
+                            // Add testimonial images
+                            $testimonialImages = $testimonials->filter(fn($t) => $t->image)->take(6);
+                            foreach ($testimonialImages as $ti) {
+                                $marqueeCards->push([
+                                    'type' => 'testimonial',
+                                    'image' => $ti->image_url,
+                                    'title' => $ti->user->name,
+                                    'link' => route('testimoni'),
+                                ]);
+                            }
+
+                            // Duplicate for infinite scroll
+                            $allMarqueeCards = $marqueeCards->concat($marqueeCards);
+                        @endphp
 
                         <div class="np-gallery-marquee" data-gallery-marquee>
-                            @foreach($marqueeItems as $index => $gallery)
-                                @php
-                                    $thumbImage = $gallery->image_url ?: $galleryFallback[$index % count($galleryFallback)];
-                                @endphp
-                                <a href="{{ route('galeri') }}" class="group block w-40 shrink-0 overflow-hidden rounded-xl border border-black/6 bg-white shadow-[0_6px_24px_rgba(0,0,0,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(0,0,0,0.1)] sm:w-48 md:w-55">
-                                    <img src="{{ $thumbImage }}" alt="{{ $gallery->title }}" class="h-24 w-full object-cover transition duration-500 group-hover:scale-105 sm:h-28" loading="lazy">
-                                    <div class="px-3 py-2.5">
-                                        <p class="line-clamp-1 text-xs font-semibold tracking-tight text-zinc-800">{{ $gallery->title }}</p>
+                            @foreach ($allMarqueeCards as $index => $card)
+                                @if ($card['type'] === 'gallery')
+                                    <a href="{{ $card['link'] }}"
+                                        class="group block w-40 shrink-0 overflow-hidden rounded-xl border border-black/6 bg-white shadow-[0_6px_24px_rgba(0,0,0,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(0,0,0,0.1)] sm:w-48 md:w-55">
+                                        <div class="relative">
+                                            <img src="{{ $card['image'] }}" alt="{{ $card['title'] }}"
+                                                class="h-24 w-full object-cover transition duration-500 group-hover:scale-105 sm:h-28"
+                                                loading="lazy">
+                                        </div>
+                                        <div class="px-3 py-2.5">
+                                            <p class="line-clamp-1 text-xs font-semibold tracking-tight text-zinc-800">
+                                                {{ $card['title'] }}</p>
+                                        </div>
+                                    </a>
+                                @else
+                                    <div class="block w-64 shrink-0 overflow-hidden rounded-xl border border-black/6 bg-white shadow-[0_6px_24px_rgba(0,0,0,0.06)] sm:w-80 md:w-96">
+                                        <div class="aspect-video">
+                                            <img src="{{ $card['image'] }}" alt="Testimoni"
+                                                class="h-full w-full object-contain"
+                                                loading="lazy">
+                                        </div>
                                     </div>
-                                </a>
+                                @endif
                             @endforeach
                         </div>
                     </div>
@@ -242,13 +286,18 @@
             </div>
         </section>
 
+        
+
         <section class="np-fade-section bg-white py-16 lg:py-20">
             <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
-                <div class="rounded-3xl border border-black/5 bg-linear-to-r from-zinc-100 to-white px-8 py-14 text-center shadow-[0_8px_34px_rgba(0,0,0,0.04)] lg:px-12">
-                    <h2 class="text-3xl font-semibold tracking-tight text-black sm:text-4xl lg:text-5xl">Level up your game with NoraPadel</h2>
-                    <p class="mx-auto mt-4 max-w-2xl text-zinc-600">Designed for players who expect precision craftsmanship and world-class performance in every detail.</p>
+                <div
+                    class="rounded-3xl border border-black/5 bg-linear-to-r from-zinc-100 to-white px-8 py-14 text-center shadow-[0_8px_34px_rgba(0,0,0,0.04)] lg:px-12">
+                    <h2 class="text-3xl font-semibold tracking-tight text-black sm:text-4xl lg:text-5xl">Level up your game
+                        with NoraPadel</h2>
+                    <p class="mx-auto mt-4 max-w-2xl text-zinc-600">Designed for players who expect precision craftsmanship
+                        and world-class performance in every detail.</p>
                     <a href="{{ auth()->check() ? route('customer.products.index') : route('login') }}"
-                       class="mt-8 inline-flex rounded-full bg-[#0071e3] px-8 py-3 text-sm font-medium text-white transition duration-300 hover:scale-[1.02] hover:bg-[#0077ED]">
+                        class="mt-8 inline-flex rounded-full bg-[#0071e3] px-8 py-3 text-sm font-medium text-white transition duration-300 hover:scale-[1.02] hover:bg-[#0077ED]">
                         Shop Collection
                     </a>
                 </div>
@@ -259,7 +308,8 @@
             <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
                 <div class="space-y-3 md:hidden">
                     <details class="rounded-xl border border-black/10 px-4 py-3">
-                        <summary class="cursor-pointer list-none text-xs font-semibold uppercase tracking-wide text-black">Shop</summary>
+                        <summary class="cursor-pointer list-none text-xs font-semibold uppercase tracking-wide text-black">
+                            Shop</summary>
                         <ul class="mt-3 space-y-2 text-sm">
                             <li><a href="{{ route('produk.index') }}" class="hover:underline">Racket</a></li>
                             <li><a href="{{ route('produk.index') }}" class="hover:underline">Shoes</a></li>
@@ -269,7 +319,8 @@
                     </details>
 
                     <details class="rounded-xl border border-black/10 px-4 py-3">
-                        <summary class="cursor-pointer list-none text-xs font-semibold uppercase tracking-wide text-black">Support</summary>
+                        <summary class="cursor-pointer list-none text-xs font-semibold uppercase tracking-wide text-black">
+                            Support</summary>
                         <ul class="mt-3 space-y-2 text-sm">
                             <li><a href="{{ route('tentang') }}" class="hover:underline">Help Center</a></li>
                             <li><a href="{{ route('tentang') }}" class="hover:underline">Shipping</a></li>
@@ -279,12 +330,15 @@
                     </details>
 
                     <details class="rounded-xl border border-black/10 px-4 py-3">
-                        <summary class="cursor-pointer list-none text-xs font-semibold uppercase tracking-wide text-black">Account</summary>
+                        <summary class="cursor-pointer list-none text-xs font-semibold uppercase tracking-wide text-black">
+                            Account</summary>
                         <ul class="mt-3 space-y-2 text-sm">
                             @auth
-                                <li><a href="{{ route('customer.profile.index') }}" class="hover:underline">Dashboard</a></li>
+                                <li><a href="{{ route('customer.profile.index') }}" class="hover:underline">Dashboard</a>
+                                </li>
                                 <li><a href="{{ route('customer.orders.index') }}" class="hover:underline">Orders</a></li>
-                                <li><a href="{{ route('customer.notifications.index') }}" class="hover:underline">Notifications</a></li>
+                                <li><a href="{{ route('customer.notifications.index') }}"
+                                        class="hover:underline">Notifications</a></li>
                             @else
                                 <li><a href="{{ route('login') }}" class="hover:underline">Sign In</a></li>
                                 <li><a href="{{ route('register') }}" class="hover:underline">Create Account</a></li>
@@ -293,7 +347,8 @@
                     </details>
 
                     <details class="rounded-xl border border-black/10 px-4 py-3">
-                        <summary class="cursor-pointer list-none text-xs font-semibold uppercase tracking-wide text-black">About NoraPadel</summary>
+                        <summary class="cursor-pointer list-none text-xs font-semibold uppercase tracking-wide text-black">
+                            About NoraPadel</summary>
                         <ul class="mt-3 space-y-2 text-sm">
                             <li><a href="{{ route('tentang') }}" class="hover:underline">Our Story</a></li>
                             <li><a href="{{ route('galeri') }}" class="hover:underline">Gallery</a></li>
@@ -326,9 +381,11 @@
                         <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">Account</h3>
                         <ul class="space-y-2">
                             @auth
-                                <li><a href="{{ route('customer.profile.index') }}" class="hover:underline">Dashboard</a></li>
+                                <li><a href="{{ route('customer.profile.index') }}" class="hover:underline">Dashboard</a>
+                                </li>
                                 <li><a href="{{ route('customer.orders.index') }}" class="hover:underline">Orders</a></li>
-                                <li><a href="{{ route('customer.notifications.index') }}" class="hover:underline">Notifications</a></li>
+                                <li><a href="{{ route('customer.notifications.index') }}"
+                                        class="hover:underline">Notifications</a></li>
                             @else
                                 <li><a href="{{ route('login') }}" class="hover:underline">Sign In</a></li>
                                 <li><a href="{{ route('register') }}" class="hover:underline">Create Account</a></li>
@@ -346,7 +403,8 @@
                     </div>
                 </div>
             </div>
-            <div class="mx-auto mt-10 w-full max-w-7xl border-t border-black/10 px-6 pt-5 text-xs text-zinc-400 md:px-10 lg:px-12">
+            <div
+                class="mx-auto mt-10 w-full max-w-7xl border-t border-black/10 px-6 pt-5 text-xs text-zinc-400 md:px-10 lg:px-12">
                 © {{ now()->year }} NoraPadel. All rights reserved.
             </div>
         </footer>
@@ -412,7 +470,7 @@
 
         .np-container-scroll-card {
             transform-style: preserve-3d;
-            transform-origin: center top;
+            transform-origin: center center;
             transition: transform 120ms linear, box-shadow 120ms linear;
             will-change: transform;
         }
@@ -426,12 +484,34 @@
             background-repeat: no-repeat;
         }
 
+        .np-testimonial-marquee {
+            display: flex;
+            gap: 1.25rem;
+            width: max-content;
+            animation: npTestimonialMarquee 32s linear infinite;
+        }
+
+        .np-testimonial-marquee:hover {
+            animation-play-state: paused;
+        }
+
         @keyframes npMarquee {
             0% {
                 transform: translateX(0);
             }
+
             100% {
                 transform: translateX(calc(-50% - 0.5rem));
+            }
+        }
+
+        @keyframes npTestimonialMarquee {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(calc(-50% - 0.625rem));
             }
         }
     </style>
@@ -439,19 +519,13 @@
 
 @push('scripts')
     <script>
-        (function () {
+        (function() {
             const revealEls = document.querySelectorAll('.np-fade-section');
             const heroImages = document.querySelectorAll('.np-parallax-image');
             const layoutSections = document.querySelectorAll('[data-featured-toggle]');
             const galleryShowcase = document.querySelector('[data-gallery-showcase]');
             const mobileMenuToggle = document.querySelector('[data-mobile-menu-toggle]');
             const mobileMenu = document.querySelector('[data-mobile-menu]');
-            const racketSection = document.querySelector('#racket');
-            const racketContent = racketSection?.querySelector('.np-container-scroll-content');
-            const racketCard = racketSection?.querySelector('.np-container-scroll-card');
-            const racketTitle = racketSection?.querySelector('.np-container-scroll-content h2');
-            const racketSubtitle = racketSection?.querySelector('.np-container-scroll-content p');
-            const racketCta = racketSection?.querySelector('.np-container-scroll-content .mt-7');
 
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach((entry) => {
@@ -459,7 +533,9 @@
                         entry.target.classList.add('is-visible');
                     }
                 });
-            }, { threshold: 0.12 });
+            }, {
+                threshold: 0.12
+            });
 
             revealEls.forEach((el) => observer.observe(el));
 
@@ -480,11 +556,17 @@
                 };
 
                 prevBtn.addEventListener('click', () => {
-                    container.scrollBy({ left: -getStep(), behavior: 'smooth' });
+                    container.scrollBy({
+                        left: -getStep(),
+                        behavior: 'smooth'
+                    });
                 });
 
                 nextBtn.addEventListener('click', () => {
-                    container.scrollBy({ left: getStep(), behavior: 'smooth' });
+                    container.scrollBy({
+                        left: getStep(),
+                        behavior: 'smooth'
+                    });
                 });
             });
 
@@ -496,31 +578,52 @@
                 });
             };
 
-            window.addEventListener('scroll', applyParallax, { passive: true });
+            window.addEventListener('scroll', applyParallax, {
+                passive: true
+            });
             applyParallax();
 
             const applyContainerScroll = () => {
-                if (!racketSection || !racketCard) return;
+                const containers = document.querySelectorAll('[data-scroll-container]');
+                
+                containers.forEach((container) => {
+                    const card = container.querySelector('.np-container-scroll-card');
+                    const content = container.querySelector('.np-container-scroll-content');
+                    const title = content?.querySelector('h2');
+                    const subtitle = content?.querySelector('p');
+                    const cta = content?.querySelector('.mt-7');
+                    
+                    if (!card || !content) return;
 
-                const rect = racketSection.getBoundingClientRect();
-                const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-                const rawProgress = (viewportHeight - rect.top) / (viewportHeight + rect.height);
-                const progress = Math.max(0, Math.min(1, rawProgress));
-                const isMobile = window.innerWidth <= 768;
+                    const rect = container.getBoundingClientRect();
+                    const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+                    const rawProgress = (viewportHeight - rect.top) / (viewportHeight + rect.height);
+                    const progress = Math.max(0, Math.min(1, rawProgress));
+                    const isMobile = window.innerWidth <= 768;
 
-                const rotateX = 20 - (20 * progress);
-                const startScale = isMobile ? 0.9 : 1.05;
-                const scale = startScale + ((1 - startScale) * progress);
-                const translateY = -100 * progress;
+                    // 3D rotation effect (starts at 20deg, ends at 0deg)
+                    const rotateX = 20 - (20 * progress);
+                    
+                    // Scale effect (mobile: 0.7 to 0.9, desktop: 1.05 to 1)
+                    const startScale = isMobile ? 0.7 : 1.05;
+                    const endScale = isMobile ? 0.9 : 1;
+                    const scale = startScale + ((endScale - startScale) * progress);
+                    
+                    // Translate Y for content (moves up as you scroll)
+                    const translateY = -100 * progress;
 
-                racketCard.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
+                    // Apply transforms
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
 
-                if (racketTitle) racketTitle.style.transform = `translate3d(0, ${translateY.toFixed(2)}px, 0)`;
-                if (racketSubtitle) racketSubtitle.style.transform = `translate3d(0, ${translateY.toFixed(2)}px, 0)`;
-                if (racketCta) racketCta.style.transform = `translate3d(0, ${translateY.toFixed(2)}px, 0)`;
+                    if (title) title.style.transform = `translate3d(0, ${translateY.toFixed(2)}px, 0)`;
+                    if (subtitle) subtitle.style.transform = `translate3d(0, ${translateY.toFixed(2)}px, 0)`;
+                    if (cta) cta.style.transform = `translate3d(0, ${translateY.toFixed(2)}px, 0)`;
+                });
             };
 
-            window.addEventListener('scroll', applyContainerScroll, { passive: true });
+            window.addEventListener('scroll', applyContainerScroll, {
+                passive: true
+            });
             window.addEventListener('resize', applyContainerScroll);
             applyContainerScroll();
 
@@ -623,7 +726,8 @@
             if (mobileMenuToggle && mobileMenu) {
                 mobileMenuToggle.addEventListener('click', () => {
                     mobileMenu.classList.toggle('hidden');
-                    mobileMenuToggle.setAttribute('aria-expanded', String(!mobileMenu.classList.contains('hidden')));
+                    mobileMenuToggle.setAttribute('aria-expanded', String(!mobileMenu.classList.contains(
+                        'hidden')));
                 });
             }
         })();

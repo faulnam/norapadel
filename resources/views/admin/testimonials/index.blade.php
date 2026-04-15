@@ -4,8 +4,13 @@
 
 @section('content')
 <div class="card">
-    <div class="card-header">
-        <i class="fas fa-comment me-2"></i>Daftar Testimoni
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <div>
+            <i class="fas fa-comment me-2"></i>Daftar Testimoni
+        </div>
+        <a href="{{ route('admin.testimonials.create') }}" class="btn btn-primary btn-sm">
+            <i class="fas fa-plus me-1"></i>Tambah Testimoni
+        </a>
     </div>
     <div class="card-body">
         <!-- Filters -->
@@ -60,11 +65,25 @@
                             
                             <p class="card-text">{{ $testimonial->content }}</p>
                             
-                            <small class="text-muted d-block mb-3">
-                                Pesanan: <a href="{{ route('admin.orders.show', $testimonial->order) }}">
-                                    {{ $testimonial->order->order_number }}
-                                </a>
-                            </small>
+                            @if($testimonial->image)
+                                <div class="mb-3">
+                                    <img src="{{ $testimonial->image_url }}" alt="Foto Testimoni" 
+                                         class="img-fluid rounded" style="max-height: 200px; object-fit: cover; cursor: pointer;"
+                                         data-bs-toggle="modal" data-bs-target="#testimonialImageModal{{ $testimonial->id }}">
+                                </div>
+                            @endif
+
+                            @if($testimonial->order_id)
+                                <small class="text-muted d-block mb-3">
+                                    Pesanan: <a href="{{ route('admin.orders.show', $testimonial->order) }}">
+                                        {{ $testimonial->order->order_number }}
+                                    </a>
+                                </small>
+                            @else
+                                <small class="text-muted d-block mb-3">
+                                    <i class="fas fa-user-shield me-1"></i>Ditambahkan oleh Admin
+                                </small>
+                            @endif
                             
                             <div class="d-flex gap-2">
                                 @if(!$testimonial->is_approved)
@@ -110,4 +129,23 @@
         </div>
     </div>
 </div>
+
+{{-- Image Modals --}}
+@foreach($testimonials as $testimonial)
+    @if($testimonial->image)
+        <div class="modal fade" id="testimonialImageModal{{ $testimonial->id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content bg-transparent border-0">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title text-white">Foto Testimoni - {{ $testimonial->user->name }}</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-0 text-center">
+                        <img src="{{ $testimonial->image_url }}" alt="Foto Testimoni" class="img-fluid rounded">
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+@endforeach
 @endsection

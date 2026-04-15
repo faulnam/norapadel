@@ -15,17 +15,17 @@
     
     <style>
         :root {
-            --primary: #16a34a;
-            --primary-dark: #15803d;
-            --primary-light: #dcfce7;
-            --accent: #f97316;
-            --accent-light: #ffedd5;
-            --dark: #1f2937;
-            --gray: #6b7280;
-            --gray-light: #f3f4f6;
+            --primary: #0f172a;
+            --primary-dark: #020617;
+            --primary-light: #e2e8f0;
+            --accent: #34d399;
+            --accent-light: #d1fae5;
+            --dark: #0f172a;
+            --gray: #64748b;
+            --gray-light: #f1f5f9;
             --white: #ffffff;
-            --off-white: #fafafa;
-            --border-color: #e5e7eb;
+            --off-white: #f8fafc;
+            --border-color: #e2e8f0;
             --radius: 12px;
             --radius-sm: 8px;
             --radius-lg: 16px;
@@ -301,7 +301,7 @@
         
         .stat-icon.info {
             background: #dbeafe;
-            color: #2563eb;
+            color: #0f172a;
         }
         
         .stat-icon.purple {
@@ -431,7 +431,7 @@
         
         .badge.bg-warning {
             background: var(--accent-light) !important;
-            color: #c2410c;
+            color: #065f46;
         }
         
         .badge.bg-danger {
@@ -440,8 +440,8 @@
         }
         
         .badge.bg-info {
-            background: #dbeafe !important;
-            color: #2563eb;
+            background: #e2e8f0 !important;
+            color: #334155;
         }
         
         .badge.bg-secondary {
@@ -493,7 +493,7 @@
         
         .alert-warning {
             background: var(--accent-light);
-            color: #c2410c;
+            color: #065f46;
         }
         
         /* Dropdown Menu */

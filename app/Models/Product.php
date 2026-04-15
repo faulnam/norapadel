@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class Product extends Model
@@ -23,6 +24,7 @@ class Product extends Model
         'image',
         'category',
         'is_active',
+        'is_featured',
     ];
 
     protected $casts = [
@@ -32,17 +34,20 @@ class Product extends Model
         'discount_end' => 'datetime',
         'weight' => 'integer',
         'is_active' => 'boolean',
+        'is_featured' => 'boolean',
     ];
 
     // Categories
     const CATEGORY_ORIGINAL = 'original';
     const CATEGORY_PEDAS = 'pedas';
+    const CATEGORY_SHOES = 'shoes';
 
     public static function categories(): array
     {
         return [
             self::CATEGORY_ORIGINAL => 'Raket Padel',
             self::CATEGORY_PEDAS => 'Aksesori Padel',
+            self::CATEGORY_SHOES => 'Shoes Padel',
         ];
     }
 
@@ -162,14 +167,62 @@ class Product extends Model
     }
 
     /**
+     * Scope for featured products
+     */
+    public function scopeFeatured($query)
+    {
+        return $query->where('is_featured', true);
+    }
+
+    /**
      * Get image URL
      */
     public function getImageUrlAttribute(): string
     {
-        if ($this->image) {
-            return asset('storage/' . $this->image);
+        $rawPath = trim((string) $this->image);
+        $normalizedPath = ltrim(str_replace('\\', '/', $rawPath), '/');
+
+        if ($normalizedPath !== '' && preg_match('/^https?:\/\//i', $normalizedPath)) {
+            return $normalizedPath;
         }
-        return asset('images/default-product.png');
+
+        $knownPrefixes = [
+            'storage/app/public/',
+            'public/storage/',
+            'storage/',
+        ];
+
+        foreach ($knownPrefixes as $prefix) {
+            if (str_contains($normalizedPath, $prefix)) {
+                $parts = explode($prefix, $normalizedPath, 2);
+                $normalizedPath = ltrim($parts[1] ?? '', '/');
+                break;
+            }
+        }
+
+        if (!str_starts_with($normalizedPath, 'products/') && str_contains($normalizedPath, '/products/')) {
+            $parts = explode('/products/', $normalizedPath, 2);
+            $normalizedPath = 'products/' . ltrim($parts[1] ?? '', '/');
+        }
+
+        if (str_starts_with($normalizedPath, 'storage/')) {
+            $normalizedPath = substr($normalizedPath, strlen('storage/'));
+        }
+
+        $candidatePaths = array_values(array_unique(array_filter([
+            $normalizedPath,
+            $normalizedPath !== '' && !str_starts_with($normalizedPath, 'products/') ? 'products/' . ltrim($normalizedPath, '/') : null,
+        ])));
+
+        foreach ($candidatePaths as $path) {
+            if (Storage::disk('public')->exists($path)) {
+                $encodedPath = implode('/', array_map('rawurlencode', explode('/', $path)));
+
+                return '/media/products/' . $encodedPath;
+            }
+        }
+
+        return '/images/logo.png';
     }
 
     /**

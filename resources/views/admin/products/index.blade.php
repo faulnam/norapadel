@@ -50,6 +50,7 @@
                         <th>Harga</th>
                         <th>Stok</th>
                         <th>Status</th>
+                        <th>Highlight</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -84,6 +85,19 @@
                                 @endif
                             </td>
                             <td>
+                                <form action="{{ route('admin.products.toggle-featured', $product) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit" class="btn btn-sm btn-{{ $product->is_featured ? 'warning' : 'outline-secondary' }}" 
+                                            title="{{ $product->is_featured ? 'Hapus dari Highlight' : 'Jadikan Highlight' }}">
+                                        <i class="fas fa-star"></i>
+                                    </button>
+                                </form>
+                                @if($product->is_featured)
+                                    <br><small class="text-warning fw-bold">Highlight</small>
+                                @endif
+                            </td>
+                            <td>
                                 <div class="btn-group btn-group-sm">
                                     <a href="{{ route('admin.products.edit', $product) }}" class="btn btn-outline-primary" title="Edit">
                                         <i class="fas fa-edit"></i>
@@ -109,7 +123,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="text-center py-4">
+                            <td colspan="9" class="text-center py-4">
                                 <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
                                 <p class="text-muted mb-0">Belum ada produk</p>
                             </td>

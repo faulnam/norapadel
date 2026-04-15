@@ -14,6 +14,7 @@ class Testimonial extends Model
         'order_id',
         'rating',
         'content',
+        'image',
         'is_approved',
     ];
 
@@ -34,7 +35,7 @@ class Testimonial extends Model
      */
     public function order()
     {
-        return $this->belongsTo(Order::class);
+        return $this->belongsTo(Order::class)->withDefault();
     }
 
     /**
@@ -51,6 +52,17 @@ class Testimonial extends Model
     public function scopePending($query)
     {
         return $query->where('is_approved', false);
+    }
+
+    /**
+     * Get image URL
+     */
+    public function getImageUrlAttribute(): ?string
+    {
+        if ($this->image) {
+            return asset('storage/' . $this->image);
+        }
+        return null;
     }
 
     /**

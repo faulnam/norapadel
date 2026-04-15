@@ -24,6 +24,34 @@ use App\Http\Controllers\Courier\ProfileController as CourierProfile;
 use App\Http\Controllers\Courier\NotificationController as CourierNotification;
 use App\Http\Controllers\PakasirWebhookController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
+
+Route::get('/media/products/{path}', function (string $path) {
+    $normalizedPath = ltrim(str_replace('\\', '/', $path), '/');
+
+    if (str_contains($normalizedPath, '..')) {
+        abort(404);
+    }
+
+    $candidatePaths = array_values(array_unique(array_filter([
+        $normalizedPath,
+        !str_starts_with($normalizedPath, 'products/') ? 'products/' . ltrim($normalizedPath, '/') : null,
+    ])));
+
+    $resolvedPath = null;
+    foreach ($candidatePaths as $candidate) {
+        if (Storage::disk('public')->exists($candidate)) {
+            $resolvedPath = $candidate;
+            break;
+        }
+    }
+
+    if ($resolvedPath === null) {
+        abort(404);
+    }
+
+    return response()->file(Storage::disk('public')->path($resolvedPath));
+})->where('path', '.*')->name('media.product');
 
 // Public Pages (Guest)
 Route::get('/', [PageController::class, 'home'])->name('home');
@@ -59,6 +87,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     // Products
     Route::resource('products', AdminProduct::class);
     Route::patch('/products/{product}/toggle-status', [AdminProduct::class, 'toggleStatus'])->name('products.toggle-status');
+    Route::patch('/products/{product}/toggle-featured', [AdminProduct::class, 'toggleFeatured'])->name('products.toggle-featured');
     
     // Orders
     Route::get('/orders', [AdminOrder::class, 'index'])->name('orders.index');
@@ -74,6 +103,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     
     // Testimonials
     Route::get('/testimonials', [AdminTestimonial::class, 'index'])->name('testimonials.index');
+    Route::get('/testimonials/create', [AdminTestimonial::class, 'create'])->name('testimonials.create');
+    Route::post('/testimonials', [AdminTestimonial::class, 'store'])->name('testimonials.store');
     Route::patch('/testimonials/{testimonial}/approve', [AdminTestimonial::class, 'approve'])->name('testimonials.approve');
     Route::patch('/testimonials/{testimonial}/reject', [AdminTestimonial::class, 'reject'])->name('testimonials.reject');
     Route::delete('/testimonials/{testimonial}', [AdminTestimonial::class, 'destroy'])->name('testimonials.destroy');

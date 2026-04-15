@@ -88,7 +88,7 @@
                     </div>
                     <div class="list-group-item d-flex justify-content-between align-items-center py-3">
                         <span class="d-flex align-items-center gap-2">
-                            <span class="badge" style="width: 8px; height: 8px; padding: 0; border-radius: 50%; background: #2563eb;"></span>
+                            <span class="badge" style="width: 8px; height: 8px; padding: 0; border-radius: 50%; background: #0f172a;"></span>
                             Dikirim
                         </span>
                         <strong>{{ $orderStats['shipped'] }}</strong>
@@ -129,8 +129,8 @@
                 @endif
                 
                 @if($pendingTestimonials > 0)
-                    <a href="{{ route('admin.testimonials.index', ['status' => 'pending']) }}" class="d-flex justify-content-between align-items-center p-3 rounded mb-2 text-decoration-none" style="background: #dbeafe;">
-                        <span style="color: #2563eb;">
+                    <a href="{{ route('admin.testimonials.index', ['status' => 'pending']) }}" class="d-flex justify-content-between align-items-center p-3 rounded mb-2 text-decoration-none" style="background: #e2e8f0;">
+                        <span style="color: #0f172a;">
                             <i class="fas fa-star me-2"></i>Testimoni Pending
                         </span>
                         <span class="badge bg-info">{{ $pendingTestimonials }}</span>
@@ -206,12 +206,12 @@
             datasets: [{
                 label: 'Pendapatan',
                 data: {!! json_encode(array_column($monthlyRevenue, 'revenue')) !!},
-                borderColor: '#16a34a',
-                backgroundColor: 'rgba(22, 163, 74, 0.1)',
+                borderColor: '#34d399',
+                backgroundColor: 'rgba(52, 211, 153, 0.14)',
                 tension: 0.4,
                 fill: true,
                 borderWidth: 2,
-                pointBackgroundColor: '#16a34a',
+                pointBackgroundColor: '#34d399',
                 pointBorderColor: '#fff',
                 pointBorderWidth: 2,
                 pointRadius: 4

@@ -573,52 +573,7 @@
         </section>
     @endif
 
-    <!-- Testimonials Section - Clean Cards -->
-    <section class="testimonials-section" id="testimonials">
-        <div class="container">
-            <div class="section-header-flex">
-                <div>
-                    <span class="section-label">Testimoni</span>
-                    <h2 class="section-heading mb-0">Apa Kata Mereka?</h2>
-                </div>
-                <a href="{{ route('testimoni') }}" class="btn-link-arrow d-none d-md-flex">
-                    Lihat Semua <i class="fas fa-arrow-right ms-2"></i>
-                </a>
-            </div>
-
-            <div class="testimonials-slider">
-                @forelse($testimonials as $testimonial)
-                    <div class="testimonial-item">
-                        <div class="testimonial-stars">
-                            @for ($i = 1; $i <= 5; $i++)
-                                <i class="fas fa-star {{ $i <= $testimonial->rating ? 'active' : '' }}"></i>
-                            @endfor
-                        </div>
-                        <p class="testimonial-text">"{{ Str::limit($testimonial->content, 120) }}"</p>
-                        <div class="testimonial-author-info">
-                            <img src="{{ $testimonial->user->avatar_url }}" alt="{{ $testimonial->user->name }}"
-                                class="testimonial-avatar">
-                            <div>
-                                <h6 class="testimonial-name">{{ $testimonial->user->name }}</h6>
-                                <span class="testimonial-date">{{ $testimonial->created_at->diffForHumans() }}</span>
-                            </div>
-                        </div>
-                    </div>
-                @empty
-                    <div class="text-center py-5 w-100">
-                        <i class="fas fa-comments fa-3x text-muted mb-3"></i>
-                        <p class="text-muted">Belum ada testimoni.</p>
-                    </div>
-                @endforelse
-            </div>
-
-            <div class="text-center mt-4 d-md-none">
-                <a href="{{ route('testimoni') }}" class="btn btn-outline-dark">
-                    Lihat Semua <i class="fas fa-arrow-right ms-2"></i>
-                </a>
-            </div>
-        </div>
-    </section>
+    
 
     
 

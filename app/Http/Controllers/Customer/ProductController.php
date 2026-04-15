@@ -13,7 +13,7 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Product::active()->inStock();
+        $query = Product::active()->inStock()->where('is_featured', false);
 
         // Search
         if ($request->filled('search')) {
@@ -61,6 +61,7 @@ class ProductController extends Controller
         // Get related products
         $relatedProducts = Product::active()
             ->inStock()
+            ->where('is_featured', false)
             ->where('category', $product->category)
             ->where('id', '!=', $product->id)
             ->take(4)

@@ -60,7 +60,7 @@
                     </div>
 
                     <!-- Testimonial Form -->
-                    <form action="{{ route('customer.testimonials.store', $order) }}" method="POST">
+                    <form action="{{ route('customer.testimonials.store', $order) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         
                         <div class="mb-4">
@@ -93,6 +93,24 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                             <small class="text-muted">Minimal 20 karakter</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="image" class="form-label fw-bold">Foto Testimoni <span class="text-muted fw-normal">(opsional)</span></label>
+                            <input type="file" name="image" id="image" 
+                                class="form-control @error('image') is-invalid @enderror" 
+                                accept="image/jpeg,image/png,image/jpg,image/webp"
+                                onchange="previewImage(this)">
+                            @error('image')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <small class="text-muted">Format: JPEG, PNG, WEBP. Maksimal 2MB. Gambar akan ditampilkan di galeri NoraPadel.</small>
+                            <div id="imagePreview" class="mt-2" style="display: none;">
+                                <img id="previewImg" src="" alt="Preview" class="rounded shadow-sm" style="max-height: 200px; object-fit: cover;">
+                                <button type="button" class="btn btn-sm btn-outline-danger mt-2" onclick="removeImage()">
+                                    <i class="fas fa-times me-1"></i>Hapus Foto
+                                </button>
+                            </div>
                         </div>
 
                         <div class="alert alert-warning py-2 alert-mobile">
@@ -176,4 +194,30 @@
     }
 }
 </style>
+
+<script>
+function previewImage(input) {
+    const preview = document.getElementById('imagePreview');
+    const previewImg = document.getElementById('previewImg');
+    
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            previewImg.src = e.target.result;
+            preview.style.display = 'block';
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function removeImage() {
+    const input = document.getElementById('image');
+    const preview = document.getElementById('imagePreview');
+    const previewImg = document.getElementById('previewImg');
+    
+    input.value = '';
+    previewImg.src = '';
+    preview.style.display = 'none';
+}
+</script>
 @endsection

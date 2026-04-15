@@ -17,6 +17,7 @@ class PageController extends Controller
     {
         $products = Product::active()
             ->inStock()
+            ->where('is_featured', false)
             ->latest()
             ->take(6)
             ->get();
@@ -47,6 +48,7 @@ class PageController extends Controller
     {
         $query = Product::active()
             ->inStock()
+            ->where('is_featured', false)
             ->where('category', Product::CATEGORY_ORIGINAL);
 
         if ($request->filled('q')) {
@@ -70,7 +72,10 @@ class PageController extends Controller
      */
     public function shoes(Request $request)
     {
-        $query = Product::active()->inStock();
+        $query = Product::active()
+            ->inStock()
+            ->where('is_featured', false)
+            ->where('category', Product::CATEGORY_SHOES);
 
         if ($request->filled('q')) {
             $keyword = trim((string) $request->q);
@@ -93,7 +98,10 @@ class PageController extends Controller
      */
     public function apparel(Request $request)
     {
-        $query = Product::active()->inStock();
+        $query = Product::active()
+            ->inStock()
+            ->where('is_featured', false)
+            ->where('category', Product::CATEGORY_PEDAS);
 
         if ($request->filled('q')) {
             $keyword = trim((string) $request->q);
@@ -124,7 +132,7 @@ class PageController extends Controller
      */
     private function getShopSections(): array
     {
-        $baseQuery = Product::active()->inStock();
+        $baseQuery = Product::active()->inStock()->where('is_featured', false);
 
         $buildSection = function (string $title, array $keywords = [], ?string $category = null) use ($baseQuery) {
             $query = (clone $baseQuery);
@@ -148,17 +156,27 @@ class PageController extends Controller
                 $items = (clone $baseQuery)->latest()->take(8)->get();
             }
 
+            // Prioritize featured product as the big highlight card
+            $featured = Product::active()->inStock()->where('is_featured', true)->latest()->first();
+
+            if (!$featured) {
+                // Fallback: latest product as highlight
+                $featured = $items->first();
+            }
+
+            $others = $items->values();
+
             return [
                 'title' => $title,
-                'latest' => $items->first(),
-                'others' => $items->slice(1)->values(),
+                'latest' => $featured,
+                'others' => $others,
             ];
         };
 
         return [
             $buildSection('Racket Terbaru', [], Product::CATEGORY_ORIGINAL),
-            $buildSection('Shoes Terbaru', ['shoe', 'sepatu', 'nike', 'adidas', 'new balance', 'brooks', 'salomon']),
-            $buildSection('Accessories Terbaru', ['apparel', 'jersey', 'shirt', 'kaos', 'wear', 'outfit']),
+            $buildSection('Shoes Terbaru', ['shoe', 'sepatu', 'nike', 'adidas', 'new balance', 'brooks', 'salomon'], Product::CATEGORY_SHOES),
+            $buildSection('Accessories Terbaru', ['apparel', 'jersey', 'shirt', 'kaos', 'wear', 'outfit'], Product::CATEGORY_PEDAS),
         ];
     }
 
@@ -210,7 +228,7 @@ class PageController extends Controller
      */
     public function produkIndex(Request $request)
     {
-        $query = Product::active()->inStock();
+        $query = Product::active()->inStock()->where('is_featured', false);
 
         if ($request->filled('q')) {
             $keyword = trim((string) $request->q);
@@ -255,6 +273,7 @@ class PageController extends Controller
         }
 
         $relatedProducts = Product::active()
+            ->where('is_featured', false)
             ->where('id', '!=', $product->id)
             ->where('category', $product->category)
             ->take(4)

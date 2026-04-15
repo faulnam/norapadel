@@ -120,15 +120,15 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="weight" class="form-label">Berat <span class="text-danger">*</span></label>
-                                <select class="form-select @error('weight') is-invalid @enderror" id="weight" name="weight" required>
-                                    <option value="">Pilih Berat</option>
-                                    @foreach(\App\Models\Product::weightOptions() as $value => $label)
-                                        <option value="{{ $value }}" {{ old('weight') == $value ? 'selected' : '' }}>{{ $label }}</option>
-                                    @endforeach
-                                </select>
+                                <div class="input-group">
+                                    <input type="number" class="form-control @error('weight') is-invalid @enderror" 
+                                           id="weight" name="weight" value="{{ old('weight') }}" min="1" step="1" required>
+                                    <span class="input-group-text">gram</span>
+                                </div>
                                 @error('weight')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
+                                <small class="text-muted">Isi berat produk dalam gram (contoh: 360, 900, 1200).</small>
                             </div>
                         </div>
                     </div>
@@ -152,6 +152,16 @@
                             <input type="checkbox" class="form-check-input" id="is_active" name="is_active" value="1" checked>
                             <label class="form-check-label" for="is_active">Aktifkan Produk</label>
                         </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="is_featured" name="is_featured" value="1" {{ old('is_featured') ? 'checked' : '' }}>
+                            <label class="form-check-label" for="is_featured">
+                                <i class="fas fa-star text-warning me-1"></i>Jadikan Highlight (Card Besar)
+                            </label>
+                        </div>
+                        <small class="text-muted">Produk highlight akan tampil sebagai card besar di halaman utama. Hanya 1 produk per kategori yang bisa menjadi highlight.</small>
                     </div>
                 </div>
             </div>

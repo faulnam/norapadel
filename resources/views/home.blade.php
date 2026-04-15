@@ -104,8 +104,13 @@
             @forelse($products as $product)
                 <div class="col-md-6 col-lg-4">
                     <div class="card h-100 product-card">
-                        <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=400' }}" 
-                             class="card-img-top" alt="{{ $product->name }}" style="height: 200px; object-fit: cover;">
+                        <div class="position-relative">
+                            <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=400' }}" 
+                                 class="card-img-top" alt="{{ $product->name }}" style="height: 200px; object-fit: cover;">
+                            @if($product->hasActiveDiscount())
+                                <span class="position-absolute top-0 end-0 m-2 badge bg-danger">-{{ $product->formatted_discount_percent }}</span>
+                            @endif
+                        </div>
                         <div class="card-body">
                             <div class="mb-2">
                                 <span class="badge bg-{{ $product->category == 'original' ? 'success' : 'danger' }} me-1">{{ $product->category_label }}</span>
@@ -114,7 +119,14 @@
                             <h5 class="card-title">{{ $product->name }}</h5>
                             <p class="card-text text-muted small">{{ Str::limit($product->description, 80) }}</p>
                             <div class="d-flex justify-content-between align-items-center">
-                                <span class="h5 text-success mb-0">{{ $product->formatted_price }}</span>
+                                <div>
+                                    @if($product->hasActiveDiscount())
+                                        <span class="h5 text-success mb-0">{{ $product->formatted_discounted_price }}</span>
+                                        <small class="text-decoration-line-through text-muted d-block">{{ $product->formatted_price }}</small>
+                                    @else
+                                        <span class="h5 text-success mb-0">{{ $product->formatted_price }}</span>
+                                    @endif
+                                </div>
                                 @auth
                                     <a href="{{ route('customer.products.show', $product) }}" class="btn btn-outline-success btn-sm">
                                         <i class="fas fa-eye me-1"></i>Detail
@@ -194,44 +206,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-</section>
-
-<!-- Testimonials Section -->
-<section class="py-5" id="testimonials">
-    <div class="container">
-        <div class="text-center mb-5">
-            <h2 class="fw-bold">Apa Kata Mereka?</h2>
-            <p class="text-muted">Testimoni dari pelanggan setia kami</p>
-        </div>
-        
-        <div class="row g-4">
-            @forelse($testimonials as $testimonial)
-                <div class="col-md-6 col-lg-4">
-                    <div class="card h-100 p-4">
-                        <div class="card-body">
-                            <div class="mb-3">
-                                {!! $testimonial->stars !!}
-                            </div>
-                            <p class="card-text text-muted mb-4">"{{ $testimonial->content }}"</p>
-                            <div class="d-flex align-items-center">
-                                <img src="{{ $testimonial->user->avatar_url }}" alt="{{ $testimonial->user->name }}" 
-                                     class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;">
-                                <div>
-                                    <h6 class="mb-0">{{ $testimonial->user->name }}</h6>
-                                    <small class="text-muted">{{ $testimonial->created_at->diffForHumans() }}</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @empty
-                <div class="col-12 text-center py-5">
-                    <i class="fas fa-comments fa-3x text-muted mb-3"></i>
-                    <p class="text-muted">Belum ada testimoni.</p>
-                </div>
-            @endforelse
         </div>
     </div>
 </section>

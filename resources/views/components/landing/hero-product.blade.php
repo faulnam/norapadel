@@ -14,27 +14,18 @@
     'ctaClass' => '',
 ])
 
-<section id="{{ $id }}" class="np-fade-section relative overflow-hidden {{ $sectionClass }}">
-    <div class="mx-auto w-full max-w-7xl px-6 pb-14 pt-14 text-center md:px-10 md:pb-16 md:pt-16 lg:px-12 lg:pb-18 lg:pt-18 {{ $contentClass }}">
-        <h2 class="text-4xl font-semibold tracking-tight text-black sm:text-5xl lg:text-6xl">{{ $title }}</h2>
-        <p class="mx-auto mt-3 max-w-2xl text-lg font-normal text-zinc-700 sm:text-2xl">{{ $subtitle }}</p>
-
-        <div class="mt-7 flex flex-wrap items-center justify-center gap-3 {{ $ctaClass }}">
-            <a href="{{ $primaryHref }}"
-               class="inline-flex items-center justify-center rounded-full bg-[#0071e3] px-7 py-3 text-sm font-medium text-white transition duration-300 hover:scale-[1.02] hover:bg-[#0077ED]">
-                {{ $primaryText }}
-            </a>
-            <a href="{{ $secondaryHref }}"
-               class="inline-flex items-center justify-center rounded-full border border-black/25 bg-transparent px-7 py-3 text-sm font-medium text-black transition duration-300 hover:scale-[1.02] hover:border-black/40 hover:bg-black/2">
-                {{ $secondaryText }}
-            </a>
+<section id="{{ $id }}" class="np-fade-section relative {{ $sectionClass }}" style="height: 60rem; display: flex; align-items: center; justify-content: center;" data-scroll-container>
+    <div class="w-full relative" style="perspective: 1000px; padding: 1rem 1.5rem;">
+        <div class="np-container-scroll-content mx-auto w-full max-w-5xl text-center {{ $contentClass }}">
+            <h2 class="text-4xl font-semibold tracking-tight text-black sm:text-5xl lg:text-6xl">{{ $title }}</h2>
+            <p class="mx-auto mt-1 max-w-2xl text-lg font-normal text-zinc-700 sm:text-2xl">{{ $subtitle }}</p>
         </div>
 
-        <div class="relative mx-auto mt-8 max-w-5xl md:mt-10 {{ $imageWrapperClass }}">
+        <div class="np-container-scroll-card relative mx-auto -mt-20 max-w-5xl {{ $imageWrapperClass }}" style="transform-style: preserve-3d; box-shadow: 0 0 #0000004d, 0 9px 20px #0000004a, 0 37px 37px #00000042, 0 84px 50px #00000026, 0 149px 60px #0000000a, 0 233px 65px #00000003;">
             <img
                 src="{{ $image }}"
                 alt="{{ $alt }}"
-                class="np-parallax-image mx-auto w-full max-w-4xl object-contain drop-shadow-[0_20px_45px_rgba(0,0,0,0.08)]"
+                class="mx-auto h-full w-full rounded-3xl object-contain"
                 loading="lazy"
             >
         </div>

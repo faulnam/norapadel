@@ -165,33 +165,6 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // Create sample galleries
-        $galleries = [
-            [
-                'title' => 'Tips Bermain Padel untuk Pemula',
-                'description' => 'Panduan teknik dasar positioning, volley, dan servis yang efektif.',
-                'type' => 'image',
-                'sort_order' => 1,
-                'is_active' => true,
-            ],
-            [
-                'title' => 'Review Raket Padel 2026',
-                'description' => 'Perbandingan raket attack, control, dan hybrid untuk semua level pemain.',
-                'type' => 'image',
-                'sort_order' => 2,
-                'is_active' => true,
-            ],
-            [
-                'title' => 'Nora Padel Open Weekend Event',
-                'description' => 'Dokumentasi event komunitas, coaching clinic, dan mini tournament.',
-                'type' => 'image',
-                'sort_order' => 3,
-                'is_active' => true,
-            ],
-        ];
-
-        foreach ($galleries as $gallery) {
-            Gallery::create($gallery);
-        }
+        
     }
 }

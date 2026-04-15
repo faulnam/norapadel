@@ -31,6 +31,37 @@ class TestimonialController extends Controller
     }
 
     /**
+     * Show create form
+     */
+    public function create()
+    {
+        return view('admin.testimonials.create');
+    }
+
+    /**
+     * Store new testimonial
+     */
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'image' => 'required|image|mimes:jpeg,jpg,png,webp|max:2048',
+        ]);
+
+        $imagePath = $request->file('image')->store('testimonials', 'public');
+
+        Testimonial::create([
+            'user_id' => auth()->id(),
+            'image' => $imagePath,
+            'content' => '',
+            'rating' => 5,
+            'is_approved' => true,
+        ]);
+
+        return redirect()->route('admin.testimonials.index')
+            ->with('success', 'Testimoni berhasil ditambahkan.');
+    }
+
+    /**
      * Approve testimonial
      */
     public function approve(Testimonial $testimonial)

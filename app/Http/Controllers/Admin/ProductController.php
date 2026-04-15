@@ -84,8 +84,8 @@ class ProductController extends Controller
             'discount_start' => 'nullable|date',
             'discount_end' => 'nullable|date|after_or_equal:discount_start',
             'stock' => 'required|integer|min:0',
-            'category' => 'required|in:original,pedas',
-            'weight' => 'required|in:50,100,250,500,1000',
+            'category' => 'required|in:original,pedas,shoes',
+            'weight' => 'required|integer|min:1|max:50000',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'is_active' => 'boolean',
         ], [
@@ -96,7 +96,9 @@ class ProductController extends Controller
             'stock.required' => 'Stok wajib diisi.',
             'stock.integer' => 'Stok harus berupa angka.',
             'category.required' => 'Kategori wajib dipilih.',
-            'weight.required' => 'Berat wajib dipilih.',
+            'weight.required' => 'Berat wajib diisi.',
+            'weight.integer' => 'Berat harus berupa angka bulat (gram).',
+            'weight.min' => 'Berat minimal 1 gram.',
             'image.image' => 'File harus berupa gambar.',
             'image.max' => 'Ukuran gambar maksimal 2MB.',
         ]);
@@ -104,6 +106,13 @@ class ProductController extends Controller
         $imagePath = null;
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('products', 'public');
+        }
+
+        // If marking as featured, unfeature other products in the same category
+        if ($request->boolean('is_featured')) {
+            Product::where('category', $validated['category'])
+                ->where('is_featured', true)
+                ->update(['is_featured' => false]);
         }
 
         Product::create([
@@ -119,6 +128,7 @@ class ProductController extends Controller
             'weight' => $validated['weight'],
             'image' => $imagePath,
             'is_active' => $request->boolean('is_active', true),
+            'is_featured' => $request->boolean('is_featured'),
         ]);
 
         return redirect()->route('admin.products.index')
@@ -154,8 +164,8 @@ class ProductController extends Controller
             'discount_start' => 'nullable|date',
             'discount_end' => 'nullable|date|after_or_equal:discount_start',
             'stock' => 'required|integer|min:0',
-            'category' => 'required|in:original,pedas',
-            'weight' => 'required|in:50,100,250,500,1000',
+            'category' => 'required|in:original,pedas,shoes',
+            'weight' => 'required|integer|min:1|max:50000',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'is_active' => 'boolean',
         ]);
@@ -171,6 +181,17 @@ class ProductController extends Controller
         $product->category = $validated['category'];
         $product->weight = $validated['weight'];
         $product->is_active = $request->boolean('is_active', true);
+
+        // Handle featured toggle
+        $newFeatured = $request->boolean('is_featured');
+        if ($newFeatured && !$product->is_featured) {
+            // Unfeature other products in the same category
+            Product::where('category', $product->category)
+                ->where('id', '!=', $product->id)
+                ->where('is_featured', true)
+                ->update(['is_featured' => false]);
+        }
+        $product->is_featured = $newFeatured;
 
         // Only update slug if name actually changed (compare trimmed values)
         $oldName = trim($product->getOriginal('name'));
@@ -218,6 +239,26 @@ class ProductController extends Controller
         $product->update(['is_active' => !$product->is_active]);
 
         $status = $product->is_active ? 'diaktifkan' : 'dinonaktifkan';
+
+        return back()->with('success', "Produk berhasil {$status}.");
+    }
+
+    /**
+     * Toggle product featured status
+     */
+    public function toggleFeatured(Product $product)
+    {
+        if (!$product->is_featured) {
+            // Unfeature other products in the same category
+            Product::where('category', $product->category)
+                ->where('id', '!=', $product->id)
+                ->where('is_featured', true)
+                ->update(['is_featured' => false]);
+        }
+
+        $product->update(['is_featured' => !$product->is_featured]);
+
+        $status = $product->is_featured ? 'dijadikan highlight' : 'dihapus dari highlight';
 
         return back()->with('success', "Produk berhasil {$status}.");
     }

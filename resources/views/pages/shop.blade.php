@@ -123,12 +123,17 @@
                                             data-product-price="{{ $product->hasActiveDiscount() ? $product->formatted_discounted_price : $product->formatted_price }}"
                                             data-product-old-price="{{ $product->hasActiveDiscount() ? $product->formatted_price : '' }}"
                                         >
-                                            <img
-                                                src="{{ $product->image ? asset('storage/' . $product->image) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}"
-                                                alt="{{ $product->name }}"
-                                                class="aspect-4/5 w-full object-cover transition duration-500 group-hover:scale-105"
-                                                loading="lazy"
-                                            >
+                                            <div class="relative">
+                                                <img
+                                                    src="{{ $product->image ? asset('storage/' . $product->image) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}"
+                                                    alt="{{ $product->name }}"
+                                                    class="aspect-4/5 w-full object-cover transition duration-500 group-hover:scale-105"
+                                                    loading="lazy"
+                                                >
+                                                @if($product->hasActiveDiscount())
+                                                    <span class="absolute left-3 top-3 rounded-full bg-rose-500 px-2.5 py-1 text-[11px] font-semibold text-white">-{{ $product->formatted_discount_percent }}</span>
+                                                @endif
+                                            </div>
                                             <div class="p-3">
                                                 <p class="line-clamp-1 text-sm font-semibold tracking-tight text-zinc-800">{{ $product->name }}</p>
                                                 <p class="mt-1 text-xs text-zinc-500">{{ $product->category_label }}</p>
