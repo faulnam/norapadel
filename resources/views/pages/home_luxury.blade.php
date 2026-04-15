@@ -28,6 +28,10 @@
                                 <i class="fas fa-arrow-left text-[10px]"></i>
                                 <span>Dashboard</span>
                             </a>
+                        @elseif(auth()->user()->role === 'customer')
+                            <a href="{{ route('customer.profile.index') }}" class="transition duration-300 hover:text-black" aria-label="Profile">
+                                <i class="fas fa-user text-sm"></i>
+                            </a>
                         @endif
                     @endauth
                     @guest
@@ -39,9 +43,15 @@
                         </a>
                     @endguest
                     @auth
-                        <a href="{{ route('customer.cart.index') }}" class="transition duration-300 hover:text-black"
+                        <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-black"
                             aria-label="Cart">
                             <i class="fas fa-shopping-bag text-sm"></i>
+                            @if(auth()->user()->role === 'customer')
+                                @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
+                                @if($cartCount > 0)
+                                    <span class="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
+                                @endif
+                            @endif
                         </a>
                     @else
                         <a href="{{ route('login') }}" class="transition duration-300 hover:text-black" aria-label="Cart">
@@ -69,7 +79,7 @@
         <x-landing.hero-product id="racket" title="NoraPadel" subtitle="Precision. Power. Performance."
             image="{{ asset('storage/banner.png') }}" alt="NoraPadel Racket" primary-text="Explore"
             primary-href="{{ route('produk.index') }}" secondary-text="Buy Now"
-            secondary-href="{{ auth()->check() ? route('customer.products.index') : route('login') }}"
+            secondary-href="{{ route('home') }}#products"
             section-class="bg-[#f5f5f7] border-b-[14px] border-white" />
 
         <!-- Why Choose NoraPadel -->
@@ -212,7 +222,7 @@
         </section>
 
 
-        <x-landing.featured-toggle :products="$products" section-class="bg-[#f5f5f7] pt-3 pb-20 lg:pt-5 lg:pb-24" />
+        <x-landing.featured-toggle :products="$products" section-class="bg-[#f5f5f7] pt-3 pb-20 lg:pt-5 lg:pb-24" section-id="products" />
 
         <section class="np-fade-section bg-white py-18 lg:py-22" data-gallery-showcase>
             <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
@@ -339,7 +349,7 @@
                         with NoraPadel</h2>
                     <p class="mx-auto mt-4 max-w-2xl text-zinc-600">Designed for players who expect precision craftsmanship
                         and world-class performance in every detail.</p>
-                    <a href="{{ auth()->check() ? route('customer.products.index') : route('login') }}"
+                    <a href="{{ route('home') }}#products"
                         class="mt-8 inline-flex rounded-full bg-[#0071e3] px-8 py-3 text-sm font-medium text-white transition duration-300 hover:scale-[1.02] hover:bg-[#0077ED]">
                         Shop Collection
                     </a>

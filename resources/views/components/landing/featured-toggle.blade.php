@@ -3,13 +3,14 @@
     'title' => 'Featured Products',
     'subtitle' => 'Curated essentials for serious athletes and premium performance lifestyle.',
     'sectionClass' => 'bg-[#f5f5f7] py-20 lg:py-24',
+    'sectionId' => '',
 ])
 
 @php
     $cardFallbackImage = '/images/logo.png';
 @endphp
 
-<section class="np-fade-section {{ $sectionClass }}" data-featured-toggle>
+<section class="np-fade-section {{ $sectionClass }}" data-featured-toggle @if($sectionId) id="{{ $sectionId }}" @endif>
     <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
         <h2 class="text-center text-4xl font-semibold tracking-tight text-black sm:text-5xl">{{ $title }}</h2>
         <p class="mx-auto mt-3 max-w-2xl text-center text-zinc-600">{{ $subtitle }}</p>

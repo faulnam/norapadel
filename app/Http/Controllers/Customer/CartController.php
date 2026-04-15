@@ -16,8 +16,9 @@ class CartController extends Controller
     {
         $cartItems = auth()->user()->cart()->with('product')->get();
         
+        // Calculate total using discounted prices
         $total = $cartItems->sum(function ($item) {
-            return $item->product->price * $item->quantity;
+            return $item->subtotal; // This uses the accessor which handles discounts
         });
 
         return view('customer.cart.index', compact('cartItems', 'total'));

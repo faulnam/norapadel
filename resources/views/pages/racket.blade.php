@@ -24,6 +24,10 @@
                                 <i class="fas fa-arrow-left text-[10px]"></i>
                                 <span>Dashboard</span>
                             </a>
+                        @elseif(auth()->user()->role === 'customer')
+                            <a href="{{ route('customer.profile.index') }}" class="transition duration-300 hover:text-black" aria-label="Profile">
+                                <i class="fas fa-user text-sm"></i>
+                            </a>
                         @endif
                     @endauth
                     @guest
@@ -33,8 +37,14 @@
                         </a>
                     @endguest
                     @auth
-                        <a href="{{ route('customer.cart.index') }}" class="transition duration-300 hover:text-black" aria-label="Cart">
+                        <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-black" aria-label="Cart">
                             <i class="fas fa-shopping-bag text-sm"></i>
+                            @if(auth()->user()->role === 'customer')
+                                @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
+                                @if($cartCount > 0)
+                                    <span class="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
+                                @endif
+                            @endif
                         </a>
                     @else
                         <a href="{{ route('login') }}" class="transition duration-300 hover:text-black" aria-label="Cart">
