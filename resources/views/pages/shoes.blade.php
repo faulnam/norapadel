@@ -16,6 +16,16 @@
                 </nav>
 
                 <div class="flex items-center gap-3 text-black/80">
+                    @auth
+                        @if(auth()->user()->role === 'admin')
+                            <a href="{{ route('admin.dashboard') }}"
+                                class="inline-flex items-center gap-1.5 rounded-full border border-black/15 bg-black px-4 py-1.5 text-xs font-medium text-white transition duration-300 hover:bg-black/90"
+                                aria-label="Back to Dashboard">
+                                <i class="fas fa-arrow-left text-[10px]"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        @endif
+                    @endauth
                     @guest
                         <a href="{{ route('login') }}" class="inline-flex items-center gap-1 rounded-full border border-black/15 px-3 py-1.5 text-xs font-medium text-black/80 transition duration-300 hover:border-black/30 hover:text-black" aria-label="Masuk">
                             <i class="fas fa-sign-in-alt text-[11px]"></i>
@@ -53,18 +63,21 @@
             </div>
         </header>
 
-        <x-landing.hero-product
-            id="shoes"
-            title="NoraPadel Shoes"
-            subtitle="Move faster. Play smarter."
-            image="{{ asset('storage/shoes.png') }}"
-            alt="NoraPadel Shoes"
-            primary-text="Explore"
-            primary-href="{{ route('produk.index') }}"
-            secondary-text="Buy Now"
-            secondary-href="{{ auth()->check() ? route('customer.products.index') : route('login') }}"
-            section-class="bg-[#f5f5f7] border-b-[14px] border-white"
-        />
+        <section class="relative overflow-hidden bg-[#f5f5f7]">
+            <div class="mx-auto w-full max-w-7xl px-6 py-8 text-center md:px-10 md:py-12 lg:px-12 lg:py-16">
+                <h2 class="text-4xl font-semibold tracking-tight text-black sm:text-5xl lg:text-6xl">NoraPadel Shoes</h2>
+                <p class="mx-auto mt-3 max-w-2xl text-lg font-normal text-zinc-700 sm:text-2xl">Move faster. Play smarter.</p>
+            </div>
+            <div class="relative w-full">
+                <img
+                    src="{{ asset('storage/shoes.png') }}"
+                    alt="NoraPadel Shoes"
+                    class="w-full object-contain object-bottom"
+                    style="height: 400px;"
+                    loading="lazy"
+                >
+            </div>
+        </section>
 
         <section class="np-fade-section bg-white py-16 lg:py-20">
             <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">

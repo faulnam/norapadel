@@ -20,6 +20,16 @@
                 </nav>
 
                 <div class="flex items-center gap-3 text-black/80">
+                    @auth
+                        @if(auth()->user()->role === 'admin')
+                            <a href="{{ route('admin.dashboard') }}"
+                                class="inline-flex items-center gap-1.5 rounded-full border border-black/15 bg-black px-4 py-1.5 text-xs font-medium text-white transition duration-300 hover:bg-black/90"
+                                aria-label="Back to Dashboard">
+                                <i class="fas fa-arrow-left text-[10px]"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        @endif
+                    @endauth
                     @guest
                         <a href="{{ route('login') }}"
                             class="inline-flex items-center gap-1 rounded-full border border-black/15 px-3 py-1.5 text-xs font-medium text-black/80 transition duration-300 hover:border-black/30 hover:text-black"
@@ -56,13 +66,46 @@
                 </nav>
             </div>
         </header>
-        <x-landing.hero-product id="racket" title="NoraDynamicSport" subtitle="Precision. Power. Performance."
+        <x-landing.hero-product id="racket" title="NoraPadel" subtitle="Precision. Power. Performance."
             image="{{ asset('storage/banner.png') }}" alt="NoraPadel Racket" primary-text="Explore"
             primary-href="{{ route('produk.index') }}" secondary-text="Buy Now"
             secondary-href="{{ auth()->check() ? route('customer.products.index') : route('login') }}"
             section-class="bg-[#f5f5f7] border-b-[14px] border-white" />
 
-        <section class="np-fade-section bg-white pt-16 pb-6 lg:pt-20 lg:pb-8">
+        <!-- Why Choose NoraPadel -->
+        <section class="np-fade-section bg-white py-12 lg:py-14">
+            <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
+                <div class="mb-8 text-center">
+                    <h2 class="text-3xl font-semibold tracking-tight text-black sm:text-4xl lg:text-5xl">Why Choose NoraPadel</h2>
+                    <p class="mx-auto mt-3 max-w-2xl text-zinc-600">Experience the difference with premium quality and exceptional service</p>
+                </div>
+                <div class="grid gap-6 md:grid-cols-3">
+                    <div class="group rounded-2xl border border-black/6 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-2 hover:shadow-xl">
+                        <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-black/5 text-black transition duration-300 group-hover:text-white">
+                            <i class="fas fa-shipping-fast text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-black">Fast Delivery</h3>
+                        <p class="mt-2 text-sm text-zinc-600">Get your order delivered quickly with our reliable shipping partners</p>
+                    </div>
+                    <div class="group rounded-2xl border border-black/6 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-2 hover:shadow-xl">
+                        <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-black/5 text-black transition duration-300 group-hover:text-white">
+                            <i class="fas fa-shield-alt text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-black">Quality Guaranteed</h3>
+                        <p class="mt-2 text-sm text-zinc-600">100% authentic products with warranty and quality assurance</p>
+                    </div>
+                    <div class="group rounded-2xl border border-black/6 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-2 hover:shadow-xl">
+                        <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-black/5 text-black transition duration-300  group-hover:text-white">
+                            <i class="fas fa-headset text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-black">24/7 Support</h3>
+                        <p class="mt-2 text-sm text-zinc-600">Our customer service team is always ready to help you</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="np-fade-section bg-white pt-6 pb-6 lg:pt-8 lg:pb-8">
             <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
                 @php
                     $section = $sections[0] ?? null;
