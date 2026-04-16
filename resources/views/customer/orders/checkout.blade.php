@@ -5,11 +5,50 @@
 @push('styles')
 <!-- Leaflet CSS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<script src="https://cdn.tailwindcss.com"></script>
 <style>
+    /* Override app.blade styles */
+    body {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+    }
+    .navbar-brand-icon {
+        display: none !important;
+    }
+    .mobile-bottom-nav {
+        display: none !important;
+    }
+    /* Hide app.blade navbar */
+    #mainNavbar {
+        display: none !important;
+    }
+    /* Hide app.blade footer */
+    .footer {
+        display: none !important;
+    }
+    /* Ensure no large logo appears */
+    img[height="40"], img[height="36"], img[height="32"], img[height="28"] {
+        max-width: 120px !important;
+        height: auto !important;
+    }
+    .brand-logo {
+        max-width: 120px !important;
+        height: auto !important;
+    }
+    body {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+    }
+    .navbar-brand-icon {
+        display: none !important;
+    }
+    .mobile-bottom-nav {
+        display: none !important;
+    }
     .checkout-page {
         background: #f5f5f7;
         min-height: 100vh;
-        padding: 3rem 0;
+        padding: 1.5rem 0;
     }
     .checkout-card {
         background: white;
@@ -138,6 +177,145 @@
         font-size: 0.875rem;
         margin-top: 1rem;
     }
+    .courier-option {
+        border: 2px solid rgba(0,0,0,0.1);
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        margin-bottom: 0.75rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        background: white;
+    }
+    .courier-option:hover {
+        border-color: #0071e3;
+        background: #f0f9ff;
+    }
+    .courier-option.selected {
+        border-color: #0071e3;
+        background: #f0f9ff;
+        box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.1);
+    }
+    .courier-header {
+        display: flex;
+        align-items: center;
+        gap: 0.875rem;
+    }
+    .courier-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        background: #f5f5f7;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.125rem;
+        color: #0071e3;
+        flex-shrink: 0;
+    }
+    .courier-title {
+        font-weight: 600;
+        font-size: 0.9375rem;
+        color: #1d1d1f;
+        flex: 1;
+    }
+    .courier-toggle {
+        font-size: 0.75rem;
+        color: #0071e3;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+    .courier-services {
+        margin-top: 0.875rem;
+        padding-top: 0.875rem;
+        border-top: 1px solid rgba(0,0,0,0.06);
+        display: none;
+    }
+    .courier-option.open .courier-services {
+        display: block;
+    }
+    .courier-option.open .courier-toggle i {
+        transform: rotate(180deg);
+    }
+    .service-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.625rem 0.75rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.15s;
+        margin-bottom: 0.375rem;
+    }
+    .service-item:last-child { margin-bottom: 0; }
+    .service-item:hover { background: rgba(0,113,227,0.06); }
+    .service-item.selected { background: rgba(0,113,227,0.1); }
+    .service-item input[type=radio] { display: none; }
+    .service-left {
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+    }
+    .service-radio {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 2px solid rgba(0,0,0,0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        transition: all 0.15s;
+    }
+    .service-item.selected .service-radio {
+        border-color: #0071e3;
+        background: #0071e3;
+    }
+    .service-item.selected .service-radio::after {
+        content: '';
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: white;
+    }
+    .service-name {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #1d1d1f;
+    }
+    .service-duration {
+        font-size: 0.75rem;
+        color: #86868b;
+        margin-top: 1px;
+    }
+    .service-price {
+        font-weight: 700;
+        font-size: 0.9375rem;
+        color: #1d1d1f;
+    }
+    .service-badge {
+        display: inline-block;
+        font-size: 0.625rem;
+        font-weight: 600;
+        padding: 0.125rem 0.4rem;
+        border-radius: 4px;
+        text-transform: uppercase;
+        margin-left: 0.375rem;
+        vertical-align: middle;
+    }
+    .badge-regular  { background: #e5e7eb; color: #374151; }
+    .badge-express  { background: #dbeafe; color: #1d4ed8; }
+    .badge-sameday  { background: #fef3c7; color: #92400e; }
+    .badge-instant  { background: #fee2e2; color: #991b1b; }
+    .zone-info {
+        font-size: 0.75rem;
+        color: #86868b;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+    }
 
     .map-hint {
         font-size: 0.75rem;
@@ -147,7 +325,7 @@
     }
     .breadcrumb-minimal {
         font-size: 0.875rem;
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
         color: #86868b;
     }
     .breadcrumb-minimal a {
@@ -281,6 +459,46 @@
 @endpush
 
 @section('content')
+<!-- Navbar Checkout -->
+<header class="sticky top-0 z-50 border-b border-black/6 bg-white/80 backdrop-blur-xl">
+    <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-10 lg:px-12">
+        <a href="{{ route('home') }}" class="text-xl font-semibold tracking-tight text-black">NoraPadel</a>
+
+        <nav class="hidden items-center gap-8 md:flex">
+            <a href="{{ route('home') }}"
+                class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Home</a>
+            <a href="{{ route('racket') }}"
+                class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Racket</a>
+            <a href="{{ route('shoes') }}"
+                class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Shoes</a>
+            <a href="{{ route('apparel') }}"
+                class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Accessories</a>
+        </nav>
+
+        <div class="flex items-center gap-3 text-black/80">
+            @auth
+                @if(auth()->user()->role === 'customer')
+                    <a href="{{ route('customer.profile.index') }}" class="transition duration-300 hover:text-black" aria-label="Profile">
+                        <i class="fas fa-user text-sm"></i>
+                    </a>
+                @endif
+            @endauth
+            @auth
+                <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-black"
+                    aria-label="Cart">
+                    <i class="fas fa-shopping-bag text-sm"></i>
+                    @if(auth()->user()->role === 'customer')
+                        @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
+                        @if($cartCount > 0)
+                            <span class="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
+                        @endif
+                    @endif
+                </a>
+            @endauth
+        </div>
+    </div>
+</header>
+
 <div class="checkout-page">
     <div class="container">
         <div class="breadcrumb-minimal">
@@ -376,36 +594,32 @@
                                     <button type="button" class="btn-calc" id="getLocation">
                                         <i class="fas fa-crosshairs me-1"></i>Lokasi Saya
                                     </button>
-                                    <button type="button" class="btn-calc" id="calculateShipping">
-                                        <i class="fas fa-calculator me-1"></i>Hitung Ongkir
-                                    </button>
-                                </div>
-
-                                <div class="shipping-result" id="shippingInfo" style="display: none;">
-                                    <i class="fas fa-truck me-1"></i>
-                                    Jarak: <strong id="distanceText">-</strong> • 
-                                    Ongkir: <strong id="shippingCostText">-</strong>
-                                </div>
-                                
-                                <!-- Out of Range Warning -->
-                                <div class="alert alert-danger py-3 mt-3" id="outOfRangeWarning" style="display: none; border-radius: 12px;">
-                                    <div class="d-flex align-items-start">
-                                        <i class="fas fa-exclamation-triangle me-2 mt-1" style="font-size: 18px;"></i>
-                                        <div>
-                                            <strong>Lokasi Di Luar Jangkauan</strong>
-                                            <p class="mb-2 mt-1" style="font-size: 13px;">
-                                                Maaf, lokasi Anda (<span id="outOfRangeDistance">0</span> km) melebihi batas area layanan kami (maksimal 40 km).
-                                            </p>
-                                            <div class="d-flex flex-wrap gap-2">
-                                                <a href="https://shopee.co.id/norapadel" target="_blank" class="btn btn-sm btn-outline-danger">
-                                                    <i class="fab fa-shopee me-1"></i>Beli di Shopee
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
 
+                            <!-- Courier Selection -->
+                            <div id="courierSelection" style="display: none;">
+                                <label class="form-label">Pilih Ekspedisi <span class="text-danger">*</span></label>
+                                
+                                <!-- Loading State -->
+                                <div class="shipping-result" id="shippingLoading" style="display: none; background: #e0f2fe; border-color: #0ea5e9; color: #0c4a6e;">
+                                    <i class="fas fa-spinner fa-spin me-1"></i>
+                                    Mengambil data ongkir dari ekspedisi...
+                                </div>
+
+                                <!-- Error State -->
+                                <div class="alert alert-warning py-3" id="shippingError" style="display: none; border-radius: 12px;">
+                                    <i class="fas fa-exclamation-circle me-2"></i>
+                                    <span id="shippingErrorText"></span>
+                                </div>
+
+                                <!-- Courier Options -->
+                                <div id="courierOptions"></div>
+                            </div>
+
+                            <input type="hidden" name="courier_code" id="courier_code">
+                            <input type="hidden" name="courier_name" id="courier_name">
+                            <input type="hidden" name="courier_service_name" id="courier_service_name">
                             <input type="hidden" name="delivery_distance_km" id="delivery_distance_km" value="{{ old('delivery_distance_km', '0') }}">
                             <input type="hidden" name="delivery_distance_minutes" id="delivery_distance_minutes" value="{{ old('delivery_distance_minutes', '0') }}">
                             <input type="hidden" name="shipping_cost" id="shipping_cost_input" value="{{ old('shipping_cost', '0') }}">
@@ -521,6 +735,70 @@
         </form>
     </div>
 </div>
+
+<!-- Footer -->
+<footer class="border-t border-black/10 bg-white py-10 text-sm text-zinc-500">
+    <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
+        <div class="hidden grid-cols-2 gap-8 md:grid md:grid-cols-4">
+            <div>
+                <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">Shop</h3>
+                <ul class="space-y-2">
+                    <li><a href="{{ route('produk.index') }}" class="hover:underline">Racket</a></li>
+                    <li><a href="{{ route('produk.index') }}" class="hover:underline">Shoes</a></li>
+                    <li><a href="{{ route('produk.index') }}" class="hover:underline">Accessories</a></li>
+                    <li><a href="{{ route('produk.index') }}" class="hover:underline">Shop</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">Support</h3>
+                <ul class="space-y-2">
+                    <li><a href="{{ route('tentang') }}" class="hover:underline">Help Center</a></li>
+                    <li><a href="{{ route('tentang') }}" class="hover:underline">Shipping</a></li>
+                    <li><a href="{{ route('tentang') }}" class="hover:underline">Returns</a></li>
+                    <li><a href="{{ route('tentang') }}" class="hover:underline">Contact</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">Account</h3>
+                <ul class="space-y-2">
+                    @auth
+                        <li><a href="{{ route('customer.profile.index') }}" class="hover:underline">Dashboard</a></li>
+                        <li><a href="{{ route('customer.orders.index') }}" class="hover:underline">Orders</a></li>
+                        <li><a href="{{ route('customer.notifications.index') }}" class="hover:underline">Notifications</a></li>
+                    @else
+                        <li><a href="{{ route('login') }}" class="hover:underline">Sign In</a></li>
+                        <li><a href="{{ route('register') }}" class="hover:underline">Create Account</a></li>
+                    @endauth
+                </ul>
+            </div>
+            <div>
+                <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">About NoraPadel</h3>
+                <ul class="space-y-2">
+                    <li><a href="{{ route('tentang') }}" class="hover:underline">Our Story</a></li>
+                    <li><a href="{{ route('galeri') }}" class="hover:underline">Gallery</a></li>
+                    <li><a href="{{ route('testimoni') }}" class="hover:underline">Testimonials</a></li>
+                    <li><a href="{{ route('tentang') }}" class="hover:underline">Careers</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Mobile Footer -->
+        <div class="md:hidden">
+            <div class="text-center">
+                <h3 class="mb-4 text-lg font-semibold text-black">NoraPadel</h3>
+                <div class="flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs">
+                    <a href="{{ route('produk.index') }}" class="hover:underline">Shop</a>
+                    <a href="{{ route('tentang') }}" class="hover:underline">Support</a>
+                    <a href="{{ route('customer.profile.index') }}" class="hover:underline">Account</a>
+                    <a href="{{ route('galeri') }}" class="hover:underline">Gallery</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mx-auto mt-8 w-full max-w-7xl border-t border-black/10 px-6 pt-5 text-xs text-zinc-400 md:px-10 lg:px-12">
+        © {{ now()->year }} NoraPadel. All rights reserved.
+    </div>
+</footer>
 
 @push('scripts')
 <!-- Leaflet JS -->
@@ -650,15 +928,15 @@
         document.getElementById('shipping_latitude').value = lat.toFixed(8);
         document.getElementById('shipping_longitude').value = lng.toFixed(8);
         
-        // Auto calculate shipping
-        calculateShipping();
+        // Auto fetch shipping rates
+        fetchShippingRates();
     }
     
     function onMarkerDrag(e) {
         const latlng = e.target.getLatLng();
         document.getElementById('shipping_latitude').value = latlng.lat.toFixed(8);
         document.getElementById('shipping_longitude').value = latlng.lng.toFixed(8);
-        calculateShipping();
+        fetchShippingRates();
     }
     
     function searchAddress(query) {
@@ -710,10 +988,8 @@
         }
     });
 
-    // Calculate shipping
-    document.getElementById('calculateShipping').addEventListener('click', calculateShipping);
-
-    function calculateShipping() {
+    // Fetch shipping rates from Biteship
+    async function fetchShippingRates() {
         const lat = parseFloat(document.getElementById('shipping_latitude').value);
         const lng = parseFloat(document.getElementById('shipping_longitude').value);
 
@@ -722,81 +998,163 @@
             return;
         }
 
-        // Calculate distance using Haversine formula
-        const distance = haversineDistance(STORE_LAT, STORE_LNG, lat, lng);
-        
-        // Round up to nearest km (minimum 1 km)
-        const distanceKm = Math.max(1, Math.ceil(distance));
+        // Show courier selection section
+        document.getElementById('courierSelection').style.display = 'block';
+        document.getElementById('shippingLoading').style.display = 'block';
+        document.getElementById('shippingError').style.display = 'none';
+        document.getElementById('courierOptions').innerHTML = '';
 
-        // Check if distance exceeds maximum delivery range
-        if (distanceKm > MAX_DELIVERY_DISTANCE) {
-            // Show out of range warning
-            document.getElementById('outOfRangeDistance').textContent = distanceKm;
-            document.getElementById('outOfRangeWarning').style.display = 'block';
-            document.getElementById('shippingInfo').style.display = 'none';
-            
-            // Disable submit button
-            document.getElementById('submitBtn').disabled = true;
-            document.getElementById('warningShipping').style.display = 'block';
-            document.getElementById('warningShipping').innerHTML = '<i class="fas fa-times-circle me-1"></i>Lokasi di luar jangkauan pengiriman';
-            
-            // Reset shipping display
-            document.getElementById('displayShippingCost').textContent = '-';
-            document.getElementById('displayShippingCost').classList.add('text-muted');
-            document.getElementById('shippingDiscountRow').style.display = 'none';
-            
-            console.log('Out of range:', { distanceKm, maxDistance: MAX_DELIVERY_DISTANCE });
+        try {
+            const response = await fetch('{{ route("customer.shipping.rates") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    destination_latitude: lat,
+                    destination_longitude: lng
+                })
+            });
+
+            const data = await response.json();
+            document.getElementById('shippingLoading').style.display = 'none';
+
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || 'Gagal mengambil data ongkir');
+            }
+
+            displayCourierOptions(data.rates);
+
+        } catch (error) {
+            document.getElementById('shippingLoading').style.display = 'none';
+            document.getElementById('shippingError').style.display = 'block';
+            document.getElementById('shippingErrorText').textContent = error.message;
+            console.error('Fetch rates error:', error);
+        }
+    }
+
+    function displayCourierOptions(rates) {
+        const container = document.getElementById('courierOptions');
+        container.innerHTML = '';
+
+        if (!rates || rates.length === 0) {
+            container.innerHTML = '<div class="alert alert-info">Tidak ada ekspedisi tersedia untuk lokasi ini.</div>';
             return;
         }
 
-        // Hide out of range warning if within range
-        document.getElementById('outOfRangeWarning').style.display = 'none';
+        // Tampilkan info zona & berat
+        const firstRate = rates[0];
+        const zoneLabel = { same_city: 'Dalam Kota', nearby: 'Kota Tetangga', inter_city: 'Antar Kota', inter_island: 'Antar Pulau' };
+        const zoneInfo = document.createElement('div');
+        zoneInfo.className = 'zone-info';
+        zoneInfo.innerHTML = `<i class="fas fa-map-marker-alt"></i> Zona: <strong>${zoneLabel[firstRate.zone] || firstRate.zone}</strong> &nbsp;·&nbsp; <i class="fas fa-weight-hanging"></i> Berat: <strong>${firstRate.weight_kg} kg</strong>`;
+        container.appendChild(zoneInfo);
 
-        // Calculate shipping cost (1 KM = Rp 1.500)
-        const shippingCost = distanceKm * SHIPPING_RATE_PER_KM;
-        
+        // Group by courier
+        const grouped = {};
+        rates.forEach(rate => {
+            if (!grouped[rate.courier_code]) {
+                grouped[rate.courier_code] = { name: rate.courier_name, services: [] };
+            }
+            grouped[rate.courier_code].services.push(rate);
+        });
+
+        const courierIcons = { jnt: 'fa-truck', anteraja: 'fa-shipping-fast', paxel: 'fa-bolt' };
+
+        Object.entries(grouped).forEach(([code, courier]) => {
+            const card = document.createElement('div');
+            card.className = 'courier-option';
+            card.dataset.courier = code;
+
+            const servicesHtml = courier.services.map(s => {
+                const badgeClass = { regular: 'badge-regular', express: 'badge-express', sameday: 'badge-sameday', instant: 'badge-instant' }[s.service_type] || 'badge-regular';
+                const badgeLabel = { regular: 'Reguler', express: 'Express', sameday: 'Same Day', instant: 'Instant' }[s.service_type] || s.service_type;
+                return `
+                <div class="service-item" data-rate='${JSON.stringify(s)}'>
+                    <input type="radio" name="selected_service">
+                    <div class="service-left">
+                        <div class="service-radio"></div>
+                        <div>
+                            <div class="service-name">
+                                ${s.courier_service_name}
+                                <span class="service-badge ${badgeClass}">${badgeLabel}</span>
+                            </div>
+                            <div class="service-duration"><i class="far fa-clock me-1"></i>${s.duration}</div>
+                        </div>
+                    </div>
+                    <div class="service-price">${formatRupiah(s.price)}</div>
+                </div>`;
+            }).join('');
+
+            card.innerHTML = `
+                <div class="courier-header">
+                    <div class="courier-icon"><i class="fas ${courierIcons[code] || 'fa-truck'}"></i></div>
+                    <div class="courier-title">${courier.name}</div>
+                    <div class="courier-toggle">Pilih Layanan <i class="fas fa-chevron-down ms-1" style="transition:transform 0.2s"></i></div>
+                </div>
+                <div class="courier-services">${servicesHtml}</div>
+            `;
+
+            // Toggle dropdown
+            card.querySelector('.courier-header').addEventListener('click', () => {
+                const isOpen = card.classList.contains('open');
+                document.querySelectorAll('.courier-option').forEach(c => c.classList.remove('open'));
+                if (!isOpen) card.classList.add('open');
+            });
+
+            // Select service
+            card.querySelectorAll('.service-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    document.querySelectorAll('.service-item').forEach(i => i.classList.remove('selected'));
+                    item.classList.add('selected');
+                    document.querySelectorAll('.courier-option').forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+                    const rate = JSON.parse(item.dataset.rate);
+                    selectCourier(rate);
+                });
+            });
+
+            container.appendChild(card);
+        });
+    }
+
+    function selectCourier(rate) {
+        // Update hidden inputs
+        document.getElementById('courier_code').value = rate.courier_code;
+        document.getElementById('courier_name').value = rate.courier_name;
+        document.getElementById('courier_service_name').value = rate.courier_service_name;
+        document.getElementById('shipping_cost_input').value = rate.price;
+        document.getElementById('delivery_distance_km').value = rate.distance_km || 0;
+        document.getElementById('delivery_distance_minutes').value = rate.duration_minutes || 60; // Default 60 menit jika tidak ada
+
         // Calculate shipping discount
         let shippingDiscount = 0;
         if (SHIPPING_DISCOUNT && SUBTOTAL >= SHIPPING_DISCOUNT.minSubtotal) {
-            shippingDiscount = shippingCost * (SHIPPING_DISCOUNT.percent / 100);
-            
-            // Apply max discount cap
+            shippingDiscount = rate.price * (SHIPPING_DISCOUNT.percent / 100);
             if (SHIPPING_DISCOUNT.maxDiscount && shippingDiscount > SHIPPING_DISCOUNT.maxDiscount) {
                 shippingDiscount = SHIPPING_DISCOUNT.maxDiscount;
             }
         }
 
-        // Calculate final total
-        const finalTotal = SUBTOTAL + shippingCost - shippingDiscount;
-
-        // Update UI
-        document.getElementById('distanceText').textContent = distanceKm + ' km';
-        document.getElementById('shippingCostText').textContent = formatRupiah(shippingCost);
-        document.getElementById('shippingInfo').style.display = 'block';
-
-        document.getElementById('displayShippingCost').textContent = formatRupiah(shippingCost);
+        // Update summary
+        document.getElementById('displayShippingCost').textContent = formatRupiah(rate.price);
         document.getElementById('displayShippingCost').classList.remove('text-muted');
-        
-        // Show shipping discount if applicable
+
         if (shippingDiscount > 0) {
             document.getElementById('shippingDiscountRow').style.display = 'flex';
             document.getElementById('displayShippingDiscount').textContent = '-' + formatRupiah(shippingDiscount);
         } else {
             document.getElementById('shippingDiscountRow').style.display = 'none';
         }
-        
-        document.getElementById('displayTotal').textContent = formatRupiah(finalTotal);
 
-        // Set hidden inputs
-        document.getElementById('delivery_distance_km').value = distanceKm;
-        document.getElementById('delivery_distance_minutes').value = Math.ceil((distance / 30) * 60); // For backward compatibility
-        document.getElementById('shipping_cost_input').value = shippingCost;
+        const finalTotal = SUBTOTAL + rate.price - shippingDiscount;
+        document.getElementById('displayTotal').textContent = formatRupiah(finalTotal);
 
         // Enable submit button
         document.getElementById('submitBtn').disabled = false;
         document.getElementById('warningShipping').style.display = 'none';
-        
-        console.log('Shipping calculated:', { distanceKm, shippingCost, shippingDiscount, finalTotal, distance: distance.toFixed(2) + ' km' });
     }
 
     function haversineDistance(lat1, lon1, lat2, lon2) {
@@ -820,17 +1178,19 @@
 
     // Form validation before submit
     document.getElementById('checkoutForm').addEventListener('submit', function(e) {
-        const distanceKm = document.getElementById('delivery_distance_km').value;
+        const courierCode = document.getElementById('courier_code').value;
         const shippingCost = document.getElementById('shipping_cost_input').value;
         
-        if (!distanceKm || distanceKm == '0' || !shippingCost || shippingCost == '0') {
+        if (!courierCode || !shippingCost || shippingCost == '0') {
             e.preventDefault();
-            alert('Silakan pilih lokasi pengiriman di peta dan hitung ongkos kirim terlebih dahulu.');
+            alert('Silakan pilih lokasi pengiriman dan ekspedisi terlebih dahulu.');
             return false;
         }
         
         console.log('Submitting form with:', {
-            distanceKm,
+            courierCode,
+            courierName: document.getElementById('courier_name').value,
+            courierService: document.getElementById('courier_service_name').value,
             shippingCost,
             lat: document.getElementById('shipping_latitude').value,
             lng: document.getElementById('shipping_longitude').value

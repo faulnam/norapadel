@@ -565,6 +565,9 @@
                 </div>
             </div>
 
+            <!-- Ekspedisi & Pickup -->
+            @include('admin.orders._pickup_section')
+
             <!-- Assign Courier -->
             @if($order->canAssignCourier())
             <div class="detail-card">

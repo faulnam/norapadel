@@ -64,6 +64,9 @@ class OrderController extends Controller
             'shipping_cost' => 'required|numeric|min:0',
             'delivery_date' => 'required|date',
             'delivery_time_slot' => 'required|string',
+            'courier_code' => 'nullable|string',
+            'courier_name' => 'nullable|string',
+            'courier_service_name' => 'nullable|string',
             'notes' => 'nullable|string|max:500',
         ], [
             'shipping_name.required' => 'Nama penerima wajib diisi.',
@@ -136,6 +139,9 @@ class OrderController extends Controller
                 'delivery_distance_minutes' => $validated['delivery_distance_minutes'],
                 'delivery_date' => $validated['delivery_date'],
                 'delivery_time_slot' => $validated['delivery_time_slot'],
+                'courier_code' => $validated['courier_code'] ?? null,
+                'courier_name' => $validated['courier_name'] ?? null,
+                'courier_service_name' => $validated['courier_service_name'] ?? null,
                 'notes' => $validated['notes'],
                 'status' => Order::STATUS_PENDING_PAYMENT,
                 'payment_status' => Order::PAYMENT_UNPAID,
@@ -170,9 +176,9 @@ class OrderController extends Controller
 
             DB::commit();
 
-            // Redirect to payment page instead of order detail
-            return redirect()->route('customer.payment.show', $order)
-                ->with('success', 'Pesanan berhasil dibuat. Silakan lakukan pembayaran.');
+            // Redirect to select payment gateway
+            return redirect()->route('customer.payment.select-gateway', $order)
+                ->with('success', 'Pesanan berhasil dibuat. Silakan pilih metode pembayaran.');
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -453,9 +459,41 @@ class OrderController extends Controller
     }
 
     /**
-     * Get tracking data for order (AJAX)
+     * Get tracking data for order (AJAX) - Biteship Tracking
      */
     public function getTracking(Order $order)
+    {
+        if ($order->user_id !== auth()->id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        if (!$order->waybill_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Nomor resi belum tersedia',
+            ]);
+        }
+
+        $biteship = app(\App\Services\BiteshipService::class);
+        $result = $biteship->trackOrder($order->waybill_id);
+
+        if (!$result['success']) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil data tracking',
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $result['data'],
+        ]);
+    }
+
+    /**
+     * Get courier location tracking (for internal courier)
+     */
+    public function getCourierLocation(Order $order)
     {
         // Check if user is the order owner
         if ($order->user_id !== auth()->id()) {

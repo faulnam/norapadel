@@ -1056,7 +1056,7 @@
     </div>
 </div>
 @endif
-@endsection
+@include('customer.orders._tracking_section')`r`n`r`n@endsection
 
 @if($order->status === \App\Models\Order::STATUS_ON_DELIVERY && $order->courier)
 @push('styles')
