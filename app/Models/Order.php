@@ -13,6 +13,11 @@ class Order extends Model
         'order_number',
         'user_id',
         'courier_id',
+        'courier_code',
+        'courier_name',
+        'courier_service_name',
+        'biteship_order_id',
+        'waybill_id',
         'assigned_at',
         'subtotal',
         'product_discount',
@@ -48,6 +53,13 @@ class Order extends Model
         'refund_at',
         'refund_amount',
         'refund_status',
+        'courier_driver_name',
+        'courier_driver_phone',
+        'courier_driver_photo',
+        'courier_driver_rating',
+        'courier_driver_vehicle',
+        'courier_driver_vehicle_number',
+        'pickup_time',
     ];
 
     protected $casts = [
@@ -72,6 +84,8 @@ class Order extends Model
         'delivered_at' => 'datetime',
         'completed_at' => 'datetime',
         'refund_at' => 'datetime',
+        'pickup_time' => 'datetime',
+        'courier_driver_rating' => 'decimal:2',
     ];
 
     // Waktu tunggu pembatalan (dalam menit) - customer punya 5 menit untuk membatalkan setelah order
@@ -89,13 +103,18 @@ class Order extends Model
 
     // Status pesanan
     const STATUS_PENDING_PAYMENT = 'pending_payment';
+    const STATUS_PROCESSING = 'processing';
+    const STATUS_READY_TO_SHIP = 'ready_to_ship';
+    const STATUS_SHIPPED = 'shipped';
+    const STATUS_DELIVERED = 'delivered';
+    const STATUS_COMPLETED = 'completed';
+    const STATUS_CANCELLED = 'cancelled';
+
+    // Legacy status (untuk backward compatibility)
     const STATUS_PAID = 'paid';
     const STATUS_ASSIGNED = 'assigned';
     const STATUS_PICKED_UP = 'picked_up';
     const STATUS_ON_DELIVERY = 'on_delivery';
-    const STATUS_DELIVERED = 'delivered';
-    const STATUS_COMPLETED = 'completed';
-    const STATUS_CANCELLED = 'cancelled';
 
     // Status pembayaran
     const PAYMENT_UNPAID = 'unpaid';
@@ -187,13 +206,17 @@ class Order extends Model
     {
         return match($this->status) {
             self::STATUS_PENDING_PAYMENT => 'Menunggu Pembayaran',
-            self::STATUS_PAID => 'Menunggu Kurir',
+            self::STATUS_PROCESSING => 'Pesanan Diproses',
+            self::STATUS_READY_TO_SHIP => 'Siap Pickup',
+            self::STATUS_SHIPPED => 'Dikirim Ekspedisi',
+            self::STATUS_DELIVERED => 'Sudah Sampai',
+            self::STATUS_COMPLETED => 'Selesai',
+            self::STATUS_CANCELLED => 'Dibatalkan',
+            // Legacy status
+            self::STATUS_PAID => 'Siap Pickup',
             self::STATUS_ASSIGNED => 'Kurir Ditugaskan',
             self::STATUS_PICKED_UP => 'Barang Diambil',
             self::STATUS_ON_DELIVERY => 'Sedang Diantar',
-            self::STATUS_DELIVERED => 'Sudah Diantar',
-            self::STATUS_COMPLETED => 'Selesai',
-            self::STATUS_CANCELLED => 'Dibatalkan',
             default => 'Unknown'
         };
     }
@@ -218,13 +241,17 @@ class Order extends Model
     {
         return match($this->status) {
             self::STATUS_PENDING_PAYMENT => 'warning',
+            self::STATUS_PROCESSING => 'info',
+            self::STATUS_READY_TO_SHIP => 'primary',
+            self::STATUS_SHIPPED => 'primary',
+            self::STATUS_DELIVERED => 'success',
+            self::STATUS_COMPLETED => 'success',
+            self::STATUS_CANCELLED => 'danger',
+            // Legacy status
             self::STATUS_PAID => 'info',
             self::STATUS_ASSIGNED => 'primary',
             self::STATUS_PICKED_UP => 'info',
             self::STATUS_ON_DELIVERY => 'primary',
-            self::STATUS_DELIVERED => 'success',
-            self::STATUS_COMPLETED => 'success',
-            self::STATUS_CANCELLED => 'danger',
             default => 'secondary'
         };
     }
@@ -670,7 +697,7 @@ class Order extends Model
      */
     public function scopeProcessing($query)
     {
-        return $query->where('status', self::STATUS_PROCESSING);
+        return $query->whereIn('status', [self::STATUS_PROCESSING, self::STATUS_SHIPPED]);
     }
 
     /**

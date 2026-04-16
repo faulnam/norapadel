@@ -478,6 +478,9 @@
         <div class="flex items-center gap-3 text-black/80">
             @auth
                 @if(auth()->user()->role === 'customer')
+                    <a href="{{ route('customer.orders.index') }}" class="transition duration-300 hover:text-black" aria-label="History">
+                        <i class="fas fa-history text-sm"></i>
+                    </a>
                     <a href="{{ route('customer.profile.index') }}" class="transition duration-300 hover:text-black" aria-label="Profile">
                         <i class="fas fa-user text-sm"></i>
                     </a>

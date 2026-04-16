@@ -33,8 +33,10 @@
                 <select class="form-select" name="status" style="border: 2px solid var(--border-color);">
                     <option value="">Semua Status</option>
                     <option value="pending_payment" {{ request('status') == 'pending_payment' ? 'selected' : '' }}>Menunggu Pembayaran</option>
-                    <option value="processing" {{ request('status') == 'processing' ? 'selected' : '' }}>Diproses</option>
+                    <option value="processing" {{ request('status') == 'processing' ? 'selected' : '' }}>Pesanan Diproses</option>
+                    <option value="ready_to_ship" {{ request('status') == 'ready_to_ship' ? 'selected' : '' }}>Siap Pickup</option>
                     <option value="shipped" {{ request('status') == 'shipped' ? 'selected' : '' }}>Dikirim</option>
+                    <option value="delivered" {{ request('status') == 'delivered' ? 'selected' : '' }}>Sudah Sampai</option>
                     <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Selesai</option>
                     <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Dibatalkan</option>
                 </select>
@@ -79,11 +81,9 @@
                         @php
                             $statusColors = [
                                 'pending_payment' => 'background: rgba(245, 158, 11, 0.1); color: #f59e0b;',
-                                'paid' => 'background: rgba(37, 99, 235, 0.1); color: #2563eb;',
-                                'processing' => 'background: rgba(139, 92, 246, 0.1); color: #8b5cf6;',
-                                'assigned' => 'background: rgba(6, 182, 212, 0.1); color: #06b6d4;',
-                                'picked_up' => 'background: rgba(59, 130, 246, 0.1); color: #3b82f6;',
-                                'on_delivery' => 'background: rgba(249, 115, 22, 0.1); color: #f97316;',
+                                'processing' => 'background: rgba(59, 130, 246, 0.1); color: #2563eb;',
+                                'ready_to_ship' => 'background: rgba(139, 92, 246, 0.1); color: #8b5cf6;',
+                                'shipped' => 'background: rgba(249, 115, 22, 0.1); color: #f97316;',
                                 'delivered' => 'background: rgba(16, 185, 129, 0.1); color: #10b981;',
                                 'completed' => 'background: rgba(16, 185, 129, 0.1); color: #10b981;',
                                 'cancelled' => 'background: rgba(239, 68, 68, 0.1); color: #ef4444;',

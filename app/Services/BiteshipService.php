@@ -172,6 +172,11 @@ class BiteshipService
      */
     public function createOrder(array $orderData)
     {
+        // Jika sandbox mode, return mock data dengan kurir dummy
+        if ($this->sandbox) {
+            return $this->mockCreateOrder($orderData);
+        }
+
         try {
             $payload = [
                 'origin_contact_name' => $orderData['origin_contact_name'] ?? config('branding.name', 'NoraPadel'),
@@ -230,6 +235,110 @@ class BiteshipService
                 'message' => $e->getMessage(),
             ];
         }
+    }
+
+    /**
+     * Mock create order untuk sandbox mode
+     */
+    private function mockCreateOrder(array $orderData)
+    {
+        // Simulasi delay scanning kurir
+        sleep(2);
+
+        // Data dummy kurir berdasarkan ekspedisi
+        $courierData = $this->getDummyCourier($orderData['courier_code']);
+
+        return [
+            'success' => true,
+            'data' => [
+                'id' => 'BITESHIP-' . strtoupper(uniqid()),
+                'courier' => [
+                    'waybill_id' => strtoupper($orderData['courier_code']) . '-' . time(),
+                    'company' => $orderData['courier_code'],
+                    'name' => $courierData['name'],
+                    'phone' => $courierData['phone'],
+                    'photo' => $courierData['photo'],
+                    'rating' => $courierData['rating'],
+                    'total_trips' => $courierData['total_trips'],
+                    'vehicle_type' => $courierData['vehicle_type'],
+                    'vehicle_number' => $courierData['vehicle_number'],
+                ],
+                'status' => 'confirmed',
+                'pickup_time' => now()->addMinutes(30)->format('Y-m-d H:i:s'),
+            ],
+        ];
+    }
+
+    /**
+     * Get dummy courier data
+     */
+    private function getDummyCourier(string $courierCode)
+    {
+        $couriers = [
+            'jnt' => [
+                [
+                    'name' => 'Budi Santoso',
+                    'phone' => '081234567890',
+                    'photo' => 'https://ui-avatars.com/api/?name=Budi+Santoso&background=EF4444&color=fff&size=200',
+                    'rating' => 4.8,
+                    'total_trips' => 1250,
+                    'vehicle_type' => 'Motor',
+                    'vehicle_number' => 'L 1234 AB',
+                ],
+                [
+                    'name' => 'Ahmad Rizki',
+                    'phone' => '081234567891',
+                    'photo' => 'https://ui-avatars.com/api/?name=Ahmad+Rizki&background=EF4444&color=fff&size=200',
+                    'rating' => 4.9,
+                    'total_trips' => 980,
+                    'vehicle_type' => 'Motor',
+                    'vehicle_number' => 'L 5678 CD',
+                ],
+            ],
+            'anteraja' => [
+                [
+                    'name' => 'Dedi Kurniawan',
+                    'phone' => '081234567892',
+                    'photo' => 'https://ui-avatars.com/api/?name=Dedi+Kurniawan&background=3B82F6&color=fff&size=200',
+                    'rating' => 4.7,
+                    'total_trips' => 850,
+                    'vehicle_type' => 'Motor',
+                    'vehicle_number' => 'L 9012 EF',
+                ],
+                [
+                    'name' => 'Eko Prasetyo',
+                    'phone' => '081234567893',
+                    'photo' => 'https://ui-avatars.com/api/?name=Eko+Prasetyo&background=3B82F6&color=fff&size=200',
+                    'rating' => 4.9,
+                    'total_trips' => 1100,
+                    'vehicle_type' => 'Motor',
+                    'vehicle_number' => 'L 3456 GH',
+                ],
+            ],
+            'paxel' => [
+                [
+                    'name' => 'Fajar Ramadhan',
+                    'phone' => '081234567894',
+                    'photo' => 'https://ui-avatars.com/api/?name=Fajar+Ramadhan&background=10B981&color=fff&size=200',
+                    'rating' => 4.8,
+                    'total_trips' => 720,
+                    'vehicle_type' => 'Motor',
+                    'vehicle_number' => 'L 7890 IJ',
+                ],
+                [
+                    'name' => 'Gilang Pratama',
+                    'phone' => '081234567895',
+                    'photo' => 'https://ui-avatars.com/api/?name=Gilang+Pratama&background=10B981&color=fff&size=200',
+                    'rating' => 4.9,
+                    'total_trips' => 950,
+                    'vehicle_type' => 'Motor',
+                    'vehicle_number' => 'L 2345 KL',
+                ],
+            ],
+        ];
+
+        $courierList = $couriers[$courierCode] ?? $couriers['jnt'];
+        return $courierList[array_rand($courierList)];
     }
 
     /**

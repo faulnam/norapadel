@@ -899,7 +899,7 @@
                                         <i class="fas fa-store me-2 text-primary"></i>Belanja
                                     </a></li>
                                     <li><a class="dropdown-item" href="{{ route('customer.orders.index') }}">
-                                        <i class="fas fa-shopping-bag me-2 text-primary"></i>Pesanan Saya
+                                        <i class="fas fa-history me-2 text-primary"></i>Riwayat Pesanan
                                     </a></li>
                                     <li><a class="dropdown-item" href="{{ route('customer.profile.index') }}">
                                         <i class="fas fa-user me-2 text-primary"></i>Profil
@@ -945,7 +945,7 @@
                                     <i class="fas fa-store me-2 text-primary"></i>Belanja
                                 </a>
                                 <a class="nav-link" href="{{ route('customer.orders.index') }}">
-                                    <i class="fas fa-shopping-bag me-2 text-primary"></i>Pesanan
+                                    <i class="fas fa-history me-2 text-primary"></i>Riwayat Pesanan
                                 </a>
                                 <a class="nav-link" href="{{ route('customer.profile.index') }}">
                                     <i class="fas fa-user me-2 text-primary"></i>Profil
@@ -1113,7 +1113,7 @@
                         @endif
                     </a>
                     <a href="{{ route('customer.orders.index') }}" class="mobile-nav-item {{ request()->routeIs('customer.orders.*') ? 'active' : '' }}">
-                        <i class="fas fa-receipt"></i>
+                        <i class="fas fa-history"></i>
                        <br>
                     </a>
                     <a href="{{ route('customer.profile.index') }}" class="mobile-nav-item {{ request()->routeIs('customer.profile.*') ? 'active' : '' }}">

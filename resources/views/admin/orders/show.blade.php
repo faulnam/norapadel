@@ -424,8 +424,9 @@
                     @php
                         $statusClass = match($order->status) {
                             'pending_payment' => 'pending',
-                            'paid', 'processing' => 'processing',
-                            'assigned', 'picked_up', 'on_delivery' => 'delivery',
+                            'processing' => 'processing',
+                            'ready_to_ship' => 'processing',
+                            'shipped' => 'delivery',
                             'delivered', 'completed' => 'success',
                             'cancelled' => 'danger',
                             default => ''
@@ -434,6 +435,20 @@
                     <span class="status-badge {{ $statusClass }}">{{ $order->status_label }}</span>
                 </div>
                 <div class="detail-card-body">
+                    @if($order->status === 'processing' && $order->payment_status === 'paid' && $order->courier_code)
+                    <div class="alert alert-warning" style="font-size: 13px; padding: 12px; border-radius: 6px; margin-bottom: 16px; border-left: 4px solid #f59e0b;">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Action Required:</strong> Pesanan sedang diproses. Silakan pack barang, lalu ubah status ke "Siap Pickup" atau langsung request pickup.
+                    </div>
+                    @endif
+                    
+                    @if($order->status === 'ready_to_ship' && $order->payment_status === 'paid' && $order->courier_code && !$order->biteship_order_id)
+                    <div class="alert alert-info" style="font-size: 13px; padding: 12px; border-radius: 6px; margin-bottom: 16px; border-left: 4px solid #0ea5e9;">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Siap Pickup:</strong> Barang sudah siap. Silakan request pickup ke ekspedisi di bawah.
+                    </div>
+                    @endif
+                    
                     <div class="row">
                         <div class="col-md-6">
                             <div class="info-row">
@@ -566,38 +581,50 @@
             </div>
 
             <!-- Ekspedisi & Pickup -->
-            @include('admin.orders._pickup_section')
-
-            <!-- Assign Courier -->
-            @if($order->canAssignCourier())
-            <div class="detail-card">
-                <div class="detail-card-header">
-                    <h6><i class="fas fa-motorcycle"></i> Tugaskan Kurir</h6>
-                </div>
-                <div class="detail-card-body">
-                    <form action="{{ route('admin.orders.assign-courier', $order) }}" method="POST">
-                        @csrf
-                        <div class="mb-3">
-                            <label class="form-label-minimal">Pilih Kurir</label>
-                            <select class="form-select-minimal" name="courier_id" required>
-                                <option value="">-- Pilih Kurir --</option>
-                                @foreach($couriers as $courier)
-                                    <option value="{{ $courier->id }}">
-                                        {{ $courier->name }} - {{ $courier->phone }}
-                                        ({{ $courier->activeDeliveries()->count() }} tugas aktif)
-                                    </option>
-                                @endforeach
-                            </select>
+            @if($order->courier_code)
+                @include('admin.orders._pickup_section')
+            @else
+                <div class="detail-card">
+                    <div class="detail-card-header">
+                        <h6><i class="fas fa-shipping-fast"></i> Ekspedisi & Pickup</h6>
+                        <span class="status-badge pending">Belum Ada Ekspedisi</span>
+                    </div>
+                    <div class="detail-card-body">
+                        <div class="alert alert-warning" style="font-size: 13px; padding: 12px; border-radius: 6px;">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Customer belum memilih ekspedisi saat checkout.</strong>
+                            <br><small style="color: var(--text-muted); margin-top: 4px; display: block;">Order ini dibuat sebelum sistem ekspedisi diimplementasikan atau customer skip pilih ekspedisi.</small>
                         </div>
-                        <button type="submit" class="action-btn action-btn-primary">
-                            <i class="fas fa-paper-plane"></i> Tugaskan Sekarang
-                        </button>
-                    </form>
+                        
+                        <div style="margin-top: 16px; padding: 12px; background: #f9fafb; border-radius: 6px; border: 1px solid var(--border-color);">
+                            <div style="font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Solusi:</div>
+                            <ol style="font-size: 13px; color: var(--text-primary); margin: 0; padding-left: 20px;">
+                                <li>Hubungi customer untuk konfirmasi alamat</li>
+                                <li>Kirim paket manual ke ekspedisi</li>
+                                <li>Input nomor resi manual di bawah setelah dapat resi</li>
+                            </ol>
+                        </div>
+                        
+                        <!-- Manual Input Resi -->
+                        @if($order->payment_status === 'paid')
+                        <div style="margin-top: 16px;">
+                            <div style="font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Input Nomor Resi Manual:</div>
+                            <form action="{{ route('admin.orders.update-waybill', $order) }}" method="POST">
+                                @csrf
+                                <div class="input-group">
+                                    <input type="text" class="form-control-minimal" name="waybill_id" placeholder="Masukkan nomor resi" required style="border-radius: 6px 0 0 6px;">
+                                    <button type="submit" class="action-btn action-btn-outline" style="border-radius: 0 6px 6px 0; width: auto; padding: 0 16px;">
+                                        <i class="fas fa-save"></i> Simpan
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        @endif
+                    </div>
                 </div>
-            </div>
             @endif
 
-            <!-- Courier Info -->
+            <!-- Courier Info (Legacy) -->
             @if($order->courier)
             <div class="detail-card">
                 <div class="detail-card-header">
@@ -781,10 +808,9 @@
                             <label class="form-label-minimal">Status Pesanan</label>
                             <select class="form-select-minimal" name="status" id="statusSelect" onchange="toggleCancelReason()">
                                 <option value="pending_payment" {{ $order->status == 'pending_payment' ? 'selected' : '' }}>Menunggu Pembayaran</option>
-                                <option value="paid" {{ $order->status == 'paid' ? 'selected' : '' }}>Sudah Dibayar</option>
-                                <option value="assigned" {{ $order->status == 'assigned' ? 'selected' : '' }}>Ditugaskan ke Kurir</option>
-                                <option value="picked_up" {{ $order->status == 'picked_up' ? 'selected' : '' }}>Barang Diambil</option>
-                                <option value="on_delivery" {{ $order->status == 'on_delivery' ? 'selected' : '' }}>Sedang Diantar</option>
+                                <option value="processing" {{ $order->status == 'processing' ? 'selected' : '' }}>Pesanan Diproses</option>
+                                <option value="ready_to_ship" {{ $order->status == 'ready_to_ship' ? 'selected' : '' }}>Siap Pickup</option>
+                                <option value="shipped" {{ $order->status == 'shipped' ? 'selected' : '' }}>Dikirim Ekspedisi</option>
                                 <option value="delivered" {{ $order->status == 'delivered' ? 'selected' : '' }}>Sudah Sampai</option>
                                 <option value="completed" {{ $order->status == 'completed' ? 'selected' : '' }}>Selesai</option>
                                 <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>Dibatalkan</option>

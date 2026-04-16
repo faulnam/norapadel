@@ -75,7 +75,7 @@ class OrderController extends Controller
     public function updateStatus(Request $request, Order $order)
     {
         $validated = $request->validate([
-            'status' => 'required|in:pending_payment,paid,assigned,picked_up,on_delivery,delivered,completed,cancelled',
+            'status' => 'required|in:pending_payment,processing,ready_to_ship,shipped,delivered,completed,cancelled',
             'cancel_reason' => 'required_if:status,cancelled|nullable|string|max:500',
         ]);
 
@@ -104,20 +104,21 @@ class OrderController extends Controller
     }
 
     /**
-     * Verify payment - Status menjadi 'paid', siap untuk assign kurir
+     * Verify payment - Status menjadi 'processing', pesanan sedang diproses
      */
     public function verifyPayment(Order $order)
     {
         $order->update([
             'payment_status' => 'paid',
             'payment_verified_at' => now(),
-            'status' => Order::STATUS_PAID, // Siap untuk ditugaskan ke kurir
+            'paid_at' => now(),
+            'status' => Order::STATUS_PROCESSING, // Pesanan sedang diproses
         ]);
 
         // Send notification
         $order->user->notify(new OrderStatusChanged($order, 'Pembayaran Anda sudah diverifikasi. Pesanan sedang dipersiapkan.'));
 
-        return back()->with('success', 'Pembayaran berhasil diverifikasi. Silakan tugaskan kurir.');
+        return back()->with('success', 'Pembayaran berhasil diverifikasi. Pesanan sedang diproses, silakan siapkan barang.');
     }
 
     /**
@@ -134,23 +135,20 @@ class OrderController extends Controller
     }
 
     /**
-     * Update shipping info
+     * Update shipping info (manual input resi jika tidak pakai Biteship)
      */
     public function updateShipping(Request $request, Order $order)
     {
         $validated = $request->validate([
-            'courier_name' => 'required|string|max:100',
-            'courier_service' => 'required|string|max:100',
-            'tracking_number' => 'required|string|max:100',
+            'waybill_id' => 'required|string|max:100',
         ], [
-            'courier_name.required' => 'Nama kurir wajib diisi.',
-            'courier_service.required' => 'Jasa pengiriman wajib diisi.',
-            'tracking_number.required' => 'Nomor resi wajib diisi.',
+            'waybill_id.required' => 'Nomor resi wajib diisi.',
         ]);
 
-        $order->update($validated);
-
-        return back()->with('success', 'Informasi pengiriman berhasil diperbarui.');
+        $order->update([
+            'waybill_id' => $validated['waybill_id'],
+            'status' => Order::STATUS_SHIPPED,
+        ]);
     }
 
     /**
@@ -174,63 +172,5 @@ class OrderController extends Controller
         return view('admin.orders.receipt', compact('order'));
     }
 
-    /**
-     * Assign courier to order
-     */
-    public function assignCourier(Request $request, Order $order)
-    {
-        $validated = $request->validate([
-            'courier_id' => 'required|exists:users,id',
-        ], [
-            'courier_id.required' => 'Kurir harus dipilih.',
-            'courier_id.exists' => 'Kurir tidak valid.',
-        ]);
 
-        // Verify courier role
-        $courier = User::where('id', $validated['courier_id'])
-            ->where('role', 'courier')
-            ->where('is_active', true)
-            ->first();
-
-        if (!$courier) {
-            return back()->with('error', 'Kurir tidak valid atau tidak aktif.');
-        }
-
-        // Check if order can be assigned
-        if (!$order->canAssignCourier()) {
-            return back()->with('error', 'Pesanan ini tidak dapat ditugaskan ke kurir.');
-        }
-
-        // Assign courier - pass courier ID, not the object
-        $order->assignCourier($courier->id);
-
-        // Notify courier
-        $courier->notify(new CourierAssigned($order));
-
-        // Notify customer
-        $order->user->notify(new OrderStatusChanged($order, 'Pesanan Anda sedang dipersiapkan untuk pengiriman.'));
-
-        return back()->with('success', 'Kurir berhasil ditugaskan untuk pesanan ini.');
-    }
-
-    /**
-     * Get list of couriers for AJAX
-     */
-    public function getCouriers()
-    {
-        $couriers = User::where('role', 'courier')
-            ->where('is_active', true)
-            ->withCount(['activeDeliveries'])
-            ->get()
-            ->map(function ($courier) {
-                return [
-                    'id' => $courier->id,
-                    'name' => $courier->name,
-                    'phone' => $courier->phone,
-                    'active_deliveries' => $courier->active_deliveries_count,
-                ];
-            });
-
-        return response()->json($couriers);
-    }
 }
