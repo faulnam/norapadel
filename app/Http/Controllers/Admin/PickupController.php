@@ -54,15 +54,15 @@ class PickupController extends Controller
             ];
         })->toArray();
 
-        // Request pickup ke Biteship
+        // Request pickup ke Biteship (tanpa courier_type karena optional)
         $result = $this->biteship->createOrder([
             'destination_contact_name' => $order->shipping_name,
             'destination_contact_phone' => $order->shipping_phone,
             'destination_address' => $order->shipping_address,
             'destination_latitude' => $order->shipping_latitude,
             'destination_longitude' => $order->shipping_longitude,
+            'destination_postal_code' => $order->shipping_postal_code ?? '61219',
             'courier_code' => $order->courier_code,
-            'courier_service_code' => strtolower($order->courier_service_name ?? 'reg'),
             'order_note' => 'Order #' . $order->order_number . ($order->notes ? ' - ' . $order->notes : ''),
             'items' => $items,
         ]);
@@ -137,6 +137,41 @@ class PickupController extends Controller
             'success' => true,
             'data' => $result['data'],
         ]);
+    }
+
+    /**
+     * Cetak label/resi dari Biteship API
+     */
+    public function printLabel(Order $order)
+    {
+        if (!$order->biteship_order_id) {
+            return back()->with('error', 'Order belum diproses oleh Biteship. Lakukan request pickup terlebih dahulu.');
+        }
+
+        // Check if sandbox mode
+        if (config('biteship.sandbox', true)) {
+            return back()->with('error', 'Label resi Biteship hanya tersedia di mode production. Ubah BITESHIP_SANDBOX=false di file .env untuk menggunakan API Biteship sungguhan dan mendapatkan label resi resmi dari ekspedisi.');
+        }
+
+        $result = $this->biteship->printLabel($order->biteship_order_id);
+
+        if (!$result['success']) {
+            return back()->with('error', 'Gagal cetak label: ' . $result['message']);
+        }
+
+        // Jika response berupa file PDF/image langsung
+        if (!empty($result['content'])) {
+            return response($result['content'], 200)
+                ->header('Content-Type', $result['content_type'])
+                ->header('Content-Disposition', 'inline; filename="label-' . $order->order_number . '.pdf"');
+        }
+
+        // Jika response berupa URL, redirect ke URL label
+        if (!empty($result['url'])) {
+            return redirect($result['url']);
+        }
+
+        return back()->with('error', 'Format response label tidak dikenali.');
     }
 
     /**

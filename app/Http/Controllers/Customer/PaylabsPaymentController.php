@@ -25,7 +25,7 @@ class PaylabsPaymentController extends Controller
             abort(403);
         }
 
-        if ($order->payment_status === 'paid') {
+        if ($order->payment_status === Order::PAYMENT_PAID) {
             return redirect()->route('customer.orders.show', $order)
                 ->with('info', 'Pesanan sudah dibayar.');
         }
@@ -99,7 +99,7 @@ class PaylabsPaymentController extends Controller
             abort(403);
         }
 
-        if ($order->payment_status === 'paid') {
+        if ($order->payment_status === Order::PAYMENT_PAID) {
             return redirect()->route('customer.orders.show', $order)
                 ->with('success', 'Pembayaran berhasil!');
         }
@@ -138,9 +138,9 @@ class PaylabsPaymentController extends Controller
         // Update order if paid
         if ($status === 'paid' || $status === 'success') {
             $order->update([
-                'payment_status' => 'paid',
+                'payment_status' => Order::PAYMENT_PAID,
                 'paid_at' => now(),
-                'status' => 'paid',
+                'status' => Order::STATUS_PROCESSING,
             ]);
         }
 
@@ -165,9 +165,9 @@ class PaylabsPaymentController extends Controller
         }
 
         $order->update([
-            'payment_status' => 'paid',
+            'payment_status' => Order::PAYMENT_PAID,
             'paid_at' => now(),
-            'status' => 'paid',
+            'status' => Order::STATUS_PROCESSING,
         ]);
 
         return redirect()->route('customer.orders.show', $order)

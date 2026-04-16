@@ -108,6 +108,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::post('/orders/{order}/request-pickup', [\App\Http\Controllers\Admin\PickupController::class, 'requestPickup'])->name('orders.request-pickup');
     Route::post('/orders/{order}/update-waybill', [\App\Http\Controllers\Admin\PickupController::class, 'updateWaybill'])->name('orders.update-waybill');
     Route::get('/orders/{order}/tracking', [\App\Http\Controllers\Admin\PickupController::class, 'getTracking'])->name('orders.tracking');
+    Route::get('/orders/{order}/print-label', [\App\Http\Controllers\Admin\PickupController::class, 'printLabel'])->name('orders.print-label');
     
     // Testimonials
     Route::get('/testimonials', [AdminTestimonial::class, 'index'])->name('testimonials.index');

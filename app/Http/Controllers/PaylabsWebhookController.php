@@ -41,9 +41,9 @@ class PaylabsWebhookController extends Controller
         // Update order based on status
         if (in_array($status, ['paid', 'success'])) {
             $order->update([
-                'payment_status' => 'paid',
+                'payment_status' => Order::PAYMENT_PAID,
                 'paid_at' => now(),
-                'status' => 'paid',
+                'status' => Order::STATUS_PROCESSING,
             ]);
 
             Log::info('Paylabs Webhook: Payment success', [

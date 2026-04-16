@@ -35,6 +35,7 @@ class Order extends Model
         'shipping_address',
         'shipping_phone',
         'shipping_name',
+        'shipping_postal_code',
         'shipping_latitude',
         'shipping_longitude',
         'delivery_distance_minutes',
@@ -130,7 +131,11 @@ class Order extends Model
 
         static::creating(function ($order) {
             if (empty($order->order_number)) {
-                $order->order_number = 'PTH-' . date('Ymd') . '-' . strtoupper(uniqid());
+                // Format: NP-YYYYMMDD-XXXXX
+                // NP = NoraPadel
+                // YYYYMMDD = Tanggal
+                // XXXXX = 5 digit random
+                $order->order_number = 'NP-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -5));
             }
         });
     }
@@ -473,7 +478,7 @@ class Order extends Model
      */
     public function canAssignCourier(): bool
     {
-        return $this->status === self::STATUS_PAID && !$this->courier_id;
+        return $this->status === self::STATUS_PROCESSING && !$this->courier_id;
     }
 
     /**

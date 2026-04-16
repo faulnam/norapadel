@@ -3,6 +3,8 @@
 @section('page-title', 'Detail Pesanan')
 
 @push('styles')
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
     :root {
         --admin-bg: #fafafa;
@@ -13,6 +15,8 @@
         --text-muted: #9ca3af;
         --accent: #374151;
     }
+    
+    #courierMap { height: 400px; border-radius: 8px; margin-top: 16px; }
     
     .order-detail-page {
         background: var(--admin-bg);
@@ -832,14 +836,14 @@
             <!-- Print Receipt -->
             <div class="detail-card">
                 <div class="detail-card-header">
-                    <h6><i class="fas fa-print"></i> Cetak Resi</h6>
+                    <h6><i class="fas fa-print"></i> Dokumen</h6>
                 </div>
                 <div class="detail-card-body">
                     <div class="d-grid gap-2">
                         <a href="{{ route('admin.orders.receipt', $order) }}" class="action-btn action-btn-outline" target="_blank">
                             <i class="fas fa-eye"></i> Lihat Resi
                         </a>
-                        <a href="{{ route('admin.orders.print-receipt', $order) }}" class="action-btn action-btn-primary">
+                        <a href="{{ route('admin.orders.print-receipt', $order) }}" class="action-btn action-btn-outline">
                             <i class="fas fa-download"></i> Download PDF
                         </a>
                     </div>

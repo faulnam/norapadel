@@ -71,7 +71,9 @@ class PaymentController extends Controller
         if ($paymentMethod === 'cod') {
             $order->update([
                 'payment_method' => 'cod',
-                'status' => Order::STATUS_PAID, // Ready for courier assignment
+                'status' => Order::STATUS_PROCESSING, // Pesanan diproses
+                'payment_status' => Order::PAYMENT_PAID,
+                'paid_at' => now(),
             ]);
 
             return redirect()->route('customer.orders.show', $order)
@@ -183,7 +185,7 @@ class PaymentController extends Controller
             // Update order if webhook hasn't done it yet
             if ($order->status === Order::STATUS_PENDING_PAYMENT) {
                 $order->update([
-                    'status' => Order::STATUS_PAID,
+                    'status' => Order::STATUS_PROCESSING,
                     'payment_status' => Order::PAYMENT_PAID,
                     'payment_method' => $transaction['payment_method'] ?? 'pakasir',
                     'paid_at' => now(),
@@ -268,7 +270,7 @@ class PaymentController extends Controller
         if ($result) {
             // Update order status
             $order->update([
-                'status' => Order::STATUS_PAID,
+                'status' => Order::STATUS_PROCESSING,
                 'payment_status' => Order::PAYMENT_PAID,
                 'payment_method' => $paymentTransaction['method'] ?? 'qris',
                 'paid_at' => now(),

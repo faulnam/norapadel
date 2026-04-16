@@ -133,6 +133,7 @@ class OrderController extends Controller
                 'shipping_name' => $validated['shipping_name'],
                 'shipping_phone' => $validated['shipping_phone'],
                 'shipping_address' => $validated['shipping_address'],
+                'shipping_postal_code' => '61219',
                 'shipping_latitude' => $validated['shipping_latitude'],
                 'shipping_longitude' => $validated['shipping_longitude'],
                 'delivery_distance_km' => $validated['delivery_distance_km'] ?? null,
@@ -229,7 +230,9 @@ class OrderController extends Controller
 
         // Only show receipt for paid orders
         if (!in_array($order->status, [
-            Order::STATUS_PAID,
+            Order::STATUS_PROCESSING,
+            Order::STATUS_READY_TO_SHIP,
+            Order::STATUS_SHIPPED,
             Order::STATUS_ASSIGNED,
             Order::STATUS_PICKED_UP,
             Order::STATUS_ON_DELIVERY,

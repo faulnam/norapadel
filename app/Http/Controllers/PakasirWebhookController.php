@@ -91,7 +91,7 @@ class PakasirWebhookController extends Controller
         // Update order status to paid
         if ($order->status === Order::STATUS_PENDING_PAYMENT) {
             $order->update([
-                'status' => Order::STATUS_PAID,
+                'status' => Order::STATUS_PROCESSING,
                 'payment_status' => Order::PAYMENT_PAID,
                 'payment_method' => $paymentMethod,
                 'paid_at' => $completedAt ? now()->parse($completedAt) : now(),
@@ -126,7 +126,7 @@ class PakasirWebhookController extends Controller
             // Update order if not already updated by webhook
             if ($order->status === Order::STATUS_PENDING_PAYMENT) {
                 $order->update([
-                    'status' => Order::STATUS_PAID,
+                    'status' => Order::STATUS_PROCESSING,
                     'payment_status' => Order::PAYMENT_PAID,
                     'payment_method' => $transaction['payment_method'] ?? 'pakasir',
                     'paid_at' => now(),

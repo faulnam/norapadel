@@ -193,10 +193,9 @@ class BiteshipService
                 'destination_note' => $orderData['destination_note'] ?? '',
                 'destination_latitude' => $orderData['destination_latitude'],
                 'destination_longitude' => $orderData['destination_longitude'],
-                'destination_postal_code' => $orderData['destination_postal_code'] ?? '00000',
+                'destination_postal_code' => $orderData['destination_postal_code'] ?? '61219',
                 
                 'courier_company' => $orderData['courier_code'],
-                'courier_type' => $orderData['courier_service_code'] ?? 'reg',
                 'delivery_type' => 'now',
                 'order_note' => $orderData['order_note'] ?? '',
                 'items' => $orderData['items'],
@@ -247,13 +246,16 @@ class BiteshipService
 
         // Data dummy kurir berdasarkan ekspedisi
         $courierData = $this->getDummyCourier($orderData['courier_code']);
+        
+        // Generate nomor resi sesuai format ekspedisi
+        $waybillId = $this->generateWaybillNumber($orderData['courier_code']);
 
         return [
             'success' => true,
             'data' => [
                 'id' => 'BITESHIP-' . strtoupper(uniqid()),
                 'courier' => [
-                    'waybill_id' => strtoupper($orderData['courier_code']) . '-' . time(),
+                    'waybill_id' => $waybillId,
                     'company' => $orderData['courier_code'],
                     'name' => $courierData['name'],
                     'phone' => $courierData['phone'],
@@ -267,6 +269,33 @@ class BiteshipService
                 'pickup_time' => now()->addMinutes(30)->format('Y-m-d H:i:s'),
             ],
         ];
+    }
+    
+    /**
+     * Generate nomor resi sesuai format ekspedisi
+     */
+    private function generateWaybillNumber(string $courierCode): string
+    {
+        switch ($courierCode) {
+            case 'jnt':
+                // Format J&T: JT + 12 digit angka
+                // Contoh: JT012345678901
+                return 'JT' . str_pad(rand(0, 999999999999), 12, '0', STR_PAD_LEFT);
+                
+            case 'anteraja':
+                // Format AnterAja: 10000 + 10 digit angka
+                // Contoh: 100001234567890
+                return '10000' . str_pad(rand(0, 9999999999), 10, '0', STR_PAD_LEFT);
+                
+            case 'paxel':
+                // Format Paxel: PXL + 8 digit angka + 2 huruf
+                // Contoh: PXL12345678AB
+                $letters = chr(rand(65, 90)) . chr(rand(65, 90));
+                return 'PXL' . str_pad(rand(0, 99999999), 8, '0', STR_PAD_LEFT) . $letters;
+                
+            default:
+                return strtoupper($courierCode) . '-' . time();
+        }
     }
 
     /**
@@ -339,6 +368,60 @@ class BiteshipService
 
         $courierList = $couriers[$courierCode] ?? $couriers['jnt'];
         return $courierList[array_rand($courierList)];
+    }
+
+    /**
+     * Print label/resi dari Biteship
+     * Endpoint: GET /v1/orders/{id}/label
+     */
+    public function printLabel(string $biteshipOrderId): array
+    {
+        if ($this->sandbox) {
+            return [
+                'success' => false,
+                'sandbox' => true,
+                'message' => 'Label resi hanya tersedia di mode production. Set BITESHIP_SANDBOX=false di .env untuk menggunakan label resmi ekspedisi.',
+            ];
+        }
+
+        try {
+            $response = Http::withoutVerifying()->withHeaders([
+                'Authorization' => $this->apiKey,
+            ])->get("{$this->baseUrl}/orders/{$biteshipOrderId}/label");
+
+            if ($response->successful()) {
+                $contentType = $response->header('Content-Type');
+
+                if (str_contains($contentType, 'application/pdf') || str_contains($contentType, 'image/')) {
+                    return [
+                        'success' => true,
+                        'content' => $response->body(),
+                        'content_type' => $contentType,
+                    ];
+                }
+
+                $data = $response->json();
+                return [
+                    'success' => true,
+                    'url' => $data['url'] ?? $data['label_url'] ?? null,
+                    'data' => $data,
+                ];
+            }
+
+            Log::error('Biteship printLabel failed', [
+                'order_id' => $biteshipOrderId,
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+
+            return [
+                'success' => false,
+                'message' => 'Gagal mengambil label dari Biteship: ' . ($response->json()['error'] ?? $response->body()),
+            ];
+        } catch (\Exception $e) {
+            Log::error('Biteship printLabel exception', ['message' => $e->getMessage()]);
+            return ['success' => false, 'message' => $e->getMessage()];
+        }
     }
 
     /**

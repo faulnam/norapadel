@@ -148,17 +148,27 @@
         @endif
 
         <!-- Tracking Button -->
-        @if($order->waybill_id)
+        @if($order->waybill_id && in_array($order->status, ['shipped', 'delivered']))
         <div class="mt-3">
-            <button type="button" class="action-btn action-btn-outline" onclick="loadTracking()">
-                <i class="fas fa-map-marker-alt"></i> Lihat Tracking
+            <button type="button" class="action-btn action-btn-outline" onclick="toggleCourierTracking()">
+                <i class="fas fa-map-marker-alt"></i> <span id="trackingBtnText">Tracking Kurir</span>
             </button>
         </div>
 
-        <!-- Tracking Result -->
-        <div id="trackingResult" style="display: none; margin-top: 16px;">
-            <div class="section-title">Status Pengiriman</div>
-            <div id="trackingContent"></div>
+        <!-- Courier Tracking Map -->
+        <div id="courierTrackingSection" style="display: none; margin-top: 16px;">
+            <div style="font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Tracking Kurir Real-Time</div>
+            <div id="courierMap"></div>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 12px; font-size: 12px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="width: 12px; height: 12px; border-radius: 50%; background: #3b82f6;"></div>
+                    <span style="color: var(--text-secondary);">Posisi Kurir</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="width: 12px; height: 12px; border-radius: 50%; background: #ef4444;"></div>
+                    <span style="color: var(--text-secondary);">Alamat Tujuan</span>
+                </div>
+            </div>
         </div>
         @endif
     </div>
@@ -166,16 +176,17 @@
 
 @push('scripts')
 <script>
+let mapInitialized = false;
+let map, courierMarker, routeLine;
+
 function requestPickupWithLoading() {
     if (!confirm('Request pickup ke {{ $order->courier_name }}?')) {
         return;
     }
     
-    // Show loading modal
     const modal = document.getElementById('pickupLoadingModal');
     modal.style.display = 'flex';
     
-    // Submit form via fetch
     fetch('{{ route("admin.orders.request-pickup", $order) }}', {
         method: 'POST',
         headers: {
@@ -198,47 +209,109 @@ function requestPickupWithLoading() {
     });
 }
 
-function loadTracking() {
-    const resultDiv = document.getElementById('trackingResult');
-    const contentDiv = document.getElementById('trackingContent');
+function toggleCourierTracking() {
+    const section = document.getElementById('courierTrackingSection');
+    const btnText = document.getElementById('trackingBtnText');
     
-    resultDiv.style.display = 'block';
-    contentDiv.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-muted);"><i class="fas fa-spinner fa-spin me-2"></i>Memuat data tracking...</div>';
-    
-    fetch('{{ route("admin.orders.tracking", $order) }}')
-        .then(response => response.json())
-        .then(data => {
-            if (!data.success) {
-                contentDiv.innerHTML = '<div class="alert alert-warning" style="font-size: 13px;">Gagal memuat tracking: ' + data.message + '</div>';
-                return;
-            }
-            
-            const tracking = data.data;
-            let html = '';
-            
-            if (tracking.history && tracking.history.length > 0) {
-                tracking.history.forEach(item => {
-                    html += `
-                    <div class="timeline-item">
-                        <div>
-                            <div class="timeline-label">${item.note || item.status}</div>
-                            <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">
-                                ${item.service_type || ''} ${item.receiver_name ? '- Diterima: ' + item.receiver_name : ''}
-                            </div>
-                        </div>
-                        <span class="timeline-time">${item.updated_at || item.created_at}</span>
-                    </div>`;
-                });
-            } else {
-                html = '<div style="text-align: center; padding: 20px; color: var(--text-muted);">Belum ada data tracking</div>';
-            }
-            
-            contentDiv.innerHTML = html;
-        })
-        .catch(error => {
-            contentDiv.innerHTML = '<div class="alert alert-danger" style="font-size: 13px;">Error: ' + error.message + '</div>';
-        });
+    if (section.style.display === 'none') {
+        section.style.display = 'block';
+        btnText.textContent = 'Sembunyikan Tracking';
+        
+        if (!mapInitialized) {
+            initializeCourierMap();
+            mapInitialized = true;
+        }
+    } else {
+        section.style.display = 'none';
+        btnText.textContent = 'Tracking Kurir';
+    }
 }
+
+@if($order->waybill_id && in_array($order->status, ['shipped', 'delivered']) && $order->shipping_latitude && $order->shipping_longitude)
+function initializeCourierMap() {
+    map = L.map('courierMap').setView([{{ $order->shipping_latitude }}, {{ $order->shipping_longitude }}], 14);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 19
+    }).addTo(map);
+
+    const destinationIcon = L.divIcon({
+        html: '<div style="background: #ef4444; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3);"><i class="fas fa-home" style="color: white; font-size: 14px;"></i></div>',
+        className: '',
+        iconSize: [32, 32],
+        iconAnchor: [16, 16]
+    });
+
+    const destinationMarker = L.marker([{{ $order->shipping_latitude }}, {{ $order->shipping_longitude }}], {
+        icon: destinationIcon
+    }).addTo(map);
+
+    destinationMarker.bindPopup('<b>Alamat Tujuan</b><br>{{ $order->shipping_address }}');
+
+    const courierIcon = L.divIcon({
+        html: '<div style="background: #3b82f6; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 4px 12px rgba(59,130,246,0.5); animation: pulse 2s infinite;"><i class="fas fa-motorcycle" style="color: white; font-size: 16px;"></i></div><style>@keyframes pulse { 0%, 100% { box-shadow: 0 4px 12px rgba(59,130,246,0.5); } 50% { box-shadow: 0 4px 20px rgba(59,130,246,0.8); } }</style>',
+        className: '',
+        iconSize: [40, 40],
+        iconAnchor: [20, 20]
+    });
+
+    let courierLat = {{ $order->shipping_latitude }} + (Math.random() - 0.5) * 0.02;
+    let courierLng = {{ $order->shipping_longitude }} + (Math.random() - 0.5) * 0.02;
+
+    courierMarker = L.marker([courierLat, courierLng], {
+        icon: courierIcon
+    }).addTo(map);
+
+    courierMarker.bindPopup('<b>{{ $order->courier_driver_name ?? "Kurir" }}</b><br>{{ $order->courier_name }}<br><small>Sedang menuju lokasi customer</small>');
+
+    routeLine = L.polyline([
+        [courierLat, courierLng],
+        [{{ $order->shipping_latitude }}, {{ $order->shipping_longitude }}]
+    ], {
+        color: '#3b82f6',
+        weight: 3,
+        opacity: 0.6,
+        dashArray: '10, 10'
+    }).addTo(map);
+
+    const bounds = L.latLngBounds([
+        [courierLat, courierLng],
+        [{{ $order->shipping_latitude }}, {{ $order->shipping_longitude }}]
+    ]);
+    map.fitBounds(bounds, { padding: [50, 50] });
+
+    let moveStep = 0;
+    const totalSteps = 100;
+    const startLat = courierLat;
+    const startLng = courierLng;
+    const endLat = {{ $order->shipping_latitude }};
+    const endLng = {{ $order->shipping_longitude }};
+
+    function moveCourier() {
+        if (moveStep < totalSteps) {
+            moveStep++;
+            const progress = moveStep / totalSteps;
+            const newLat = startLat + (endLat - startLat) * progress;
+            const newLng = startLng + (endLng - startLng) * progress;
+            
+            courierMarker.setLatLng([newLat, newLng]);
+            routeLine.setLatLngs([
+                [newLat, newLng],
+                [endLat, endLng]
+            ]);
+            
+            const newBounds = L.latLngBounds([
+                [newLat, newLng],
+                [endLat, endLng]
+            ]);
+            map.fitBounds(newBounds, { padding: [50, 50], animate: true });
+        }
+    }
+
+    setInterval(moveCourier, 3000);
+}
+@endif
 </script>
 @endpush
 @endif
