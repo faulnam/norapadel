@@ -268,6 +268,23 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'customer'])->
     Route::get('/payment/{order}/redirect', [PaymentController::class, 'redirect'])->name('payment.redirect');
     Route::get('/payment/{order}/callback', [PakasirWebhookController::class, 'handleCallback'])->name('payment.callback');
     
+    // Payment COD
+    Route::get('/payment/{order}/cod', function(\App\Models\Order $order) {
+        if ($order->user_id !== auth()->id()) {
+            abort(403);
+        }
+        
+        // Update order to COD
+        $order->update([
+            'payment_gateway' => 'cod',
+            'payment_channel' => 'cash_on_delivery',
+            'payment_status' => 'unpaid',
+        ]);
+        
+        return redirect()->route('customer.orders.show', $order)
+            ->with('success', 'Pesanan akan dibayar saat barang diterima (COD).');
+    })->name('payment.cod');
+    
     // Payment Gateway (Paylabs)
     Route::get('/payment-paylabs/{order}', [\App\Http\Controllers\Customer\PaylabsPaymentController::class, 'show'])->name('payment.paylabs.show');
     Route::post('/payment-paylabs/{order}/process', [\App\Http\Controllers\Customer\PaylabsPaymentController::class, 'process'])->name('payment.paylabs.process');

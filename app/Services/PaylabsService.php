@@ -201,7 +201,7 @@ class PaylabsService
             $mockData['va_number'] = $vaNumbers[$channel] ?? '8808' . rand(10000000, 99999999);
             $mockData['payment_url'] = null;
         } elseif ($data['payment_method'] === 'qris') {
-            $mockData['qr_url'] = 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=PAYLABS-MOCK-' . $transactionId;
+            $mockData['qr_url'] = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' . urlencode('PAYLABS-MOCK-' . $transactionId);
             $mockData['payment_url'] = null;
         } elseif ($data['payment_method'] === 'ewallet') {
             $mockData['deeplink_url'] = '#mock-ewallet-deeplink';

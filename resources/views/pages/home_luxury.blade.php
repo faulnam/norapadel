@@ -29,7 +29,10 @@
                                 <span>Dashboard</span>
                             </a>
                         @elseif(auth()->user()->role === 'customer')
-                            <a href="{{ route('customer.profile.index') }}" class="transition duration-300 hover:text-black" aria-label="Profile">
+                            <a href="{{ route('customer.orders.index') }}" class="transition duration-300 hover:text-black" aria-label="Riwayat Pesanan" title="Riwayat Pesanan">
+                                <i class="fas fa-history text-sm"></i>
+                            </a>
+                            <a href="{{ route('customer.profile.index') }}" class="transition duration-300 hover:text-black" aria-label="Profile" title="Profile">
                                 <i class="fas fa-user text-sm"></i>
                             </a>
                         @endif
@@ -44,7 +47,7 @@
                     @endguest
                     @auth
                         <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-black"
-                            aria-label="Cart">
+                            aria-label="Cart" title="Keranjang">
                             <i class="fas fa-shopping-bag text-sm"></i>
                             @if(auth()->user()->role === 'customer')
                                 @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
@@ -54,7 +57,7 @@
                             @endif
                         </a>
                     @else
-                        <a href="{{ route('login') }}" class="transition duration-300 hover:text-black" aria-label="Cart">
+                        <a href="{{ route('login') }}" class="transition duration-300 hover:text-black" aria-label="Cart" title="Keranjang">
                             <i class="fas fa-shopping-bag text-sm"></i>
                         </a>
                     @endauth
