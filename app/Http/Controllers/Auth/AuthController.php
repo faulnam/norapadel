@@ -49,7 +49,7 @@ class AuthController extends Controller
                 return redirect()->intended(route('courier.dashboard'));
             }
 
-            return redirect()->intended(route('customer.products.index'));
+            return redirect()->intended(route('home'));
         }
 
         return back()->with('error', 'Email atau password salah.');
@@ -226,7 +226,7 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Registrasi berhasil! Akun Anda sudah aktif.',
-            'redirect' => route('customer.products.index'),
+            'redirect' => route('home'),
         ]);
     }
 

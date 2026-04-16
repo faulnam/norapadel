@@ -12,7 +12,7 @@ use App\Http\Controllers\Admin\GalleryController as AdminGallery;
 use App\Http\Controllers\Admin\ProfileController as AdminProfile;
 use App\Http\Controllers\Admin\UserManagementController as AdminStaff;
 use App\Http\Controllers\Admin\ShippingDiscountController;
-use App\Http\Controllers\Customer\ProductController as CustomerProduct;
+use App\Http\Controllers\Admin\ReportController as AdminReport;
 use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Customer\OrderController as CustomerOrder;
 use App\Http\Controllers\Customer\PaymentController;
@@ -176,6 +176,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     // Shipping Discounts
     Route::resource('shipping-discounts', ShippingDiscountController::class)->except(['show']);
     Route::patch('/shipping-discounts/{shipping_discount}/toggle', [ShippingDiscountController::class, 'toggleActive'])->name('shipping-discounts.toggle');
+
+    // Reports
+    Route::get('/reports', [AdminReport::class, 'index'])->name('reports.index');
+    Route::get('/reports/download-sales', [AdminReport::class, 'downloadSalesReport'])->name('reports.download-sales');
+    Route::get('/reports/download-soldout', [AdminReport::class, 'downloadSoldOutReport'])->name('reports.download-soldout');
 });
 
 // Courier Routes
@@ -207,9 +212,14 @@ Route::prefix('courier')->name('courier.')->middleware(['auth', 'courier'])->gro
 
 // Customer Routes
 Route::prefix('customer')->name('customer.')->middleware(['auth', 'customer'])->group(function () {
-    // Products
-    Route::get('/products', [CustomerProduct::class, 'index'])->name('products.index');
-    Route::get('/products/{product}', [CustomerProduct::class, 'show'])->name('products.show');
+    // Products (alias to public produk route)
+    Route::get('/products', function() {
+        return redirect()->route('produk.index');
+    })->name('products.index');
+    
+    Route::get('/products/{product}', function($product) {
+        return redirect()->route('produk.show', $product);
+    })->name('products.show');
     
     // Cart
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');

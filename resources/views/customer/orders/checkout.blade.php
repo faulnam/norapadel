@@ -1,214 +1,185 @@
 @extends('layouts.app')
 
-@section('title', 'Checkout - Nora Padel')
+@section('title', 'Checkout - NoraPadel')
 
 @push('styles')
 <!-- Leaflet CSS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 <style>
     .checkout-page {
-        background: #f8f9fa;
+        background: #f5f5f7;
         min-height: 100vh;
-        padding: 2rem 0;
+        padding: 3rem 0;
     }
     .checkout-card {
         background: white;
-        border-radius: 12px;
-        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+        border: 1px solid rgba(0,0,0,0.06);
         margin-bottom: 1.5rem;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.04);
     }
     .checkout-card-header {
-        padding: 1rem 1.5rem;
-        border-bottom: 1px solid #e5e7eb;
+        padding: 1.25rem 1.75rem;
+        border-bottom: 1px solid rgba(0,0,0,0.06);
         font-weight: 600;
-        color: #1f2937;
+        font-size: 0.9375rem;
+        color: #1d1d1f;
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.625rem;
     }
     .checkout-card-header i {
-        color: #6b7280;
+        color: #86868b;
         font-size: 14px;
     }
     .checkout-card-body {
-        padding: 1.5rem;
+        padding: 1.75rem;
     }
     .form-label {
-        font-size: 13px;
+        font-size: 0.875rem;
         font-weight: 500;
-        color: #374151;
-        margin-bottom: 6px;
-    }
-    .form-control {
-        border: 1px solid #d1d5db;
-        border-radius: 8px;
-        padding: 10px 14px;
-        font-size: 14px;
-    }
-    .form-control:focus {
-        border-color: #16a34a;
-        box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
-    }
-    .coord-box {
-        background: #f9fafb;
-        border: 1px solid #e5e7eb;
-        border-radius: 10px;
-        padding: 1.25rem;
-    }
-    .coord-title {
-        font-size: 13px;
-        font-weight: 600;
-        color: #374151;
-        margin-bottom: 0.75rem;
-    }
-    .schedule-box {
-        background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-        border: 1px solid #bbf7d0;
-        border-radius: 10px;
-        padding: 1rem 1.25rem;
-    }
-    .schedule-title {
-        font-size: 13px;
-        font-weight: 600;
-        color: #166534;
+        color: #1d1d1f;
         margin-bottom: 0.5rem;
     }
-    .payment-info {
-        background: #f9fafb;
-        border: 1px solid #e5e7eb;
-        border-radius: 10px;
-        padding: 1.25rem;
+    .form-control, .form-select, textarea.form-control {
+        border: 1px solid rgba(0,0,0,0.12);
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        font-size: 0.9375rem;
+        transition: all 0.2s;
     }
-    .bank-item {
-        display: flex;
-        justify-content: space-between;
-        padding: 8px 0;
-        border-bottom: 1px dashed #e5e7eb;
-        font-size: 13px;
+    .form-control:focus, .form-select:focus, textarea.form-control:focus {
+        border-color: #0071e3;
+        box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1);
+        outline: none;
     }
-    .bank-item:last-child {
-        border-bottom: none;
+    .coord-box {
+        background: #f5f5f7;
+        border: 1px solid rgba(0,0,0,0.06);
+        border-radius: 16px;
+        padding: 1.5rem;
     }
-    .summary-sticky {
-        position: sticky;
-        top: 100px;
-    }
-    .summary-item {
-        display: flex;
-        justify-content: space-between;
-        padding: 8px 0;
-        font-size: 14px;
-        color: #4b5563;
-    }
-    .summary-divider {
-        border-top: 1px solid #e5e7eb;
-        margin: 12px 0;
-    }
-    .summary-total {
-        display: flex;
-        justify-content: space-between;
-        padding: 12px 0;
-        font-weight: 700;
-        font-size: 18px;
-        color: #1f2937;
+    .coord-title {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #1d1d1f;
+        margin-bottom: 0.75rem;
     }
     .btn-checkout {
-        background: #16a34a;
+        background: #0071e3;
         color: white;
         border: none;
-        border-radius: 10px;
-        padding: 14px;
+        border-radius: 12px;
+        padding: 0.875rem;
         font-weight: 600;
-        font-size: 15px;
+        font-size: 0.9375rem;
         width: 100%;
         transition: all 0.2s;
     }
     .btn-checkout:hover:not(:disabled) {
-        background: #15803d;
+        background: #0077ed;
+        transform: scale(1.01);
         color: white;
     }
     .btn-checkout:disabled {
-        background: #9ca3af;
+        background: #86868b;
         cursor: not-allowed;
     }
     .btn-calc {
         background: white;
-        border: 1px solid #d1d5db;
-        color: #374151;
-        border-radius: 8px;
-        padding: 8px 16px;
-        font-size: 13px;
+        border: 1px solid rgba(0,0,0,0.12);
+        color: #1d1d1f;
+        border-radius: 10px;
+        padding: 0.625rem 1rem;
+        font-size: 0.875rem;
         font-weight: 500;
         transition: all 0.2s;
     }
     .btn-calc:hover {
-        background: #f3f4f6;
-        border-color: #9ca3af;
+        background: #f5f5f7;
+        border-color: rgba(0,0,0,0.2);
     }
-    .shipping-result {
-        background: #f0fdf4;
-        border: 1px solid #bbf7d0;
-        border-radius: 8px;
-        padding: 10px 14px;
-        font-size: 13px;
-        color: #166534;
-        margin-top: 1rem;
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        font-size: 0.9375rem;
+        color: #1d1d1f;
+    }
+    .summary-divider {
+        border-top: 1px solid rgba(0,0,0,0.06);
+        margin: 0.75rem 0;
+    }
+    .summary-total {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0;
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: #1d1d1f;
     }
     .warning-box {
-        background: #fffbeb;
-        border: 1px solid #fde68a;
-        border-radius: 8px;
-        padding: 10px 14px;
-        font-size: 13px;
+        background: #fef3c7;
+        border: 1px solid #fbbf24;
         color: #92400e;
+        padding: 0.75rem 1rem;
+        border-radius: 10px;
+        font-size: 0.875rem;
+        text-align: center;
     }
-    /* Leaflet Map Styles */
+    .shipping-result {
+        background: #dcfce7;
+        border: 1px solid #86efac;
+        color: #166534;
+        padding: 0.75rem 1rem;
+        border-radius: 10px;
+        font-size: 0.875rem;
+        margin-top: 1rem;
+    }
+
+    .map-hint {
+        font-size: 0.75rem;
+        color: #86868b;
+        margin-top: 0.5rem;
+        text-align: center;
+    }
+    .breadcrumb-minimal {
+        font-size: 0.875rem;
+        margin-bottom: 2rem;
+        color: #86868b;
+    }
+    .breadcrumb-minimal a {
+        color: #86868b;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+    .breadcrumb-minimal a:hover {
+        color: #0071e3;
+    }
     #map-container {
         margin-top: 1rem;
-        border-radius: 8px;
+        border-radius: 12px;
         overflow: hidden;
-        border: 1px solid #e5e7eb;
+        border: 1px solid rgba(0,0,0,0.06);
     }
     #map {
-        height: 280px;
+        height: 320px;
         width: 100%;
         z-index: 1;
     }
-    .map-search-box {
-        margin-bottom: 0.75rem;
-    }
     .map-search-box input {
         width: 100%;
-        padding: 10px 14px;
-        border: 1px solid #d1d5db;
-        border-radius: 8px;
-        font-size: 13px;
+        padding: 0.75rem 1rem;
+        border: 1px solid rgba(0,0,0,0.12);
+        border-radius: 12px;
+        font-size: 0.875rem;
     }
     .map-search-box input:focus {
         outline: none;
-        border-color: #16a34a;
-    }
-    .map-hint {
-        font-size: 12px;
-        color: #6b7280;
-        margin-top: 8px;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-    }
-    .leaflet-container {
-        font-family: inherit;
-    }
-    .breadcrumb-minimal {
-        font-size: 13px;
-        margin-bottom: 1.5rem;
-    }
-    .breadcrumb-minimal a {
-        color: #6b7280;
-        text-decoration: none;
-    }
-    .breadcrumb-minimal a:hover {
-        color: #16a34a;
+        border-color: #0071e3;
+        box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1);
     }
     
     /* Mobile Responsive */
@@ -379,12 +350,6 @@
                                     <input type="text" id="searchAddress" placeholder="Cari alamat atau tempat..." autocomplete="off">
                                 </div>
                                 
-                                <!-- Area Layanan Warning -->
-                                <div class="alert alert-info py-2 mb-3" style="font-size: 13px; border-radius: 10px;">
-                                    <i class="fas fa-map-marker-alt me-1"></i>
-                                    <strong>Area Layanan:</strong> Sidoarjo, Mojokerto & Surabaya (maks. 40 km dari Tarik)
-                                </div>
-                                
                                 <!-- Leaflet Map -->
                                 <div id="map-container">
                                     <div id="map"></div>
@@ -429,8 +394,7 @@
                                         <div>
                                             <strong>Lokasi Di Luar Jangkauan</strong>
                                             <p class="mb-2 mt-1" style="font-size: 13px;">
-                                                Maaf, lokasi Anda (<span id="outOfRangeDistance">0</span> km) melebihi batas area layanan kami (maks. 40 km dari Tarik, Sidoarjo).
-                                                Kami hanya melayani pengiriman di area <strong>Sidoarjo, Mojokerto, dan Surabaya</strong>.
+                                                Maaf, lokasi Anda (<span id="outOfRangeDistance">0</span> km) melebihi batas area layanan kami (maksimal 40 km).
                                             </p>
                                             <div class="d-flex flex-wrap gap-2">
                                                 <a href="https://shopee.co.id/norapadel" target="_blank" class="btn btn-sm btn-outline-danger">
@@ -446,35 +410,9 @@
                             <input type="hidden" name="delivery_distance_minutes" id="delivery_distance_minutes" value="{{ old('delivery_distance_minutes', '0') }}">
                             <input type="hidden" name="shipping_cost" id="shipping_cost_input" value="{{ old('shipping_cost', '0') }}">
 
-                            <!-- Info Pengiriman Pre-Order -->
                             @php
                                 $deliveryInfo = \App\Models\Order::calculateDeliveryDate();
-                                // Estimasi: 5 hari proses + 1 hari kirim
-                                $estimasiProses = now()->addDays(5);
-                                $estimasiSampai = now()->addDays(6);
                             @endphp
-                            <div class="schedule-box mb-3" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-color: #f59e0b;">
-                                <div class="schedule-title" style="color: #92400e;">
-                                    <i class="fas fa-box me-1"></i>Sistem Pre-Order
-                                </div>
-                                <div class="small mb-2" style="color: #92400e;">
-                                    <i class="fas fa-clock me-1"></i>
-                                    <strong>Estimasi Proses:</strong> 5 hari kerja setelah pembayaran
-                                </div>
-                                <div class="small mb-2" style="color: #92400e;">
-                                    <i class="fas fa-truck me-1"></i>
-                                    <strong>Estimasi Pengiriman:</strong> 1 hari setelah proses selesai
-                                </div>
-                                <div class="small" style="color: #78350f; background: rgba(255,255,255,0.5); padding: 8px; border-radius: 8px; margin-top: 8px;">
-                                    <i class="fas fa-calendar-check me-1"></i>
-                                    <strong>Perkiraan Sampai:</strong> {{ $estimasiSampai->translatedFormat('l, d F Y') }}
-                                </div>
-                            </div>
-                            
-                            <div class="alert alert-light py-2 mb-3" style="font-size: 12px; border-radius: 10px; border: 1px solid #e5e7eb;">
-                                <i class="fas fa-bell me-1 text-success"></i>
-                                Pantau status pesanan di halaman <strong>Pesanan Saya</strong>. Anda akan mendapat notifikasi saat ada update.
-                            </div>
                             <input type="hidden" name="delivery_date" value="{{ $deliveryInfo['date'] }}">
                             <input type="hidden" name="delivery_time_slot" value="{{ $deliveryInfo['time_slot'] }}">
                             
@@ -588,13 +526,12 @@
 <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
-    // Koordinat Nora Padel Store
     const STORE_LAT = {{ config('branding.store_latitude', -7.4674) }};
     const STORE_LNG = {{ config('branding.store_longitude', 112.5274) }};
     // Subtotal setelah diskon produk
     const SUBTOTAL = {{ $subtotal - $productDiscount }};
     const SHIPPING_RATE_PER_KM = 1500; // Rp 1.500 per KM
-    const MAX_DELIVERY_DISTANCE = 40; // Maksimal 40 KM (Sidoarjo, Mojokerto, Surabaya)
+    const MAX_DELIVERY_DISTANCE = 40; // Maksimal 40 KM
     
     // Shipping Discount Info
     @if($shippingDiscountInfo)

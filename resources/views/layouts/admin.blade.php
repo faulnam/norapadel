@@ -715,6 +715,10 @@
                 <i class="fas fa-history"></i> Riwayat
             </a>
             
+            <a href="{{ route('admin.reports.index') }}" class="nav-link {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}">
+                <i class="fas fa-file-download"></i> Laporan
+            </a>
+            
             <a href="{{ route('admin.notifications.index') }}" class="nav-link {{ request()->routeIs('admin.notifications.*') ? 'active' : '' }}">
                 <i class="fas fa-bell"></i> Notifikasi
                 @if(auth()->user()->unreadNotifications->count() > 0)

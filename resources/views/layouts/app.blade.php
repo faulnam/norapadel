@@ -1025,8 +1025,8 @@
                                             <form id="npModalCartForm" action="{{ route('customer.cart.add', ['product' => 1]) }}" data-action-template="{{ route('customer.cart.add', ['product' => '__PRODUCT_ID__']) }}" method="POST" class="d-flex gap-2 align-items-center">
                                                 @csrf
                                                 <input type="hidden" name="quantity" value="1">
-                                                <button type="submit" class="btn btn-primary">
-                                                    <i class="fas fa-cart-plus me-2"></i>Beli Sekarang
+                                                <button type="submit" class="btn np-product-buy-btn">
+                                                    <i class="fas fa-shopping-bag me-2"></i>Beli
                                                 </button>
                                             </form>
                                         @else
