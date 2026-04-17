@@ -570,6 +570,7 @@ class OrderController extends Controller
 
     /**
      * Get courier location tracking (for internal courier)
+     * With simulation for demo/testing
      */
     public function getCourierLocation(Order $order)
     {
@@ -578,43 +579,95 @@ class OrderController extends Controller
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-        // Only allow tracking when order is being delivered
-        if (!in_array($order->status, [Order::STATUS_ON_DELIVERY])) {
+        // Allow tracking when order is shipped or on_delivery
+        if (!in_array($order->status, [Order::STATUS_SHIPPED, Order::STATUS_ON_DELIVERY, Order::STATUS_DELIVERED])) {
             return response()->json([
                 'success' => false,
                 'message' => 'Tracking hanya tersedia saat pesanan sedang dikirim',
             ]);
         }
 
-        if (!$order->courier_id) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Belum ada kurir yang ditugaskan',
-            ]);
-        }
-
-        $location = CourierLocation::where('order_id', $order->id)
-            ->where('is_active', true)
-            ->latest()
-            ->first();
-
-        if (!$location) {
-            // Try to get courier's last known location
-            $location = CourierLocation::where('user_id', $order->courier_id)
+        // Try to get real courier location
+        $location = null;
+        
+        if ($order->courier_id) {
+            $location = CourierLocation::where('order_id', $order->id)
                 ->where('is_active', true)
                 ->latest()
                 ->first();
+
+            if (!$location) {
+                // Try to get courier's last known location
+                $location = CourierLocation::where('user_id', $order->courier_id)
+                    ->where('is_active', true)
+                    ->latest()
+                    ->first();
+            }
         }
 
+        // If no real location, simulate for demo (like Shopee)
         if (!$location) {
+            // Get store and destination coordinates
+            $storeLat = (float) config('branding.store_latitude', -7.4674);
+            $storeLng = (float) config('branding.store_longitude', 112.5274);
+            $destLat = (float) $order->shipping_latitude;
+            $destLng = (float) $order->shipping_longitude;
+            
+            // Calculate progress based on order created time
+            // Simulate courier moving from store to destination over time
+            $orderAge = now()->diffInMinutes($order->updated_at ?? $order->created_at);
+            $estimatedDuration = $order->delivery_distance_minutes ?? 60; // default 60 minutes
+            $progress = min($orderAge / $estimatedDuration, 0.95); // Max 95% to keep moving
+            
+            // Calculate current position along the route
+            $currentLat = $storeLat + ($destLat - $storeLat) * $progress;
+            $currentLng = $storeLng + ($destLng - $storeLng) * $progress;
+            
+            // Add small random offset for realistic movement
+            $randomOffset = 0.0005; // ~50 meters
+            $currentLat += (rand(-100, 100) / 100) * $randomOffset;
+            $currentLng += (rand(-100, 100) / 100) * $randomOffset;
+            
+            // Calculate heading (direction)
+            $heading = $this->calculateBearing($currentLat, $currentLng, $destLat, $destLng);
+            
+            // Simulate speed (km/h)
+            $speed = $progress < 0.9 ? rand(20, 40) : rand(5, 15); // Slower when near destination
+            
             return response()->json([
-                'success' => false,
-                'message' => 'Lokasi kurir belum tersedia',
+                'success' => true,
+                'simulated' => true,
+                'location' => [
+                    'latitude' => $currentLat,
+                    'longitude' => $currentLng,
+                    'accuracy' => 10,
+                    'speed' => $speed,
+                    'heading' => $heading,
+                    'updated_at' => now()->toISOString(),
+                    'updated_ago' => 'Baru saja',
+                ],
+                'destination' => [
+                    'latitude' => $destLat,
+                    'longitude' => $destLng,
+                    'address' => $order->shipping_address,
+                ],
+                'store' => [
+                    'latitude' => $storeLat,
+                    'longitude' => $storeLng,
+                ],
+                'courier' => [
+                    'name' => $order->courier_driver_name ?? 'Kurir',
+                    'phone' => $order->courier_driver_phone ?? '-',
+                    'avatar' => $order->courier_driver_photo ?? null,
+                ],
+                'progress' => round($progress * 100, 1),
             ]);
         }
 
+        // Return real location data
         return response()->json([
             'success' => true,
+            'simulated' => false,
             'location' => [
                 'latitude' => $location->latitude,
                 'longitude' => $location->longitude,
@@ -634,10 +687,32 @@ class OrderController extends Controller
                 'longitude' => (float) config('branding.store_longitude', 112.5274),
             ],
             'courier' => [
-                'name' => $order->courier->name,
-                'phone' => $order->courier->phone,
-                'avatar' => $order->courier->avatar_url,
+                'name' => $order->courier->name ?? $order->courier_driver_name,
+                'phone' => $order->courier->phone ?? $order->courier_driver_phone,
+                'avatar' => $order->courier->avatar_url ?? $order->courier_driver_photo,
             ],
         ]);
+    }
+    
+    /**
+     * Calculate bearing between two coordinates
+     */
+    private function calculateBearing($lat1, $lng1, $lat2, $lng2)
+    {
+        $lat1 = deg2rad($lat1);
+        $lng1 = deg2rad($lng1);
+        $lat2 = deg2rad($lat2);
+        $lng2 = deg2rad($lng2);
+        
+        $dLng = $lng2 - $lng1;
+        
+        $y = sin($dLng) * cos($lat2);
+        $x = cos($lat1) * sin($lat2) - sin($lat1) * cos($lat2) * cos($dLng);
+        
+        $bearing = atan2($y, $x);
+        $bearing = rad2deg($bearing);
+        $bearing = ($bearing + 360) % 360;
+        
+        return round($bearing);
     }
 }

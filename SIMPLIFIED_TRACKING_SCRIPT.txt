@@ -1,0 +1,177 @@
+// Simplified tracking script - replace the existing script section
+
+<script>
+let map, courierMarker, destinationMarker, routingControl;
+let updateInterval = null;
+
+// Simple motorcycle icon using Font Awesome
+const motorIcon = L.divIcon({
+    html: `
+        <div style="position: relative; width: 50px; height: 50px;">
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 46px; height: 46px; background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%); border-radius: 50%; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5); display: flex; align-items: center; justify-content: center; border: 3px solid white;">
+                <i class="fas fa-motorcycle" style="color: white; font-size: 24px;"></i>
+            </div>
+        </div>
+    `,
+    className: '',
+    iconSize: [50, 50],
+    iconAnchor: [25, 25]
+});
+
+const destinationIcon = L.divIcon({
+    html: `
+        <div style="position: relative; width: 40px; height: 50px;">
+            <div style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 36px; height: 36px; background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); border-radius: 50% 50% 50% 0; transform: translateX(-50%) rotate(-45deg); box-shadow: 0 3px 10px rgba(239, 68, 68, 0.4); border: 3px solid white;">
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(45deg); width: 12px; height: 12px; background: white; border-radius: 50%;"></div>
+            </div>
+        </div>
+    `,
+    className: '',
+    iconSize: [40, 50],
+    iconAnchor: [20, 40]
+});
+
+function initMap() {
+    const destination = { 
+        lat: {{ $order->shipping_latitude ?? -6.2088 }}, 
+        lng: {{ $order->shipping_longitude ?? 106.8456 }} 
+    };
+
+    map = L.map('courierMap').setView([destination.lat, destination.lng], 14);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap',
+        maxZoom: 19
+    }).addTo(map);
+
+    destinationMarker = L.marker([destination.lat, destination.lng], { icon: destinationIcon }).addTo(map);
+    destinationMarker.bindPopup(`
+        <div style="font-family: system-ui; padding: 4px; max-width: 200px;">
+            <div style="font-weight: 600; margin-bottom: 4px;">📍 Alamat Tujuan</div>
+            <div style="font-size: 12px; color: #666; margin-bottom: 4px;">{{ $order->shipping_name }}</div>
+            <div style="font-size: 11px; color: #888;">{{ $order->shipping_address }}</div>
+        </div>
+    `);
+
+    document.getElementById('mapLoader').style.display = 'none';
+
+    updateCourierLocation();
+    updateInterval = setInterval(updateCourierLocation, 3000);
+}
+
+function updateCourierLocation() {
+    fetch('{{ route('customer.orders.courier-location', $order) }}')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.location) {
+                const newPosition = {
+                    lat: parseFloat(data.location.latitude),
+                    lng: parseFloat(data.location.longitude)
+                };
+
+                if (!courierMarker) {
+                    courierMarker = L.marker([newPosition.lat, newPosition.lng], { 
+                        icon: motorIcon,
+                        zIndexOffset: 1000
+                    }).addTo(map);
+
+                    courierMarker.bindPopup(`
+                        <div style="font-family: system-ui; padding: 6px;">
+                            <div style="font-weight: 600; margin-bottom: 4px;">🏍️ ${data.courier.name || 'Kurir'}</div>
+                            <div style="font-size: 12px; color: #666; margin-bottom: 2px;">{{ $order->courier_name ?? 'Ekspedisi' }}</div>
+                            <div style="font-size: 10px; color: #10B981; margin-top: 4px;">● Sedang menuju lokasi Anda</div>
+                        </div>
+                    `);
+
+                    createRoute(newPosition, {
+                        lat: {{ $order->shipping_latitude ?? -6.2088 }},
+                        lng: {{ $order->shipping_longitude ?? 106.8456 }}
+                    });
+                } else {
+                    animateMarker(courierMarker, newPosition);
+                    
+                    if (routingControl) {
+                        map.removeControl(routingControl);
+                    }
+                    createRoute(newPosition, {
+                        lat: {{ $order->shipping_latitude ?? -6.2088 }},
+                        lng: {{ $order->shipping_longitude ?? 106.8456 }}
+                    });
+                }
+
+                const bounds = L.latLngBounds([
+                    [newPosition.lat, newPosition.lng],
+                    [{{ $order->shipping_latitude ?? -6.2088 }}, {{ $order->shipping_longitude ?? 106.8456 }}]
+                ]);
+                map.fitBounds(bounds, { padding: [50, 50] });
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching courier location:', error);
+        });
+}
+
+function createRoute(origin, destination) {
+    routingControl = L.Routing.control({
+        waypoints: [
+            L.latLng(origin.lat, origin.lng),
+            L.latLng(destination.lat, destination.lng)
+        ],
+        routeWhileDragging: false,
+        addWaypoints: false,
+        draggableWaypoints: false,
+        fitSelectedRoutes: false,
+        showAlternatives: false,
+        lineOptions: {
+            styles: [{
+                color: '#3B82F6',
+                opacity: 0.8,
+                weight: 5
+            }]
+        },
+        createMarker: function() { return null; },
+    }).addTo(map);
+}
+
+function animateMarker(marker, newPosition) {
+    const startLatLng = marker.getLatLng();
+    const endLatLng = L.latLng(newPosition.lat, newPosition.lng);
+    
+    let step = 0;
+    const numSteps = 30;
+    const delay = 100;
+
+    function animate() {
+        step++;
+        if (step > numSteps) return;
+
+        const progress = step / numSteps;
+        const lat = startLatLng.lat + (endLatLng.lat - startLatLng.lat) * progress;
+        const lng = startLatLng.lng + (endLatLng.lng - startLatLng.lng) * progress;
+
+        marker.setLatLng([lat, lng]);
+
+        if (step < numSteps) {
+            setTimeout(animate, delay);
+        }
+    }
+
+    animate();
+}
+
+if (typeof L !== 'undefined') {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initMap);
+    } else {
+        initMap();
+    }
+} else {
+    window.addEventListener('load', initMap);
+}
+
+window.addEventListener('beforeunload', () => {
+    if (updateInterval) {
+        clearInterval(updateInterval);
+    }
+});
+</script>

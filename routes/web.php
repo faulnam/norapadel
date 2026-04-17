@@ -303,6 +303,7 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'customer'])->
     
     // Order Tracking
     Route::get('/orders/{order}/tracking', [CustomerOrder::class, 'getTracking'])->name('orders.tracking');
+    Route::get('/orders/{order}/courier-location', [CustomerOrder::class, 'getCourierLocation'])->name('orders.courier-location');
     
     // Profile
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');

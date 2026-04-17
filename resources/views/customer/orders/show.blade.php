@@ -5,11 +5,26 @@
 @push('styles')
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
 <style>
     body { padding-top: 0 !important; padding-bottom: 0 !important; }
     #mainNavbar, .mobile-bottom-nav, .footer { display: none !important; }
-    #courierMap { height: 400px; border-radius: 1rem; }
+    #courierMap { height: 450px; border-radius: 1rem; }
+    
+    /* Hide routing instructions */
+    .leaflet-routing-container {
+        display: none;
+    }
+    
+    /* Pulse animation for courier marker */
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.05); opacity: 0.9; }
+    }
+    
+    .courier-marker {
+        animation: pulse 2s ease-in-out infinite;
+    }
 </style>
 @endpush
 
@@ -163,25 +178,46 @@
                 @endif
 
                 <!-- Courier Tracking Map -->
-                @if($order->courier_driver_name && in_array($order->status, ['shipped', 'delivered']))
+                @if(in_array($order->status, ['shipped', 'on_delivery', 'delivered']))
                 <div class="rounded-2xl bg-white p-6 shadow-sm">
-                    <h3 class="mb-4 text-base font-semibold text-black">Lacak Posisi Kurir</h3>
-                    <div id="courierMap" class="mb-4"></div>
-                    <div class="flex items-center justify-between text-sm">
-                        <div class="flex items-center gap-2">
-                            <div class="h-3 w-3 rounded-full bg-blue-500"></div>
-                            <span class="text-zinc-600">Posisi Kurir</span>
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-base font-semibold text-black">Lacak Posisi Kurir</h3>
+                        <div class="flex items-center gap-2 text-xs text-emerald-600">
+                            <div class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                            <span class="font-medium">Live Tracking</span>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <div class="h-3 w-3 rounded-full bg-red-500"></div>
-                            <span class="text-zinc-600">Tujuan Anda</span>
+                    </div>
+                    <div id="courierMap" class="relative">
+                        <div class="absolute inset-0 flex items-center justify-center bg-zinc-100 rounded-xl z-10" id="mapLoader">
+                            <div class="text-center">
+                                <i class="fas fa-spinner fa-spin text-3xl text-zinc-400 mb-2"></i>
+                                <p class="text-sm text-zinc-600">Memuat peta...</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Tracking Info -->
+                    <div class="mt-4 grid grid-cols-2 gap-3">
+                        <div class="rounded-xl bg-blue-50 p-3">
+                            <div class="flex items-center gap-2 mb-1">
+                                <i class="fas fa-route text-blue-600 text-xs"></i>
+                                <span class="text-xs font-medium text-blue-900">Jarak</span>
+                            </div>
+                            <p id="distanceInfo" class="text-sm font-semibold text-blue-900">Menghitung...</p>
+                        </div>
+                        <div class="rounded-xl bg-emerald-50 p-3">
+                            <div class="flex items-center gap-2 mb-1">
+                                <i class="fas fa-shipping-fast text-emerald-600 text-xs"></i>
+                                <span class="text-xs font-medium text-emerald-900">Status</span>
+                            </div>
+                            <p id="progressInfo" class="text-sm font-semibold text-emerald-900">Memuat...</p>
                         </div>
                     </div>
                 </div>
                 @endif
 
                 <!-- Courier Info -->
-                @if($order->courier_driver_name && in_array($order->status, ['ready_to_ship', 'shipped', 'delivered', 'completed']))
+                @if(($order->courier_driver_name || $order->courier_id) && in_array($order->status, ['ready_to_ship', 'shipped', 'on_delivery', 'delivered', 'completed']))
                 <div class="rounded-2xl bg-white p-6 shadow-sm">
                     <h3 class="mb-4 text-base font-semibold text-black">Informasi Kurir</h3>
                     <div class="flex items-center gap-4">
@@ -564,99 +600,238 @@ updateTimer();
 @endif
 </script>
 
-@if($order->courier_driver_name && in_array($order->status, ['shipped', 'delivered']))
+@if(in_array($order->status, ['shipped', 'on_delivery', 'delivered']))
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
 <script>
-// Initialize Map
-const map = L.map('courierMap').setView([{{ $order->shipping_latitude ?? -6.2088 }}, {{ $order->shipping_longitude ?? 106.8456 }}], 14);
+let map, courierMarker, destinationMarker, routingControl;
+let courierPosition = null;
+let updateInterval = null;
+let routeCoordinates = [];
+let currentRouteIndex = 0;
 
-// Add Tile Layer
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap contributors',
-    maxZoom: 19
-}).addTo(map);
+// Motor icon - Simple and clear
+const motorIcon = L.divIcon({
+    html: `
+        <div class="courier-marker" style="position: relative; width: 50px; height: 50px;">
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 46px; height: 46px; background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%); border-radius: 50%; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5); display: flex; align-items: center; justify-content: center; border: 3px solid white;">
+                <i class="fas fa-motorcycle" style="color: white; font-size: 24px;"></i>
+            </div>
+            <div style="position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); background: rgba(59, 130, 246, 0.3); width: 40px; height: 8px; border-radius: 50%; filter: blur(4px);"></div>
+        </div>
+    `,
+    className: '',
+    iconSize: [50, 50],
+    iconAnchor: [25, 25]
+});
 
-// Destination Marker (Customer Address)
 const destinationIcon = L.divIcon({
-    html: '<div style="background: #ef4444; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3);"><i class="fas fa-home" style="color: white; font-size: 14px;"></i></div>',
+    html: `
+        <div style="position: relative; width: 40px; height: 50px;">
+            <div style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 36px; height: 36px; background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); border-radius: 50% 50% 50% 0; transform: translateX(-50%) rotate(-45deg); box-shadow: 0 3px 10px rgba(239, 68, 68, 0.4); border: 3px solid white;">
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(45deg); width: 12px; height: 12px; background: white; border-radius: 50%;"></div>
+            </div>
+        </div>
+    `,
     className: '',
-    iconSize: [32, 32],
-    iconAnchor: [16, 16]
+    iconSize: [40, 50],
+    iconAnchor: [20, 40]
 });
 
-const destinationMarker = L.marker([{{ $order->shipping_latitude ?? -6.2088 }}, {{ $order->shipping_longitude ?? 106.8456 }}], {
-    icon: destinationIcon
-}).addTo(map);
+function initMap() {
+    const destination = { 
+        lat: {{ $order->shipping_latitude ?? -6.2088 }}, 
+        lng: {{ $order->shipping_longitude ?? 106.8456 }} 
+    };
 
-destinationMarker.bindPopup('<b>Alamat Tujuan</b><br>{{ $order->shipping_address }}');
+    // Initialize map
+    map = L.map('courierMap').setView([destination.lat, destination.lng], 14);
 
-// Courier Marker (Moving)
-const courierIcon = L.divIcon({
-    html: '<div style="background: #3b82f6; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 4px 12px rgba(59,130,246,0.5); animation: pulse 2s infinite;"><i class="fas fa-motorcycle" style="color: white; font-size: 16px;"></i></div><style>@keyframes pulse { 0%, 100% { box-shadow: 0 4px 12px rgba(59,130,246,0.5); } 50% { box-shadow: 0 4px 20px rgba(59,130,246,0.8); } }</style>',
-    className: '',
-    iconSize: [40, 40],
-    iconAnchor: [20, 20]
-});
+    // Add tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 19
+    }).addTo(map);
 
-// Simulate courier position (random nearby location for demo)
-let courierLat = {{ $order->shipping_latitude ?? -6.2088 }} + (Math.random() - 0.5) * 0.02;
-let courierLng = {{ $order->shipping_longitude ?? 106.8456 }} + (Math.random() - 0.5) * 0.02;
+    // Add destination marker only
+    destinationMarker = L.marker([destination.lat, destination.lng], { icon: destinationIcon }).addTo(map);
+    destinationMarker.bindPopup(`
+        <div style="font-family: system-ui; padding: 4px; max-width: 200px;">
+            <div style="font-weight: 600; margin-bottom: 4px;">📍 Alamat Tujuan</div>
+            <div style="font-size: 12px; color: #666; margin-bottom: 4px;">{{ $order->shipping_name }}</div>
+            <div style="font-size: 11px; color: #888;">{{ $order->shipping_address }}</div>
+        </div>
+    `);
 
-const courierMarker = L.marker([courierLat, courierLng], {
-    icon: courierIcon
-}).addTo(map);
+    // Hide loader
+    document.getElementById('mapLoader').style.display = 'none';
 
-courierMarker.bindPopup('<b>{{ $order->courier_driver_name }}</b><br>{{ $order->courier_name }}<br><small>Sedang menuju lokasi Anda</small>');
-
-// Draw route line
-const routeLine = L.polyline([
-    [courierLat, courierLng],
-    [{{ $order->shipping_latitude ?? -6.2088 }}, {{ $order->shipping_longitude ?? 106.8456 }}]
-], {
-    color: '#3b82f6',
-    weight: 3,
-    opacity: 0.6,
-    dashArray: '10, 10'
-}).addTo(map);
-
-// Fit bounds to show both markers
-const bounds = L.latLngBounds([
-    [courierLat, courierLng],
-    [{{ $order->shipping_latitude ?? -6.2088 }}, {{ $order->shipping_longitude ?? 106.8456 }}]
-]);
-map.fitBounds(bounds, { padding: [50, 50] });
-
-// Simulate real-time courier movement (for demo)
-let moveStep = 0;
-const totalSteps = 100;
-const startLat = courierLat;
-const startLng = courierLng;
-const endLat = {{ $order->shipping_latitude ?? -6.2088 }};
-const endLng = {{ $order->shipping_longitude ?? 106.8456 }};
-
-function moveCourier() {
-    if (moveStep < totalSteps) {
-        moveStep++;
-        const progress = moveStep / totalSteps;
-        const newLat = startLat + (endLat - startLat) * progress;
-        const newLng = startLng + (endLng - startLng) * progress;
-        
-        courierMarker.setLatLng([newLat, newLng]);
-        routeLine.setLatLngs([
-            [newLat, newLng],
-            [endLat, endLng]
-        ]);
-        
-        // Update map view to follow courier
-        const newBounds = L.latLngBounds([
-            [newLat, newLng],
-            [endLat, endLng]
-        ]);
-        map.fitBounds(newBounds, { padding: [50, 50], animate: true });
-    }
+    // Start tracking
+    updateCourierLocation();
+    updateInterval = setInterval(updateCourierLocation, 3000); // Update every 3 seconds
 }
 
-// Move courier every 3 seconds (for demo)
-setInterval(moveCourier, 3000);
+function updateCourierLocation() {
+    fetch('{{ route('customer.orders.courier-location', $order) }}')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.location) {
+                const newPosition = {
+                    lat: parseFloat(data.location.latitude),
+                    lng: parseFloat(data.location.longitude)
+                };
+
+                if (!courierMarker) {
+                    // Create courier marker
+                    courierMarker = L.marker([newPosition.lat, newPosition.lng], { 
+                        icon: motorIcon,
+                        zIndexOffset: 1000
+                    }).addTo(map);
+
+                    courierMarker.bindPopup(`
+                        <div style="font-family: system-ui; padding: 6px;">
+                            <div style="font-weight: 600; margin-bottom: 4px;">🏍️ ${data.courier.name || 'Kurir'}</div>
+                            <div style="font-size: 12px; color: #666; margin-bottom: 2px;">{{ $order->courier_name ?? 'Ekspedisi' }}</div>
+                            <div style="font-size: 10px; color: #10B981; margin-top: 4px;">● Sedang menuju lokasi Anda</div>
+                        </div>
+                    `);
+
+                    // Create routing
+                    createRoute(newPosition, {
+                        lat: {{ $order->shipping_latitude ?? -6.2088 }},
+                        lng: {{ $order->shipping_longitude ?? 106.8456 }}
+                    });
+                } else {
+                    // Smooth animation to new position
+                    animateMarker(courierMarker, newPosition);
+                    
+                    // Update route
+                    if (routingControl) {
+                        map.removeControl(routingControl);
+                    }
+                    createRoute(newPosition, {
+                        lat: {{ $order->shipping_latitude ?? -6.2088 }},
+                        lng: {{ $order->shipping_longitude ?? 106.8456 }}
+                    });
+                }
+
+                courierPosition = newPosition;
+
+                // Update progress info
+                const progressElement = document.getElementById('progressInfo');
+                if (progressElement) {
+                    if (data.progress) {
+                        progressElement.textContent = `${data.progress}% menuju tujuan`;
+                    } else {
+                        progressElement.textContent = 'Dalam perjalanan';
+                    }
+                }
+
+                // Fit bounds to show all markers
+                const bounds = L.latLngBounds([
+                    [newPosition.lat, newPosition.lng],
+                    [{{ $order->shipping_latitude ?? -6.2088 }}, {{ $order->shipping_longitude ?? 106.8456 }}]
+                ]);
+                map.fitBounds(bounds, { padding: [50, 50] });
+            } else {
+                console.log('Courier location not available:', data.message);
+                const progressElement = document.getElementById('progressInfo');
+                if (progressElement) {
+                    progressElement.textContent = 'Lokasi tidak tersedia';
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching courier location:', error);
+            const progressElement = document.getElementById('progressInfo');
+            if (progressElement) {
+                progressElement.textContent = 'Error memuat lokasi';
+            }
+        });
+}
+
+function createRoute(origin, destination) {
+    routingControl = L.Routing.control({
+        waypoints: [
+            L.latLng(origin.lat, origin.lng),
+            L.latLng(destination.lat, destination.lng)
+        ],
+        routeWhileDragging: false,
+        addWaypoints: false,
+        draggableWaypoints: false,
+        fitSelectedRoutes: false,
+        showAlternatives: false,
+        lineOptions: {
+            styles: [{
+                color: '#3B82F6',
+                opacity: 0.8,
+                weight: 5
+            }]
+        },
+        createMarker: function() { return null; }, // Hide default markers
+    }).addTo(map);
+
+    // Get route info
+    routingControl.on('routesfound', function(e) {
+        const routes = e.routes;
+        const summary = routes[0].summary;
+        
+        // Update distance info
+        const distanceElement = document.getElementById('distanceInfo');
+        if (distanceElement) {
+            const distance = (summary.totalDistance / 1000).toFixed(1) + ' km';
+            const duration = Math.round(summary.totalTime / 60) + ' menit';
+            distanceElement.textContent = `${distance} (~${duration})`;
+        }
+        
+        // Store route coordinates for smooth animation
+        routeCoordinates = routes[0].coordinates;
+    });
+}
+
+function animateMarker(marker, newPosition) {
+    const startLatLng = marker.getLatLng();
+    const endLatLng = L.latLng(newPosition.lat, newPosition.lng);
+    
+    let step = 0;
+    const numSteps = 30;
+    const delay = 100;
+
+    function animate() {
+        step++;
+        if (step > numSteps) return;
+
+        const progress = step / numSteps;
+        const lat = startLatLng.lat + (endLatLng.lat - startLatLng.lat) * progress;
+        const lng = startLatLng.lng + (endLatLng.lng - startLatLng.lng) * progress;
+
+        marker.setLatLng([lat, lng]);
+
+        if (step < numSteps) {
+            setTimeout(animate, delay);
+        }
+    }
+
+    animate();
+}
+
+// Initialize map when page loads
+if (typeof L !== 'undefined') {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initMap);
+    } else {
+        initMap();
+    }
+} else {
+    window.addEventListener('load', initMap);
+}
+
+// Cleanup interval on page unload
+window.addEventListener('beforeunload', () => {
+    if (updateInterval) {
+        clearInterval(updateInterval);
+    }
+});
 </script>
 @endif
 @endsection
