@@ -19,6 +19,235 @@ class BiteshipService
     }
 
     /**
+     * Get shipping rates from Biteship API (Real API)
+     * 
+     * @param array $params
+     * @return array
+     */
+    public function getRatesFromAPI(array $params)
+    {
+        try {
+            // Prepare items for API
+            $items = [];
+            foreach ($params['items'] as $item) {
+                $items[] = [
+                    'name' => $item['name'],
+                    'value' => $item['value'] ?? 10000,
+                    'weight' => $item['weight'] ?? 500,
+                    'quantity' => $item['quantity'] ?? 1,
+                ];
+            }
+
+            $payload = [
+                'origin_postal_code' => $params['origin_postal_code'] ?? config('biteship.origin.postal_code', '60119'),
+                'destination_postal_code' => $params['destination_postal_code'] ?? '61219',
+                'couriers' => 'jne,jnt,anteraja,gojek,grab,paxel',
+                'items' => $items,
+            ];
+
+            $response = Http::withoutVerifying()->withHeaders([
+                'Authorization' => $this->apiKey,
+                'Content-Type' => 'application/json',
+            ])->post("{$this->baseUrl}/rates/couriers", $payload);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                
+                // Process and format the rates
+                $formattedRates = $this->formatRates($data['pricing'] ?? []);
+                
+                return [
+                    'success' => true,
+                    'data' => $formattedRates,
+                ];
+            }
+
+            Log::error('Biteship getRatesFromAPI failed', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+                'payload' => $payload,
+            ]);
+
+            return [
+                'success' => false,
+                'message' => 'Failed to get rates: ' . ($response->json()['error'] ?? $response->body()),
+            ];
+        } catch (\Exception $e) {
+            Log::error('Biteship getRatesFromAPI exception', [
+                'message' => $e->getMessage(),
+            ]);
+
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * Format rates from Biteship API response
+     * 
+     * @param array $pricing
+     * @return array
+     */
+    private function formatRates(array $pricing): array
+    {
+        $formatted = [];
+        
+        foreach ($pricing as $rate) {
+            // Determine service category
+            $category = $this->determineCategory(
+                $rate['courier_code'] ?? '',
+                $rate['courier_service_name'] ?? ''
+            );
+            
+            // Format ETD
+            $etd = $this->formatETD(
+                $rate['duration'] ?? '',
+                $category
+            );
+            
+            $formatted[] = [
+                'courier_code' => $rate['courier_code'] ?? '',
+                'courier_name' => $rate['courier_name'] ?? '',
+                'courier_service_name' => $rate['courier_service_name'] ?? '',
+                'service_type' => $category,
+                'price' => (int) ($rate['price'] ?? 0),
+                'duration' => $etd,
+                'duration_minutes' => $this->convertETDToMinutes($etd, $category),
+                'company' => $rate['company'] ?? '',
+                'description' => $rate['description'] ?? '',
+            ];
+        }
+        
+        // Group by category
+        $grouped = [
+            'instant' => [],
+            'sameday' => [],
+            'regular' => [],
+        ];
+        
+        foreach ($formatted as $rate) {
+            $grouped[$rate['service_type']][] = $rate;
+        }
+        
+        // Sort each group
+        foreach ($grouped as $key => $rates) {
+            usort($rates, function($a, $b) {
+                // Sort by price first, then by duration
+                if ($a['price'] === $b['price']) {
+                    return $a['duration_minutes'] <=> $b['duration_minutes'];
+                }
+                return $a['price'] <=> $b['price'];
+            });
+            $grouped[$key] = $rates;
+        }
+        
+        // Mark cheapest and fastest
+        $allRates = array_merge($grouped['instant'], $grouped['sameday'], $grouped['regular']);
+        if (!empty($allRates)) {
+            $cheapest = min(array_column($allRates, 'price'));
+            $fastest = min(array_column($allRates, 'duration_minutes'));
+            
+            foreach ($grouped as $key => $rates) {
+                foreach ($rates as $index => $rate) {
+                    $grouped[$key][$index]['is_cheapest'] = ($rate['price'] === $cheapest);
+                    $grouped[$key][$index]['is_fastest'] = ($rate['duration_minutes'] === $fastest);
+                }
+            }
+        }
+        
+        return $grouped;
+    }
+    
+    /**
+     * Determine service category based on courier and service name
+     * 
+     * @param string $courierCode
+     * @param string $serviceName
+     * @return string
+     */
+    private function determineCategory(string $courierCode, string $serviceName): string
+    {
+        // Instant couriers
+        if (in_array(strtolower($courierCode), ['gojek', 'gosend', 'grab', 'grabexpress'])) {
+            if (stripos($serviceName, 'same day') !== false) {
+                return 'sameday';
+            }
+            return 'instant';
+        }
+        
+        // Same day services
+        if (stripos($serviceName, 'same day') !== false || 
+            stripos($serviceName, 'sameday') !== false) {
+            return 'sameday';
+        }
+        
+        // Default to regular
+        return 'regular';
+    }
+    
+    /**
+     * Format ETD (Estimated Time of Delivery)
+     * 
+     * @param string $duration
+     * @param string $category
+     * @return string
+     */
+    private function formatETD(string $duration, string $category): string
+    {
+        if ($category === 'instant') {
+            return '1-3 jam';
+        }
+        
+        if ($category === 'sameday') {
+            return '6-8 jam (hari yang sama)';
+        }
+        
+        // Parse duration like "2-3" or "1-2 days"
+        if (preg_match('/(\d+)-(\d+)/', $duration, $matches)) {
+            return $matches[1] . '-' . $matches[2] . ' hari';
+        }
+        
+        if (preg_match('/(\d+)/', $duration, $matches)) {
+            $days = (int) $matches[1];
+            return $days . ' hari';
+        }
+        
+        return $duration ?: '2-3 hari';
+    }
+    
+    /**
+     * Convert ETD to minutes for sorting
+     * 
+     * @param string $etd
+     * @param string $category
+     * @return int
+     */
+    private function convertETDToMinutes(string $etd, string $category): int
+    {
+        if ($category === 'instant') {
+            return 180; // 3 hours
+        }
+        
+        if ($category === 'sameday') {
+            return 480; // 8 hours
+        }
+        
+        // Parse "2-3 hari" format
+        if (preg_match('/(\d+)-(\d+)\s*hari/', $etd, $matches)) {
+            $avgDays = ((int)$matches[1] + (int)$matches[2]) / 2;
+            return (int) ($avgDays * 24 * 60);
+        }
+        
+        if (preg_match('/(\d+)\s*hari/', $etd, $matches)) {
+            return (int) $matches[1] * 24 * 60;
+        }
+        
+        return 2880; // Default 2 days
+    }
+
+    /**
      * Get shipping rates from Biteship
      * 
      * @param array $params
@@ -53,7 +282,9 @@ class BiteshipService
 
         return [
             'success' => true,
-            'data' => ['pricing' => $rates],
+            'data' => [
+                'pricing' => $rates
+            ],
         ];
     }
 

@@ -1022,12 +1022,39 @@
 
             const data = await response.json();
             document.getElementById('shippingLoading').style.display = 'none';
+            
+            console.log('API Response:', data);
 
             if (!response.ok || !data.success) {
                 throw new Error(data.message || 'Gagal mengambil data ongkir');
             }
 
-            displayCourierOptions(data.rates);
+            // Check if data is grouped or flat array
+            let rates = [];
+            if (data.rates && Array.isArray(data.rates)) {
+                rates = data.rates;
+            } else if (data.data && typeof data.data === 'object') {
+                // If grouped (instant, sameday, regular)
+                if (data.data.instant || data.data.sameday || data.data.regular) {
+                    rates = [
+                        ...(data.data.instant || []),
+                        ...(data.data.sameday || []),
+                        ...(data.data.regular || [])
+                    ];
+                } else if (data.data.pricing && Array.isArray(data.data.pricing)) {
+                    rates = data.data.pricing;
+                } else {
+                    rates = Object.values(data.data).flat();
+                }
+            }
+            
+            console.log('Processed rates:', rates);
+
+            if (!rates || rates.length === 0) {
+                throw new Error('Tidak ada ekspedisi tersedia untuk lokasi ini.');
+            }
+
+            displayCourierOptions(rates);
 
         } catch (error) {
             document.getElementById('shippingLoading').style.display = 'none';
@@ -1046,13 +1073,15 @@
             return;
         }
 
-        // Tampilkan info zona & berat
+        // Tampilkan info zona & berat (jika ada)
         const firstRate = rates[0];
-        const zoneLabel = { same_city: 'Dalam Kota', nearby: 'Kota Tetangga', inter_city: 'Antar Kota', inter_island: 'Antar Pulau' };
-        const zoneInfo = document.createElement('div');
-        zoneInfo.className = 'zone-info';
-        zoneInfo.innerHTML = `<i class="fas fa-map-marker-alt"></i> Zona: <strong>${zoneLabel[firstRate.zone] || firstRate.zone}</strong> &nbsp;·&nbsp; <i class="fas fa-weight-hanging"></i> Berat: <strong>${firstRate.weight_kg} kg</strong>`;
-        container.appendChild(zoneInfo);
+        if (firstRate.zone || firstRate.weight_kg) {
+            const zoneLabel = { same_city: 'Dalam Kota', nearby: 'Kota Tetangga', inter_city: 'Antar Kota', inter_island: 'Antar Pulau' };
+            const zoneInfo = document.createElement('div');
+            zoneInfo.className = 'zone-info';
+            zoneInfo.innerHTML = `<i class="fas fa-map-marker-alt"></i> Zona: <strong>${zoneLabel[firstRate.zone] || firstRate.zone || 'N/A'}</strong> &nbsp;·&nbsp; <i class="fas fa-weight-hanging"></i> Berat: <strong>${firstRate.weight_kg || 'N/A'} kg</strong>`;
+            container.appendChild(zoneInfo);
+        }
 
         // Group by courier
         const grouped = {};
@@ -1079,6 +1108,23 @@
             const servicesHtml = courier.services.map(s => {
                 const badgeClass = { regular: 'badge-regular', express: 'badge-express', sameday: 'badge-sameday', instant: 'badge-instant' }[s.service_type] || 'badge-regular';
                 const badgeLabel = { regular: 'Reguler', express: 'Express', sameday: 'Same Day', instant: 'Instant' }[s.service_type] || s.service_type;
+                
+                // Format duration - gunakan estimated_date jika ada, fallback ke duration atau etd
+                let durationText = '';
+                if (s.estimated_date) {
+                    durationText = `Tiba ${s.estimated_date}`;
+                    // Tambahkan label jika ada
+                    if (s.label) {
+                        durationText += ` ${s.label}`;
+                    }
+                } else if (s.duration) {
+                    durationText = s.duration;
+                } else if (s.etd) {
+                    durationText = s.etd;
+                } else {
+                    durationText = 'Estimasi tidak tersedia';
+                }
+                
                 return `
                 <div class="service-item" data-rate='${JSON.stringify(s)}'>
                     <input type="radio" name="selected_service">
@@ -1086,10 +1132,10 @@
                         <div class="service-radio"></div>
                         <div>
                             <div class="service-name">
-                                ${s.courier_service_name}
+                                ${s.courier_service_name || s.service_name || 'Layanan'}
                                 <span class="service-badge ${badgeClass}">${badgeLabel}</span>
                             </div>
-                            <div class="service-duration"><i class="far fa-clock me-1"></i>${s.duration}</div>
+                            <div class="service-duration"><i class="far fa-clock me-1"></i>${durationText}</div>
                         </div>
                     </div>
                     <div class="service-price">${formatRupiah(s.price)}</div>

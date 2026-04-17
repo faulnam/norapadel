@@ -9,7 +9,35 @@
 <style>
     body { padding-top: 0 !important; padding-bottom: 0 !important; }
     #mainNavbar, .mobile-bottom-nav, .footer { display: none !important; }
-    #courierMap { height: 450px; border-radius: 1rem; }
+    
+    /* Fix z-index for navbar */
+    header {
+        position: sticky;
+        top: 0;
+        z-index: 9999 !important;
+    }
+    
+    /* Map container with proper z-index */
+    #courierMap { 
+        height: 450px; 
+        border-radius: 1rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    /* Ensure Leaflet map doesn't override navbar */
+    .leaflet-container {
+        z-index: 1 !important;
+    }
+    
+    .leaflet-pane {
+        z-index: auto !important;
+    }
+    
+    .leaflet-top,
+    .leaflet-bottom {
+        z-index: 10 !important;
+    }
     
     /* Hide routing instructions */
     .leaflet-routing-container {
@@ -30,7 +58,7 @@
 
 @section('content')
 <!-- Navbar -->
-<header class="sticky top-0 z-50 border-b border-black/6 bg-white/80 backdrop-blur-xl">
+<header class="sticky top-0 z-[9999] border-b border-black/6 bg-white/80 backdrop-blur-xl">
     <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-10 lg:px-12">
         <a href="{{ route('home') }}" class="text-xl font-semibold tracking-tight text-black">NoraPadel</a>
         <nav class="hidden items-center gap-8 md:flex">
@@ -187,7 +215,7 @@
                             <span class="font-medium">Live Tracking</span>
                         </div>
                     </div>
-                    <div id="courierMap" class="relative">
+                    <div id="courierMap" class="relative" style="z-index: 1;">
                         <div class="absolute inset-0 flex items-center justify-center bg-zinc-100 rounded-xl z-10" id="mapLoader">
                             <div class="text-center">
                                 <i class="fas fa-spinner fa-spin text-3xl text-zinc-400 mb-2"></i>
@@ -644,8 +672,17 @@ function initMap() {
         lng: {{ $order->shipping_longitude ?? 106.8456 }} 
     };
 
-    // Initialize map
-    map = L.map('courierMap').setView([destination.lat, destination.lng], 14);
+    // Initialize map with proper z-index
+    map = L.map('courierMap', {
+        zoomControl: true,
+        attributionControl: true
+    }).setView([destination.lat, destination.lng], 14);
+    
+    // Set z-index for map container
+    const mapContainer = document.getElementById('courierMap');
+    if (mapContainer) {
+        mapContainer.style.zIndex = '1';
+    }
 
     // Add tile layer
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
