@@ -1182,7 +1182,18 @@
         document.getElementById('courier_service_name').value = rate.courier_service_name;
         document.getElementById('shipping_cost_input').value = rate.price;
         document.getElementById('delivery_distance_km').value = rate.distance_km || 0;
-        document.getElementById('delivery_distance_minutes').value = rate.duration_minutes || 60; // Default 60 menit jika tidak ada
+        document.getElementById('delivery_distance_minutes').value = rate.duration_minutes || 60;
+
+        // Add hidden input for estimated_delivery_date
+        let estimatedDateInput = document.getElementById('estimated_delivery_date_input');
+        if (!estimatedDateInput) {
+            estimatedDateInput = document.createElement('input');
+            estimatedDateInput.type = 'hidden';
+            estimatedDateInput.name = 'estimated_delivery_date';
+            estimatedDateInput.id = 'estimated_delivery_date_input';
+            document.getElementById('checkoutForm').appendChild(estimatedDateInput);
+        }
+        estimatedDateInput.value = rate.estimated_date || rate.duration || '2-3 hari'; // Default 60 menit jika tidak ada
 
         // Calculate shipping discount
         let shippingDiscount = 0;

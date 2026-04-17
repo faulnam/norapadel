@@ -16,6 +16,7 @@ class Order extends Model
         'courier_code',
         'courier_name',
         'courier_service_name',
+        'estimated_delivery_date',
         'biteship_order_id',
         'waybill_id',
         'label_url',
@@ -771,5 +772,60 @@ class Order extends Model
         $secs = $seconds % 60;
 
         return sprintf('%02d:%02d:%02d', $hours, $minutes, $secs);
+    }
+
+    /**
+     * Get calculated estimated delivery date
+     * Fallback jika estimated_delivery_date kosong (untuk order lama)
+     */
+    public function getCalculatedEstimatedDeliveryAttribute(): string
+    {
+        // Jika sudah ada data tersimpan, gunakan itu
+        if ($this->estimated_delivery_date) {
+            return $this->estimated_delivery_date;
+        }
+
+        // Fallback: hitung ulang berdasarkan courier_service_name
+        $serviceType = 'regular'; // default
+        
+        if ($this->courier_service_name) {
+            $serviceName = strtolower($this->courier_service_name);
+            if (str_contains($serviceName, 'instant')) {
+                $serviceType = 'instant';
+            } elseif (str_contains($serviceName, 'same day') || str_contains($serviceName, 'sameday')) {
+                $serviceType = 'sameday';
+            } elseif (str_contains($serviceName, 'express')) {
+                $serviceType = 'express';
+            }
+        }
+
+        // Estimasi hari berdasarkan service type
+        $minDays = 2;
+        $maxDays = 3;
+
+        switch ($serviceType) {
+            case 'instant':
+                return '2-4 jam';
+            case 'sameday':
+                return 'Hari ini';
+            case 'express':
+                $minDays = 1;
+                $maxDays = 2;
+                break;
+            default:
+                $minDays = 2;
+                $maxDays = 3;
+                break;
+        }
+
+        // Convert ke format tanggal
+        $startDate = $this->created_at->addDays($minDays);
+        $endDate = $this->created_at->addDays($maxDays);
+
+        if ($startDate->month === $endDate->month) {
+            return $startDate->format('d') . ' – ' . $endDate->format('d F');
+        } else {
+            return $startDate->format('d M') . ' – ' . $endDate->format('d M');
+        }
     }
 }

@@ -225,20 +225,22 @@
                     </div>
                     
                     <!-- Tracking Info -->
-                    <div class="mt-4 grid grid-cols-2 gap-3">
-                        <div class="rounded-xl bg-blue-50 p-3">
-                            <div class="flex items-center gap-2 mb-1">
-                                <i class="fas fa-route text-blue-600 text-xs"></i>
-                                <span class="text-xs font-medium text-blue-900">Jarak</span>
-                            </div>
-                            <p id="distanceInfo" class="text-sm font-semibold text-blue-900">Menghitung...</p>
+                    <div class="mt-4 rounded-xl bg-zinc-50 p-4 border border-zinc-200">
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fas fa-clock text-zinc-600"></i>
+                            <span class="text-sm font-semibold text-black">Estimasi Pengiriman</span>
                         </div>
-                        <div class="rounded-xl bg-emerald-50 p-3">
-                            <div class="flex items-center gap-2 mb-1">
-                                <i class="fas fa-shipping-fast text-emerald-600 text-xs"></i>
-                                <span class="text-xs font-medium text-emerald-900">Status</span>
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-zinc-600">Layanan</span>
+                                <span class="text-sm font-semibold text-black">{{ $order->courier_service_name ?? 'Reguler' }}</span>
                             </div>
-                            <p id="progressInfo" class="text-sm font-semibold text-emerald-900">Memuat...</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-zinc-600">Estimasi Tiba</span>
+                                <span class="text-sm font-semibold text-black">
+                                    {{ $order->calculated_estimated_delivery }}
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -754,16 +756,6 @@ function updateCourierLocation() {
 
                 courierPosition = newPosition;
 
-                // Update progress info
-                const progressElement = document.getElementById('progressInfo');
-                if (progressElement) {
-                    if (data.progress) {
-                        progressElement.textContent = `${data.progress}% menuju tujuan`;
-                    } else {
-                        progressElement.textContent = 'Dalam perjalanan';
-                    }
-                }
-
                 // Fit bounds to show all markers
                 const bounds = L.latLngBounds([
                     [newPosition.lat, newPosition.lng],
@@ -772,18 +764,10 @@ function updateCourierLocation() {
                 map.fitBounds(bounds, { padding: [50, 50] });
             } else {
                 console.log('Courier location not available:', data.message);
-                const progressElement = document.getElementById('progressInfo');
-                if (progressElement) {
-                    progressElement.textContent = 'Lokasi tidak tersedia';
-                }
             }
         })
         .catch(error => {
             console.error('Error fetching courier location:', error);
-            const progressElement = document.getElementById('progressInfo');
-            if (progressElement) {
-                progressElement.textContent = 'Error memuat lokasi';
-            }
         });
 }
 
@@ -811,16 +795,6 @@ function createRoute(origin, destination) {
     // Get route info
     routingControl.on('routesfound', function(e) {
         const routes = e.routes;
-        const summary = routes[0].summary;
-        
-        // Update distance info
-        const distanceElement = document.getElementById('distanceInfo');
-        if (distanceElement) {
-            const distance = (summary.totalDistance / 1000).toFixed(1) + ' km';
-            const duration = Math.round(summary.totalTime / 60) + ' menit';
-            distanceElement.textContent = `${distance} (~${duration})`;
-        }
-        
         // Store route coordinates for smooth animation
         routeCoordinates = routes[0].coordinates;
     });

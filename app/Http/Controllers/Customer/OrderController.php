@@ -68,6 +68,7 @@ class OrderController extends Controller
             'courier_code' => 'nullable|string',
             'courier_name' => 'nullable|string',
             'courier_service_name' => 'nullable|string',
+            'estimated_delivery_date' => 'nullable|string',
             'notes' => 'nullable|string|max:500',
         ], [
             'shipping_name.required' => 'Nama penerima wajib diisi.',
@@ -144,6 +145,7 @@ class OrderController extends Controller
                 'courier_code' => $validated['courier_code'] ?? null,
                 'courier_name' => $validated['courier_name'] ?? null,
                 'courier_service_name' => $validated['courier_service_name'] ?? null,
+                'estimated_delivery_date' => $validated['estimated_delivery_date'] ?? null,
                 'notes' => $validated['notes'],
                 'status' => Order::STATUS_PENDING_PAYMENT,
                 'payment_status' => Order::PAYMENT_UNPAID,
