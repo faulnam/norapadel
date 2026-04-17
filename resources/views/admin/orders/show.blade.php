@@ -760,6 +760,76 @@
                     <span class="status-badge {{ $paymentClass }}">{{ $order->payment_status_label }}</span>
                 </div>
                 <div class="detail-card-body">
+                    <!-- Payment Method Info -->
+                    @if($order->payment_method)
+                        @if(strtolower($order->payment_method) === 'cod' || strtolower($order->payment_gateway) === 'cod')
+                            <!-- COD Payment Info -->
+                            <div style="background: #fef3c7; border: 1px solid #fbbf24; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+                                <div style="display: flex; align-items: start; gap: 12px;">
+                                    <div style="width: 40px; height: 40px; background: #fbbf24; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                        <i class="fas fa-hand-holding-usd" style="color: white; font-size: 18px;"></i>
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <div style="font-size: 14px; font-weight: 600; color: #92400e; margin-bottom: 4px;">Cash on Delivery (COD)</div>
+                                        <div style="font-size: 12px; color: #92400e; margin-bottom: 8px;">Pembayaran saat barang diterima</div>
+                                        <div style="background: white; border-radius: 6px; padding: 10px; margin-bottom: 8px;">
+                                            <div style="font-size: 11px; color: #92400e; margin-bottom: 4px;">Total yang harus dibayar:</div>
+                                            <div style="font-size: 16px; font-weight: 700; color: #92400e;">{{ $order->formatted_total }}</div>
+                                        </div>
+                                        <div style="font-size: 11px; color: #92400e;">
+                                            <div style="margin-bottom: 4px;"><i class="fas fa-info-circle" style="margin-right: 6px;"></i>Customer akan bayar ke kurir saat pengiriman</div>
+                                            <div style="margin-bottom: 4px;"><i class="fas fa-check-circle" style="margin-right: 6px;"></i>Pastikan kurir collect payment</div>
+                                            @if($order->status === 'processing' || $order->status === 'ready_to_ship')
+                                            <div style="margin-bottom: 4px;"><i class="fas fa-clock" style="margin-right: 6px;"></i>Siapkan barang untuk dikirim</div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @else
+                            <!-- Non-COD Payment Info -->
+                            <div style="background: #dbeafe; border: 1px solid #3b82f6; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+                                <div style="display: flex; align-items: start; gap: 12px;">
+                                    <div style="width: 40px; height: 40px; background: #3b82f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                        <i class="fas fa-credit-card" style="color: white; font-size: 18px;"></i>
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <div style="font-size: 14px; font-weight: 600; color: #1e40af; margin-bottom: 4px;">
+                                            {{ ucfirst($order->payment_gateway ?? 'Online Payment') }}
+                                        </div>
+                                        <div style="font-size: 12px; color: #1e40af; margin-bottom: 8px;">
+                                            @if($order->payment_channel)
+                                                {{ str_replace('_', ' ', ucwords($order->payment_channel, '_')) }}
+                                            @else
+                                                Pembayaran Online
+                                            @endif
+                                        </div>
+                                        @if($order->payment_status === 'paid')
+                                            <div style="background: #d1fae5; border: 1px solid #10b981; border-radius: 6px; padding: 10px; margin-bottom: 8px;">
+                                                <div style="font-size: 11px; color: #065f46; margin-bottom: 4px;"><i class="fas fa-check-circle" style="margin-right: 6px;"></i>Pembayaran Berhasil</div>
+                                                @if($order->paid_at)
+                                                <div style="font-size: 11px; color: #065f46;"><i class="fas fa-calendar-check" style="margin-right: 6px;"></i>{{ $order->paid_at->format('d M Y, H:i') }} WIB</div>
+                                                @endif
+                                            </div>
+                                        @elseif($order->payment_status === 'pending')
+                                            <div style="background: white; border: 1px solid #fbbf24; border-radius: 6px; padding: 10px; margin-bottom: 8px;">
+                                                <div style="font-size: 11px; color: #92400e;"><i class="fas fa-clock" style="margin-right: 6px;"></i>Menunggu pembayaran dari customer</div>
+                                            </div>
+                                        @elseif($order->payment_status === 'pending_verification')
+                                            <div style="background: white; border: 1px solid #3b82f6; border-radius: 6px; padding: 10px; margin-bottom: 8px;">
+                                                <div style="font-size: 11px; color: #1e40af;"><i class="fas fa-hourglass-half" style="margin-right: 6px;"></i>Menunggu verifikasi admin</div>
+                                            </div>
+                                        @endif
+                                        <div style="background: white; border-radius: 6px; padding: 10px;">
+                                            <div style="font-size: 11px; color: #1e40af; margin-bottom: 4px;">Total Pembayaran:</div>
+                                            <div style="font-size: 16px; font-weight: 700; color: #1e40af;">{{ $order->formatted_total }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                    @endif
+                    
                     @if($order->payment_proof)
                         <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">Bukti Pembayaran:</div>
                         <a href="{{ asset('storage/' . $order->payment_proof) }}" target="_blank">
@@ -785,7 +855,7 @@
                             </form>
                         </div>
                         @endif
-                    @else
+                    @elseif(!$order->payment_method || (strtolower($order->payment_method) !== 'cod' && strtolower($order->payment_gateway) !== 'cod'))
                         <p style="font-size: 13px; color: var(--text-muted); margin: 0;">Belum ada bukti pembayaran</p>
                     @endif
 

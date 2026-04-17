@@ -19,5 +19,7 @@ return [
         'anteraja' => 'AnterAja',
         'spx' => 'Shopee Express',
         'paxel' => 'Paxel',
+        'gosend' => 'GoSend',
+        'grabexpress' => 'GrabExpress',
     ],
 ];

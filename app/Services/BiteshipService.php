@@ -87,7 +87,7 @@ class BiteshipService
         // Harga dasar per kg per zona (dalam rupiah)
         $baseRates = [
             'same_city'    => ['regular' => 8000,  'express' => 14000, 'sameday' => 20000, 'instant' => 30000],
-            'nearby'       => ['regular' => 12000, 'express' => 20000, 'sameday' => 35000, 'instant' => null],
+            'nearby'       => ['regular' => 12000, 'express' => 20000, 'sameday' => 35000, 'instant' => 45000],
             'inter_city'   => ['regular' => 15000, 'express' => 25000, 'sameday' => null,  'instant' => null],
             'inter_island' => ['regular' => 25000, 'express' => 40000, 'sameday' => null,  'instant' => null],
         ];
@@ -119,6 +119,22 @@ class BiteshipService
                     ['name' => 'Regular',      'type' => 'regular',  'multiplier' => 1.05],
                     ['name' => 'Same Day',     'type' => 'sameday',  'multiplier' => 1.1],
                     ['name' => 'Instant',      'type' => 'instant',  'multiplier' => 1.0],
+                ],
+            ],
+            [
+                'courier_code'         => 'gosend',
+                'courier_name'         => 'GoSend',
+                'services' => [
+                    ['name' => 'Instant',      'type' => 'instant',  'multiplier' => 1.0],
+                    ['name' => 'Same Day',     'type' => 'sameday',  'multiplier' => 0.85],
+                ],
+            ],
+            [
+                'courier_code'         => 'grabexpress',
+                'courier_name'         => 'GrabExpress',
+                'services' => [
+                    ['name' => 'Instant',      'type' => 'instant',  'multiplier' => 0.95],
+                    ['name' => 'Same Day',     'type' => 'sameday',  'multiplier' => 0.8],
                 ],
             ],
         ];
@@ -297,6 +313,16 @@ class BiteshipService
                 $letters = chr(rand(65, 90)) . chr(rand(65, 90));
                 return 'PXL' . str_pad(rand(0, 99999999), 8, '0', STR_PAD_LEFT) . $letters;
                 
+            case 'gosend':
+                // Format GoSend: GOSEND- + timestamp + 4 digit random
+                // Contoh: GOSEND-17763116031234
+                return 'GOSEND-' . time() . str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT);
+                
+            case 'grabexpress':
+                // Format GrabExpress: GRAB + 12 digit angka
+                // Contoh: GRAB123456789012
+                return 'GRAB' . str_pad(rand(0, 999999999999), 12, '0', STR_PAD_LEFT);
+                
             default:
                 return strtoupper($courierCode) . '-' . time();
         }
@@ -366,6 +392,46 @@ class BiteshipService
                     'total_trips' => 950,
                     'vehicle_type' => 'Motor',
                     'vehicle_number' => 'L 2345 KL',
+                ],
+            ],
+            'gosend' => [
+                [
+                    'name' => 'Hendra Wijaya',
+                    'phone' => '081234567896',
+                    'photo' => 'https://ui-avatars.com/api/?name=Hendra+Wijaya&background=00AA13&color=fff&size=200',
+                    'rating' => 4.9,
+                    'total_trips' => 1580,
+                    'vehicle_type' => 'Motor',
+                    'vehicle_number' => 'L 6789 MN',
+                ],
+                [
+                    'name' => 'Irfan Hakim',
+                    'phone' => '081234567897',
+                    'photo' => 'https://ui-avatars.com/api/?name=Irfan+Hakim&background=00AA13&color=fff&size=200',
+                    'rating' => 4.8,
+                    'total_trips' => 1320,
+                    'vehicle_type' => 'Motor',
+                    'vehicle_number' => 'L 4321 OP',
+                ],
+            ],
+            'grabexpress' => [
+                [
+                    'name' => 'Joko Susilo',
+                    'phone' => '081234567898',
+                    'photo' => 'https://ui-avatars.com/api/?name=Joko+Susilo&background=00B14F&color=fff&size=200',
+                    'rating' => 4.9,
+                    'total_trips' => 1450,
+                    'vehicle_type' => 'Motor',
+                    'vehicle_number' => 'L 8765 QR',
+                ],
+                [
+                    'name' => 'Kurniawan Adi',
+                    'phone' => '081234567899',
+                    'photo' => 'https://ui-avatars.com/api/?name=Kurniawan+Adi&background=00B14F&color=fff&size=200',
+                    'rating' => 4.8,
+                    'total_trips' => 1290,
+                    'vehicle_type' => 'Motor',
+                    'vehicle_number' => 'L 5432 ST',
                 ],
             ],
         ];

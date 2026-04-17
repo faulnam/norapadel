@@ -175,6 +175,68 @@ class PaylabsService
     }
 
     /**
+     * Refund transaction
+     * 
+     * @param string $transactionId
+     * @param float $amount
+     * @param string $reason
+     * @return array
+     */
+    public function refundTransaction(string $transactionId, float $amount, string $reason = 'Order cancelled')
+    {
+        // Mock for sandbox
+        if ($this->sandbox) {
+            return $this->mockRefundTransaction($transactionId, $amount);
+        }
+
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $this->apiKey,
+                'Content-Type' => 'application/json',
+            ])->post($this->baseUrl . '/v1/payment/refund', [
+                'transaction_id' => $transactionId,
+                'amount' => $amount,
+                'reason' => $reason,
+            ]);
+
+            if ($response->successful()) {
+                $result = $response->json();
+                
+                return [
+                    'success' => true,
+                    'data' => [
+                        'refund_id' => $result['data']['refund_id'] ?? null,
+                        'transaction_id' => $transactionId,
+                        'amount' => $amount,
+                        'status' => $result['data']['status'] ?? 'pending',
+                        'refunded_at' => $result['data']['refunded_at'] ?? now()->toIso8601String(),
+                    ],
+                ];
+            }
+
+            Log::error('Paylabs refund failed', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+
+            return [
+                'success' => false,
+                'message' => 'Failed to process refund: ' . ($response->json()['message'] ?? $response->body()),
+            ];
+
+        } catch (\Exception $e) {
+            Log::error('Paylabs refund exception', [
+                'message' => $e->getMessage(),
+            ]);
+
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
      * Mock create transaction for sandbox testing
      */
     protected function mockCreateTransaction(array $data)
@@ -230,6 +292,23 @@ class PaylabsService
                 'status' => 'pending',
                 'amount' => 0,
                 'paid_at' => null,
+            ],
+        ];
+    }
+
+    /**
+     * Mock refund for sandbox testing
+     */
+    protected function mockRefundTransaction(string $transactionId, float $amount)
+    {
+        return [
+            'success' => true,
+            'data' => [
+                'refund_id' => 'REFUND-' . strtoupper(uniqid()),
+                'transaction_id' => $transactionId,
+                'amount' => $amount,
+                'status' => 'completed',
+                'refunded_at' => now()->toIso8601String(),
             ],
         ];
     }

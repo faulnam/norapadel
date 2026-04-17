@@ -70,10 +70,12 @@ class ShippingController extends Controller
                     'courier_name'         => $rate['courier_name'],
                     'courier_service_name' => $rate['courier_service_name'],
                     'duration'             => $rate['duration'] ?? '',
+                    'duration_minutes'     => $rate['duration_minutes'] ?? 0,
                     'service_type'         => $rate['service_type'] ?? '',
                     'price'                => $rate['price'],
                     'zone'                 => $rate['zone'] ?? '',
                     'weight_kg'            => $rate['weight_kg'] ?? '',
+                    'distance_km'          => $rate['distance_km'] ?? 0,
                 ];
             })
             ->values();

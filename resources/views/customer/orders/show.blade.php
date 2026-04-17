@@ -69,6 +69,29 @@
                         <span class="rounded-full px-3 py-1 text-xs font-medium {{ $statusColor }}">{{ $order->status_label }}</span>
                     </div>
                     <p class="text-sm text-zinc-500">{{ $order->created_at->format('d F Y, H:i') }}</p>
+                    
+                    @if($order->status === 'pending_payment' && !$order->isExpired())
+                        <div class="mt-4 rounded-xl bg-amber-50 border border-amber-200 p-4">
+                            <div class="flex items-start gap-3">
+                                <i class="fas fa-clock text-amber-600 mt-0.5"></i>
+                                <div class="flex-1">
+                                    <p class="text-sm font-semibold text-amber-900 mb-1">Segera Lakukan Pembayaran</p>
+                                    <p class="text-xs text-amber-800 mb-2">Pesanan akan otomatis dibatalkan jika tidak dibayar dalam:</p>
+                                    <div class="text-lg font-bold text-amber-900" id="expirationTimer">{{ $order->formatted_expiration_time }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    @elseif($order->status === 'pending_payment' && $order->isExpired())
+                        <div class="mt-4 rounded-xl bg-red-50 border border-red-200 p-4">
+                            <div class="flex items-start gap-3">
+                                <i class="fas fa-exclamation-circle text-red-600 mt-0.5"></i>
+                                <div class="flex-1">
+                                    <p class="text-sm font-semibold text-red-900 mb-1">Pesanan Expired</p>
+                                    <p class="text-xs text-red-800">Pesanan ini akan segera dibatalkan karena tidak dibayar dalam 24 jam.</p>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                 </div>
 
                 <!-- Tracking Timeline -->
@@ -261,6 +284,89 @@
                             <span class="text-black">{{ $order->formatted_total }}</span>
                         </div>
                     </div>
+                    
+                    <!-- Payment Method Info -->
+                    @if($order->payment_method)
+                        <div class="mt-4 pt-4 border-t border-zinc-200">
+                            <p class="text-xs font-semibold text-zinc-500 mb-2">Metode Pembayaran</p>
+                            
+                            @if(strtolower($order->payment_method) === 'cod' || strtolower($order->payment_gateway) === 'cod')
+                                <!-- COD Payment Info -->
+                                <div class="rounded-xl bg-amber-50 border border-amber-200 p-4">
+                                    <div class="flex items-start gap-3">
+                                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 flex-shrink-0">
+                                            <i class="fas fa-hand-holding-usd text-amber-600"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <p class="text-sm font-semibold text-amber-900 mb-1">Cash on Delivery (COD)</p>
+                                            <p class="text-xs text-amber-800 mb-2">Bayar saat barang diterima</p>
+                                            <div class="space-y-1">
+                                                <div class="flex items-center gap-2 text-xs text-amber-700">
+                                                    <i class="fas fa-check-circle text-amber-600"></i>
+                                                    <span>Siapkan uang pas <strong>{{ $order->formatted_total }}</strong></span>
+                                                </div>
+                                                <div class="flex items-center gap-2 text-xs text-amber-700">
+                                                    <i class="fas fa-check-circle text-amber-600"></i>
+                                                    <span>Bayar langsung ke kurir</span>
+                                                </div>
+                                                @if($order->status === 'processing' || $order->status === 'ready_to_ship')
+                                                <div class="flex items-center gap-2 text-xs text-amber-700">
+                                                    <i class="fas fa-clock text-amber-600"></i>
+                                                    <span>Kurir akan menghubungi Anda</span>
+                                                </div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @else
+                                <!-- Non-COD Payment Info -->
+                                <div class="rounded-xl bg-blue-50 border border-blue-200 p-4">
+                                    <div class="flex items-start gap-3">
+                                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 flex-shrink-0">
+                                            <i class="fas fa-credit-card text-blue-600"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <p class="text-sm font-semibold text-blue-900 mb-1">
+                                                {{ ucfirst($order->payment_gateway ?? 'Online Payment') }}
+                                            </p>
+                                            <p class="text-xs text-blue-800 mb-2">
+                                                @if($order->payment_channel)
+                                                    {{ str_replace('_', ' ', ucwords($order->payment_channel, '_')) }}
+                                                @else
+                                                    Pembayaran Online
+                                                @endif
+                                            </p>
+                                            <div class="space-y-1">
+                                                @if($order->payment_status === 'paid')
+                                                    <div class="flex items-center gap-2 text-xs text-emerald-700">
+                                                        <i class="fas fa-check-circle text-emerald-600"></i>
+                                                        <span>Pembayaran berhasil</span>
+                                                    </div>
+                                                    @if($order->paid_at)
+                                                    <div class="flex items-center gap-2 text-xs text-blue-700">
+                                                        <i class="fas fa-calendar-check text-blue-600"></i>
+                                                        <span>{{ $order->paid_at->format('d M Y, H:i') }}</span>
+                                                    </div>
+                                                    @endif
+                                                @elseif($order->payment_status === 'pending')
+                                                    <div class="flex items-center gap-2 text-xs text-amber-700">
+                                                        <i class="fas fa-clock text-amber-600"></i>
+                                                        <span>Menunggu pembayaran</span>
+                                                    </div>
+                                                @elseif($order->payment_status === 'pending_verification')
+                                                    <div class="flex items-center gap-2 text-xs text-blue-700">
+                                                        <i class="fas fa-hourglass-half text-blue-600"></i>
+                                                        <span>Menunggu verifikasi admin</span>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                    @endif
                 </div>
 
                 <!-- Actions -->
@@ -269,6 +375,13 @@
                    class="block w-full rounded-xl bg-black py-3 text-center text-sm font-medium text-white transition hover:bg-black/90">
                     Bayar Sekarang
                 </a>
+                @endif
+
+                @if($order->canBeCancelled())
+                <button type="button" onclick="showCancelModal()" 
+                   class="block w-full rounded-xl border border-red-300 bg-white py-3 text-center text-sm font-medium text-red-600 transition hover:bg-red-50">
+                    Batalkan Pesanan
+                </button>
                 @endif
 
                 <a href="{{ route('customer.orders.index') }}" 
@@ -299,6 +412,71 @@
             <h3 id="photoModalTitle" class="text-lg font-semibold text-black mb-4"></h3>
             <img id="photoModalImage" src="" class="w-full rounded-lg" alt="Bukti Foto">
         </div>
+    </div>
+</div>
+
+<!-- Cancel Order Modal -->
+<div id="cancelModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onclick="closeCancelModal(event)">
+    <div class="relative mx-4 w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl" onclick="event.stopPropagation()">
+        <div class="mb-6 flex justify-center">
+            <div class="flex h-20 w-20 items-center justify-center rounded-full bg-red-100">
+                <i class="fas fa-exclamation-triangle text-3xl text-red-600"></i>
+            </div>
+        </div>
+        
+        <h2 class="mb-4 text-center text-2xl font-bold text-black">Batalkan Pesanan?</h2>
+        
+        <div class="mb-6 space-y-3 text-center">
+            <p class="text-sm text-zinc-600">Apakah Anda yakin ingin membatalkan pesanan ini?</p>
+            
+            @if($order->requiresRefund())
+            <div class="rounded-xl bg-blue-50 p-4 text-left">
+                <h3 class="mb-2 flex items-center gap-2 text-sm font-semibold text-blue-900">
+                    <i class="fas fa-info-circle"></i>
+                    Informasi Refund:
+                </h3>
+                <ul class="space-y-2 text-xs text-blue-800">
+                    <li class="flex items-start gap-2">
+                        <i class="fas fa-check-circle mt-0.5 flex-shrink-0"></i>
+                        <span>Dana sebesar <strong>{{ $order->formatted_total }}</strong> akan dikembalikan</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i class="fas fa-check-circle mt-0.5 flex-shrink-0"></i>
+                        <span>Proses refund memakan waktu 1-3 hari kerja</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i class="fas fa-check-circle mt-0.5 flex-shrink-0"></i>
+                        <span>Stok produk akan dikembalikan</span>
+                    </li>
+                </ul>
+            </div>
+            @else
+            <div class="rounded-xl bg-zinc-100 p-4">
+                <p class="text-xs text-zinc-600">Stok produk akan dikembalikan setelah pembatalan.</p>
+            </div>
+            @endif
+        </div>
+        
+        <form action="{{ route('customer.orders.cancel', $order) }}" method="POST">
+            @csrf
+            @method('PATCH')
+            
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-zinc-700 mb-2">Alasan Pembatalan (Opsional)</label>
+                <textarea name="cancel_reason" rows="3" class="w-full rounded-xl border border-zinc-300 px-4 py-2 text-sm focus:border-black focus:outline-none focus:ring-2 focus:ring-black/20" placeholder="Berikan alasan pembatalan..."></textarea>
+            </div>
+            
+            <div class="flex gap-3">
+                <button type="button" onclick="closeCancelModal()" 
+                        class="flex-1 rounded-xl border-2 border-zinc-300 bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-zinc-50">
+                    Tidak
+                </button>
+                <button type="submit" 
+                        class="flex-1 rounded-xl bg-red-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-red-700">
+                    Ya, Batalkan
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -333,6 +511,20 @@ function closePhotoModal() {
     document.body.style.overflow = 'auto';
 }
 
+// Show Cancel Modal
+function showCancelModal() {
+    document.getElementById('cancelModal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+// Close Cancel Modal
+function closeCancelModal(event) {
+    if (!event || event.target.id === 'cancelModal') {
+        document.getElementById('cancelModal').classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
+}
+
 // Close dropdown when clicking outside
 document.addEventListener('click', function(event) {
     const dropdowns = document.querySelectorAll('[id^="photo-"]');
@@ -342,6 +534,34 @@ document.addEventListener('click', function(event) {
         dropdowns.forEach(d => d.classList.add('hidden'));
     }
 });
+
+// Expiration Timer
+@if($order->status === 'pending_payment' && !$order->isExpired())
+let expirationSeconds = {{ $order->expiration_time }};
+const timerElement = document.getElementById('expirationTimer');
+
+function updateTimer() {
+    if (expirationSeconds <= 0) {
+        timerElement.textContent = 'Expired';
+        timerElement.classList.add('text-red-600');
+        // Reload page to show expired state
+        setTimeout(() => location.reload(), 2000);
+        return;
+    }
+    
+    const hours = Math.floor(expirationSeconds / 3600);
+    const minutes = Math.floor((expirationSeconds % 3600) / 60);
+    const seconds = expirationSeconds % 60;
+    
+    timerElement.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    
+    expirationSeconds--;
+}
+
+// Update timer every second
+setInterval(updateTimer, 1000);
+updateTimer();
+@endif
 </script>
 
 @if($order->courier_driver_name && in_array($order->status, ['shipped', 'delivered']))

@@ -360,37 +360,22 @@ class Order extends Model
     /**
      * Check if order can be cancelled
      * Rules:
-     * 1. Cannot cancel if already cancelled or completed
-     * 2. Cannot cancel if courier has picked up the order (picked_up, on_delivery, delivered)
-     * 3. Can only cancel within 5 minutes after order is created
+     * 1. Can only cancel if status is 'processing'
+     * 2. Cannot cancel if already cancelled or completed
+     * 3. Cannot cancel if already shipped, delivered, or ready_to_ship
      */
     public function canBeCancelled(): bool
     {
-        // Cannot cancel if already cancelled or completed
-        if (in_array($this->status, [self::STATUS_CANCELLED, self::STATUS_COMPLETED])) {
-            return false;
-        }
-
-        // Cannot cancel if already picked up or being delivered by courier
-        if (in_array($this->status, [self::STATUS_PICKED_UP, self::STATUS_ON_DELIVERY, self::STATUS_DELIVERED])) {
-            return false;
-        }
-
-        // Check if within 5 minutes window from order creation
-        $minutesSinceCreated = now()->diffInMinutes($this->created_at);
-        if ($minutesSinceCreated > self::CANCEL_WAIT_MINUTES) {
-            return false; // More than 5 minutes, cannot cancel
-        }
-
-        return true;
+        // Can only cancel if status is processing
+        return $this->status === self::STATUS_PROCESSING;
     }
 
     /**
-     * Check if order was paid via payment gateway
+     * Check if order was paid via payment gateway (non-COD)
      */
     public function isPaidViaGateway(): bool
     {
-        return $this->payment_method === 'payment_gateway' 
+        return !$this->isCod()
             && $this->payment_status === self::PAYMENT_PAID
             && $this->paid_at !== null;
     }
@@ -424,7 +409,7 @@ class Order extends Model
     }
 
     /**
-     * Cancel order
+     * Cancel order with refund handling
      */
     public function cancelOrder(string $reason = null): bool
     {
@@ -432,10 +417,22 @@ class Order extends Model
             return false;
         }
 
-        $this->update([
+        // Check if refund is needed (non-COD and paid)
+        $needsRefund = $this->requiresRefund();
+
+        $updateData = [
             'status' => self::STATUS_CANCELLED,
             'cancel_reason' => $reason ?? 'Dibatalkan oleh customer',
-        ]);
+        ];
+
+        // If refund is needed, set refund status
+        if ($needsRefund) {
+            $updateData['refund_status'] = self::REFUND_PENDING;
+            $updateData['refund_amount'] = $this->total;
+            $updateData['refund_at'] = now();
+        }
+
+        $this->update($updateData);
 
         return true;
     }
@@ -712,5 +709,67 @@ class Order extends Model
     public function scopeCompleted($query)
     {
         return $query->where('status', self::STATUS_COMPLETED);
+    }
+
+    /**
+     * Scope for expired pending payment orders (>24 hours)
+     */
+    public function scopeExpiredPendingPayment($query)
+    {
+        return $query->where('status', self::STATUS_PENDING_PAYMENT)
+                    ->where('created_at', '<', now()->subHours(24));
+    }
+
+    /**
+     * Check if order is expired (pending payment > 24 hours)
+     */
+    public function isExpired(): bool
+    {
+        if ($this->status !== self::STATUS_PENDING_PAYMENT) {
+            return false;
+        }
+
+        return $this->created_at->addHours(24)->isPast();
+    }
+
+    /**
+     * Get remaining time before expiration (in seconds)
+     */
+    public function getExpirationTimeRemaining(): int
+    {
+        if ($this->status !== self::STATUS_PENDING_PAYMENT) {
+            return 0;
+        }
+
+        $expiresAt = $this->created_at->addHours(24);
+        $remaining = now()->diffInSeconds($expiresAt, false);
+
+        return max(0, (int) $remaining);
+    }
+
+    /**
+     * Get expiration time as attribute
+     */
+    public function getExpirationTimeAttribute(): int
+    {
+        return $this->getExpirationTimeRemaining();
+    }
+
+    /**
+     * Get formatted expiration time
+     */
+    public function getFormattedExpirationTimeAttribute(): string
+    {
+        $seconds = $this->getExpirationTimeRemaining();
+        
+        if ($seconds <= 0) {
+            return 'Expired';
+        }
+
+        $hours = floor($seconds / 3600);
+        $minutes = floor(($seconds % 3600) / 60);
+        $secs = $seconds % 60;
+
+        return sprintf('%02d:%02d:%02d', $hours, $minutes, $secs);
     }
 }

@@ -1063,7 +1063,13 @@
             grouped[rate.courier_code].services.push(rate);
         });
 
-        const courierIcons = { jnt: 'fa-truck', anteraja: 'fa-shipping-fast', paxel: 'fa-bolt' };
+        const courierIcons = { 
+            jnt: 'fa-truck', 
+            anteraja: 'fa-shipping-fast', 
+            paxel: 'fa-bolt',
+            gosend: 'fa-motorcycle',
+            grabexpress: 'fa-car'
+        };
 
         Object.entries(grouped).forEach(([code, courier]) => {
             const card = document.createElement('div');

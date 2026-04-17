@@ -275,15 +275,18 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'customer'])->
             abort(403);
         }
         
-        // Update order to COD
+        // Update order to COD with processing status
         $order->update([
             'payment_gateway' => 'cod',
             'payment_channel' => 'cash_on_delivery',
-            'payment_status' => 'unpaid',
+            'payment_method' => 'cod',
+            'payment_status' => 'paid', // Set as paid for COD
+            'status' => 'processing', // Langsung ke processing
+            'paid_at' => now(),
         ]);
         
         return redirect()->route('customer.orders.show', $order)
-            ->with('success', 'Pesanan akan dibayar saat barang diterima (COD).');
+            ->with('success', 'Pesanan berhasil dikonfirmasi! Pesanan Anda sedang diproses. Bayar saat barang diterima (COD).');
     })->name('payment.cod');
     
     // Payment Gateway (Paylabs)
