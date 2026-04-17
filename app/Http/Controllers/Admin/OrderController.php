@@ -158,15 +158,8 @@ class OrderController extends Controller
     {
         $order->load('user', 'items.product', 'courier');
         
-        // Get Biteship label if available
-        $biteshipLabel = null;
-        if ($order->biteship_order_id && !config('biteship.sandbox', true)) {
-            $biteship = app(\App\Services\BiteshipService::class);
-            $result = $biteship->printLabel($order->biteship_order_id);
-            if ($result['success'] && !empty($result['url'])) {
-                $biteshipLabel = $result['url'];
-            }
-        }
+        // Gunakan label_url dari database jika tersedia
+        $biteshipLabel = $order->label_url;
 
         $pdf = PDF::loadView('admin.orders.receipt', compact('order', 'biteshipLabel'));
         
@@ -180,18 +173,8 @@ class OrderController extends Controller
     {
         $order->load('user', 'items.product', 'courier');
         
-        // Get Biteship label if available
-        $biteshipLabel = null;
-        if ($order->biteship_order_id && !config('biteship.sandbox', true)) {
-            // Check if biteship_order_id is valid (not fake sandbox ID)
-            if (!str_starts_with($order->biteship_order_id, 'BITESHIP-')) {
-                $biteship = app(\App\Services\BiteshipService::class);
-                $result = $biteship->printLabel($order->biteship_order_id);
-                if ($result['success'] && !empty($result['url'])) {
-                    $biteshipLabel = $result['url'];
-                }
-            }
-        }
+        // Gunakan label_url dari database jika tersedia
+        $biteshipLabel = $order->label_url;
         
         return view('admin.orders.receipt', compact('order', 'biteshipLabel'));
     }

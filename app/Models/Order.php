@@ -18,6 +18,7 @@ class Order extends Model
         'courier_service_name',
         'biteship_order_id',
         'waybill_id',
+        'label_url',
         'assigned_at',
         'subtotal',
         'product_discount',

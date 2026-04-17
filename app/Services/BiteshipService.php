@@ -250,6 +250,9 @@ class BiteshipService
         // Generate nomor resi sesuai format ekspedisi
         $waybillId = $this->generateWaybillNumber($orderData['courier_code']);
 
+        // Generate label URL dari Biteship sandbox
+        $labelUrl = "https://sandbox.biteship.com/label/{$waybillId}";
+
         return [
             'success' => true,
             'data' => [
@@ -265,6 +268,7 @@ class BiteshipService
                     'vehicle_type' => $courierData['vehicle_type'],
                     'vehicle_number' => $courierData['vehicle_number'],
                 ],
+                'label_url' => $labelUrl,
                 'status' => 'confirmed',
                 'pickup_time' => now()->addMinutes(30)->format('Y-m-d H:i:s'),
             ],

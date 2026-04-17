@@ -582,11 +582,21 @@
             @endif
             
             <!-- Biteship Label -->
-            @if(isset($biteshipLabel) && $biteshipLabel)
-            <div style="margin-top: 30px; padding: 20px; border: 2px dashed var(--border); border-radius: 8px; text-align: center;">
-                <h3 style="font-size: 14px; font-weight: 600; color: var(--primary); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px;">📦 Label Resi Ekspedisi</h3>
-                <iframe src="{{ $biteshipLabel }}" style="width: 100%; height: 600px; border: 1px solid var(--border); border-radius: 6px;"></iframe>
-                <p style="margin-top: 12px; font-size: 12px; color: var(--gray);">Label resi resmi dari {{ $order->courier_name }}</p>
+            @if($order->label_url || $order->waybill_id)
+            <div style="margin-top: 30px; page-break-before: always;">
+                @php
+                    $courierCode = strtolower($order->courier_code ?? 'jnt');
+                @endphp
+                
+                @if($courierCode === 'jnt')
+                    @include('admin.orders.labels.jnt', ['order' => $order])
+                @elseif($courierCode === 'anteraja')
+                    @include('admin.orders.labels.anteraja', ['order' => $order])
+                @elseif($courierCode === 'paxel')
+                    @include('admin.orders.labels.paxel', ['order' => $order])
+                @else
+                    @include('admin.orders.labels.generic', ['order' => $order])
+                @endif
             </div>
             @endif
             

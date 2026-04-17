@@ -81,6 +81,7 @@ class PickupController extends Controller
         $order->update([
             'biteship_order_id' => $biteshipData['id'] ?? null,
             'waybill_id' => $courierInfo['waybill_id'] ?? null,
+            'label_url' => $biteshipData['label_url'] ?? null,
             'status' => Order::STATUS_READY_TO_SHIP, // Siap pickup, menunggu kurir ambil
             'courier_driver_name' => $courierInfo['name'] ?? null,
             'courier_driver_phone' => $courierInfo['phone'] ?? null,
