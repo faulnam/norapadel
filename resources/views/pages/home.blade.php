@@ -2259,12 +2259,27 @@
             opacity: 1;
             transform: translateY(0);
         }
+
+        /* === ANIMASI 3D SCROLL (ORYZO.AI STYLE) === */
+        .np-3d-card-target {
+            transform-origin: center bottom;
+            will-change: transform;
+        }
+
+        .np-3d-text-target {
+            will-change: transform, opacity;
+        }
     </style>
 @endpush
 
 @push('scripts')
+    <!-- GSAP + ScrollTrigger untuk animasi 3D scroll -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
     <script>
         (function () {
+            // === ANIMASI YANG SUDAH ADA (TIDAK DIUBAH) ===
             const revealEls = document.querySelectorAll('.np-fade-section');
             const heroImages = document.querySelectorAll('.np-parallax-image');
             const mobileMenuToggle = document.querySelector('[data-mobile-menu-toggle]');
@@ -2296,6 +2311,107 @@
                     mobileMenu.classList.toggle('hidden');
                     mobileMenuToggle.setAttribute('aria-expanded', String(!mobileMenu.classList.contains('hidden')));
                 });
+            }
+
+            // === ANIMASI 3D SCROLL BARU (ORYZO.AI STYLE) ===
+            if (typeof gsap !== 'undefined') {
+                gsap.registerPlugin(ScrollTrigger);
+
+                const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+                if (!prefersReduced) {
+                    // Target semua section hero-product (id: racket, shoes, apparel)
+                    const heroSections = document.querySelectorAll('#racket, #shoes, #apparel');
+
+                    heroSections.forEach((section) => {
+                        // Cari elemen card (div dengan max-w-5xl yang berisi img)
+                        const cardWrapper = section.querySelector('.max-w-5xl:has(img)');
+                        // Cari elemen text (div dengan h2 dan p)
+                        const textWrapper = section.querySelector('.max-w-5xl:has(h2)');
+
+                        if (cardWrapper) {
+                            // Tambahkan class untuk styling
+                            cardWrapper.classList.add('np-3d-card-target');
+
+                            // Card: mulai miring (rotateX) lalu meluruskan saat scroll
+                            gsap.fromTo(cardWrapper,
+                                { 
+                                    rotateX: 28, 
+                                    scale: 0.88, 
+                                    y: 60, 
+                                    opacity: 0 
+                                },
+                                {
+                                    rotateX: 0,
+                                    scale: 1,
+                                    y: 0,
+                                    opacity: 1,
+                                    ease: 'power3.out',
+                                    scrollTrigger: {
+                                        trigger: section,
+                                        start: 'top 80%',
+                                        end: 'center 40%',
+                                        scrub: 1.4,
+                                    },
+                                }
+                            );
+
+                            // Parallax depth saat scroll melewati section
+                            gsap.to(cardWrapper, {
+                                y: -30,
+                                ease: 'none',
+                                scrollTrigger: {
+                                    trigger: section,
+                                    start: 'top bottom',
+                                    end: 'bottom top',
+                                    scrub: true,
+                                },
+                            });
+                        }
+
+                        // Text: slide up saat section masuk viewport
+                        if (textWrapper) {
+                            textWrapper.classList.add('np-3d-text-target');
+
+                            gsap.fromTo(textWrapper,
+                                { y: 30, opacity: 0 },
+                                {
+                                    y: 0,
+                                    opacity: 1,
+                                    duration: 0.7,
+                                    ease: 'power2.out',
+                                    scrollTrigger: {
+                                        trigger: section,
+                                        start: 'top 82%',
+                                        toggleActions: 'play none none none',
+                                    },
+                                }
+                            );
+                        }
+                    });
+
+                    // Featured cards: stagger 3D rotateY
+                    const featuredCards = document.querySelectorAll('.np-fade-section .group');
+                    if (featuredCards.length) {
+                        gsap.fromTo(featuredCards,
+                            { rotateY: 12, scale: 0.92, opacity: 0, y: 40 },
+                            {
+                                rotateY: 0,
+                                scale: 1,
+                                opacity: 1,
+                                y: 0,
+                                duration: 0.7,
+                                stagger: 0.12,
+                                ease: 'power2.out',
+                                scrollTrigger: {
+                                    trigger: featuredCards[0].closest('section'),
+                                    start: 'top 78%',
+                                    toggleActions: 'play none none none',
+                                },
+                            }
+                        );
+                    }
+                }
             }
         })();
     </script>
