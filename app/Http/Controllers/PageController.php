@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ContactMessageMail;
 use App\Models\Product;
 use App\Models\Testimonial;
 use App\Models\Gallery;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class PageController extends Controller
 {
@@ -220,7 +223,64 @@ class PageController extends Controller
      */
     public function tentang()
     {
-        return view('pages.tentang');
+        return view('pages.about');
+    }
+
+    /**
+     * Show about page
+     */
+    public function about()
+    {
+        return view('pages.about');
+    }
+
+    /**
+     * Show help center page
+     */
+    public function helpCenter()
+    {
+        return view('pages.help-center');
+    }
+
+    /**
+     * Show contact page
+     */
+    public function contact()
+    {
+        return view('pages.contact');
+    }
+
+    /**
+     * Handle contact form submit
+     */
+    public function submitContact(Request $request)
+    {
+        $payload = $request->validate([
+            'name' => ['required', 'string', 'max:120'],
+            'email' => ['required', 'email', 'max:160'],
+            'subject' => ['required', 'string', 'max:180'],
+            'message' => ['required', 'string', 'max:2000'],
+        ]);
+
+        $receiverEmail = (string) config('contact.receiver_email');
+        $receiverName = (string) config('contact.receiver_name', config('app.name', 'NoraPadel Support'));
+
+        if (empty($receiverEmail)) {
+            return back()->withInput()->with('error', 'Konfigurasi email tujuan contact belum diatur. Set CONTACT_RECEIVER_EMAIL di file .env.');
+        }
+
+        try {
+            Mail::to($receiverEmail, $receiverName)->send(new ContactMessageMail($payload));
+        } catch (\Throwable $exception) {
+            Log::error('Gagal mengirim email contact form.', [
+                'error' => $exception->getMessage(),
+                'receiver_email' => $receiverEmail,
+            ]);
+
+            return back()->withInput()->with('error', 'Pesan gagal dikirim. Silakan cek konfigurasi email (SMTP) lalu coba lagi.');
+        }
+
+        return back()->with('success', 'Pesan Anda sudah kami terima.');
     }
 
     /**

@@ -821,7 +821,8 @@
             }
         }
     </style>
-    
+    <script src="https://cdn.tailwindcss.com"></script>
+
     @stack('styles')
 </head>
 <body>
@@ -830,7 +831,11 @@
     <nav class="navbar navbar-expand-lg sticky-top" id="mainNavbar">
         <div class="container">
             <a class="navbar-brand" href="{{ route('home') }}">
-                <img src="{{ asset(config('branding.logo', 'storage/logo.png')) }}" alt="{{ config('branding.name', 'Nora Padel') }}" height="40" class="brand-logo">
+                @if(request()->routeIs('help-center', 'contact', 'about'))
+                    <span class="text-dark">{{ config('branding.name', 'Nora Padel') }}</span>
+                @else
+                    <img src="{{ asset(config('branding.logo', 'storage/logo.png')) }}" alt="{{ config('branding.name', 'Nora Padel') }}" height="40" class="brand-logo">
+                @endif
             </a>
             
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -1049,46 +1054,7 @@
         </div>
     </div>
 
-    @unless(request()->routeIs('home', 'racket', 'shoes', 'apparel', 'shop', 'login', 'register', 'customer.products.*', 'customer.cart.*', 'customer.profile.*'))
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="row g-4">
-                <div class="col-lg-4 col-12">
-                    <h5>
-                        <img src="{{ asset(config('branding.logo', 'storage/logo.png')) }}" alt="{{ config('branding.name', 'Nora Padel') }}" height="30" class="me-2">
-                        {{ config('branding.name', 'Nora Padel') }}
-                    </h5>
-                    <p class="text-white-50 mb-3">Perlengkapan padel premium untuk latihan dan turnamen. Siap main, siap menang 🎾</p>
-                    <div class="footer-social">
-                        <a href="https://instagram.com/norapadel.id"><i class="fab fa-instagram"></i></a>
-                        <a href="https://tiktok.com/@norapadel.id"><i class="fab fa-tiktok"></i></a>
-                    </div>
-                </div>
-                <!-- Menu & Lainnya - hidden di mobile -->
-                <div class="col-6 col-lg-2 d-none d-md-block">
-                    <h6 class="text-white-50 mb-3">Menu</h6>
-                    <a href="{{ route('home') }}" class="footer-link">Beranda</a>
-                    <a href="{{ route('tentang') }}" class="footer-link">Tentang</a>
-                    <a href="{{ route('produk.index') }}" class="footer-link">Produk</a>
-                    <a href="{{ route('galeri') }}" class="footer-link">Galeri</a>
-                </div>
-                <div class="col-6 col-lg-2 d-none d-md-block">
-                    <h6 class="text-white-50 mb-3">Lainnya</h6>
-                    <a href="{{ route('testimoni') }}" class="footer-link">Testimoni</a>
-                    <a href="{{ route('login') }}" class="footer-link">Masuk</a>
-                    <a href="{{ route('register') }}" class="footer-link">Daftar</a>
-                </div>
-                <div class="col-lg-4 col-12">
-                    <h6 class="text-white-50 mb-3">Kontak</h6>
-                    <p class="text-white-50 mb-2"><i class="fas fa-phone me-2"></i>{{ config('branding.phone', '+62 812 7788 9900') }}</p>
-                    <p class="text-white-50"><i class="fas fa-map-marker-alt me-2"></i>{{ config('branding.address', 'Jl. Padel Arena No. 21, Surabaya') }}</p>
-                </div>
-            </div>
-            <hr style="border-color: rgba(255,255,255,0.1); margin: 2rem 0 1rem;">
-        </div>
-    </footer>
-    @endunless
+    <x-site-footer />
 
     @unless(request()->routeIs('home', 'racket', 'shoes', 'apparel', 'shop', 'login', 'register', 'customer.products.*', 'customer.cart.*', 'customer.profile.*'))
     <!-- Mobile Bottom Navigation -->

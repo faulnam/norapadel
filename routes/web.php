@@ -56,10 +56,15 @@ Route::get('/media/products/{path}', function (string $path) {
 // Public Pages (Guest)
 Route::get('/', [PageController::class, 'home'])->name('home');
 Route::get('/tentang', [PageController::class, 'tentang'])->name('tentang');
+Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/racket', [PageController::class, 'racket'])->name('racket');
 Route::get('/shoes', [PageController::class, 'shoes'])->name('shoes');
 Route::get('/apparel', [PageController::class, 'apparel'])->name('apparel');
+Route::get('/accessories', [PageController::class, 'apparel'])->name('accessories');
 Route::get('/shop', [PageController::class, 'shop'])->name('shop');
+Route::get('/help-center', [PageController::class, 'helpCenter'])->name('help-center');
+Route::get('/contact', [PageController::class, 'contact'])->name('contact');
+Route::post('/contact', [PageController::class, 'submitContact'])->name('contact.submit');
 Route::get('/produk', [PageController::class, 'produkIndex'])->name('produk.index');
 Route::get('/produk/{product}', [PageController::class, 'produkShow'])->name('produk.show');
 Route::get('/galeri', [PageController::class, 'galeri'])->name('galeri');

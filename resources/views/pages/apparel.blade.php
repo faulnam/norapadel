@@ -25,6 +25,9 @@
                                 <span>Dashboard</span>
                             </a>
                         @elseif(auth()->user()->role === 'customer')
+                            <a href="{{ route('customer.orders.index') }}" class="transition duration-300 hover:text-black" aria-label="Riwayat Pesanan">
+                                <i class="fas fa-history text-sm"></i>
+                            </a>
                             <a href="{{ route('customer.profile.index') }}" class="transition duration-300 hover:text-black" aria-label="Profile">
                                 <i class="fas fa-user text-sm"></i>
                             </a>
@@ -170,101 +173,6 @@
             </div>
         </section>
 
-        <footer class="border-t border-black/10 bg-white py-14 text-sm text-zinc-500">
-            <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
-                <div class="space-y-3 md:hidden">
-                    <details class="rounded-xl border border-black/10 px-4 py-3">
-                        <summary class="cursor-pointer list-none text-xs font-semibold uppercase tracking-wide text-black">Shop</summary>
-                        <ul class="mt-3 space-y-2 text-sm">
-                            <li><a href="{{ route('racket') }}" class="hover:underline">Racket</a></li>
-                            <li><a href="{{ route('shoes') }}" class="hover:underline">Shoes</a></li>
-                            <li><a href="{{ route('apparel') }}" class="hover:underline">Accessories</a></li>
-                            <li><a href="{{ route('produk.index') }}" class="hover:underline">Shop</a></li>
-                        </ul>
-                    </details>
-
-                    <details class="rounded-xl border border-black/10 px-4 py-3">
-                        <summary class="cursor-pointer list-none text-xs font-semibold uppercase tracking-wide text-black">Support</summary>
-                        <ul class="mt-3 space-y-2 text-sm">
-                            <li><a href="{{ route('tentang') }}" class="hover:underline">Help Center</a></li>
-                            <li><a href="{{ route('tentang') }}" class="hover:underline">Shipping</a></li>
-                            <li><a href="{{ route('tentang') }}" class="hover:underline">Returns</a></li>
-                            <li><a href="{{ route('tentang') }}" class="hover:underline">Contact</a></li>
-                        </ul>
-                    </details>
-
-                    <details class="rounded-xl border border-black/10 px-4 py-3">
-                        <summary class="cursor-pointer list-none text-xs font-semibold uppercase tracking-wide text-black">Account</summary>
-                        <ul class="mt-3 space-y-2 text-sm">
-                            @auth
-                                <li><a href="{{ route('customer.profile.index') }}" class="hover:underline">Dashboard</a></li>
-                                <li><a href="{{ route('customer.orders.index') }}" class="hover:underline">Orders</a></li>
-                                <li><a href="{{ route('customer.notifications.index') }}" class="hover:underline">Notifications</a></li>
-                            @else
-                                <li><a href="{{ route('login') }}" class="hover:underline">Sign In</a></li>
-                                <li><a href="{{ route('register') }}" class="hover:underline">Create Account</a></li>
-                            @endauth
-                        </ul>
-                    </details>
-
-                    <details class="rounded-xl border border-black/10 px-4 py-3">
-                        <summary class="cursor-pointer list-none text-xs font-semibold uppercase tracking-wide text-black">About NoraPadel</summary>
-                        <ul class="mt-3 space-y-2 text-sm">
-                            <li><a href="{{ route('tentang') }}" class="hover:underline">Our Story</a></li>
-                            <li><a href="{{ route('galeri') }}" class="hover:underline">Gallery</a></li>
-                            <li><a href="{{ route('testimoni') }}" class="hover:underline">Testimonials</a></li>
-                            <li><a href="{{ route('tentang') }}" class="hover:underline">Careers</a></li>
-                        </ul>
-                    </details>
-                </div>
-
-                <div class="hidden grid-cols-2 gap-8 md:grid md:grid-cols-4">
-                    <div>
-                        <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">Shop</h3>
-                        <ul class="space-y-2">
-                            <li><a href="{{ route('racket') }}" class="hover:underline">Racket</a></li>
-                            <li><a href="{{ route('shoes') }}" class="hover:underline">Shoes</a></li>
-                            <li><a href="{{ route('apparel') }}" class="hover:underline">Accessories</a></li>
-                            <li><a href="{{ route('produk.index') }}" class="hover:underline">Shop</a></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">Support</h3>
-                        <ul class="space-y-2">
-                            <li><a href="{{ route('tentang') }}" class="hover:underline">Help Center</a></li>
-                            <li><a href="{{ route('tentang') }}" class="hover:underline">Shipping</a></li>
-                            <li><a href="{{ route('tentang') }}" class="hover:underline">Returns</a></li>
-                            <li><a href="{{ route('tentang') }}" class="hover:underline">Contact</a></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">Account</h3>
-                        <ul class="space-y-2">
-                            @auth
-                                <li><a href="{{ route('customer.profile.index') }}" class="hover:underline">Dashboard</a></li>
-                                <li><a href="{{ route('customer.orders.index') }}" class="hover:underline">Orders</a></li>
-                                <li><a href="{{ route('customer.notifications.index') }}" class="hover:underline">Notifications</a></li>
-                            @else
-                                <li><a href="{{ route('login') }}" class="hover:underline">Sign In</a></li>
-                                <li><a href="{{ route('register') }}" class="hover:underline">Create Account</a></li>
-                            @endauth
-                        </ul>
-                    </div>
-                    <div>
-                        <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">About NoraPadel</h3>
-                        <ul class="space-y-2">
-                            <li><a href="{{ route('tentang') }}" class="hover:underline">Our Story</a></li>
-                            <li><a href="{{ route('galeri') }}" class="hover:underline">Gallery</a></li>
-                            <li><a href="{{ route('testimoni') }}" class="hover:underline">Testimonials</a></li>
-                            <li><a href="{{ route('tentang') }}" class="hover:underline">Careers</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="mx-auto mt-10 w-full max-w-7xl border-t border-black/10 px-6 pt-5 text-xs text-zinc-400 md:px-10 lg:px-12">
-                © {{ now()->year }} NoraPadel. All rights reserved.
-            </div>
-        </footer>
     </div>
 @endsection
 
