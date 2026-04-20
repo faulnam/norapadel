@@ -22,6 +22,7 @@ use App\Http\Controllers\Courier\DashboardController as CourierDashboard;
 use App\Http\Controllers\Courier\DeliveryController as CourierDelivery;
 use App\Http\Controllers\Courier\ProfileController as CourierProfile;
 use App\Http\Controllers\Courier\NotificationController as CourierNotification;
+use App\Http\Controllers\BiteshipWebhookController;
 use App\Http\Controllers\PakasirWebhookController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -87,6 +88,9 @@ Route::post('/webhook/pakasir', [PakasirWebhookController::class, 'handleWebhook
 
 // Paylabs Webhook (no auth required)
 Route::post('/webhook/paylabs', [\App\Http\Controllers\PaylabsWebhookController::class, 'handleWebhook'])->name('webhook.paylabs');
+
+// Biteship Webhook (no auth required)
+Route::post('/webhook/biteship', [BiteshipWebhookController::class, 'handleWebhook'])->name('webhook.biteship');
 
 // Admin Routes
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {

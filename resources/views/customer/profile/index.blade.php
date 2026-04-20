@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="bg-white text-black antialiased">
-    <header class="sticky top-0 z-50 border-b border-black/6 bg-white/80 backdrop-blur-xl">
+    <header class="fixed left-0 top-0 z-50 w-full border-b border-black/6 bg-white/80 backdrop-blur-xl md:sticky">
         <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-10 lg:px-12">
             <a href="{{ route('home') }}" class="text-xl font-semibold tracking-tight text-black">NoraPadel</a>
 
@@ -38,7 +38,7 @@
         </div>
     </header>
 
-<div class="mx-auto w-full max-w-7xl px-6 py-8 md:px-10 md:py-12 lg:px-12 lg:py-16">
+<div class="mx-auto w-full max-w-7xl px-6 py-8 pt-16 md:px-10 md:py-12 md:pt-0 lg:px-12 lg:py-16">
     <h3 class="mb-6 text-3xl font-semibold tracking-tight text-black sm:text-4xl">
         <i class="fas fa-user mr-3 text-black"></i>Profil Saya
     </h3>

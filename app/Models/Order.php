@@ -18,6 +18,9 @@ class Order extends Model
         'courier_service_name',
         'estimated_delivery_date',
         'biteship_order_id',
+        'biteship_draft_order_id',
+    'biteship_tracking_status',
+    'biteship_status_stage',
         'waybill_id',
         'label_url',
         'assigned_at',
@@ -119,6 +122,14 @@ class Order extends Model
     const STATUS_PICKED_UP = 'picked_up';
     const STATUS_ON_DELIVERY = 'on_delivery';
 
+    // Stage status Biteship untuk tampilan customer
+    const BITESHIP_STAGE_PROCESSING = 'sedang_diproses';
+    const BITESHIP_STAGE_PICKUP = 'penjemputan';
+    const BITESHIP_STAGE_DELIVERY = 'pengantaran';
+    const BITESHIP_STAGE_RETURN = 'pengembalian';
+    const BITESHIP_STAGE_ON_HOLD = 'ditahan';
+    const BITESHIP_STAGE_FINISHED = 'selesai';
+
     // Status pembayaran
     const PAYMENT_UNPAID = 'unpaid';
     const PAYMENT_PENDING = 'pending_verification';
@@ -213,19 +224,144 @@ class Order extends Model
     {
         return match($this->status) {
             self::STATUS_PENDING_PAYMENT => 'Menunggu Pembayaran',
-            self::STATUS_PROCESSING => 'Pesanan Diproses',
+            self::STATUS_PROCESSING => 'Diproses',
             self::STATUS_READY_TO_SHIP => 'Siap Pickup',
-            self::STATUS_SHIPPED => 'Dikirim Ekspedisi',
-            self::STATUS_DELIVERED => 'Sudah Sampai',
+            self::STATUS_SHIPPED => 'Dikirim',
+            self::STATUS_DELIVERED => 'Sampai',
             self::STATUS_COMPLETED => 'Selesai',
             self::STATUS_CANCELLED => 'Dibatalkan',
             // Legacy status
             self::STATUS_PAID => 'Siap Pickup',
-            self::STATUS_ASSIGNED => 'Kurir Ditugaskan',
-            self::STATUS_PICKED_UP => 'Barang Diambil',
-            self::STATUS_ON_DELIVERY => 'Sedang Diantar',
+            self::STATUS_ASSIGNED => 'Siap Pickup',
+            self::STATUS_PICKED_UP => 'Dikirim',
+            self::STATUS_ON_DELIVERY => 'Dikirim',
             default => 'Unknown'
         };
+    }
+
+    /**
+     * Get label stage pengiriman berbasis update Biteship.
+     */
+    public function getShipmentStageLabelAttribute(): string
+    {
+        return match($this->shipment_stage) {
+            self::BITESHIP_STAGE_PROCESSING => 'Sedang Diproses',
+            self::BITESHIP_STAGE_PICKUP => 'Penjemputan',
+            self::BITESHIP_STAGE_DELIVERY => 'Pengantaran',
+            self::BITESHIP_STAGE_RETURN => 'Pengembalian',
+            self::BITESHIP_STAGE_ON_HOLD => 'Di Tahan',
+            self::BITESHIP_STAGE_FINISHED => 'Selesai',
+            default => 'Sedang Diproses',
+        };
+    }
+
+    /**
+     * Stage pengiriman aktif untuk UI customer.
+     */
+    public function getShipmentStageAttribute(): string
+    {
+        if (!empty($this->biteship_status_stage)) {
+            return (string) $this->biteship_status_stage;
+        }
+
+        return self::mapOrderStatusToShipmentStage((string) $this->status);
+    }
+
+    /**
+     * Normalisasi status mentah Biteship ke stage business.
+     */
+    public static function normalizeBiteshipStage(?string $trackingStatus): ?string
+    {
+        $status = strtolower(trim((string) $trackingStatus));
+
+        if ($status === '') {
+            return null;
+        }
+
+        $pickupStatuses = [
+            'allocated', 'picking_up', 'picked',
+            'pickup', 'penjemputan',
+        ];
+
+        $processingStatuses = [
+            'created', 'confirmed', 'pending',
+            'processing', 'diproses', 'sedang_diproses',
+        ];
+
+        $deliveryStatuses = [
+            'dropping_off', 'out_for_delivery', 'on_delivery', 'delivering',
+            'delivery', 'pengantaran',
+        ];
+
+        $returnStatuses = [
+            'returning', 'returned', 'return', 'pengembalian', 'disposed',
+        ];
+
+        $onHoldStatuses = [
+            'on_hold', 'hold', 'held', 'ditahan', 'di_tahan',
+        ];
+
+        $finishedStatuses = [
+            'delivered', 'completed', 'done', 'finished', 'selesai',
+        ];
+
+        return match (true) {
+            in_array($status, $processingStatuses, true) => self::BITESHIP_STAGE_PROCESSING,
+            in_array($status, $pickupStatuses, true) => self::BITESHIP_STAGE_PICKUP,
+            in_array($status, $deliveryStatuses, true) => self::BITESHIP_STAGE_DELIVERY,
+            in_array($status, $returnStatuses, true) => self::BITESHIP_STAGE_RETURN,
+            in_array($status, $onHoldStatuses, true) => self::BITESHIP_STAGE_ON_HOLD,
+            in_array($status, $finishedStatuses, true) => self::BITESHIP_STAGE_FINISHED,
+            default => null,
+        };
+    }
+
+    /**
+     * Mapping status order internal ke stage pengiriman customer.
+     */
+    public static function mapOrderStatusToShipmentStage(string $orderStatus): string
+    {
+        return match ($orderStatus) {
+            self::STATUS_COMPLETED => self::BITESHIP_STAGE_FINISHED,
+            self::STATUS_PENDING_PAYMENT, self::STATUS_PROCESSING => self::BITESHIP_STAGE_PROCESSING,
+            self::STATUS_READY_TO_SHIP, self::STATUS_ASSIGNED => self::BITESHIP_STAGE_PICKUP,
+            self::STATUS_SHIPPED, self::STATUS_DELIVERED, self::STATUS_ON_DELIVERY, self::STATUS_PICKED_UP => self::BITESHIP_STAGE_DELIVERY,
+            self::STATUS_CANCELLED => self::BITESHIP_STAGE_RETURN,
+            default => self::BITESHIP_STAGE_PROCESSING,
+        };
+    }
+
+    /**
+     * Mapping status tracking Biteship ke status order internal.
+     */
+    public static function mapBiteshipTrackingToOrderStatus(?string $trackingStatus): ?string
+    {
+        $status = strtolower(trim((string) $trackingStatus));
+
+        if ($status === '') {
+            return null;
+        }
+
+        $statusMap = [
+            'confirmed' => self::STATUS_PROCESSING,
+            'allocated' => self::STATUS_READY_TO_SHIP,
+            'picking_up' => self::STATUS_READY_TO_SHIP,
+            'picked' => self::STATUS_SHIPPED,
+            'dropping_off' => self::STATUS_SHIPPED,
+            'out_for_delivery' => self::STATUS_SHIPPED,
+            'on_delivery' => self::STATUS_SHIPPED,
+            'delivered' => self::STATUS_DELIVERED,
+            'completed' => self::STATUS_COMPLETED,
+            'done' => self::STATUS_COMPLETED,
+            'cancelled' => self::STATUS_CANCELLED,
+            'rejected' => self::STATUS_CANCELLED,
+            'disposed' => self::STATUS_CANCELLED,
+            'returned' => self::STATUS_CANCELLED,
+            'returning' => self::STATUS_CANCELLED,
+            'on_hold' => self::STATUS_READY_TO_SHIP,
+        ];
+
+        return $statusMap[$status] ?? null;
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Order;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -10,12 +11,14 @@ class BiteshipService
     protected $apiKey;
     protected $baseUrl;
     protected $sandbox;
+    protected $useMock;
 
     public function __construct()
     {
         $this->apiKey = config('biteship.api_key');
         $this->baseUrl = config('biteship.base_url');
         $this->sandbox = config('biteship.sandbox', true);
+        $this->useMock = config('biteship.use_mock', false);
     }
 
     /**
@@ -40,10 +43,30 @@ class BiteshipService
 
             $payload = [
                 'origin_postal_code' => $params['origin_postal_code'] ?? config('biteship.origin.postal_code', '60119'),
-                'destination_postal_code' => $params['destination_postal_code'] ?? '61219',
-                'couriers' => 'jne,jnt,anteraja,gojek,grab,paxel',
+                'destination_postal_code' => $params['destination_postal_code'] ?? config('biteship.origin.postal_code', '61219'),
+                'couriers' => $params['couriers'] ?? 'jne,jnt,anteraja,gojek,grab,paxel',
                 'items' => $items,
             ];
+
+            // Koordinat sangat membantu Biteship menghitung eligibility layanan instant/same-day.
+            $originLatitude = $params['origin_latitude'] ?? config('biteship.origin.latitude');
+            $originLongitude = $params['origin_longitude'] ?? config('biteship.origin.longitude');
+            $destinationLatitude = $params['destination_latitude'] ?? null;
+            $destinationLongitude = $params['destination_longitude'] ?? null;
+
+            if (is_numeric($originLatitude) && is_numeric($originLongitude)) {
+                $payload['origin_latitude'] = (float) $originLatitude;
+                $payload['origin_longitude'] = (float) $originLongitude;
+                $payload['origin_coordinate_latitude'] = (float) $originLatitude;
+                $payload['origin_coordinate_longitude'] = (float) $originLongitude;
+            }
+
+            if (is_numeric($destinationLatitude) && is_numeric($destinationLongitude)) {
+                $payload['destination_latitude'] = (float) $destinationLatitude;
+                $payload['destination_longitude'] = (float) $destinationLongitude;
+                $payload['destination_coordinate_latitude'] = (float) $destinationLatitude;
+                $payload['destination_coordinate_longitude'] = (float) $destinationLongitude;
+            }
 
             $response = Http::withoutVerifying()->withHeaders([
                 'Authorization' => $this->apiKey,
@@ -58,7 +81,9 @@ class BiteshipService
                 
                 return [
                     'success' => true,
-                    'data' => $formattedRates,
+                    'data' => [
+                        'pricing' => $formattedRates,
+                    ],
                 ];
             }
 
@@ -101,63 +126,43 @@ class BiteshipService
                 $rate['courier_service_name'] ?? ''
             );
             
-            // Format ETD
-            $etd = $this->formatETD(
-                $rate['duration'] ?? '',
-                $category
-            );
+            $rawDuration = trim((string) ($rate['duration'] ?? ''));
+            $duration = $rawDuration !== '' ? $rawDuration : 'Estimasi tidak tersedia';
             
             $formatted[] = [
                 'courier_code' => $rate['courier_code'] ?? '',
                 'courier_name' => $rate['courier_name'] ?? '',
+                'courier_service_code' => $rate['courier_service_code'] ?? ($rate['service_code'] ?? ($rate['courier_type'] ?? null)),
+                'courier_type' => $rate['courier_type'] ?? ($rate['courier_service_code'] ?? ($rate['service_code'] ?? null)),
                 'courier_service_name' => $rate['courier_service_name'] ?? '',
                 'service_type' => $category,
                 'price' => (int) ($rate['price'] ?? 0),
-                'duration' => $etd,
-                'duration_minutes' => $this->convertETDToMinutes($etd, $category),
+                'duration' => $duration,
+                'duration_minutes' => $this->convertETDToMinutes($duration, $category),
                 'company' => $rate['company'] ?? '',
                 'description' => $rate['description'] ?? '',
             ];
         }
         
-        // Group by category
-        $grouped = [
-            'instant' => [],
-            'sameday' => [],
-            'regular' => [],
-        ];
-        
-        foreach ($formatted as $rate) {
-            $grouped[$rate['service_type']][] = $rate;
-        }
-        
-        // Sort each group
-        foreach ($grouped as $key => $rates) {
-            usort($rates, function($a, $b) {
-                // Sort by price first, then by duration
-                if ($a['price'] === $b['price']) {
-                    return $a['duration_minutes'] <=> $b['duration_minutes'];
-                }
-                return $a['price'] <=> $b['price'];
-            });
-            $grouped[$key] = $rates;
-        }
-        
-        // Mark cheapest and fastest
-        $allRates = array_merge($grouped['instant'], $grouped['sameday'], $grouped['regular']);
-        if (!empty($allRates)) {
-            $cheapest = min(array_column($allRates, 'price'));
-            $fastest = min(array_column($allRates, 'duration_minutes'));
-            
-            foreach ($grouped as $key => $rates) {
-                foreach ($rates as $index => $rate) {
-                    $grouped[$key][$index]['is_cheapest'] = ($rate['price'] === $cheapest);
-                    $grouped[$key][$index]['is_fastest'] = ($rate['duration_minutes'] === $fastest);
-                }
+        usort($formatted, function ($a, $b) {
+            if ($a['price'] === $b['price']) {
+                return $a['duration_minutes'] <=> $b['duration_minutes'];
+            }
+
+            return $a['price'] <=> $b['price'];
+        });
+
+        if (!empty($formatted)) {
+            $cheapest = min(array_column($formatted, 'price'));
+            $fastest = min(array_column($formatted, 'duration_minutes'));
+
+            foreach ($formatted as $index => $rate) {
+                $formatted[$index]['is_cheapest'] = ($rate['price'] === $cheapest);
+                $formatted[$index]['is_fastest'] = ($rate['duration_minutes'] === $fastest);
             }
         }
-        
-        return $grouped;
+
+        return $formatted;
     }
     
     /**
@@ -226,6 +231,26 @@ class BiteshipService
      */
     private function convertETDToMinutes(string $etd, string $category): int
     {
+        // Parse hours first (contoh: "2-3 hours", "3 jam")
+        if (preg_match('/(\d+)\s*-\s*(\d+)\s*(jam|hour|hours|hrs|h)/i', $etd, $matches)) {
+            $avgHours = ((int) $matches[1] + (int) $matches[2]) / 2;
+            return (int) round($avgHours * 60);
+        }
+
+        if (preg_match('/(\d+)\s*(jam|hour|hours|hrs|h)/i', $etd, $matches)) {
+            return (int) $matches[1] * 60;
+        }
+
+        // Parse days (contoh: "1-2 days", "2 hari")
+        if (preg_match('/(\d+)\s*-\s*(\d+)\s*(hari|day|days|d)/i', $etd, $matches)) {
+            $avgDays = ((int) $matches[1] + (int) $matches[2]) / 2;
+            return (int) round($avgDays * 24 * 60);
+        }
+
+        if (preg_match('/(\d+)\s*(hari|day|days|d)/i', $etd, $matches)) {
+            return (int) $matches[1] * 24 * 60;
+        }
+
         if ($category === 'instant') {
             return 180; // 3 hours
         }
@@ -255,7 +280,35 @@ class BiteshipService
      */
     public function getRates(array $params)
     {
-        // Hitung total berat
+        $strictBiteship = (bool) ($params['strict_biteship'] ?? false);
+
+        $apiResult = $this->getRatesFromAPI([
+            'origin_postal_code' => $params['origin_postal_code'] ?? config('biteship.origin.postal_code', '61219'),
+            'destination_postal_code' => $params['destination_postal_code'] ?? config('biteship.origin.postal_code', '61219'),
+            'origin_latitude' => $params['origin_latitude'] ?? config('biteship.origin.latitude'),
+            'origin_longitude' => $params['origin_longitude'] ?? config('biteship.origin.longitude'),
+            'destination_latitude' => $params['destination_latitude'] ?? null,
+            'destination_longitude' => $params['destination_longitude'] ?? null,
+            'couriers' => $params['couriers'] ?? 'jne,jnt,anteraja,gojek,grab,paxel',
+            'items' => $params['items'] ?? [],
+        ]);
+
+        if (($apiResult['success'] ?? false) && !empty($apiResult['data']['pricing'] ?? [])) {
+            return $apiResult;
+        }
+
+        if ($strictBiteship) {
+            return [
+                'success' => false,
+                'message' => $apiResult['message'] ?? 'Layanan ongkir Biteship sedang tidak tersedia. Silakan coba lagi.',
+            ];
+        }
+
+        Log::warning('Biteship getRates fallback ke local calculator', [
+            'message' => $apiResult['message'] ?? 'API rates gagal / kosong',
+        ]);
+
+        // fallback lokal jika API gagal
         $totalWeight = collect($params['items'] ?? [])->sum(function ($item) {
             return ($item['weight'] ?? 500) * ($item['quantity'] ?? 1);
         });
@@ -396,6 +449,8 @@ class BiteshipService
                 $rates[] = [
                     'courier_code'         => $courier['courier_code'],
                     'courier_name'         => $courier['courier_name'],
+                    'courier_service_code' => strtolower(strtok($service['name'], ' ')),
+                    'courier_type'         => strtolower(strtok($service['name'], ' ')),
                     'courier_service_name' => $service['name'],
                     'service_type'         => $service['type'],
                     'duration'             => $durationMap[$service['type']],
@@ -419,51 +474,136 @@ class BiteshipService
      */
     public function createOrder(array $orderData)
     {
-        // Jika sandbox mode, return mock data dengan kurir dummy
-        if ($this->sandbox) {
+        // Mock hanya bila diaktifkan eksplisit
+        if ($this->useMock) {
             return $this->mockCreateOrder($orderData);
         }
 
         try {
+            $courierCode = strtolower((string) ($orderData['courier_code'] ?? ''));
+            $courierType = $orderData['courier_type'] ?? $this->inferCourierType(
+                $courierCode,
+                (string) ($orderData['courier_service_name'] ?? '')
+            );
+
+            $originLatitude = (float) ($orderData['origin_latitude'] ?? config('biteship.origin.latitude'));
+            $originLongitude = (float) ($orderData['origin_longitude'] ?? config('biteship.origin.longitude'));
+            $destinationLatitude = (float) ($orderData['destination_latitude'] ?? 0);
+            $destinationLongitude = (float) ($orderData['destination_longitude'] ?? 0);
+            $orderNote = trim((string) ($orderData['order_note'] ?? ''));
+
             $payload = [
+                'shipper_contact_name' => $orderData['shipper_contact_name'] ?? ($orderData['origin_contact_name'] ?? config('branding.name', 'NoraPadel')),
+                'shipper_contact_phone' => $orderData['shipper_contact_phone'] ?? ($orderData['origin_contact_phone'] ?? config('branding.phone', '081234567890')),
+                'shipper_contact_email' => $orderData['shipper_contact_email'] ?? config('mail.from.address', 'qa@norapadel.test'),
+
                 'origin_contact_name' => $orderData['origin_contact_name'] ?? config('branding.name', 'NoraPadel'),
                 'origin_contact_phone' => $orderData['origin_contact_phone'] ?? config('branding.phone', '081234567890'),
                 'origin_address' => $orderData['origin_address'] ?? config('branding.address', 'Toko NoraPadel'),
                 'origin_note' => $orderData['origin_note'] ?? 'Pickup dari toko',
-                'origin_latitude' => $orderData['origin_latitude'] ?? config('biteship.origin.latitude'),
-                'origin_longitude' => $orderData['origin_longitude'] ?? config('biteship.origin.longitude'),
+                'origin_latitude' => $originLatitude,
+                'origin_longitude' => $originLongitude,
                 'origin_postal_code' => $orderData['origin_postal_code'] ?? config('biteship.origin.postal_code'),
+                'origin_coordinate_latitude' => $originLatitude,
+                'origin_coordinate_longitude' => $originLongitude,
+                'origin_coordinate' => [
+                    'latitude' => $originLatitude,
+                    'longitude' => $originLongitude,
+                ],
                 
                 'destination_contact_name' => $orderData['destination_contact_name'],
                 'destination_contact_phone' => $orderData['destination_contact_phone'],
                 'destination_address' => $orderData['destination_address'],
                 'destination_note' => $orderData['destination_note'] ?? '',
-                'destination_latitude' => $orderData['destination_latitude'],
-                'destination_longitude' => $orderData['destination_longitude'],
+                'destination_latitude' => $destinationLatitude,
+                'destination_longitude' => $destinationLongitude,
                 'destination_postal_code' => $orderData['destination_postal_code'] ?? '61219',
+                'destination_coordinate_latitude' => $destinationLatitude,
+                'destination_coordinate_longitude' => $destinationLongitude,
+                'destination_coordinate' => [
+                    'latitude' => $destinationLatitude,
+                    'longitude' => $destinationLongitude,
+                ],
                 
-                'courier_company' => $orderData['courier_code'],
-                'delivery_type' => 'now',
-                'order_note' => $orderData['order_note'] ?? '',
+                'courier_company' => $courierCode,
+                'courier_type' => $courierType,
+                'delivery_type' => $orderData['delivery_type'] ?? 'now',
                 'items' => $orderData['items'],
             ];
+
+            if ($orderNote !== '') {
+                $payload['order_note'] = $orderNote;
+            }
+
+            if (!empty($orderData['delivery_datetime'])) {
+                $payload['delivery_datetime'] = $orderData['delivery_datetime'];
+            }
+
+            if (!empty($orderData['reference_id'])) {
+                $payload['reference_id'] = $orderData['reference_id'];
+            }
+
+            $paymentPayload = $this->buildPaymentPayloadForBiteship($orderData);
+            $payloadWithPayment = array_merge($payload, $paymentPayload);
+
+            $rawPaymentMethod = strtolower(trim((string) ($orderData['payment_method'] ?? '')));
+            $isCodOrder = filter_var(($orderData['is_cod'] ?? false), FILTER_VALIDATE_BOOLEAN)
+                || in_array($rawPaymentMethod, ['cod', 'cash_on_delivery'], true);
+
+            Log::info('Biteship createOrder request payment meta', [
+                'reference_id' => $payloadWithPayment['reference_id'] ?? null,
+                'courier_company' => $payloadWithPayment['courier_company'] ?? null,
+                'courier_type' => $payloadWithPayment['courier_type'] ?? null,
+                'is_cod_order' => $isCodOrder,
+                'payment_method' => $paymentPayload['payment_method'] ?? null,
+                'is_cod_payload' => $paymentPayload['is_cod'] ?? null,
+                'cash_on_delivery_amount' => data_get($paymentPayload, 'cash_on_delivery.amount'),
+            ]);
 
             $response = Http::withoutVerifying()->withHeaders([
                 'Authorization' => $this->apiKey,
                 'Content-Type' => 'application/json',
-            ])->post("{$this->baseUrl}/orders", $payload);
+            ])->post("{$this->baseUrl}/orders", $payloadWithPayment);
+
+            // Fallback aman: jika field payment tidak dikenali API, coba ulang tanpa field payment
+            // HANYA untuk non-COD agar order COD tidak berubah menjadi Non-COD di Biteship.
+            if (!$response->successful() && !empty($paymentPayload)) {
+                Log::warning('Biteship createOrder failed with payment payload, retry without payment payload', [
+                    'status' => $response->status(),
+                    'body' => $response->body(),
+                    'payment_payload' => $paymentPayload,
+                    'is_cod_order' => $isCodOrder,
+                ]);
+
+                if (!$isCodOrder) {
+                    $response = Http::withoutVerifying()->withHeaders([
+                        'Authorization' => $this->apiKey,
+                        'Content-Type' => 'application/json',
+                    ])->post("{$this->baseUrl}/orders", $payload);
+                }
+            }
 
             if ($response->successful()) {
+                $responseJson = $response->json();
+
+                Log::info('Biteship createOrder response payment meta', [
+                    'reference_id' => $payloadWithPayment['reference_id'] ?? null,
+                    'biteship_order_id' => $responseJson['id'] ?? ($responseJson['order_id'] ?? null),
+                    'status' => $responseJson['status'] ?? null,
+                    'note' => $responseJson['note'] ?? null,
+                    'is_cod_order' => $isCodOrder,
+                ]);
+
                 return [
                     'success' => true,
-                    'data' => $response->json(),
+                    'data' => $responseJson,
                 ];
             }
 
             Log::error('Biteship createOrder failed', [
                 'status' => $response->status(),
                 'body' => $response->body(),
-                'payload' => $payload,
+                'payload' => $payloadWithPayment,
             ]);
 
             return [
@@ -481,6 +621,228 @@ class BiteshipService
                 'message' => $e->getMessage(),
             ];
         }
+    }
+
+    /**
+     * Create draft order in Biteship.
+     *
+     * Endpoint utama: POST /v1/draft_orders
+     */
+    public function createDraftOrder(array $orderData): array
+    {
+        if ($this->useMock) {
+            return [
+                'success' => true,
+                'data' => [
+                    'id' => 'DRAFT-' . strtoupper(uniqid()),
+                    'status' => 'draft',
+                ],
+            ];
+        }
+
+        try {
+            $courierCode = strtolower((string) ($orderData['courier_code'] ?? ''));
+            $courierType = $orderData['courier_type'] ?? $this->inferCourierType(
+                $courierCode,
+                (string) ($orderData['courier_service_name'] ?? '')
+            );
+
+            $originLatitude = (float) ($orderData['origin_latitude'] ?? config('biteship.origin.latitude'));
+            $originLongitude = (float) ($orderData['origin_longitude'] ?? config('biteship.origin.longitude'));
+            $destinationLatitude = (float) ($orderData['destination_latitude'] ?? 0);
+            $destinationLongitude = (float) ($orderData['destination_longitude'] ?? 0);
+            $orderNote = trim((string) ($orderData['order_note'] ?? ''));
+
+            $payload = [
+                'shipper_contact_name' => $orderData['shipper_contact_name'] ?? ($orderData['origin_contact_name'] ?? config('branding.name', 'NoraPadel')),
+                'shipper_contact_phone' => $orderData['shipper_contact_phone'] ?? ($orderData['origin_contact_phone'] ?? config('branding.phone', '081234567890')),
+                'shipper_contact_email' => $orderData['shipper_contact_email'] ?? config('mail.from.address', 'qa@norapadel.test'),
+
+                'origin_contact_name' => $orderData['origin_contact_name'] ?? config('branding.name', 'NoraPadel'),
+                'origin_contact_phone' => $orderData['origin_contact_phone'] ?? config('branding.phone', '081234567890'),
+                'origin_address' => $orderData['origin_address'] ?? config('branding.address', 'Toko NoraPadel'),
+                'origin_note' => $orderData['origin_note'] ?? 'Pickup dari toko',
+                'origin_latitude' => $originLatitude,
+                'origin_longitude' => $originLongitude,
+                'origin_postal_code' => $orderData['origin_postal_code'] ?? config('biteship.origin.postal_code'),
+                'origin_coordinate_latitude' => $originLatitude,
+                'origin_coordinate_longitude' => $originLongitude,
+
+                'destination_contact_name' => $orderData['destination_contact_name'],
+                'destination_contact_phone' => $orderData['destination_contact_phone'],
+                'destination_address' => $orderData['destination_address'],
+                'destination_note' => $orderData['destination_note'] ?? '',
+                'destination_latitude' => $destinationLatitude,
+                'destination_longitude' => $destinationLongitude,
+                'destination_postal_code' => $orderData['destination_postal_code'] ?? '61219',
+                'destination_coordinate_latitude' => $destinationLatitude,
+                'destination_coordinate_longitude' => $destinationLongitude,
+
+                'courier_company' => $courierCode,
+                'courier_type' => $courierType,
+                'delivery_type' => $orderData['delivery_type'] ?? 'now',
+                'items' => $orderData['items'],
+                'is_draft' => true,
+            ];
+
+            if ($orderNote !== '') {
+                $payload['order_note'] = $orderNote;
+            }
+
+            if (!empty($orderData['delivery_datetime'])) {
+                $payload['delivery_datetime'] = $orderData['delivery_datetime'];
+            }
+
+            if (!empty($orderData['reference_id'])) {
+                $payload['reference_id'] = $orderData['reference_id'];
+            }
+
+            $paymentPayload = $this->buildPaymentPayloadForBiteship($orderData);
+            $payloadWithPayment = array_merge($payload, $paymentPayload);
+
+            Log::info('Biteship createDraftOrder request', [
+                'reference_id' => $payloadWithPayment['reference_id'] ?? null,
+                'courier_company' => $payloadWithPayment['courier_company'] ?? null,
+                'courier_type' => $payloadWithPayment['courier_type'] ?? null,
+                'payment_method' => $payloadWithPayment['payment_method'] ?? null,
+            ]);
+
+            $response = Http::withoutVerifying()->withHeaders([
+                'Authorization' => $this->apiKey,
+                'Content-Type' => 'application/json',
+            ])->post("{$this->baseUrl}/draft_orders", $payloadWithPayment);
+
+            if ($response->successful()) {
+                $responseJson = $response->json();
+
+                Log::info('Biteship createDraftOrder response', [
+                    'reference_id' => $payloadWithPayment['reference_id'] ?? null,
+                    'biteship_draft_order_id' => $this->extractBiteshipOrderId($responseJson),
+                    'status' => $responseJson['status'] ?? null,
+                ]);
+
+                return [
+                    'success' => true,
+                    'data' => $responseJson,
+                ];
+            }
+
+            Log::error('Biteship createDraftOrder failed', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+                'payload' => $payloadWithPayment,
+            ]);
+
+            return [
+                'success' => false,
+                'message' => 'Failed to create draft order: ' . ($response->json()['error'] ?? $response->body()),
+                'error' => $response->json(),
+            ];
+        } catch (\Exception $e) {
+            Log::error('Biteship createDraftOrder exception', [
+                'message' => $e->getMessage(),
+            ]);
+
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * Create draft order in Biteship from local order (pending payment stage).
+     */
+    public function createDraftOrderFromOrder(Order $order, ?string $courierTypeOverride = null): array
+    {
+        if (!empty($order->biteship_draft_order_id)) {
+            return [
+                'success' => true,
+                'message' => 'Draft order Biteship sudah tersedia.',
+                'data' => [
+                    'biteship_draft_order_id' => $order->biteship_draft_order_id,
+                ],
+            ];
+        }
+
+        $order->loadMissing('items.product');
+
+        $items = $order->items->map(function ($item) {
+            $weight = (int) (($item->product->weight ?? 500) * max(1, (int) $item->quantity));
+
+            return [
+                'name' => $item->product_name,
+                'description' => $item->product_name,
+                'value' => (int) $item->product_price,
+                'quantity' => (int) $item->quantity,
+                'weight' => max(1, $weight),
+                'length' => 30,
+                'width' => 25,
+                'height' => 3,
+            ];
+        })->values()->toArray();
+
+        if (empty($items)) {
+            return [
+                'success' => false,
+                'message' => 'Order item kosong, tidak bisa create Biteship draft order.',
+            ];
+        }
+
+        $customerOrderNote = trim((string) ($order->notes ?? ''));
+
+        $draftPayload = [
+            'shipper_contact_name' => config('branding.name', 'NoraPadel'),
+            'shipper_contact_phone' => config('branding.phone', '081234567890'),
+            'origin_contact_name' => config('branding.name', 'NoraPadel'),
+            'origin_contact_phone' => config('branding.phone', '081234567890'),
+            'origin_address' => config('branding.address', 'Toko NoraPadel'),
+            'origin_note' => 'Pickup dari toko',
+            'origin_latitude' => (float) config('biteship.origin.latitude'),
+            'origin_longitude' => (float) config('biteship.origin.longitude'),
+            'origin_postal_code' => config('biteship.origin.postal_code'),
+
+            'destination_contact_name' => $order->shipping_name,
+            'destination_contact_phone' => $order->shipping_phone,
+            'destination_address' => $order->shipping_address,
+            'destination_note' => $order->notes ?? '',
+            'destination_latitude' => (float) $order->shipping_latitude,
+            'destination_longitude' => (float) $order->shipping_longitude,
+            'destination_postal_code' => $order->shipping_postal_code ?: config('biteship.origin.postal_code', '61219'),
+
+            'courier_code' => strtolower((string) $order->courier_code),
+            'courier_service_name' => (string) ($order->courier_service_name ?? ''),
+            'courier_type' => $courierTypeOverride ? strtolower(trim($courierTypeOverride)) : null,
+            'delivery_type' => 'now',
+            'reference_id' => $order->order_number,
+            'is_cod' => $order->isCod(),
+            'payment_method' => $order->isCod() ? 'cash_on_delivery' : 'online_payment',
+            'total_amount' => (int) round((float) $order->total),
+            'cash_on_delivery_amount' => $order->isCod() ? (int) round((float) $order->total) : 0,
+            'items' => $items,
+        ];
+
+        if ($customerOrderNote !== '') {
+            $draftPayload['order_note'] = $customerOrderNote;
+        }
+
+        $createResult = $this->createDraftOrder($draftPayload);
+
+        if (!($createResult['success'] ?? false)) {
+            return $createResult;
+        }
+
+        $raw = $createResult['data'] ?? [];
+
+        return [
+            'success' => true,
+            'message' => 'Draft order berhasil dibuat di Biteship.',
+            'data' => [
+                'biteship_draft_order_id' => $this->extractBiteshipOrderId($raw),
+                'status' => $raw['status'] ?? null,
+                'raw' => $raw,
+            ],
+        ];
     }
 
     /**
@@ -768,6 +1130,194 @@ class BiteshipService
     }
 
     /**
+     * Cancel order in Biteship.
+     *
+     * Endpoint: POST /v1/orders/{id}/cancel
+     * Status yang umumnya bisa dibatalkan: confirmed, allocated, picking_up.
+     */
+    public function cancelOrder(string $orderId, ?string $reason = null): array
+    {
+        if (trim($orderId) === '') {
+            return [
+                'success' => false,
+                'message' => 'Biteship order ID kosong.',
+            ];
+        }
+
+        $payload = [
+            'reason' => trim((string) ($reason ?: 'Dibatalkan oleh customer')),
+        ];
+
+        try {
+            $response = Http::withoutVerifying()->withHeaders([
+                'Authorization' => $this->apiKey,
+                'Content-Type' => 'application/json',
+            ])->post("{$this->baseUrl}/orders/{$orderId}/cancel", $payload);
+
+            if ($response->successful()) {
+                $data = $response->json();
+
+                return [
+                    'success' => true,
+                    'message' => 'Cancel order Biteship berhasil.',
+                    'data' => $data,
+                    'status' => $data['status'] ?? ($data['data']['status'] ?? null),
+                ];
+            }
+
+            $errorBody = $response->json();
+            $errorMessage = $errorBody['error']
+                ?? $errorBody['message']
+                ?? $response->body();
+
+            Log::error('Biteship cancelOrder failed', [
+                'order_id' => $orderId,
+                'payload' => $payload,
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+
+            return [
+                'success' => false,
+                'message' => 'Gagal membatalkan order di Biteship: ' . $errorMessage,
+                'error' => $errorBody,
+                'http_status' => $response->status(),
+            ];
+        } catch (\Exception $e) {
+            Log::error('Biteship cancelOrder exception', [
+                'order_id' => $orderId,
+                'message' => $e->getMessage(),
+            ]);
+
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * Close/remove draft order in Biteship.
+     *
+     * Beberapa akun Biteship punya endpoint draft yang berbeda,
+     * jadi method ini mencoba beberapa endpoint fallback.
+     */
+    public function closeDraftOrder(string $draftOrderId, ?string $reason = null): array
+    {
+        $draftOrderId = trim($draftOrderId);
+
+        if ($draftOrderId === '') {
+            return [
+                'success' => false,
+                'message' => 'Biteship draft order ID kosong.',
+            ];
+        }
+
+        if ($this->useMock) {
+            return [
+                'success' => true,
+                'message' => 'Draft order ditutup (mock).',
+                'action' => 'mock_close_draft',
+            ];
+        }
+
+        $payload = [
+            'reason' => trim((string) ($reason ?: 'Draft ditutup otomatis karena payment sudah sukses.')),
+        ];
+
+        $attempts = [
+            [
+                'method' => 'post',
+                'endpoint' => "/draft_orders/{$draftOrderId}/cancel",
+                'payload' => $payload,
+                'action' => 'draft_cancel',
+            ],
+            [
+                'method' => 'post',
+                'endpoint' => "/draft_orders/{$draftOrderId}/archive",
+                'payload' => $payload,
+                'action' => 'draft_archive',
+            ],
+            [
+                'method' => 'delete',
+                'endpoint' => "/draft_orders/{$draftOrderId}",
+                'payload' => null,
+                'action' => 'draft_delete',
+            ],
+            // Fallback terakhir: beberapa akun tetap menerima cancel lewat endpoint orders.
+            [
+                'method' => 'post',
+                'endpoint' => "/orders/{$draftOrderId}/cancel",
+                'payload' => $payload,
+                'action' => 'order_cancel_fallback',
+            ],
+        ];
+
+        $errors = [];
+
+        foreach ($attempts as $attempt) {
+            try {
+                $request = Http::withoutVerifying()->withHeaders([
+                    'Authorization' => $this->apiKey,
+                    'Content-Type' => 'application/json',
+                ]);
+
+                $method = strtolower((string) ($attempt['method'] ?? 'post'));
+                $endpoint = (string) ($attempt['endpoint'] ?? '');
+                $targetUrl = "{$this->baseUrl}{$endpoint}";
+
+                if ($method === 'delete') {
+                    $response = $request->delete($targetUrl);
+                } else {
+                    $response = $request->post($targetUrl, $attempt['payload'] ?? []);
+                }
+
+                if ($response->successful()) {
+                    $data = $response->json();
+
+                    Log::info('Biteship closeDraftOrder success', [
+                        'draft_order_id' => $draftOrderId,
+                        'action' => $attempt['action'] ?? null,
+                        'endpoint' => $endpoint,
+                        'status' => data_get($data, 'status'),
+                    ]);
+
+                    return [
+                        'success' => true,
+                        'message' => 'Draft order Biteship berhasil ditutup.',
+                        'action' => $attempt['action'] ?? null,
+                        'data' => $data,
+                    ];
+                }
+
+                $errors[] = [
+                    'action' => $attempt['action'] ?? null,
+                    'endpoint' => $endpoint,
+                    'http_status' => $response->status(),
+                    'body' => $response->body(),
+                ];
+            } catch (\Throwable $e) {
+                $errors[] = [
+                    'action' => $attempt['action'] ?? null,
+                    'endpoint' => $attempt['endpoint'] ?? null,
+                    'exception' => $e->getMessage(),
+                ];
+            }
+        }
+
+        Log::warning('Biteship closeDraftOrder failed on all endpoints', [
+            'draft_order_id' => $draftOrderId,
+            'attempts' => $errors,
+        ]);
+
+        return [
+            'success' => false,
+            'message' => 'Gagal menutup draft order Biteship di semua endpoint percobaan.',
+            'errors' => $errors,
+        ];
+    }
+
+    /**
      * Track order from Biteship
      * 
      * @param string $waybillId
@@ -798,5 +1348,223 @@ class BiteshipService
                 'message' => $e->getMessage(),
             ];
         }
+    }
+
+    /**
+     * Create Biteship shipment from local order.
+     */
+    public function createShipmentFromOrder(Order $order, ?string $courierTypeOverride = null): array
+    {
+        if (!empty($order->biteship_order_id)) {
+            return [
+                'success' => true,
+                'message' => 'Order sudah tersinkron Biteship.',
+                'data' => [
+                    'biteship_order_id' => $order->biteship_order_id,
+                    'waybill_id' => $order->waybill_id,
+                ],
+            ];
+        }
+
+        $order->loadMissing('items.product');
+
+        $items = $order->items->map(function ($item) {
+            $weight = (int) (($item->product->weight ?? 500) * max(1, (int) $item->quantity));
+
+            return [
+                'name' => $item->product_name,
+                'description' => $item->product_name,
+                'value' => (int) $item->product_price,
+                'quantity' => (int) $item->quantity,
+                'weight' => max(1, $weight),
+                'length' => 30,
+                'width' => 25,
+                'height' => 3,
+            ];
+        })->values()->toArray();
+
+        if (empty($items)) {
+            return [
+                'success' => false,
+                'message' => 'Order item kosong, tidak bisa create Biteship order.',
+            ];
+        }
+
+        $customerOrderNote = trim((string) ($order->notes ?? ''));
+
+        $shipmentPayload = [
+            'shipper_contact_name' => config('branding.name', 'NoraPadel'),
+            'shipper_contact_phone' => config('branding.phone', '081234567890'),
+            'origin_contact_name' => config('branding.name', 'NoraPadel'),
+            'origin_contact_phone' => config('branding.phone', '081234567890'),
+            'origin_address' => config('branding.address', 'Toko NoraPadel'),
+            'origin_note' => 'Pickup dari toko',
+            'origin_latitude' => (float) config('biteship.origin.latitude'),
+            'origin_longitude' => (float) config('biteship.origin.longitude'),
+            'origin_postal_code' => config('biteship.origin.postal_code'),
+
+            'destination_contact_name' => $order->shipping_name,
+            'destination_contact_phone' => $order->shipping_phone,
+            'destination_address' => $order->shipping_address,
+            'destination_note' => $order->notes ?? '',
+            'destination_latitude' => (float) $order->shipping_latitude,
+            'destination_longitude' => (float) $order->shipping_longitude,
+            'destination_postal_code' => $order->shipping_postal_code ?: config('biteship.origin.postal_code', '61219'),
+
+            'courier_code' => strtolower((string) $order->courier_code),
+            'courier_service_name' => (string) ($order->courier_service_name ?? ''),
+            'courier_type' => $courierTypeOverride ? strtolower(trim($courierTypeOverride)) : null,
+            'delivery_type' => 'now',
+            'reference_id' => $order->order_number,
+            'is_cod' => $order->isCod(),
+            'payment_method' => $order->isCod() ? 'cash_on_delivery' : 'online_payment',
+            'total_amount' => (int) round((float) $order->total),
+            'cash_on_delivery_amount' => $order->isCod() ? (int) round((float) $order->total) : 0,
+            'items' => $items,
+        ];
+
+        if ($customerOrderNote !== '') {
+            $shipmentPayload['order_note'] = $customerOrderNote;
+        }
+
+        $createResult = $this->createOrder($shipmentPayload);
+
+        if (!($createResult['success'] ?? false)) {
+            return $createResult;
+        }
+
+        $raw = $createResult['data'] ?? [];
+        $courier = $raw['courier'] ?? [];
+
+        return [
+            'success' => true,
+            'message' => 'Shipment berhasil dibuat di Biteship.',
+            'data' => [
+                'biteship_order_id' => $this->extractBiteshipOrderId($raw),
+                'tracking_id' => $courier['tracking_id'] ?? null,
+                'waybill_id' => $courier['waybill_id'] ?? null,
+                'courier_company' => $courier['company'] ?? null,
+                'courier_type' => $courier['type'] ?? null,
+                'status' => $raw['status'] ?? null,
+                'tracking_link' => $courier['link'] ?? null,
+                'label_url' => $raw['label_url'] ?? null,
+                'pickup_time' => $raw['pickup_time'] ?? null,
+                'raw' => $raw,
+            ],
+        ];
+    }
+
+    /**
+     * Ambil ID order/draft dari berbagai kemungkinan key response Biteship.
+     */
+    private function extractBiteshipOrderId(array $payload): ?string
+    {
+        $id = data_get($payload, 'id')
+            ?? data_get($payload, 'order_id')
+            ?? data_get($payload, 'draft_order_id')
+            ?? data_get($payload, 'data.id')
+            ?? data_get($payload, 'data.order_id')
+            ?? data_get($payload, 'data.draft_order_id');
+
+        if ($id === null) {
+            return null;
+        }
+
+        $id = trim((string) $id);
+
+        return $id === '' ? null : $id;
+    }
+
+    /**
+     * Build payment payload for Biteship order creation.
+     *
+     * Tujuan: memastikan dashboard Biteship dapat membedakan COD vs non-COD.
+     */
+    private function buildPaymentPayloadForBiteship(array $orderData): array
+    {
+        $isCod = filter_var(($orderData['is_cod'] ?? false), FILTER_VALIDATE_BOOLEAN);
+
+        $paymentMethod = strtolower(trim((string) ($orderData['payment_method'] ?? '')));
+        if (in_array($paymentMethod, ['cod', 'cash_on_delivery'], true)) {
+            $isCod = true;
+            $paymentMethod = 'cash_on_delivery';
+        }
+
+        if ($paymentMethod === '') {
+            $paymentMethod = $isCod ? 'cash_on_delivery' : 'online_payment';
+        }
+
+        $payload = [
+            'payment_method' => $paymentMethod,
+            'is_cod' => $isCod,
+        ];
+
+        if ($paymentMethod === 'cash_on_delivery') {
+            $codAmount = (int) round((float) (
+                $orderData['cash_on_delivery_amount']
+                ?? $orderData['total_amount']
+                ?? 0
+            ));
+
+            if ($codAmount > 0) {
+                $payload['cash_on_delivery'] = [
+                    'amount' => $codAmount,
+                ];
+                $payload['cash_on_delivery_fee'] = 0;
+            }
+        }
+
+        return $payload;
+    }
+
+    private function inferCourierType(string $courierCode, string $courierServiceName): string
+    {
+        $service = strtolower(trim($courierServiceName));
+        $courierCode = strtolower(trim($courierCode));
+
+        if ($service !== '') {
+            if (preg_match('/^([a-z0-9_\-]+)/', $service, $matches)) {
+                $token = strtolower($matches[1]);
+                $map = [
+                    'ez' => 'ez',
+                    'reg' => 'reg',
+                    'regular' => 'reg',
+                    'reguler' => 'reg',
+                    'yes' => 'yes',
+                    'jtr' => 'jtr',
+                    'oke' => 'oke',
+                    'express' => 'express',
+                    'instant' => 'instant',
+                    'sameday' => 'same_day',
+                    'same_day' => 'same_day',
+                    'same-day' => 'same_day',
+                ];
+
+                if (isset($map[$token])) {
+                    // J&T cenderung menggunakan ez untuk regular
+                    if ($courierCode === 'jnt' && $map[$token] === 'reg') {
+                        return 'ez';
+                    }
+
+                    return $map[$token];
+                }
+            }
+
+            if ($courierCode === 'jnt' && (str_contains($service, 'reg') || str_contains($service, 'regular') || str_contains($service, 'reguler'))) {
+                return 'ez';
+            }
+
+            if (str_contains($service, 'instant')) {
+                return 'instant';
+            }
+
+            if (str_contains($service, 'same day') || str_contains($service, 'sameday')) {
+                return 'same_day';
+            }
+        }
+
+        return in_array($courierCode, ['gojek', 'gosend', 'grab', 'grabexpress'], true)
+            ? 'instant'
+            : 'reg';
     }
 }

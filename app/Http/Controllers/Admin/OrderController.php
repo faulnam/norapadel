@@ -6,9 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Notification;
 use App\Notifications\OrderStatusChanged;
-use App\Notifications\CourierAssigned;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class OrderController extends Controller
@@ -18,7 +16,8 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Order::with('user', 'items');
+        $query = Order::with('user', 'items')
+            ->whereNull('biteship_order_id');
 
         // Search by order number or customer name
         if ($request->filled('search')) {
@@ -161,7 +160,7 @@ class OrderController extends Controller
         // Gunakan label_url dari database jika tersedia
         $biteshipLabel = $order->label_url;
 
-        $pdf = PDF::loadView('admin.orders.receipt', compact('order', 'biteshipLabel'));
+    $pdf = Pdf::loadView('admin.orders.receipt', compact('order', 'biteshipLabel'));
         
         return $pdf->download('resi-' . $order->order_number . '.pdf');
     }

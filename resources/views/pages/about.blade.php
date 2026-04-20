@@ -10,7 +10,7 @@
     </style>
 
     <div class="bg-white text-black antialiased">
-        <header class="sticky top-0 z-50 border-b border-black/6 bg-white/80 backdrop-blur-xl">
+    <header class="fixed left-0 top-0 z-50 w-full border-b border-black/6 bg-white/80 backdrop-blur-xl md:sticky">
             <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-10 lg:px-12">
                 <a href="{{ route('home') }}" class="text-xl font-semibold tracking-tight text-black">NoraPadel</a>
 
@@ -81,7 +81,8 @@
             </div>
         </header>
 
-        <section class="bg-white pt-8 pb-14 lg:pt-10 lg:pb-16">
+    <main class="pt-16 md:pt-0">
+    <section class="bg-white pt-8 pb-14 lg:pt-10 lg:pb-16">
             <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
                 <div class="mx-auto max-w-3xl text-center">
                     <p class="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">About NoraPadel</p>
@@ -105,6 +106,7 @@
                 </div>
             </div>
         </section>
+        </main>
     </div>
 @endsection
 

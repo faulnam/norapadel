@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="min-h-screen bg-[#f5f5f7] text-black antialiased">
-        <header class="sticky top-0 z-50 border-b border-black/6 bg-white/80 backdrop-blur-xl">
+    <header class="fixed left-0 top-0 z-50 w-full border-b border-black/6 bg-white/80 backdrop-blur-xl md:sticky">
             <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-10 lg:px-12">
                 <a href="{{ route('home') }}" class="text-xl font-semibold tracking-tight text-black">NoraPadel</a>
 
@@ -43,7 +43,8 @@
             </div>
         </header>
 
-        <section class="px-6 py-10 md:px-10 lg:px-12 lg:py-14">
+    <main class="pt-16 md:pt-0">
+    <section class="px-6 py-10 md:px-10 lg:px-12 lg:py-14">
             <div class="mx-auto grid w-full max-w-7xl gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
                 <div class="hidden rounded-3xl border border-black/8 bg-white p-8 shadow-[0_16px_42px_rgba(0,0,0,0.08)] lg:block">
                     <p class="text-xs font-semibold uppercase tracking-[0.18em] text-black/50">Welcome back</p>
@@ -123,6 +124,7 @@
                 </div>
             </div>
         </section>
+        </main>
     </div>
 @endsection
 

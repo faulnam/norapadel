@@ -12,7 +12,7 @@
 
 @section('content')
 <!-- Navbar -->
-<header class="sticky top-0 z-50 border-b border-black/6 bg-white/80 backdrop-blur-xl">
+<header class="fixed left-0 top-0 z-50 w-full border-b border-black/6 bg-white/80 backdrop-blur-xl md:sticky">
     <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-10 lg:px-12">
         <a href="{{ route('home') }}" class="text-xl font-semibold tracking-tight text-black">NoraPadel</a>
         <nav class="hidden items-center gap-8 md:flex">
@@ -35,7 +35,7 @@
     </div>
 </header>
 
-<div class="min-h-screen bg-zinc-50 py-12">
+<div class="min-h-screen bg-zinc-50 py-12 pt-16 md:pt-0">
     <div class="mx-auto max-w-2xl px-6">
         <div class="rounded-2xl bg-white p-8 shadow-sm text-center">
             <div class="mb-6 flex h-20 w-20 mx-auto items-center justify-center rounded-full bg-amber-100">

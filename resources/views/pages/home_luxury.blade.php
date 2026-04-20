@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="bg-white text-black antialiased">
-        <header class="sticky top-0 z-50 border-b border-black/6 bg-white/80 backdrop-blur-xl">
+    <header class="fixed left-0 top-0 z-50 w-full border-b border-black/6 bg-white/80 backdrop-blur-xl md:sticky">
             <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-10 lg:px-12">
                 <a href="{{ route('home') }}" class="text-xl font-semibold tracking-tight text-black">NoraPadel</a>
 
@@ -79,11 +79,72 @@
                 </nav>
             </div>
         </header>
-        <x-landing.hero-product id="racket" title="NoraPadel" subtitle="Precision. Power. Performance."
-            image="{{ asset('storage/banner.png') }}" alt="NoraPadel Racket" primary-text="Explore"
-            primary-href="{{ route('produk.index') }}" secondary-text="Buy Now"
-            secondary-href="{{ route('home') }}#products"
-            section-class="bg-[#f5f5f7] border-b-[14px] border-white" />
+
+        <main class="pt-16 md:pt-0">
+        <section class="border-b-[14px] border-white bg-[#f5f5f7] md:hidden" data-mobile-hero-carousel>
+            <div class="relative h-[calc(100vh-64px)] w-full overflow-hidden">
+                <div class="absolute inset-0 h-full overflow-hidden">
+                    <div class="flex h-full transition-transform duration-500 ease-out" data-mobile-hero-track>
+                        <article class="min-w-full">
+                            <img src="{{ asset('storage/banner.png') }}" alt="NoraPadel Racket"
+                                class="mx-auto h-full w-full scale-[1.08] object-contain pb-28" loading="lazy">
+                        </article>
+
+                        <article class="min-w-full">
+                            <img src="{{ asset('storage/shoes.png') }}" alt="NoraPadel Shoes"
+                                class="mx-auto h-full w-full scale-[1.08] object-contain pb-28" loading="lazy">
+                        </article>
+
+                        <article class="min-w-full">
+                            <img src="{{ asset('storage/3.png') }}" alt="NoraPadel Accessories"
+                                class="mx-auto h-full w-full scale-[1.08] object-contain pb-28" loading="lazy">
+                        </article>
+                    </div>
+                </div>
+
+                <div class="pointer-events-none absolute inset-0 bg-linear-to-b from-[#f5f5f7]/70 via-[#f5f5f7]/35 to-[#f5f5f7]/75"></div>
+
+                <div class="pointer-events-none absolute inset-x-0 bottom-20 z-20 px-6 text-center">
+                    <h2 class="text-3xl font-semibold tracking-tight text-black">NoraPadel</h2>
+                    <p class="mt-1 text-base text-zinc-700">Precision. Power. Performance.</p>
+                    <div class="pointer-events-auto mt-5 flex items-center justify-center gap-2">
+                        <a href="{{ route('produk.index') }}"
+                            class="inline-flex rounded-full border border-black/10 bg-white px-4 py-2 text-xs font-semibold text-black">Explore</a>
+                        <a href="{{ route('home') }}#products"
+                            class="inline-flex rounded-full bg-black px-4 py-2 text-xs font-semibold text-white">Buy Now</a>
+                    </div>
+                </div>
+
+                <button type="button"
+                    class="absolute left-3 top-1/2 z-20 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-black/10 bg-white/90 text-zinc-700 shadow"
+                    data-mobile-hero-prev aria-label="Hero sebelumnya">
+                    <i class="fas fa-chevron-left text-xs"></i>
+                </button>
+                <button type="button"
+                    class="absolute right-3 top-1/2 z-20 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-black/10 bg-white/90 text-zinc-700 shadow"
+                    data-mobile-hero-next aria-label="Hero berikutnya">
+                    <i class="fas fa-chevron-right text-xs"></i>
+                </button>
+
+                <div class="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/25 px-3 py-2 backdrop-blur"
+                    data-mobile-hero-dots>
+                    <button type="button" class="h-2.5 w-2.5 rounded-full bg-white" data-mobile-hero-to="0"
+                        aria-label="Slide 1"></button>
+                    <button type="button" class="h-2.5 w-2.5 rounded-full bg-white/45" data-mobile-hero-to="1"
+                        aria-label="Slide 2"></button>
+                    <button type="button" class="h-2.5 w-2.5 rounded-full bg-white/45" data-mobile-hero-to="2"
+                        aria-label="Slide 3"></button>
+                </div>
+            </div>
+        </section>
+
+        <div class="hidden md:block">
+            <x-landing.hero-product id="racket" title="NoraPadel" subtitle="Precision. Power. Performance."
+                image="{{ asset('storage/banner.png') }}" alt="NoraPadel Racket" primary-text="Explore"
+                primary-href="{{ route('produk.index') }}" secondary-text="Buy Now"
+                secondary-href="{{ route('home') }}#products"
+                section-class="bg-[#f5f5f7] border-b-[14px] border-white" />
+        </div>
 
         <!-- Why Choose NoraPadel -->
         <section class="np-fade-section bg-white py-12 lg:py-14">
@@ -360,6 +421,7 @@
             </div>
         </section>
 
+        </main>
     </div>
 @endsection
 
@@ -367,6 +429,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
+        #mainNavbar,
+        .mobile-bottom-nav {
+            display: none !important;
+        }
+
         html {
             scroll-behavior: smooth;
         }
@@ -523,6 +590,13 @@
             });
 
             const applyParallax = () => {
+                if (window.innerWidth < 768) {
+                    heroImages.forEach((img) => {
+                        img.style.transform = '';
+                    });
+                    return;
+                }
+
                 const scrollTop = window.scrollY || window.pageYOffset;
                 heroImages.forEach((img, index) => {
                     const intensity = 0.04 + (index * 0.005);
@@ -537,6 +611,22 @@
 
             const applyContainerScroll = () => {
                 const containers = document.querySelectorAll('[data-scroll-container]');
+
+                if (window.innerWidth < 768) {
+                    containers.forEach((container) => {
+                        const card = container.querySelector('.np-container-scroll-card');
+                        const content = container.querySelector('.np-container-scroll-content');
+                        const title = content?.querySelector('h2');
+                        const subtitle = content?.querySelector('p');
+                        const cta = content?.querySelector('.mt-7');
+
+                        if (card) card.style.transform = '';
+                        if (title) title.style.transform = '';
+                        if (subtitle) subtitle.style.transform = '';
+                        if (cta) cta.style.transform = '';
+                    });
+                    return;
+                }
                 
                 containers.forEach((container) => {
                     const card = container.querySelector('.np-container-scroll-card');
@@ -551,14 +641,13 @@
                     const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
                     const rawProgress = (viewportHeight - rect.top) / (viewportHeight + rect.height);
                     const progress = Math.max(0, Math.min(1, rawProgress));
-                    const isMobile = window.innerWidth <= 768;
 
                     // 3D rotation effect (starts at 20deg, ends at 0deg)
                     const rotateX = 20 - (20 * progress);
                     
-                    // Scale effect (mobile: 0.7 to 0.9, desktop: 1.05 to 1)
-                    const startScale = isMobile ? 0.7 : 1.05;
-                    const endScale = isMobile ? 0.9 : 1;
+                    // Scale effect desktop (tetap seperti semula)
+                    const startScale = 1.05;
+                    const endScale = 1;
                     const scale = startScale + ((endScale - startScale) * progress);
                     
                     // Translate Y for content (moves up as you scroll)
@@ -578,6 +667,67 @@
             });
             window.addEventListener('resize', applyContainerScroll);
             applyContainerScroll();
+
+            const mobileHero = document.querySelector('[data-mobile-hero-carousel]');
+            if (mobileHero) {
+                const track = mobileHero.querySelector('[data-mobile-hero-track]');
+                const prevBtn = mobileHero.querySelector('[data-mobile-hero-prev]');
+                const nextBtn = mobileHero.querySelector('[data-mobile-hero-next]');
+                const dots = Array.from(mobileHero.querySelectorAll('[data-mobile-hero-to]'));
+                let index = 0;
+                let timer;
+
+                const render = (nextIndex) => {
+                    const total = dots.length;
+                    index = (nextIndex + total) % total;
+                    track.style.transform = `translateX(-${index * 100}%)`;
+
+                    dots.forEach((dot, dotIndex) => {
+                        dot.classList.toggle('bg-white', dotIndex === index);
+                        dot.classList.toggle('bg-white/45', dotIndex !== index);
+                    });
+                };
+
+                const startAuto = () => {
+                    if (window.innerWidth >= 768) return;
+                    timer = window.setInterval(() => render(index + 1), 4000);
+                };
+
+                const stopAuto = () => {
+                    if (timer) window.clearInterval(timer);
+                };
+
+                prevBtn?.addEventListener('click', () => {
+                    render(index - 1);
+                    stopAuto();
+                    startAuto();
+                });
+
+                nextBtn?.addEventListener('click', () => {
+                    render(index + 1);
+                    stopAuto();
+                    startAuto();
+                });
+
+                dots.forEach((dot) => {
+                    dot.addEventListener('click', () => {
+                        render(Number(dot.dataset.mobileHeroTo || 0));
+                        stopAuto();
+                        startAuto();
+                    });
+                });
+
+                render(0);
+                startAuto();
+
+                window.addEventListener('resize', () => {
+                    if (window.innerWidth >= 768) {
+                        stopAuto();
+                    } else {
+                        startAuto();
+                    }
+                });
+            }
 
             const layoutClasses = {
                 list: ['flex', 'flex-col', 'space-y-4'],

@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="min-h-screen bg-[#f5f5f7] text-black antialiased">
-        <header class="sticky top-0 z-50 border-b border-black/6 bg-white/80 backdrop-blur-xl">
+    <header class="fixed left-0 top-0 z-50 w-full border-b border-black/6 bg-white/80 backdrop-blur-xl md:sticky">
             <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-10 lg:px-12">
                 <a href="{{ route('home') }}" class="text-xl font-semibold tracking-tight text-black">NoraPadel</a>
 
@@ -43,7 +43,8 @@
             </div>
         </header>
 
-        <section class="px-6 py-10 md:px-10 lg:px-12 lg:py-14">
+    <main class="pt-16 md:pt-0">
+    <section class="px-6 py-10 md:px-10 lg:px-12 lg:py-14">
             <div class="mx-auto grid w-full max-w-7xl gap-8 lg:grid-cols-2 lg:items-stretch">
                 <div class="hidden h-full min-h-[760px] flex-col rounded-3xl border border-black/8 bg-white p-8 shadow-[0_16px_42px_rgba(0,0,0,0.08)] lg:flex">
                     <p class="text-xs font-semibold uppercase tracking-[0.18em] text-black/50">Join NoraPadel</p>
@@ -135,7 +136,8 @@
                     </p>
                 </div>
             </div>
-        </section>
+    </section>
+    </main>
 
         <div id="otpModal" class="fixed inset-0 z-[70] hidden">
             <div class="absolute inset-0 bg-black/45" data-close-otp-modal></div>

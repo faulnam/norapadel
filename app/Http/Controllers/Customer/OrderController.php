@@ -12,8 +12,8 @@ use App\Models\CourierLocation;
 use App\Notifications\NewOrderNotification;
 use App\Notifications\OrderCancelledNotification;
 use App\Notifications\PaymentUploadedNotification;
+use App\Services\BiteshipService;
 use App\Services\WebPushService;
-use App\Services\PakasirService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
@@ -67,6 +67,7 @@ class OrderController extends Controller
             'delivery_time_slot' => 'required|string',
             'courier_code' => 'nullable|string',
             'courier_name' => 'nullable|string',
+            'courier_service_code' => 'required_with:courier_code|nullable|string|max:50',
             'courier_service_name' => 'nullable|string',
             'estimated_delivery_date' => 'nullable|string',
             'notes' => 'nullable|string|max:500',
@@ -82,6 +83,7 @@ class OrderController extends Controller
             'shipping_cost.required' => 'Silakan hitung ongkir terlebih dahulu.',
             'delivery_date.required' => 'Tanggal pengiriman wajib diisi.',
             'delivery_time_slot.required' => 'Waktu pengiriman wajib diisi.',
+            'courier_service_code.required_with' => 'Silakan pilih layanan ongkir dari ekspedisi terlebih dahulu.',
         ]);
 
         $cartItems = auth()->user()->cart()->with('product')->get();
@@ -124,6 +126,12 @@ class OrderController extends Controller
             // Calculate final total
             $total = $subtotal - $productDiscount + $shippingCost - $shippingDiscount;
 
+            $deliveryNotes = null;
+            if (!empty($validated['courier_service_code'])) {
+                $selectedServiceCode = strtolower(trim((string) $validated['courier_service_code']));
+                $deliveryNotes = 'biteship_courier_service_code=' . $selectedServiceCode;
+            }
+
             // Create order
             $order = Order::create([
                 'user_id' => auth()->id(),
@@ -146,6 +154,7 @@ class OrderController extends Controller
                 'courier_name' => $validated['courier_name'] ?? null,
                 'courier_service_name' => $validated['courier_service_name'] ?? null,
                 'estimated_delivery_date' => $validated['estimated_delivery_date'] ?? null,
+                'delivery_notes' => $deliveryNotes,
                 'notes' => $validated['notes'],
                 'status' => Order::STATUS_PENDING_PAYMENT,
                 'payment_status' => Order::PAYMENT_UNPAID,
@@ -164,6 +173,61 @@ class OrderController extends Controller
 
                 // Reduce stock
                 $item->product->reduceStock($item->quantity);
+            }
+
+            // Saat checkout pending payment: buat Draft Order di Biteship (bukan shipment).
+            // Shipment tetap dibuat setelah payment sukses oleh observer.
+            if (
+                !empty($order->courier_code)
+                && empty($order->biteship_draft_order_id)
+            ) {
+                try {
+                    /** @var BiteshipService $biteship */
+                    $biteship = app(BiteshipService::class);
+
+                    $result = $biteship->createDraftOrderFromOrder(
+                        $order,
+                        $validated['courier_service_code'] ?? null
+                    );
+
+                    if ($result['success'] ?? false) {
+                        $data = $result['data'] ?? [];
+
+                        $payload = array_filter([
+                            'biteship_draft_order_id' => $data['biteship_draft_order_id'] ?? null,
+                            'delivery_notes' => trim((string) (($order->delivery_notes ? $order->delivery_notes . "\n" : '') . 'biteship_sync_status=draft_synced')),
+                        ], fn ($value) => $value !== null && $value !== '');
+
+                        if (!empty($payload)) {
+                            $order->fill($payload)->saveQuietly();
+                        }
+
+                        \Log::info('Create Biteship draft order saat checkout sukses (controller)', [
+                            'order_number' => $order->order_number,
+                            'biteship_draft_order_id' => $data['biteship_draft_order_id'] ?? null,
+                        ]);
+                    } else {
+                        $errorMessage = $result['message'] ?? 'Unknown error';
+
+                        $order->fill([
+                            'delivery_notes' => trim((string) (($order->delivery_notes ? $order->delivery_notes . "\n" : '') . 'biteship_sync_status=failed_to_sync_biteship_draft; reason=' . $errorMessage)),
+                        ])->saveQuietly();
+
+                        \Log::warning('Create Biteship draft order saat checkout gagal (controller)', [
+                            'order_number' => $order->order_number,
+                            'message' => $errorMessage,
+                        ]);
+                    }
+                } catch (\Throwable $e) {
+                    $order->fill([
+                        'delivery_notes' => trim((string) (($order->delivery_notes ? $order->delivery_notes . "\n" : '') . 'biteship_sync_status=failed_to_sync_biteship_draft; reason=' . $e->getMessage())),
+                    ])->saveQuietly();
+
+                    \Log::error('Create Biteship draft order saat checkout exception (controller)', [
+                        'order_number' => $order->order_number,
+                        'error' => $e->getMessage(),
+                    ]);
+                }
             }
 
             // Clear cart
@@ -217,10 +281,317 @@ class OrderController extends Controller
             abort(403);
         }
 
+        $biteshipRawDetail = null;
+        if (!empty($order->biteship_order_id)) {
+            try {
+                $biteshipRawDetail = $this->syncOrderStatusFromBiteship($order);
+                $order->refresh();
+            } catch (\Throwable $e) {
+                \Log::warning('Sinkronisasi Biteship dilewati karena error saat membuka detail order customer', [
+                    'order_number' => $order->order_number,
+                    'biteship_order_id' => $order->biteship_order_id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+
         $order->load('items.product');
 
-        return view('customer.orders.show', compact('order'));
+        $biteshipDetail = null;
+        if (!empty($order->biteship_order_id)) {
+            $biteshipDetail = $this->buildBiteshipDetailPayload($order, $biteshipRawDetail ?? []);
+        }
+
+        return view('customer.orders.show', compact('order', 'biteshipDetail'));
     }
+
+        /**
+         * Sinkronisasi status order dari Biteship saat detail dibuka.
+         * Fallback ini membantu jika webhook terlambat masuk.
+         */
+        protected function syncOrderStatusFromBiteship(Order $order): ?array
+        {
+            if (empty($order->biteship_order_id)) {
+                return null;
+            }
+
+            try {
+                /** @var BiteshipService $biteship */
+                $biteship = app(BiteshipService::class);
+                $result = $biteship->getOrder((string) $order->biteship_order_id);
+
+                if (!($result['success'] ?? false)) {
+                    return null;
+                }
+
+                $data = $result['data'] ?? [];
+                $courier = $data['courier'] ?? [];
+
+                $trackingStatus = strtolower((string) (
+                    $data['courier_tracking_status']
+                    ?? $data['status']
+                    ?? ($courier['status'] ?? '')
+                ));
+
+                $updates = [];
+
+                if ($trackingStatus !== '') {
+                    $updates['biteship_tracking_status'] = $trackingStatus;
+
+                    $shipmentStage = Order::normalizeBiteshipStage($trackingStatus);
+                    if (!empty($shipmentStage)) {
+                        $updates['biteship_status_stage'] = $shipmentStage;
+                    }
+
+                    $mappedOrderStatus = Order::mapBiteshipTrackingToOrderStatus($trackingStatus);
+                    if (!empty($mappedOrderStatus)) {
+                        $updates['status'] = $mappedOrderStatus;
+                    }
+                }
+
+                if (!empty($courier['waybill_id'])) {
+                    $updates['waybill_id'] = $courier['waybill_id'];
+                }
+
+                if (!empty($data['label_url'])) {
+                    $updates['label_url'] = $data['label_url'];
+                }
+
+                if ($trackingStatus === 'picked') {
+                    $updates['picked_up_at'] = $order->picked_up_at ?? now();
+                }
+
+                if ($trackingStatus === 'dropping_off') {
+                    $updates['on_delivery_at'] = $order->on_delivery_at ?? now();
+                }
+
+                if ($trackingStatus === 'delivered') {
+                    $updates['delivered_at'] = $order->delivered_at ?? now();
+                }
+
+                if (in_array($trackingStatus, ['completed', 'done'], true)) {
+                    $updates['completed_at'] = $order->completed_at ?? now();
+                }
+
+                if (!empty($updates)) {
+                    $order->fill($updates)->save();
+                }
+
+                return $data;
+            } catch (\Throwable $e) {
+                \Log::warning('Sync status Biteship saat buka detail gagal', [
+                    'order_number' => $order->order_number,
+                    'biteship_order_id' => $order->biteship_order_id,
+                    'error' => $e->getMessage(),
+                ]);
+
+                return null;
+            }
+        }
+
+        /**
+         * Siapkan payload detail pengiriman untuk UI customer.
+         */
+        protected function buildBiteshipDetailPayload(Order $order, array $raw): array
+        {
+            $courier = data_get($raw, 'courier', []);
+            $origin = data_get($raw, 'origin', []);
+            $destination = data_get($raw, 'destination', []);
+            $rawItems = data_get($raw, 'items', []);
+
+            $normalizedItems = collect(!empty($rawItems) ? $rawItems : $order->items)->map(function ($item, $index) {
+                $isArray = is_array($item);
+
+                $name = (string) ($isArray
+                    ? (data_get($item, 'name') ?? data_get($item, 'description') ?? 'Barang #' . ($index + 1))
+                    : ($item->product_name ?? ('Barang #' . ($index + 1))));
+
+                $quantity = (int) ($isArray
+                    ? (data_get($item, 'quantity') ?? 1)
+                    : ($item->quantity ?? 1));
+
+                $weightGram = (float) ($isArray
+                    ? (data_get($item, 'weight') ?? 0)
+                    : (($item->product->weight ?? 0) * max(1, $quantity)));
+
+                $weightKg = $weightGram > 0 ? round($weightGram / 1000, 3) : null;
+
+                $value = (float) ($isArray
+                    ? (data_get($item, 'value') ?? 0)
+                    : ($item->product_price ?? 0));
+
+                $length = (string) (data_get($item, 'length') ?? 30);
+                $width = (string) (data_get($item, 'width') ?? 25);
+                $height = (string) (data_get($item, 'height') ?? 3);
+
+                return [
+                    'name' => $name,
+                    'weight_kg' => $weightKg,
+                    'quantity' => $quantity,
+                    'price' => $this->formatRupiah($value),
+                    'dimension' => $length . ' x ' . $width . ' x ' . $height . ' cm',
+                ];
+            })->values()->all();
+
+            $totalWeightKg = collect($normalizedItems)
+                ->sum(fn ($item) => (float) ($item['weight_kg'] ?? 0));
+
+            $trackingStatus = strtolower((string) (
+                data_get($raw, 'courier_tracking_status')
+                ?? data_get($raw, 'status')
+                ?? data_get($courier, 'status')
+                ?? ''
+            ));
+
+            $biteshipShippingCost = $this->extractNumericValue([
+                data_get($raw, 'shipping.price'),
+                data_get($raw, 'shipping.cost'),
+                data_get($raw, 'shipping_cost'),
+                data_get($raw, 'price'),
+                data_get($raw, 'amount'),
+                data_get($courier, 'price'),
+                data_get($courier, 'cost'),
+            ]);
+
+            $shippingCostValue = $biteshipShippingCost ?? (float) $order->shipping_cost;
+            $billingTotalValue = (float) $order->subtotal
+                - (float) ($order->product_discount ?? 0)
+                - (float) ($order->shipping_discount ?? 0)
+                + $shippingCostValue;
+
+            return [
+                'order_id' => (string) (
+                    data_get($raw, 'id')
+                    ?? data_get($raw, 'order_id')
+                    ?? $order->biteship_order_id
+                ),
+                'reference_id' => (string) (
+                    data_get($raw, 'reference_id')
+                    ?? $order->order_number
+                ),
+                'waybill_id' => (string) (
+                    data_get($courier, 'waybill_id')
+                    ?? $order->waybill_id
+                    ?? '-'
+                ),
+                'status_label' => $this->formatBiteshipDeliveryStatusLabel($trackingStatus, $order),
+                'courier_name' => trim((string) (
+                    data_get($courier, 'company_name')
+                    ?? data_get($courier, 'company')
+                    ?? $order->courier_name
+                ) . ' ' . (string) (
+                    data_get($courier, 'type')
+                    ?? data_get($raw, 'courier_type')
+                    ?? $order->courier_service_name
+                )),
+                'total_weight_kg' => round($totalWeightKg, 3),
+                'shipping_cost' => $this->formatRupiah($shippingCostValue),
+                'driver_name' => (string) (
+                    data_get($courier, 'name')
+                    ?? $order->courier_driver_name
+                    ?? '-'
+                ),
+                'driver_phone' => (string) (
+                    data_get($courier, 'phone')
+                    ?? $order->courier_driver_phone
+                    ?? '-'
+                ),
+                'vehicle_number' => (string) (
+                    data_get($courier, 'vehicle_number')
+                    ?? $order->courier_driver_vehicle_number
+                    ?? '-'
+                ),
+                'tracking_url' => (string) (
+                    data_get($courier, 'link')
+                    ?? data_get($raw, 'tracking_link')
+                    ?? ''
+                ),
+                'label_url' => (string) (
+                    data_get($raw, 'label_url')
+                    ?? $order->label_url
+                    ?? ''
+                ),
+                'pickup' => [
+                    'name' => (string) (
+                        data_get($origin, 'contact_name')
+                        ?? config('branding.name', 'NoraPadel')
+                    ),
+                    'phone' => (string) (
+                        data_get($origin, 'contact_phone')
+                        ?? config('branding.phone', '-')
+                    ),
+                    'address' => (string) (
+                        data_get($origin, 'address')
+                        ?? config('branding.address', '-')
+                    ),
+                ],
+                'receiver' => [
+                    'name' => (string) (
+                        data_get($destination, 'contact_name')
+                        ?? $order->shipping_name
+                    ),
+                    'phone' => (string) (
+                        data_get($destination, 'contact_phone')
+                        ?? $order->shipping_phone
+                    ),
+                    'address' => (string) (
+                        data_get($destination, 'address')
+                        ?? $order->shipping_address
+                    ),
+                ],
+                'items' => $normalizedItems,
+                'note' => (string) (
+                    data_get($raw, 'order_note')
+                    ?? ($order->notes ?: '-')
+                ),
+                'billing' => [
+                    'shipping_cost' => $this->formatRupiah($shippingCostValue),
+                    'total' => $this->formatRupiah($billingTotalValue),
+                ],
+            ];
+        }
+
+        protected function extractNumericValue(array $candidates): ?float
+        {
+            foreach ($candidates as $candidate) {
+                if ($candidate === null || $candidate === '') {
+                    continue;
+                }
+
+                if (is_numeric($candidate)) {
+                    return (float) $candidate;
+                }
+
+                $normalized = preg_replace('/[^0-9\.,]/', '', (string) $candidate);
+                if ($normalized === null || $normalized === '') {
+                    continue;
+                }
+
+                // Handle format 73.000 or 73,000 etc.
+                $normalized = str_replace('.', '', $normalized);
+                $normalized = str_replace(',', '.', $normalized);
+
+                if (is_numeric($normalized)) {
+                    return (float) $normalized;
+                }
+            }
+
+            return null;
+        }
+
+        protected function formatRupiah(float $amount): string
+        {
+            return 'Rp' . number_format($amount, 0, ',', '.');
+        }
+
+        protected function formatBiteshipDeliveryStatusLabel(string $trackingStatus, Order $order): string
+        {
+            if (in_array($trackingStatus, ['delivered', 'done', 'completed'], true)) {
+                return 'Berhasil Dikirim';
+            }
+
+            return $order->status_label;
+        }
 
     /**
      * Show receipt/invoice for order
@@ -332,6 +703,50 @@ class OrderController extends Controller
 
         $reason = $request->input('cancel_reason', 'Dibatalkan oleh customer');
 
+        $biteshipCancelStatus = null;
+        $biteshipCancelStage = null;
+        $biteshipCancelAuditNote = null;
+
+        $biteshipTargetId = !empty($order->biteship_order_id)
+            ? (string) $order->biteship_order_id
+            : (!empty($order->biteship_draft_order_id) ? (string) $order->biteship_draft_order_id : '');
+
+        if ($biteshipTargetId !== '') {
+            /** @var BiteshipService $biteship */
+            $biteship = app(BiteshipService::class);
+
+            $cancelBiteship = $biteship->cancelOrder($biteshipTargetId, $reason);
+
+            if (!($cancelBiteship['success'] ?? false)) {
+                $errorMessage = (string) ($cancelBiteship['message'] ?? 'Unknown error');
+
+                \Log::warning('Cancel order blocked: failed cancelling in Biteship', [
+                    'order_number' => $order->order_number,
+                    'biteship_order_id' => $biteshipTargetId,
+                    'message' => $errorMessage,
+                ]);
+
+                return back()->with('error', 'Pesanan belum dapat dibatalkan karena gagal sinkron ke Biteship. ' . $errorMessage);
+            }
+
+            $biteshipCancelStatus = strtolower(trim((string) (
+                $cancelBiteship['status']
+                ?? data_get($cancelBiteship, 'data.status')
+                ?? 'cancel_requested'
+            )));
+
+            if ($biteshipCancelStatus === '') {
+                $biteshipCancelStatus = 'cancel_requested';
+            }
+
+            $biteshipCancelStage = Order::normalizeBiteshipStage($biteshipCancelStatus);
+            if ($biteshipCancelStage === '') {
+                $biteshipCancelStage = Order::BITESHIP_STAGE_RETURN;
+            }
+
+            $biteshipCancelAuditNote = 'biteship_cancel_status=' . $biteshipCancelStatus . '; reason=' . trim((string) $reason);
+        }
+
         try {
             DB::beginTransaction();
 
@@ -357,6 +772,14 @@ class OrderController extends Controller
 
             // Cancel order
             $order->cancelOrder($reason);
+
+            if ($biteshipCancelAuditNote !== null) {
+                $order->fill([
+                    'biteship_tracking_status' => $biteshipCancelStatus,
+                    'biteship_status_stage' => $biteshipCancelStage,
+                    'delivery_notes' => trim((string) (($order->delivery_notes ? $order->delivery_notes . "\n" : '') . $biteshipCancelAuditNote)),
+                ])->saveQuietly();
+            }
 
             // Send notifications
             $refundAmount = $needsRefund ? (float) $order->total : null;

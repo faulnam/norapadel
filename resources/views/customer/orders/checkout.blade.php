@@ -460,7 +460,7 @@
 
 @section('content')
 <!-- Navbar Checkout -->
-<header class="sticky top-0 z-50 border-b border-black/6 bg-white/80 backdrop-blur-xl">
+<header class="fixed left-0 top-0 z-50 w-full border-b border-black/6 bg-white/80 backdrop-blur-xl md:sticky">
     <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-10 lg:px-12">
         <a href="{{ route('home') }}" class="text-xl font-semibold tracking-tight text-black">NoraPadel</a>
 
@@ -502,7 +502,7 @@
     </div>
 </header>
 
-<div class="checkout-page">
+<div class="checkout-page pt-16 md:pt-0">
     <div class="container">
         <div class="breadcrumb-minimal">
             <a href="{{ route('customer.cart.index') }}">Keranjang</a>
@@ -622,6 +622,7 @@
 
                             <input type="hidden" name="courier_code" id="courier_code">
                             <input type="hidden" name="courier_name" id="courier_name">
+                            <input type="hidden" name="courier_service_code" id="courier_service_code">
                             <input type="hidden" name="courier_service_name" id="courier_service_name">
                             <input type="hidden" name="delivery_distance_km" id="delivery_distance_km" value="{{ old('delivery_distance_km', '0') }}">
                             <input type="hidden" name="delivery_distance_minutes" id="delivery_distance_minutes" value="{{ old('delivery_distance_minutes', '0') }}">
@@ -1073,6 +1074,11 @@
             return;
         }
 
+        const providerRuleNote = document.createElement('div');
+        providerRuleNote.className = 'zone-info';
+        providerRuleNote.innerHTML = '<i class="fas fa-info-circle"></i> Ketersediaan layanan (termasuk Instant / Same Day dan batas jarak) mengikuti aturan aktif di Biteship berdasarkan area layanan, jarak, dan jam operasional kurir.';
+        container.appendChild(providerRuleNote);
+
         // Tampilkan info zona & berat (jika ada)
         const firstRate = rates[0];
         if (firstRate.zone || firstRate.weight_kg) {
@@ -1092,12 +1098,15 @@
             grouped[rate.courier_code].services.push(rate);
         });
 
-        const courierIcons = { 
-            jnt: 'fa-truck', 
-            anteraja: 'fa-shipping-fast', 
+        const courierIcons = {
+            jnt: 'fa-truck',
+            jne: 'fa-box',
+            anteraja: 'fa-shipping-fast',
             paxel: 'fa-bolt',
             gosend: 'fa-motorcycle',
-            grabexpress: 'fa-car'
+            grabexpress: 'fa-car',
+            gojek: 'fa-motorcycle',
+            grab: 'fa-car'
         };
 
         Object.entries(grouped).forEach(([code, courier]) => {
@@ -1106,8 +1115,10 @@
             card.dataset.courier = code;
 
             const servicesHtml = courier.services.map(s => {
-                const badgeClass = { regular: 'badge-regular', express: 'badge-express', sameday: 'badge-sameday', instant: 'badge-instant' }[s.service_type] || 'badge-regular';
-                const badgeLabel = { regular: 'Reguler', express: 'Express', sameday: 'Same Day', instant: 'Instant' }[s.service_type] || s.service_type;
+                const serviceType = (s.service_type || '').toString().toLowerCase();
+                const normalizedServiceType = serviceType === 'same_day' ? 'sameday' : serviceType;
+                const badgeClass = { regular: 'badge-regular', express: 'badge-express', sameday: 'badge-sameday', instant: 'badge-instant' }[normalizedServiceType] || 'badge-regular';
+                const badgeLabel = { regular: 'Reguler', express: 'Express', sameday: 'Same Day', instant: 'Instant' }[normalizedServiceType] || (s.service_type || 'Layanan');
                 
                 // Format duration - gunakan estimated_date jika ada, fallback ke duration atau etd
                 let durationText = '';
@@ -1176,9 +1187,12 @@
     }
 
     function selectCourier(rate) {
+        const selectedServiceCode = (rate.courier_service_code || rate.courier_type || '').toString().trim().toLowerCase();
+
         // Update hidden inputs
         document.getElementById('courier_code').value = rate.courier_code;
         document.getElementById('courier_name').value = rate.courier_name;
+        document.getElementById('courier_service_code').value = selectedServiceCode;
         document.getElementById('courier_service_name').value = rate.courier_service_name;
         document.getElementById('shipping_cost_input').value = rate.price;
         document.getElementById('delivery_distance_km').value = rate.distance_km || 0;
@@ -1256,6 +1270,7 @@
         console.log('Submitting form with:', {
             courierCode,
             courierName: document.getElementById('courier_name').value,
+            courierServiceCode: document.getElementById('courier_service_code').value,
             courierService: document.getElementById('courier_service_name').value,
             shippingCost,
             lat: document.getElementById('shipping_latitude').value,

@@ -3,16 +3,19 @@
 namespace App\Observers;
 
 use App\Models\Order;
+use App\Services\BiteshipService;
 use App\Services\WebPushService;
 use Illuminate\Support\Facades\Log;
 
 class OrderObserver
 {
     protected WebPushService $webPush;
+    protected BiteshipService $biteship;
 
-    public function __construct(WebPushService $webPush)
+    public function __construct(WebPushService $webPush, BiteshipService $biteship)
     {
         $this->webPush = $webPush;
+        $this->biteship = $biteship;
     }
 
     /**
@@ -42,8 +45,19 @@ class OrderObserver
      */
     public function updated(Order $order): void
     {
-        // Check if status changed
-        if (!$order->wasChanged('status')) {
+        $statusChanged = $order->wasChanged('status');
+        $paymentBecamePaid = $order->wasChanged('payment_status')
+            && $order->payment_status === Order::PAYMENT_PAID;
+
+        $statusMovedToProcessingWhilePaid = $statusChanged
+            && $order->status === Order::STATUS_PROCESSING
+            && $order->payment_status === Order::PAYMENT_PAID;
+
+        if ($paymentBecamePaid || $statusMovedToProcessingWhilePaid) {
+            $this->syncBiteshipAfterPayment($order);
+        }
+
+        if (!$statusChanged) {
             return;
         }
 
@@ -62,6 +76,112 @@ class OrderObserver
         } catch (\Exception $e) {
             Log::error("Failed to send push for order update: " . $e->getMessage());
         }
+    }
+
+    protected function syncBiteshipAfterPayment(Order $order): void
+    {
+        if (empty($order->courier_code) || !empty($order->biteship_order_id)) {
+            return;
+        }
+
+        try {
+            $courierServiceCode = $this->extractCourierServiceCodeFromNotes((string) $order->delivery_notes);
+
+            $result = $this->biteship->createShipmentFromOrder($order, $courierServiceCode);
+
+            if (!($result['success'] ?? false)) {
+                $errorMessage = (string) ($result['message'] ?? 'Unknown error');
+                $order->fill([
+                    'delivery_notes' => $this->appendDeliveryNote((string) $order->delivery_notes, 'biteship_sync_status=failed_to_sync_biteship; reason=' . $errorMessage),
+                ])->saveQuietly();
+
+                Log::warning('Create Biteship shipment gagal saat payment sukses', [
+                    'order_number' => $order->order_number,
+                    'message' => $errorMessage,
+                ]);
+
+                return;
+            }
+
+            $data = $result['data'] ?? [];
+            $draftOrderId = (string) ($order->biteship_draft_order_id ?? '');
+            $draftCleanupStatus = 'not_found';
+
+            if ($draftOrderId !== '') {
+                $draftCleanup = $this->biteship->closeDraftOrder(
+                    $draftOrderId,
+                    'Draft ditutup otomatis karena payment sudah sukses dan shipment final sudah dibuat.'
+                );
+
+                $draftCleanupStatus = ($draftCleanup['success'] ?? false) ? 'success' : 'failed';
+            }
+
+            $payload = array_filter([
+                'biteship_order_id' => $data['biteship_order_id'] ?? null,
+                'waybill_id' => $data['waybill_id'] ?? null,
+                'label_url' => $data['label_url'] ?? null,
+                'pickup_time' => $data['pickup_time'] ?? null,
+                'delivery_notes' => $this->appendDeliveryNote(
+                    (string) $order->delivery_notes,
+                    'biteship_sync_status=synced' . (!empty($order->biteship_draft_order_id) ? '; source=draft_order; draft_id=' . $order->biteship_draft_order_id : '')
+                ),
+            ], fn ($value) => $value !== null && $value !== '');
+
+            $payload['delivery_notes'] = $this->appendDeliveryNote(
+                (string) ($payload['delivery_notes'] ?? $order->delivery_notes),
+                'biteship_draft_cleanup=' . $draftCleanupStatus
+            );
+
+            if ($draftCleanupStatus === 'success') {
+                $payload['biteship_draft_order_id'] = null;
+            }
+
+            if (!empty($payload)) {
+                $order->fill($payload)->saveQuietly();
+            }
+
+            Log::info('Create Biteship shipment sukses saat payment sukses', [
+                'order_number' => $order->order_number,
+                'biteship_draft_order_id' => $order->biteship_draft_order_id,
+                'biteship_draft_cleanup' => $draftCleanupStatus,
+                'biteship_order_id' => $data['biteship_order_id'] ?? null,
+                'waybill_id' => $data['waybill_id'] ?? null,
+            ]);
+        } catch (\Throwable $e) {
+            $order->fill([
+                'delivery_notes' => $this->appendDeliveryNote((string) $order->delivery_notes, 'biteship_sync_status=failed_to_sync_biteship; reason=' . $e->getMessage()),
+            ])->saveQuietly();
+
+            Log::error('Create Biteship shipment exception saat payment sukses', [
+                'order_number' => $order->order_number,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    protected function extractCourierServiceCodeFromNotes(string $notes): ?string
+    {
+        if (preg_match('/biteship_courier_service_code=([a-z0-9_\-]+)/i', $notes, $matches)) {
+            return strtolower(trim((string) ($matches[1] ?? '')));
+        }
+
+        return null;
+    }
+
+    protected function appendDeliveryNote(string $existing, string $line): string
+    {
+        $existing = trim($existing);
+        $line = trim($line);
+
+        if ($line === '') {
+            return $existing;
+        }
+
+        if ($existing === '') {
+            return $line;
+        }
+
+        return $existing . "\n" . $line;
     }
 
     /**

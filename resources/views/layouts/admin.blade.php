@@ -672,15 +672,7 @@
                 <i class="fas fa-box"></i> Produk
             </a>
             
-            <a href="{{ route('admin.orders.index') }}" class="nav-link {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">
-                <i class="fas fa-shopping-bag"></i> Pesanan
-                @php
-                    $pendingOrders = \App\Models\Order::where('payment_status', 'pending_verification')->count();
-                @endphp
-                @if($pendingOrders > 0)
-                    <span class="badge bg-danger">{{ $pendingOrders }}</span>
-                @endif
-            </a>
+            
             
             <a href="{{ route('admin.testimonials.index') }}" class="nav-link {{ request()->routeIs('admin.testimonials.*') ? 'active' : '' }}">
                 <i class="fas fa-star"></i> Testimoni

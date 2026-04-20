@@ -58,7 +58,7 @@
 
 @section('content')
 <!-- Navbar -->
-<header class="sticky top-0 z-[9999] border-b border-black/6 bg-white/80 backdrop-blur-xl">
+<header class="fixed left-0 top-0 z-[9999] w-full border-b border-black/6 bg-white/80 backdrop-blur-xl md:sticky">
     <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-10 lg:px-12">
         <a href="{{ route('home') }}" class="text-xl font-semibold tracking-tight text-black">NoraPadel</a>
         <nav class="hidden items-center gap-8 md:flex">
@@ -81,7 +81,7 @@
     </div>
 </header>
 
-<div class="min-h-screen bg-zinc-50 py-8">
+<div class="min-h-screen bg-zinc-50 py-8 pt-16 md:pt-0">
     <div class="mx-auto max-w-7xl px-6 md:px-10 lg:px-12">
         <!-- Breadcrumb -->
         <div class="mb-6 text-sm text-zinc-500">
@@ -109,7 +109,12 @@
                             ];
                             $statusColor = $statusColors[$order->status] ?? 'bg-zinc-100 text-zinc-800';
                         @endphp
-                        <span class="rounded-full px-3 py-1 text-xs font-medium {{ $statusColor }}">{{ $order->status_label }}</span>
+                        @php
+                            $displayStatusLabel = $order->biteship_order_id
+                                ? $order->shipment_stage_label
+                                : $order->status_label;
+                        @endphp
+                        <span class="rounded-full px-3 py-1 text-xs font-medium {{ $statusColor }}">{{ $displayStatusLabel }}</span>
                     </div>
                     <p class="text-sm text-zinc-500">{{ $order->created_at->format('d F Y, H:i') }}</p>
                     
@@ -138,54 +143,93 @@
                 </div>
 
                 <!-- Tracking Timeline -->
-                @if(in_array($order->status, ['processing', 'ready_to_ship', 'shipped', 'delivered', 'completed']))
+                @if(in_array($order->status, ['processing', 'ready_to_ship', 'shipped', 'delivered', 'completed', 'cancelled']) || $order->biteship_order_id)
                 <div class="rounded-2xl bg-white p-6 shadow-sm">
-                    <h3 class="mb-6 text-base font-semibold text-black">Status Pengiriman</h3>
+                    <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+                        <h3 class="text-base font-semibold text-black">Status Pengiriman</h3>
+                        @if(!empty($biteshipDetail))
+                            <button
+                                type="button"
+                                onclick="toggleOrderDetailPanel()"
+                                class="inline-flex items-center gap-2 rounded-full bg-black px-4 py-2 text-xs font-semibold text-white transition hover:bg-black/85">
+                                <i class="fas fa-file-alt"></i>
+                                <span id="orderDetailToggleLabel">Lihat Detail</span>
+                            </button>
+                        @endif
+                    </div>
                     
                     <!-- Horizontal Timeline -->
                     <div class="relative">
                         @php
                             $timeline = [
-                                ['status' => 'processing', 'label' => 'Diproses', 'icon' => 'fa-box'],
-                                ['status' => 'ready_to_ship', 'label' => 'Siap Pickup', 'icon' => 'fa-check-circle'],
-                                ['status' => 'shipped', 'label' => 'Dikirim', 'icon' => 'fa-truck', 'photo' => $order->pickup_photo],
-                                ['status' => 'delivered', 'label' => 'Sampai', 'icon' => 'fa-home', 'photo' => $order->delivery_photo],
-                                ['status' => 'completed', 'label' => 'Selesai', 'icon' => 'fa-star'],
+                                ['stage' => 'sedang_diproses', 'label' => 'Sedang Diproses', 'icon' => 'fa-cog'],
+                                ['stage' => 'penjemputan', 'label' => 'Penjemputan', 'icon' => 'fa-box', 'photo' => $order->pickup_photo],
+                                ['stage' => 'pengantaran', 'label' => 'Pengantaran', 'icon' => 'fa-truck', 'photo' => $order->delivery_photo],
+                                ['stage' => 'pengembalian', 'label' => 'Pengembalian', 'icon' => 'fa-undo'],
+                                ['stage' => 'ditahan', 'label' => 'Di Tahan', 'icon' => 'fa-pause-circle'],
+                                ['stage' => 'selesai', 'label' => 'Selesai', 'icon' => 'fa-star'],
                             ];
-                            $currentIndex = array_search($order->status, array_column($timeline, 'status'));
+                            $currentStage = $order->shipment_stage;
+                            $stagePositions = array_flip(array_column($timeline, 'stage'));
+                            $currentIndex = $stagePositions[$currentStage] ?? 0;
+                            $progressRatio = $currentIndex / max((count($timeline) - 1), 1);
                         @endphp
 
                         <!-- Progress Line -->
                         <div class="absolute top-5 left-0 right-0 h-0.5 bg-zinc-200" style="margin: 0 2.5rem;"></div>
                         <div class="absolute top-5 left-0 h-0.5 bg-black transition-all duration-500" 
-                             style="width: calc({{ ($currentIndex / (count($timeline) - 1)) * 100 }}% - {{ (1 - $currentIndex / (count($timeline) - 1)) * 2.5 }}rem); margin-left: 2.5rem;"></div>
+                             style="width: calc((100% - 5rem) * {{ $progressRatio }}); margin-left: 2.5rem;"></div>
 
                         <!-- Timeline Steps -->
                         <div class="relative flex justify-between">
                             @foreach($timeline as $index => $step)
                                 @php
-                                    $isActive = $index <= $currentIndex;
-                                    $isCurrent = $index === $currentIndex;
+                                    $stepStage = $step['stage'];
+                                    $isCurrent = $stepStage === $currentStage;
+                                    $isPassed = $index < $currentIndex;
+
+                                    // Kondisi khusus: saat status di tahan,
+                                    // step Pengembalian harus dianggap sudah dilewati (hijau)
+                                    if ($currentStage === 'ditahan' && $stepStage === 'pengembalian') {
+                                        $isPassed = true;
+                                    }
+
+                                    // Step aktif selalu hitam (termasuk Pengembalian / Di Tahan)
+                                    if ($isCurrent) {
+                                        $isPassed = false;
+                                    }
+
+                                    $isReached = $isPassed || $isCurrent;
                                     $hasPhoto = isset($step['photo']) && $step['photo'];
+
+                                    $stepCircleClass = $isCurrent
+                                        ? 'bg-black text-white ring-4 ring-black/20'
+                                        : ($isPassed
+                                            ? 'bg-emerald-500 text-white'
+                                            : 'bg-zinc-200 text-zinc-400');
+
+                                    $stepLabelClass = $isCurrent
+                                        ? 'text-black'
+                                        : ($isPassed ? 'text-emerald-700' : 'text-zinc-400');
                                 @endphp
                                 <div class="flex flex-col items-center" style="flex: 1;">
                                     <div class="relative">
-                                        <div class="flex h-10 w-10 items-center justify-center rounded-full {{ $isActive ? 'bg-black text-white' : 'bg-zinc-200 text-zinc-400' }} transition-all duration-300 {{ $isCurrent ? 'ring-4 ring-black/20' : '' }}">
+                                        <div class="flex h-10 w-10 items-center justify-center rounded-full {{ $stepCircleClass }} transition-all duration-300">
                                             <i class="fas {{ $step['icon'] }} text-sm"></i>
                                         </div>
-                                        @if($hasPhoto && $isActive)
+                                        @if($hasPhoto && $isReached)
                                             <button onclick="togglePhotoDropdown('photo-{{ $index }}')" class="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs hover:bg-blue-600 transition">
                                                 <i class="fas fa-camera"></i>
                                             </button>
                                         @endif
                                     </div>
-                                    <p class="mt-3 text-xs font-medium text-center {{ $isActive ? 'text-black' : 'text-zinc-400' }}">{{ $step['label'] }}</p>
+                                    <p class="mt-3 text-xs font-medium text-center {{ $stepLabelClass }}">{{ $step['label'] }}</p>
                                     
-                                    @if($hasPhoto && $isActive)
+                                    @if($hasPhoto && $isReached)
                                         <div id="photo-{{ $index }}" class="hidden absolute top-16 z-10 mt-2 w-64 rounded-lg bg-white shadow-xl border border-zinc-200 p-3">
                                             <div class="flex items-center justify-between mb-2">
                                                 <p class="text-xs font-semibold text-black">
-                                                    {{ $step['status'] === 'shipped' ? 'Bukti Foto Pickup' : 'Bukti Foto Pengiriman' }}
+                                                    {{ $step['stage'] === 'penjemputan' ? 'Bukti Foto Pickup' : 'Bukti Foto Pengiriman' }}
                                                 </p>
                                                 <button onclick="togglePhotoDropdown('photo-{{ $index }}')" class="text-zinc-400 hover:text-black">
                                                     <i class="fas fa-times text-xs"></i>
@@ -193,7 +237,7 @@
                                             </div>
                                             <img src="{{ asset('storage/' . $step['photo']) }}" 
                                                  class="w-full rounded-lg cursor-pointer hover:opacity-90 transition"
-                                                 onclick="openPhotoModal('{{ asset('storage/' . $step['photo']) }}', '{{ $step['status'] === 'shipped' ? 'Bukti Foto Pickup' : 'Bukti Foto Pengiriman' }}')"
+                                                 onclick="openPhotoModal('{{ asset('storage/' . $step['photo']) }}', '{{ $step['stage'] === 'penjemputan' ? 'Bukti Foto Pickup' : 'Bukti Foto Pengiriman' }}')"
                                                  alt="Bukti Foto">
                                             <p class="text-xs text-zinc-500 mt-2 text-center">Klik untuk memperbesar</p>
                                         </div>
@@ -202,11 +246,102 @@
                             @endforeach
                         </div>
                     </div>
+
+                    <div class="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4">
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-info-circle mt-0.5 text-amber-700"></i>
+                            <div>
+                                <p class="text-sm font-semibold text-amber-900">Informasi Pengembalian</p>
+                                <p class="mt-1 text-xs text-amber-800">
+                                    Jika ingin mengajukan pengembalian, silakan hubungi admin terlebih dahulu.
+                                    Pengajuan pengembalian tidak bisa dilakukan langsung dari sistem.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if(!empty($biteshipDetail))
+                        <div id="orderDetailPanel" class="mt-6 hidden space-y-6">
+                            <div class="grid gap-4 md:grid-cols-2">
+                                <div class="rounded-xl border border-zinc-200 bg-zinc-50 p-4 space-y-3 text-sm">
+                                    <div><p class="text-xs text-zinc-500">Order ID</p><p class="font-mono font-semibold text-black">{{ $biteshipDetail['order_id'] ?? '-' }}</p></div>
+                                    <div><p class="text-xs text-zinc-500">Reference ID</p><p class="font-semibold text-black">{{ $biteshipDetail['reference_id'] ?? '-' }}</p></div>
+                                    <div><p class="text-xs text-zinc-500">No. Resi</p><p class="font-semibold text-black">{{ $biteshipDetail['waybill_id'] ?? '-' }}</p></div>
+                                    <div><p class="text-xs text-zinc-500">Status</p><p class="font-semibold text-emerald-700">{{ $biteshipDetail['status_label'] ?? '-' }}</p></div>
+                                    <div>
+                                        <p class="text-xs text-zinc-500">Tanggal Order</p>
+                                        <p class="font-semibold text-black">
+                                            {{ $order->created_at->timezone('Asia/Jakarta')->translatedFormat('d M Y') }}<br>
+                                            {{ $order->created_at->timezone('Asia/Jakarta')->format('H.i') }} WIB
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="rounded-xl border border-zinc-200 bg-zinc-50 p-4 space-y-3 text-sm">
+                                    <div><p class="text-xs text-zinc-500">Kurir</p><p class="font-semibold text-black">{{ $biteshipDetail['courier_name'] ?? '-' }}</p></div>
+                                    <div><p class="text-xs text-zinc-500">Berat</p><p class="font-semibold text-black">{{ number_format((float) ($biteshipDetail['total_weight_kg'] ?? 0), 3, ',', '.') }} kg</p></div>
+                                    <div><p class="text-xs text-zinc-500">Ongkos Kirim</p><p class="font-semibold text-black">{{ $biteshipDetail['shipping_cost'] ?? '-' }}</p></div>
+                                    <div><p class="text-xs text-zinc-500">Nama Driver</p><p class="font-semibold text-black">{{ $biteshipDetail['driver_name'] ?? '-' }}</p></div>
+                                    <div><p class="text-xs text-zinc-500">Nomor HP Driver</p><p class="font-semibold text-black">{{ $biteshipDetail['driver_phone'] ?? '-' }}</p></div>
+                                    <div><p class="text-xs text-zinc-500">Plat Nomor</p><p class="font-semibold text-black">{{ $biteshipDetail['vehicle_number'] ?? '-' }}</p></div>
+                                </div>
+                            </div>
+
+                            <div class="grid gap-4 md:grid-cols-2">
+                                <div class="rounded-xl border border-zinc-200 p-4">
+                                    <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-zinc-500">Alamat Penjemputan</p>
+                                    <p class="text-sm font-semibold text-black">{{ data_get($biteshipDetail, 'pickup.name', '-') }}</p>
+                                    <p class="text-sm text-zinc-600">{{ data_get($biteshipDetail, 'pickup.phone', '-') }}</p>
+                                    <p class="mt-1 text-sm text-zinc-600">{{ data_get($biteshipDetail, 'pickup.address', '-') }}</p>
+                                </div>
+                                <div class="rounded-xl border border-zinc-200 p-4">
+                                    <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-zinc-500">Alamat Penerima</p>
+                                    <p class="text-sm font-semibold text-black">{{ data_get($biteshipDetail, 'receiver.name', '-') }}</p>
+                                    <p class="text-sm text-zinc-600">{{ data_get($biteshipDetail, 'receiver.phone', '-') }}</p>
+                                    <p class="mt-1 text-sm text-zinc-600">{{ data_get($biteshipDetail, 'receiver.address', '-') }}</p>
+                                </div>
+                            </div>
+
+                            <div class="rounded-xl border border-zinc-200 p-4">
+                                <p class="mb-4 text-xs font-semibold uppercase tracking-wide text-zinc-500">Informasi Paket</p>
+                                <div class="space-y-4">
+                                    @foreach(($biteshipDetail['items'] ?? []) as $idx => $itemDetail)
+                                        <div class="rounded-lg bg-zinc-50 p-4 text-sm">
+                                            <p class="font-semibold text-black">Nama Barang {{ $idx + 1 }}: {{ $itemDetail['name'] ?? '-' }}</p>
+                                            <div class="mt-2 grid gap-2 md:grid-cols-2">
+                                                <p class="text-zinc-600">Berat Barang {{ $idx + 1 }}: <span class="font-medium text-black">{{ number_format((float) ($itemDetail['weight_kg'] ?? 0), 3, ',', '.') }} kg</span></p>
+                                                <p class="text-zinc-600">Kuantiti: <span class="font-medium text-black">{{ $itemDetail['quantity'] ?? 1 }}</span></p>
+                                                <p class="text-zinc-600">Harga Barang: <span class="font-medium text-black">{{ $itemDetail['price'] ?? '-' }}</span></p>
+                                                <p class="text-zinc-600">Dimensi: <span class="font-medium text-black">{{ $itemDetail['dimension'] ?? '-' }}</span></p>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <div class="rounded-xl border border-zinc-200 p-4 text-sm space-y-2">
+                                <p class="text-xs font-semibold uppercase tracking-wide text-zinc-500">Catatan</p>
+                                <p class="font-medium text-black">{{ $biteshipDetail['note'] ?? '-' }}</p>
+                            </div>
+
+                            <div class="rounded-xl border border-zinc-200 p-4 text-sm">
+                                <p class="mb-3 text-xs font-semibold uppercase tracking-wide text-zinc-500">Rincian Tagihan</p>
+                                <div class="flex items-center justify-between py-1">
+                                    <span class="text-zinc-600">Ongkos Kirim</span>
+                                    <span class="font-semibold text-black">{{ data_get($biteshipDetail, 'billing.shipping_cost', '-') }}</span>
+                                </div>
+                                <div class="mt-2 border-t border-zinc-200 pt-3 flex items-center justify-between">
+                                    <span class="font-semibold text-black">Total Tagihan</span>
+                                    <span class="font-semibold text-black">{{ data_get($biteshipDetail, 'billing.total', $order->formatted_total) }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                 </div>
                 @endif
 
                 <!-- Courier Tracking Map -->
-                @if(in_array($order->status, ['shipped', 'on_delivery', 'delivered']))
+                @if($order->shipment_stage === 'pengantaran')
                 <div class="rounded-2xl bg-white p-6 shadow-sm">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-base font-semibold text-black">Lacak Posisi Kurir</h3>
@@ -243,6 +378,26 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                @endif
+
+                @if($order->shipment_stage === 'selesai')
+                <div class="rounded-2xl bg-white p-6 shadow-sm">
+                    <h3 class="mb-4 text-base font-semibold text-black">Bukti Pengiriman</h3>
+                    @if($order->delivery_photo)
+                        <div class="overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50 p-3">
+                            <img
+                                src="{{ asset('storage/' . $order->delivery_photo) }}"
+                                class="w-full rounded-lg cursor-pointer hover:opacity-90 transition"
+                                onclick="openPhotoModal('{{ asset('storage/' . $order->delivery_photo) }}', 'Bukti Foto Pengiriman')"
+                                alt="Bukti Pengiriman">
+                            <p class="mt-2 text-center text-xs text-zinc-500">Pesanan sudah selesai. Klik gambar untuk memperbesar.</p>
+                        </div>
+                    @else
+                        <div class="rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-sm text-zinc-600">
+                            Pesanan sudah selesai, tetapi bukti foto pengiriman belum tersedia.
+                        </div>
+                    @endif
                 </div>
                 @endif
 
@@ -337,7 +492,7 @@
                         @endif
                         <div class="flex justify-between">
                             <span class="text-zinc-600">Ongkir</span>
-                            <span class="text-black">{{ $order->formatted_shipping_cost }}</span>
+                            <span class="text-black">{{ data_get($biteshipDetail, 'billing.shipping_cost', $order->formatted_shipping_cost) }}</span>
                         </div>
                         @if($order->shipping_discount > 0)
                         <div class="flex justify-between text-emerald-600">
@@ -563,6 +718,18 @@ function togglePhotoDropdown(id) {
     dropdown.classList.toggle('hidden');
 }
 
+// Toggle Detail Pesanan panel
+function toggleOrderDetailPanel() {
+    const panel = document.getElementById('orderDetailPanel');
+    const label = document.getElementById('orderDetailToggleLabel');
+
+    if (!panel || !label) return;
+
+    panel.classList.toggle('hidden');
+    const isHidden = panel.classList.contains('hidden');
+    label.textContent = isHidden ? 'Lihat Detail' : 'Sembunyikan Detail';
+}
+
 // Open Photo Modal
 function openPhotoModal(imageUrl, title) {
     document.getElementById('photoModalImage').src = imageUrl;
@@ -630,7 +797,7 @@ updateTimer();
 @endif
 </script>
 
-@if(in_array($order->status, ['shipped', 'on_delivery', 'delivered']))
+@if($order->shipment_stage === 'pengantaran')
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
 <script>

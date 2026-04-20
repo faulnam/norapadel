@@ -63,7 +63,11 @@ class PickupController extends Controller
             'destination_longitude' => $order->shipping_longitude,
             'destination_postal_code' => $order->shipping_postal_code ?? '61219',
             'courier_code' => $order->courier_code,
-            'order_note' => 'Order #' . $order->order_number . ($order->notes ? ' - ' . $order->notes : ''),
+            'order_note' => 'Order #' . $order->order_number . ($order->notes ? ' - ' . $order->notes : '') . ' | PAYMENT: ' . ($order->isCod() ? 'COD' : 'NON-COD'),
+            'is_cod' => $order->isCod(),
+            'payment_method' => $order->isCod() ? 'cash_on_delivery' : 'online_payment',
+            'total_amount' => (int) round((float) $order->total),
+            'cash_on_delivery_amount' => $order->isCod() ? (int) round((float) $order->total) : 0,
             'items' => $items,
         ]);
 

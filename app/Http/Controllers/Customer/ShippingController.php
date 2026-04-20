@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
 use App\Services\BiteshipService;
-use App\Helpers\EstimationHelper;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ShippingController extends Controller
@@ -26,9 +26,18 @@ class ShippingController extends Controller
                 'destination_postal_code' => 'nullable|string',
                 'destination_latitude' => 'nullable|numeric',
                 'destination_longitude' => 'nullable|numeric',
-                'destination_city' => 'nullable|string',
-                'destination_province' => 'nullable|string',
             ]);
+
+            $destinationLatitude = (float) ($request->destination_latitude ?? -7.2575);
+            $destinationLongitude = (float) ($request->destination_longitude ?? 112.7521);
+            $destinationPostalCode = $this->resolveDestinationPostalCode($request, $destinationLatitude, $destinationLongitude);
+
+            if ($destinationPostalCode === null) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Kode pos tujuan tidak ditemukan. Coba pilih titik lokasi yang lebih akurat.',
+                ], 400);
+            }
 
             $cartItems = auth()->user()->cart()->with('product')->get();
 
@@ -48,9 +57,15 @@ class ShippingController extends Controller
                 ];
             })->toArray();
 
+            // Kirim alias kode instant agar kompatibel lintas konfigurasi akun Biteship.
+            $requestedCouriers = 'jnt,jne,anteraja,paxel,gojek,grab,gosend,grabexpress';
+
             $result = $this->biteship->getRates([
-                'destination_latitude' => $request->destination_latitude ?? -7.2575,
-                'destination_longitude' => $request->destination_longitude ?? 112.7521,
+                'destination_postal_code' => $destinationPostalCode,
+                'destination_latitude' => $destinationLatitude,
+                'destination_longitude' => $destinationLongitude,
+                'couriers' => $requestedCouriers,
+                'strict_biteship' => true,
                 'items' => $items,
             ]);
 
@@ -62,94 +77,97 @@ class ShippingController extends Controller
             }
 
             $pricing = $result['data']['pricing'] ?? [];
-            
-            // Detect zone via reverse geocoding
-            $originCity = 'Surabaya';
-            $originProvince = 'Jawa Timur';
-            $destCity = $request->destination_city ?? null;
-            $destProvince = $request->destination_province ?? null;
-            
-            // Reverse geocode jika city/province tidak dikirim
-            if (!$destCity || !$destProvince) {
-                $lat = $request->destination_latitude;
-                $lng = $request->destination_longitude;
-                $geo = $this->reverseGeocode($lat, $lng);
-                $destCity = $geo['city'] ?? 'Surabaya';
-                $destProvince = $geo['province'] ?? 'Jawa Timur';
+
+            if (empty($pricing)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tidak ada layanan ekspedisi aktif untuk rute ini di Biteship.',
+                    'debug' => config('app.debug') ? [
+                        'requested_couriers' => explode(',', $requestedCouriers),
+                        'returned_couriers' => [],
+                        'destination_postal_code' => $destinationPostalCode,
+                    ] : null,
+                ], 400);
             }
-            
-            $zone = EstimationHelper::detectZone($originCity, $originProvince, $destCity, $destProvince);
-            
-            // Process each rate
+
+            // Process each rate langsung dari Biteship tanpa filter aturan lokal.
             $processedRates = [];
             foreach ($pricing as $rate) {
-                $serviceType = $rate['service_type'];
-                
-                // Filter: Skip instant/sameday for long distance
-                if (!EstimationHelper::isServiceAvailable($serviceType, $zone)) {
-                    continue;
-                }
-                
-                // Adjust ETD based on zone
-                list($minDays, $maxDays) = EstimationHelper::adjustETD(
-                    $rate['duration'] ?? '2-3',
-                    $zone,
-                    $serviceType
-                );
-                
-                // Convert to date range
-                $estimatedDate = EstimationHelper::convertToDateRange($minDays, $maxDays);
-                $etdText = EstimationHelper::formatETDText($minDays, $maxDays, $serviceType);
-                
+                $serviceType = (string) ($rate['service_type'] ?? 'regular');
+
                 $processedRates[] = [
                     'courier_code' => $rate['courier_code'],
                     'courier_name' => $rate['courier_name'],
+                    'courier_service_code' => $rate['courier_service_code'] ?? ($rate['courier_type'] ?? null),
+                    'courier_type' => $rate['courier_type'] ?? ($rate['courier_service_code'] ?? null),
                     'courier_service_name' => $rate['courier_service_name'],
                     'service_type' => $serviceType,
-                    'price' => $rate['price'],
-                    'etd_original' => $rate['duration'] ?? '2-3',
-                    'etd_adjusted' => $etdText,
-                    'estimated_date' => $estimatedDate,
-                    'min_days' => $minDays,
-                    'max_days' => $maxDays,
+                    'price' => (int) ($rate['price'] ?? 0),
+                    'duration' => (string) ($rate['duration'] ?? ''),
                     'duration_minutes' => $rate['duration_minutes'] ?? 0,
-                    'zone' => $zone,
-                    'zone_label' => EstimationHelper::getZoneLabel($zone),
+                    'is_cheapest' => (bool) ($rate['is_cheapest'] ?? false),
+                    'is_fastest' => (bool) ($rate['is_fastest'] ?? false),
                 ];
             }
-            
-            // Sort by price (cheapest first)
+
+            [$processedRates, $hiddenByOperationalHours] = $this->filterRatesByOperationalHours($processedRates);
+
+            if (empty($processedRates)) {
+                $message = 'Semua layanan ekspedisi untuk rute ini sedang di luar jam operasional.';
+                if (!empty($hiddenByOperationalHours)) {
+                    $message .= ' Silakan pilih waktu lain atau layanan berbeda.';
+                }
+
+                return response()->json([
+                    'success' => false,
+                    'message' => $message,
+                    'debug' => config('app.debug') ? [
+                        'hidden_by_operational_hours' => $hiddenByOperationalHours,
+                    ] : null,
+                ], 400);
+            }
+
+            // Sort by price (cheapest first), lalu durasi tercepat.
             usort($processedRates, function($a, $b) {
                 if ($a['price'] === $b['price']) {
-                    return $a['min_days'] <=> $b['min_days'];
+                    return ($a['duration_minutes'] ?? 0) <=> ($b['duration_minutes'] ?? 0);
                 }
                 return $a['price'] <=> $b['price'];
             });
-            
-            // Add labels
+
+            // Add labels visual sederhana untuk UI.
             if (!empty($processedRates)) {
                 $cheapestPrice = min(array_column($processedRates, 'price'));
-                $fastestDays = min(array_column($processedRates, 'min_days'));
+                $fastestMinutes = min(array_column($processedRates, 'duration_minutes'));
                 
                 foreach ($processedRates as $index => $rate) {
                     $processedRates[$index]['is_cheapest'] = ($rate['price'] === $cheapestPrice);
-                    $processedRates[$index]['is_fastest'] = ($rate['min_days'] === $fastestDays);
+                    $processedRates[$index]['is_fastest'] = (($rate['duration_minutes'] ?? 0) === $fastestMinutes);
                     $processedRates[$index]['label'] = '';
                     
                     if ($rate['price'] === $cheapestPrice) {
                         $processedRates[$index]['label'] = '💸 Termurah';
                     }
-                    if ($rate['min_days'] === $fastestDays) {
+                    if (($rate['duration_minutes'] ?? 0) === $fastestMinutes) {
                         $processedRates[$index]['label'] = '⚡ Tercepat';
                     }
                 }
             }
 
+            $returnedCouriers = array_values(array_unique(array_filter(array_map(
+                fn ($rate) => strtolower(trim((string) ($rate['courier_code'] ?? ''))),
+                $pricing
+            ))));
+
             return response()->json([
                 'success' => true,
                 'rates' => $processedRates,
-                'zone' => $zone,
-                'zone_label' => EstimationHelper::getZoneLabel($zone),
+                'debug' => config('app.debug') ? [
+                    'requested_couriers' => explode(',', $requestedCouriers),
+                    'returned_couriers' => $returnedCouriers,
+                    'destination_postal_code' => $destinationPostalCode,
+                    'hidden_by_operational_hours' => $hiddenByOperationalHours,
+                ] : null,
             ]);
             
         } catch (\Exception $e) {
@@ -164,24 +182,165 @@ class ShippingController extends Controller
         }
     }
 
-    private function reverseGeocode($lat, $lng): array
+    private function resolveDestinationPostalCode(Request $request, float $lat, float $lng): ?string
+    {
+        $postalCode = trim((string) $request->input('destination_postal_code', ''));
+        if (preg_match('/^\d{5}$/', $postalCode)) {
+            return $postalCode;
+        }
+
+        $geo = $this->reverseGeocode($lat, $lng);
+        $geoPostalCode = trim((string) ($geo['postal_code'] ?? ''));
+
+        return preg_match('/^\d{5}$/', $geoPostalCode) ? $geoPostalCode : null;
+    }
+
+    private function reverseGeocode(float $lat, float $lng): array
     {
         try {
             $url = "https://nominatim.openstreetmap.org/reverse?format=json&lat={$lat}&lon={$lng}&addressdetails=1";
             $ctx = stream_context_create(['http' => ['header' => 'User-Agent: NoraPadel/1.0']]);
             $json = @file_get_contents($url, false, $ctx);
 
-            if (!$json) return [];
+            if (!$json) {
+                return [];
+            }
 
             $data = json_decode($json, true);
             $addr = $data['address'] ?? [];
 
-            $city = $addr['city'] ?? $addr['town'] ?? $addr['village'] ?? $addr['county'] ?? null;
-            $province = $addr['state'] ?? null;
-
-            return ['city' => $city, 'province' => $province];
-        } catch (\Exception $e) {
+            return [
+                'postal_code' => $addr['postcode'] ?? null,
+                'city' => $addr['city'] ?? $addr['town'] ?? $addr['village'] ?? $addr['county'] ?? null,
+                'province' => $addr['state'] ?? null,
+            ];
+        } catch (\Throwable $e) {
             return [];
         }
+    }
+
+    /**
+     * Filter layanan yang berada di luar jam operasional.
+     *
+     * @param array<int, array<string, mixed>> $rates
+     * @return array{0: array<int, array<string, mixed>>, 1: array<int, array<string, mixed>>}
+     */
+    private function filterRatesByOperationalHours(array $rates): array
+    {
+        $rules = (array) config('biteship.service_operational_hours', []);
+
+        if (empty($rules) || empty($rates)) {
+            return [$rates, []];
+        }
+
+        $now = Carbon::now('Asia/Jakarta');
+        $kept = [];
+        $hidden = [];
+
+        foreach ($rates as $rate) {
+            $courierCode = $this->normalizeCourierCode((string) ($rate['courier_code'] ?? ''));
+            $serviceType = $this->normalizeServiceType((array) $rate);
+            $ruleKey = $courierCode . ':' . $serviceType;
+            $rule = (array) ($rules[$ruleKey] ?? []);
+
+            if (empty($rule)) {
+                $kept[] = $rate;
+                continue;
+            }
+
+            $start = trim((string) ($rule['start'] ?? '00:00'));
+            $end = trim((string) ($rule['end'] ?? '23:59'));
+
+            $startTime = $this->parseOperationalTime($start);
+            $endTime = $this->parseOperationalTime($end);
+
+            // Jika format jam invalid di config, jangan hide layanan agar tidak memblokir checkout.
+            if ($startTime === null || $endTime === null) {
+                $kept[] = $rate;
+                continue;
+            }
+
+            // Support window lintas tengah malam (contoh 20:00-02:00) bila nanti dibutuhkan.
+            if ($endTime->lt($startTime)) {
+                $isWithinHours = $now->gte($startTime) || $now->lte($endTime);
+            } else {
+                $isWithinHours = $now->betweenIncluded($startTime, $endTime);
+            }
+
+            if ($isWithinHours) {
+                $kept[] = $rate;
+                continue;
+            }
+
+            $hidden[] = [
+                'courier_code' => $courierCode,
+                'courier_service_name' => (string) ($rate['courier_service_name'] ?? ''),
+                'service_type' => $serviceType,
+                'window' => $start . '-' . $end,
+                'current_time_wib' => $now->format('H:i'),
+            ];
+        }
+
+        return [$kept, $hidden];
+    }
+
+    /**
+     * Parse jam operasional konfigurasi (H:i) ke objek Carbon timezone WIB.
+     */
+    private function parseOperationalTime(string $time): ?Carbon
+    {
+        try {
+            return Carbon::createFromFormat('H:i', $time, 'Asia/Jakarta');
+        } catch (\Throwable $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Normalisasi variasi nama courier agar key config konsisten.
+     */
+    private function normalizeCourierCode(string $courierCode): string
+    {
+        $code = strtolower(trim($courierCode));
+
+        return match ($code) {
+            'go_send', 'go-send' => 'gosend',
+            'go_jek', 'go-jek' => 'gojek',
+            'grab_express', 'grab-express' => 'grabexpress',
+            default => $code,
+        };
+    }
+
+    /**
+     * Normalisasi service type agar konsisten untuk pencocokan rule.
+     */
+    private function normalizeServiceType(array $rate): string
+    {
+        $candidates = [
+            strtolower(trim((string) ($rate['service_type'] ?? ''))),
+            strtolower(trim((string) ($rate['courier_type'] ?? ''))),
+            strtolower(trim((string) ($rate['courier_service_code'] ?? ''))),
+            strtolower(trim((string) ($rate['courier_service_name'] ?? ''))),
+        ];
+
+        foreach ($candidates as $candidate) {
+            if ($candidate === '') {
+                continue;
+            }
+
+            if (in_array($candidate, ['same day', 'same_day', 'sameday'], true)) {
+                return 'same_day';
+            }
+
+            if (str_contains($candidate, 'same day') || str_contains($candidate, 'sameday')) {
+                return 'same_day';
+            }
+
+            if ($candidate === 'instant' || str_contains($candidate, 'instant')) {
+                return 'instant';
+            }
+        }
+
+        return $candidates[0] !== '' ? $candidates[0] : 'regular';
     }
 }

@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="bg-white text-black antialiased">
-        <header class="sticky top-0 z-50 border-b border-black/6 bg-white/80 backdrop-blur-xl">
+    <header class="fixed left-0 top-0 z-50 w-full border-b border-black/6 bg-white/80 backdrop-blur-xl md:sticky">
             <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-10 lg:px-12">
                 <a href="{{ route('home') }}" class="text-xl font-semibold tracking-tight text-black">NoraPadel</a>
 
@@ -55,7 +55,8 @@
             </div>
         </header>
 
-        <section class="np-fade-section bg-white py-16 lg:py-20">
+    <main class="pt-16 md:pt-0">
+    <section class="np-fade-section bg-white py-16 lg:py-20">
             <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
                 
 
@@ -159,6 +160,7 @@
             </div>
         </section>
 
+        </main>
     </div>
 @endsection
 

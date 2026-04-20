@@ -16,7 +16,12 @@ Tambahkan ke file `.env`:
 ```env
 BITESHIP_API_KEY=your-testing-api-key-here
 BITESHIP_SANDBOX=true
+BITESHIP_ORIGIN_LAT=-7.2575
+BITESHIP_ORIGIN_LNG=112.7521
+BITESHIP_ORIGIN_POSTAL_CODE=61219
 ```
+
+> Untuk kurir tertentu (mis. instant/same-day), origin coordinate wajib terisi agar create order tidak gagal dengan error validasi koordinat.
 
 ## 3. Jalankan Migration
 
@@ -182,3 +187,56 @@ Untuk production:
 1. Ganti `BITESHIP_API_KEY` dengan Production API Key
 2. Set `BITESHIP_SANDBOX=false`
 3. Pastikan sudah verifikasi akun dan top up saldo
+
+## 11. End-to-End Flow Test via Artisan Command
+
+Untuk test flow sesuai urutan API (rates → create order → GET detail → optional cancel), gunakan command:
+
+```bash
+php artisan biteship:test-flow
+```
+
+### Persiapan API key testing
+
+Di `.env` set API key testing dari dashboard Biteship:
+
+```env
+BITESHIP_API_KEY=biteship_test.YOUR_TEST_API_KEY
+```
+
+> Command ini akan menolak jalan jika API key masih placeholder.
+
+### Contoh skenario yang disarankan
+
+1. Cek rates dulu untuk memastikan kurir tersedia di rute uji.
+2. Buat order dengan `delivery_type=now` (status awal biasanya `confirmed`).
+3. Poll detail order via GET untuk memantau flow status:
+  `confirmed → allocated → picking_up → picked → dropping_off → delivered`.
+4. Uji cancel selagi status masih `confirmed`, `allocated`, atau `picking_up`.
+
+Contoh menjalankan flow + cancel test:
+
+```bash
+php artisan biteship:test-flow --delivery-type=now --cancel
+```
+
+Contoh scheduled order:
+
+```bash
+php artisan biteship:test-flow --delivery-type=scheduled --schedule-at="2026-04-19 15:30:00"
+```
+
+### Opsi penting command
+
+- `--couriers=` daftar kurir untuk rates check (default `gojek,grab,jne,jnt`)
+- `--courier-company=` kurir untuk create order (default `gojek`)
+- `--courier-type=` layanan kurir (default `instant`)
+- `--poll=` jumlah polling GET detail (default `6`)
+- `--interval=` jeda polling detik (default `5`)
+- `--cancel` untuk mencoba cancel order
+
+### Catatan status penting
+
+- `on_hold` lebih dari 14 hari dapat otomatis di-cancel admin Biteship.
+- `rejected` terjadi jika item tidak bisa dikembalikan ke pengirim.
+- `disposed` adalah status terminal bila ada disposal request.

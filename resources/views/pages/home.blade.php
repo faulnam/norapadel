@@ -2014,7 +2014,7 @@
 
 @section('content')
     <div class="bg-white text-black antialiased">
-    <header class="sticky top-0 z-50 border-b border-black/6 bg-white/80 backdrop-blur-xl">
+    <header class="fixed left-0 top-0 z-50 w-full border-b border-black/6 bg-white/80 backdrop-blur-xl md:sticky">
             <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-10 lg:px-12">
                 <a href="{{ route('home') }}" class="text-xl font-semibold tracking-tight text-black">NoraPadel</a>
 
@@ -2057,7 +2057,9 @@
             </div>
         </header>
 
-        <x-landing.hero-product
+    <main class="pt-16 md:pt-0">
+
+    <x-landing.hero-product
             id="racket"
             title="NoraPadel Racket"
             subtitle="Precision. Power. Performance."
@@ -2130,7 +2132,7 @@
             </div>
         </section>
 
-        <section class="np-fade-section bg-white py-16 lg:py-20">
+    <section class="np-fade-section bg-white py-16 lg:py-20">
             <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
                 <div class="rounded-3xl border border-black/5 bg-linear-to-r from-zinc-100 to-white px-8 py-14 text-center shadow-[0_8px_34px_rgba(0,0,0,0.04)] lg:px-12">
                     <h2 class="text-3xl font-semibold tracking-tight text-black sm:text-4xl lg:text-5xl">Level up your game with NoraPadel</h2>
@@ -2142,6 +2144,8 @@
                 </div>
             </div>
         </section>
+
+        </main>
 
     </div>
 @endsection
