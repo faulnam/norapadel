@@ -58,7 +58,7 @@
                     <div class="rounded-xl bg-zinc-50 p-4 mb-4">
                         <label class="text-xs text-zinc-500 mb-2 block">Nomor Virtual Account</label>
                         <div class="flex items-center gap-2">
-                            <span id="va-number" class="flex-1 text-lg font-mono font-semibold text-black">{{ $paymentData['va_number'] ?? '-' }}</span>
+                            <span id="va-number" class="flex-1 text-lg font-mono font-semibold text-black">{{ $paymentData['va_number_display'] ?? ($paymentData['va_number'] ?? '-') }}</span>
                             <button onclick="copyText('va-number')" class="rounded-lg bg-black px-4 py-2 text-sm text-white hover:bg-black/90">
                                 <i class="fas fa-copy"></i>
                             </button>
@@ -78,7 +78,17 @@
                     <h3 class="text-base font-semibold text-black mb-4"><i class="fas fa-qrcode me-2"></i>QRIS</h3>
                     <div class="flex justify-center mb-4">
                         <div class="rounded-xl border-2 border-zinc-200 p-4 bg-white">
-                            <img src="{{ $paymentData['qr_url'] ?? '' }}" alt="QR Code" class="w-64 h-64">
+                            @php
+                                $qrImage = $paymentData['qr_url_display'] ?? ($paymentData['qr_url'] ?? '');
+                            @endphp
+
+                            @if(!empty($qrImage))
+                                <img src="{{ $qrImage }}" alt="QR Code" class="w-64 h-64">
+                            @else
+                                <div class="w-64 h-64 flex items-center justify-center text-sm text-zinc-500 text-center px-4">
+                                    QRIS belum tersedia dari provider.<br>Silakan klik tombol cek status atau ulangi pembuatan pembayaran.
+                                </div>
+                            @endif
                         </div>
                     </div>
                     <div class="text-sm text-zinc-600 space-y-2">
@@ -92,7 +102,7 @@
                     </div>
                 @elseif(str_starts_with($paymentChannel, 'EWALLET_'))
                     <h3 class="text-base font-semibold text-black mb-4"><i class="fas fa-wallet me-2"></i>E-Wallet</h3>
-                    <a href="{{ $paymentData['deeplink_url'] ?? '#' }}" target="_blank"
+                    <a href="{{ $paymentData['deeplink_url_display'] ?? ($paymentData['deeplink_url'] ?? '#') }}" target="_blank"
                        class="block w-full rounded-xl bg-black py-4 text-center text-white font-medium hover:bg-black/90 mb-4">
                         <i class="fas fa-external-link-alt me-2"></i>Buka Aplikasi
                     </a>
@@ -109,7 +119,7 @@
                     <div class="rounded-xl bg-zinc-50 p-4 mb-4">
                         <label class="text-xs text-zinc-500 mb-2 block">Kode Pembayaran</label>
                         <div class="flex items-center gap-2">
-                            <span id="payment-code" class="flex-1 text-lg font-mono font-semibold text-black">{{ $paymentData['payment_code'] ?? '-' }}</span>
+                            <span id="payment-code" class="flex-1 text-lg font-mono font-semibold text-black">{{ $paymentData['payment_code_display'] ?? ($paymentData['payment_code'] ?? '-') }}</span>
                             <button onclick="copyText('payment-code')" class="rounded-lg bg-black px-4 py-2 text-sm text-white hover:bg-black/90">
                                 <i class="fas fa-copy"></i>
                             </button>
@@ -144,19 +154,6 @@
                 </button>
             </div>
 
-            @if(config('paylabs.sandbox'))
-            <div class="mt-6 rounded-xl bg-blue-50 border border-blue-200 p-4">
-                <p class="text-sm text-blue-800 mb-3">
-                    <strong>Mode Sandbox:</strong> Untuk testing, klik tombol di bawah untuk simulasi pembayaran berhasil
-                </p>
-                <form action="{{ route('customer.payment.paylabs.simulate', $order) }}" method="POST">
-                    @csrf
-                    <button type="submit" class="w-full rounded-xl bg-emerald-600 py-2 text-sm font-medium text-white hover:bg-emerald-700">
-                        <i class="fas fa-check me-2"></i>Simulasi Pembayaran Berhasil
-                    </button>
-                </form>
-            </div>
-            @endif
         </div>
     </div>
 </div>

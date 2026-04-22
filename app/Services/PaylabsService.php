@@ -11,6 +11,8 @@ class PaylabsService
     protected $apiKey;
     protected $baseUrl;
     protected $sandbox;
+    protected $timeout;
+    protected $connectTimeout;
 
     public function __construct()
     {
@@ -18,6 +20,58 @@ class PaylabsService
         $this->apiKey = config('paylabs.api_key');
         $this->baseUrl = config('paylabs.base_url');
         $this->sandbox = config('paylabs.sandbox', true);
+        $this->timeout = (int) config('paylabs.timeout', 30);
+        $this->connectTimeout = (int) config('paylabs.connect_timeout', 10);
+    }
+
+    protected function canCallLiveApi(): bool
+    {
+        return !empty($this->merchantId) && !empty($this->apiKey) && !empty($this->baseUrl);
+    }
+
+    protected function getHttpClient()
+    {
+        $verifyOption = $this->resolveSslVerifyOption();
+
+        return Http::timeout($this->timeout)
+            ->connectTimeout($this->connectTimeout)
+            ->withOptions([
+                'verify' => $verifyOption,
+            ]);
+    }
+
+    /**
+     * Resolve SSL verification strategy for outgoing Paylabs requests.
+     *
+     * - string path: use custom CA bundle file
+     * - false: disable SSL verification (local/testing only)
+     * - true: default system verification
+     */
+    protected function resolveSslVerifyOption(): bool|string
+    {
+        $caBundle = trim((string) config('paylabs.ca_bundle', ''));
+
+        $verifySslRaw = config('paylabs.verify_ssl', true);
+        $verifySsl = filter_var($verifySslRaw, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+        if ($verifySsl === null) {
+            $verifySsl = (bool) $verifySslRaw;
+        }
+
+        if ($caBundle !== '' && is_file($caBundle)) {
+            return $caBundle;
+        }
+
+        if (!$verifySsl) {
+            return false;
+        }
+
+        if ($caBundle !== '' && !is_file($caBundle)) {
+            Log::warning('Paylabs CA bundle path tidak ditemukan, fallback ke default SSL verify.', [
+                'ca_bundle' => $caBundle,
+            ]);
+        }
+
+        return true;
     }
 
     /**
@@ -31,6 +85,13 @@ class PaylabsService
         // Mock data for sandbox testing
         if ($this->sandbox) {
             return $this->mockCreateTransaction($data);
+        }
+
+        if (!$this->canCallLiveApi()) {
+            return [
+                'success' => false,
+                'message' => 'Konfigurasi Paylabs production belum lengkap. Pastikan PAYLABS_MERCHANT_ID, PAYLABS_API_KEY, dan PAYLABS_BASE_URL/PAYLABS_SANDBOX sudah benar.',
+            ];
         }
 
         try {
@@ -49,24 +110,54 @@ class PaylabsService
                 'expired_at' => now()->addHours(24)->toIso8601String(),
             ];
 
-            $response = Http::withHeaders([
+            $response = $this->getHttpClient()->withHeaders([
                 'Authorization' => 'Bearer ' . $this->apiKey,
                 'Content-Type' => 'application/json',
             ])->post($this->baseUrl . '/v1/payment/create', $payload);
 
             if ($response->successful()) {
                 $result = $response->json();
+                $resultData = $result['data'] ?? [];
+
+                $vaNumber = $resultData['va_number']
+                    ?? $resultData['virtual_account_number']
+                    ?? $resultData['virtual_account']
+                    ?? $resultData['account_number']
+                    ?? $resultData['payment_number']
+                    ?? null;
+
+                $qrString = $resultData['qr_string']
+                    ?? $resultData['qr_content']
+                    ?? null;
+
+                $qrUrl = $resultData['qr_url']
+                    ?? $resultData['qr_image_url']
+                    ?? $resultData['qr_code_url']
+                    ?? null;
+
+                $deeplinkUrl = $resultData['deeplink_url']
+                    ?? $resultData['redirect_url']
+                    ?? null;
+
+                $paymentCode = $resultData['payment_code']
+                    ?? $resultData['bill_code']
+                    ?? $resultData['pay_code']
+                    ?? null;
                 
                 return [
                     'success' => true,
                     'data' => [
-                        'transaction_id' => $result['data']['transaction_id'] ?? null,
-                        'payment_url' => $result['data']['payment_url'] ?? null,
-                        'va_number' => $result['data']['va_number'] ?? null,
-                        'qr_string' => $result['data']['qr_string'] ?? null,
-                        'expired_at' => $result['data']['expired_at'] ?? null,
+                        'transaction_id' => $resultData['transaction_id'] ?? null,
+                        'payment_url' => $resultData['payment_url'] ?? $resultData['redirect_url'] ?? null,
+                        'va_number' => $vaNumber,
+                        'qr_string' => $qrString,
+                        'qr_url' => $qrUrl,
+                        'deeplink_url' => $deeplinkUrl,
+                        'payment_code' => $paymentCode,
+                        'expired_at' => $resultData['expired_at'] ?? null,
                         'payment_method' => $data['payment_method'],
                         'payment_channel' => $data['payment_channel'] ?? null,
+                        'raw_data' => $resultData,
                     ],
                 ];
             }
@@ -106,8 +197,15 @@ class PaylabsService
             return $this->mockCheckStatus($transactionId);
         }
 
+        if (!$this->canCallLiveApi()) {
+            return [
+                'success' => false,
+                'message' => 'Konfigurasi Paylabs production belum lengkap.',
+            ];
+        }
+
         try {
-            $response = Http::withHeaders([
+            $response = $this->getHttpClient()->withHeaders([
                 'Authorization' => 'Bearer ' . $this->apiKey,
             ])->get($this->baseUrl . '/v1/payment/status/' . $transactionId);
 
@@ -156,8 +254,12 @@ class PaylabsService
             return true;
         }
 
+        if (!$this->canCallLiveApi()) {
+            return false;
+        }
+
         try {
-            $response = Http::withHeaders([
+            $response = $this->getHttpClient()->withHeaders([
                 'Authorization' => 'Bearer ' . $this->apiKey,
             ])->post($this->baseUrl . '/v1/payment/cancel', [
                 'transaction_id' => $transactionId,
@@ -189,8 +291,15 @@ class PaylabsService
             return $this->mockRefundTransaction($transactionId, $amount);
         }
 
+        if (!$this->canCallLiveApi()) {
+            return [
+                'success' => false,
+                'message' => 'Konfigurasi Paylabs production belum lengkap.',
+            ];
+        }
+
         try {
-            $response = Http::withHeaders([
+            $response = $this->getHttpClient()->withHeaders([
                 'Authorization' => 'Bearer ' . $this->apiKey,
                 'Content-Type' => 'application/json',
             ])->post($this->baseUrl . '/v1/payment/refund', [

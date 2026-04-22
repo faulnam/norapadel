@@ -66,7 +66,7 @@ class PaylabsPaymentController extends Controller
         $result = $this->paylabs->createTransaction([
             'order_id' => $order->id,
             'order_number' => $order->order_number,
-            'amount' => (int) $order->total,
+            'amount' => (int) $order->total_amount,
             'customer_name' => $order->user->name,
             'customer_email' => $order->user->email,
             'customer_phone' => $order->user->phone,
@@ -105,8 +105,53 @@ class PaylabsPaymentController extends Controller
         }
 
         $paymentData = json_decode($order->payment_data, true) ?? [];
+
+        $vaNumber = (string) (
+            $paymentData['va_number']
+            ?? $paymentData['virtual_account_number']
+            ?? $paymentData['virtual_account']
+            ?? $paymentData['account_number']
+            ?? $paymentData['payment_number']
+            ?? '-'
+        );
+
+        $qrString = (string) ($paymentData['qr_string'] ?? $paymentData['qr_content'] ?? '');
+        $qrUrl = (string) (
+            $paymentData['qr_url']
+            ?? $paymentData['qr_image_url']
+            ?? $paymentData['qr_code_url']
+            ?? ''
+        );
+
+        if ($qrUrl === '' && $qrString !== '') {
+            if (filter_var($qrString, FILTER_VALIDATE_URL)) {
+                $qrUrl = $qrString;
+            } else {
+                $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' . urlencode($qrString);
+            }
+        }
+
+        $deeplinkUrl = (string) (
+            $paymentData['deeplink_url']
+            ?? $paymentData['redirect_url']
+            ?? $paymentData['payment_url']
+            ?? '#'
+        );
+
+        $paymentCode = (string) (
+            $paymentData['payment_code']
+            ?? $paymentData['bill_code']
+            ?? $paymentData['pay_code']
+            ?? '-'
+        );
+
+        $paymentData['va_number_display'] = $vaNumber;
+        $paymentData['qr_url_display'] = $qrUrl;
+        $paymentData['deeplink_url_display'] = $deeplinkUrl;
+        $paymentData['payment_code_display'] = $paymentCode;
+
         $paymentChannel = $order->payment_channel;
-        $expiryTime = now()->addHours(24)->toIso8601String();
+        $expiryTime = $paymentData['expired_at'] ?? now()->addHours(24)->toIso8601String();
 
         return view('customer.payment.paylabs-waiting', compact('order', 'paymentData', 'paymentChannel', 'expiryTime'));
     }
@@ -156,21 +201,6 @@ class PaylabsPaymentController extends Controller
      */
     public function simulatePayment(Order $order)
     {
-        if ($order->user_id !== auth()->id()) {
-            abort(403);
-        }
-
-        if (!config('paylabs.sandbox')) {
-            return back()->with('error', 'Simulasi hanya tersedia di sandbox mode.');
-        }
-
-        $order->update([
-            'payment_status' => Order::PAYMENT_PAID,
-            'paid_at' => now(),
-            'status' => Order::STATUS_PROCESSING,
-        ]);
-
-        return redirect()->route('customer.orders.show', $order)
-            ->with('success', 'Pembayaran berhasil disimulasikan!');
+        abort(404);
     }
 }

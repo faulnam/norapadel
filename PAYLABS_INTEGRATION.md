@@ -21,6 +21,14 @@ Tambahkan ke file `.env`:
 PAYLABS_MERCHANT_ID=your_merchant_id
 PAYLABS_API_KEY=your_api_key
 PAYLABS_SANDBOX=true
+PAYLABS_BASE_URL=
+PAYLABS_TIMEOUT=30
+PAYLABS_CONNECT_TIMEOUT=10
+PAYLABS_CALLBACK_URL=
+PAYLABS_RETURN_URL=
+PAYLABS_VERIFY_SIGNATURE=false
+PAYLABS_SIGNATURE_HEADER=X-Paylabs-Signature
+PAYLABS_WEBHOOK_SECRET=
 ```
 
 ### 2. Config File
@@ -30,9 +38,9 @@ return [
     'merchant_id' => env('PAYLABS_MERCHANT_ID'),
     'api_key' => env('PAYLABS_API_KEY'),
     'sandbox' => env('PAYLABS_SANDBOX', true),
-    'base_url' => env('PAYLABS_SANDBOX', true) 
-        ? 'https://sandbox-api.paylabs.co.id' 
-        : 'https://api.paylabs.co.id',
+    'base_url' => env('PAYLABS_BASE_URL') ?: (env('PAYLABS_SANDBOX', true)
+        ? 'https://sandbox.paylabs.co.id/api'
+        : 'https://api.paylabs.co.id/api'),
     
     'payment_methods' => [
         'va' => ['BCA', 'BNI', 'BRI', 'Mandiri', 'Permata'],
@@ -41,8 +49,8 @@ return [
         'retail' => ['Alfamart', 'Indomaret'],
     ],
     
-    'callback_url' => env('APP_URL') . '/webhook/paylabs',
-    'return_url' => env('APP_URL') . '/customer/orders',
+    'callback_url' => env('PAYLABS_CALLBACK_URL', env('APP_URL') . '/webhook/paylabs'),
+    'return_url' => env('PAYLABS_RETURN_URL', env('APP_URL') . '/customer/payment-paylabs/{order_id}/callback'),
 ];
 ```
 
@@ -263,25 +271,46 @@ Pada halaman waiting, akan muncul tombol "Simulasi Pembayaran Berhasil" untuk te
 
 ## Production Deployment
 
-### 1. Disable Sandbox Mode
+### 1. Update `.env` to Production
 ```env
-PAYLABS_SANDBOX=false
-```
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://yourdomain.com
 
-### 2. Use Production Credentials
-```env
+PAYLABS_SANDBOX=false
 PAYLABS_MERCHANT_ID=your_production_merchant_id
 PAYLABS_API_KEY=your_production_api_key
+PAYLABS_VERIFY_SIGNATURE=true
+# isi jika Paylabs memberikan secret webhook khusus
+PAYLABS_WEBHOOK_SECRET=
 ```
 
-### 3. Configure Webhook URL
+### 2. Configure Webhook URL di Dashboard Paylabs
 Daftarkan webhook URL di dashboard Paylabs:
 ```
 https://yourdomain.com/webhook/paylabs
 ```
 
+Return URL (browser redirect) yang dipakai aplikasi ini:
+```
+https://yourdomain.com/customer/payment-paylabs/{order_id}/callback
+```
+
+### 3. Refresh Laravel config cache
+Setelah update environment, jalankan:
+```bash
+php artisan optimize:clear
+php artisan config:cache
+```
+
 ### 4. SSL Certificate
 Pastikan website menggunakan HTTPS untuk webhook callback.
+
+### 5. Smoke Test (wajib sebelum launch)
+1. Buat 1 order uji nominal kecil (VA/QRIS).
+2. Pastikan transaksi terbentuk dari halaman pembayaran Paylabs.
+3. Selesaikan pembayaran dan cek status order berubah ke `paid/processing`.
+4. Cek log `storage/logs/laravel.log` untuk memastikan webhook masuk tanpa error signature.
 
 ## Troubleshooting
 

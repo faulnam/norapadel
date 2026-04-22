@@ -76,9 +76,9 @@
             </div>
         </header>
 
-    <main class="pt-16 md:pt-0">
-    <section class="relative overflow-hidden bg-[#f5f5f7]">
-            <div class="mx-auto w-full max-w-7xl px-6 py-8 text-center md:px-10 md:py-12 lg:px-12 lg:py-16">
+    <main class="pt-12 sm:pt-16 md:pt-0">
+    <section class="relative -mt-16 min-h-screen overflow-hidden bg-[#f5f5f7] hidden md:block md:mt-0 md:min-h-[auto]">
+            <div class="mx-auto w-full max-w-7xl px-6 pb-8 pt-16 text-center md:px-10 md:py-12 lg:px-12 lg:py-16">
                 <h2 class="text-4xl font-semibold tracking-tight text-black sm:text-5xl lg:text-6xl">NoraPadel Shoes</h2>
                 <p class="mx-auto mt-3 max-w-2xl text-lg font-normal text-zinc-700 sm:text-2xl">Move faster. Play smarter.</p>
             </div>
@@ -86,19 +86,18 @@
                 <img
                     src="{{ asset('storage/shoes.png') }}"
                     alt="NoraPadel Shoes"
-                    class="w-full object-contain object-bottom"
-                    style="height: 400px;"
+                    class="h-[40vh] w-full max-h-[420px] object-contain object-bottom sm:h-[45vh] lg:h-[55vh]"
                     loading="lazy"
                 >
             </div>
         </section>
 
-    <section class="np-fade-section bg-white py-16 lg:py-20">
-            <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
-                <div class="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <section class="np-fade-section bg-white pt-2 pb-12 sm:pt-4 sm:pb-14 md:py-16 lg:py-20 transition-all duration-300">
+            <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 md:px-10 lg:px-12">
+                <div class="mb-4 flex flex-col gap-4 sm:mb-6 md:mb-8 lg:flex-row lg:items-end lg:justify-between transition-all duration-300">
                     <div>
-                        <h2 class="text-3xl font-semibold tracking-tight text-black sm:text-4xl">Shoes Collection</h2>
-                        <p class="mt-2 text-zinc-600">Temukan sepatu performa tinggi dengan grip, stabilitas, dan kenyamanan maksimal di lapangan.</p>
+                        <h2 class="text-2xl font-semibold leading-tight tracking-tight text-black sm:text-3xl md:text-4xl">Shoes Collection</h2>
+                        <p class="mt-2 text-sm text-zinc-500 sm:text-base">Temukan sepatu performa tinggi dengan grip, stabilitas, dan kenyamanan maksimal di lapangan.</p>
                     </div>
 
                     <form action="{{ route('shoes') }}" method="GET" class="flex w-full max-w-md items-center gap-2 rounded-full border border-black/10 bg-white p-1.5 shadow-[0_8px_24px_rgba(0,0,0,0.06)]">
@@ -150,10 +149,10 @@
 
                                 <div class="mt-auto pt-4">
                                     @if($product->hasActiveDiscount())
-                                        <p class="text-base font-semibold text-emerald-600">{{ $product->formatted_discounted_price }}</p>
+                                        <p class="text-sm font-semibold text-emerald-600 sm:text-base">{{ $product->formatted_discounted_price }}</p>
                                         <p class="text-xs text-zinc-400 line-through">{{ $product->formatted_price }}</p>
                                     @else
-                                        <p class="text-base font-semibold text-emerald-600">{{ $product->formatted_price }}</p>
+                                        <p class="text-sm font-semibold text-emerald-600 sm:text-base">{{ $product->formatted_price }}</p>
                                     @endif
                                 </div>
                             </div>

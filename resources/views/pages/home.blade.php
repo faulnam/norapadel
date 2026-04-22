@@ -2069,7 +2069,7 @@
             primary-href="{{ route('produk.index') }}"
             secondary-text="Buy Now"
             secondary-href="{{ auth()->check() ? route('customer.products.index') : route('login') }}"
-            section-class="bg-[#f5f5f7] border-b-8 border-white"
+        section-class="bg-[#f5f5f7] border-b-8 border-white -mt-16 pt-16 md:mt-0 md:pt-0"
         />
 
         <x-landing.hero-product

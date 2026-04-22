@@ -81,8 +81,8 @@
         </header>
 
         <main class="pt-16 md:pt-0">
-        <section class="border-b-[14px] border-white bg-[#f5f5f7] md:hidden" data-mobile-hero-carousel>
-            <div class="relative h-[calc(100vh-64px)] w-full overflow-hidden">
+        <section class="border-b-[14px] border-white bg-[#f5f5f7] md:hidden -mt-16" data-mobile-hero-carousel>
+            <div class="relative h-screen w-full overflow-hidden">
                 <div class="absolute inset-0 h-full overflow-hidden">
                     <div class="flex h-full transition-transform duration-500 ease-out" data-mobile-hero-track>
                         <article class="min-w-full">

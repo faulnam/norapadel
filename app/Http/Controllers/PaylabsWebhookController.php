@@ -15,11 +15,18 @@ class PaylabsWebhookController extends Controller
     {
         Log::info('Paylabs Webhook Received', $request->all());
 
-        // Verify signature (if Paylabs provides signature verification)
-        // $signature = $request->header('X-Paylabs-Signature');
-        // if (!$this->verifySignature($request->all(), $signature)) {
-        //     return response()->json(['message' => 'Invalid signature'], 401);
-        // }
+        if (config('paylabs.webhook.verify_signature', false)) {
+            $headerName = (string) config('paylabs.webhook.signature_header', 'X-Paylabs-Signature');
+            $signature = (string) $request->header($headerName, '');
+
+            if (!$this->verifySignature($request->all(), $signature)) {
+                Log::warning('Paylabs Webhook: Invalid signature', [
+                    'signature_header' => $headerName,
+                ]);
+
+                return response()->json(['message' => 'Invalid signature'], 401);
+            }
+        }
 
         $transactionId = $request->input('transaction_id');
         $status = $request->input('status');
@@ -86,9 +93,17 @@ class PaylabsWebhookController extends Controller
      */
     protected function verifySignature(array $data, string $signature): bool
     {
-        $apiKey = config('paylabs.api_key');
+        if ($signature === '') {
+            return false;
+        }
+
+        $secret = (string) (config('paylabs.webhook.secret') ?: config('paylabs.api_key'));
+        if ($secret === '') {
+            return false;
+        }
+
         $payload = json_encode($data);
-        $expectedSignature = hash_hmac('sha256', $payload, $apiKey);
+        $expectedSignature = hash_hmac('sha256', $payload, $secret);
 
         return hash_equals($expectedSignature, $signature);
     }

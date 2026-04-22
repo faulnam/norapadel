@@ -28,7 +28,11 @@ class Order extends Model
         'product_discount',
         'shipping_discount',
         'shipping_cost',
+    'ongkir_asli',
+    'diskon_ongkir',
+    'ongkir_dibayar',
         'total',
+    'total_pembayaran',
         'status',
         'payment_status',
         'payment_method',
@@ -73,7 +77,11 @@ class Order extends Model
         'product_discount' => 'decimal:2',
         'shipping_discount' => 'decimal:2',
         'shipping_cost' => 'decimal:2',
+    'ongkir_asli' => 'decimal:2',
+    'diskon_ongkir' => 'decimal:2',
+    'ongkir_dibayar' => 'decimal:2',
         'total' => 'decimal:2',
+    'total_pembayaran' => 'decimal:2',
         'refund_amount' => 'decimal:2',
         'shipping_latitude' => 'decimal:8',
         'shipping_longitude' => 'decimal:8',
@@ -417,7 +425,7 @@ class Order extends Model
      */
     public function getFormattedTotalAttribute(): string
     {
-        return 'Rp ' . number_format($this->total, 0, ',', '.');
+        return 'Rp ' . number_format($this->total_amount, 0, ',', '.');
     }
 
     /**
@@ -425,6 +433,10 @@ class Order extends Model
      */
     public function getTotalAmountAttribute(): float
     {
+        if (array_key_exists('total_pembayaran', $this->attributes) && $this->attributes['total_pembayaran'] !== null) {
+            return (float) $this->attributes['total_pembayaran'];
+        }
+
         return (float) $this->total;
     }
 
@@ -441,7 +453,13 @@ class Order extends Model
      */
     public function getFormattedShippingCostAttribute(): string
     {
-        return 'Rp ' . number_format($this->shipping_cost, 0, ',', '.');
+        $shippingPaid = $this->ongkir_dibayar;
+
+        if ($shippingPaid === null) {
+            $shippingPaid = $this->shipping_cost;
+        }
+
+        return 'Rp ' . number_format((float) $shippingPaid, 0, ',', '.');
     }
 
     /**
@@ -457,7 +475,13 @@ class Order extends Model
      */
     public function getFormattedShippingDiscountAttribute(): string
     {
-        return 'Rp ' . number_format($this->shipping_discount ?? 0, 0, ',', '.');
+        $shippingDiscount = $this->diskon_ongkir;
+
+        if ($shippingDiscount === null) {
+            $shippingDiscount = $this->shipping_discount ?? 0;
+        }
+
+        return 'Rp ' . number_format((float) $shippingDiscount, 0, ',', '.');
     }
 
     /**
@@ -465,7 +489,13 @@ class Order extends Model
      */
     public function getTotalDiscountAttribute(): float
     {
-        return ($this->product_discount ?? 0) + ($this->shipping_discount ?? 0);
+        $shippingDiscount = $this->diskon_ongkir;
+
+        if ($shippingDiscount === null) {
+            $shippingDiscount = $this->shipping_discount ?? 0;
+        }
+
+        return (float) ($this->product_discount ?? 0) + (float) $shippingDiscount;
     }
 
     /**

@@ -52,8 +52,8 @@
                         </div>
                         <p class="self-end text-xs tabular-nums leading-none tracking-tight text-slate-700">
                             @if($product->hasActiveDiscount())
-                                <span class="font-semibold text-emerald-700">{{ $product->formatted_discounted_price }}</span>
-                                <span class="ml-1 text-[10px] text-zinc-400 line-through">{{ $product->formatted_price }}</span>
+                                <span class="font-semibold text-emerald-700 text-[11px] sm:text-xs">{{ $product->formatted_discounted_price }}</span>
+                                <span class="ml-1 text-[9px] text-zinc-400 line-through sm:text-[10px]">{{ $product->formatted_price }}</span>
                             @else
                                 {{ $product->formatted_price }}
                             @endif
