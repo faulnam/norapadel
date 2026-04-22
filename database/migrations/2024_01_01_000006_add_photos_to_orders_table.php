@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->string('pickup_photo')->nullable()->after('delivery_notes');
-            $table->string('delivery_photo')->nullable()->after('pickup_photo');
+            $table->string('pickup_photo')->nullable();
+            $table->string('delivery_photo')->nullable();
         });
     }
 

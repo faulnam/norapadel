@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->string('biteship_tracking_status')->nullable()->after('biteship_order_id');
-            $table->string('biteship_status_stage')->nullable()->after('biteship_tracking_status');
+            $table->string('biteship_tracking_status')->nullable();
+            $table->string('biteship_status_stage')->nullable();
         });
     }
 

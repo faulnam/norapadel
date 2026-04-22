@@ -9,10 +9,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->string('paylabs_transaction_id')->nullable()->after('waybill_id');
-            $table->string('payment_gateway')->nullable()->after('payment_method')->comment('pakasir or paylabs');
-            $table->string('payment_channel')->nullable()->after('payment_gateway')->comment('bca, bni, qris, ovo, etc');
-            $table->text('payment_data')->nullable()->after('payment_channel')->comment('JSON data from payment gateway');
+            $table->string('paylabs_transaction_id')->nullable();
+            $table->string('payment_gateway')->nullable()->comment('pakasir or paylabs');
+            $table->string('payment_channel')->nullable()->comment('bca, bni, qris, ovo, etc');
+            $table->text('payment_data')->nullable()->comment('JSON data from payment gateway');
         });
     }
 

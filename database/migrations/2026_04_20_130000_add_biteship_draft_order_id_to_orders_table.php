@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('orders', function (Blueprint $table) {
             $table->string('biteship_draft_order_id')
                 ->nullable()
-                ->after('biteship_order_id');
+                ;
         });
     }
 

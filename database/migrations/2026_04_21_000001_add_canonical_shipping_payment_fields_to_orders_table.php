@@ -13,19 +13,19 @@ return new class extends Migration
     {
         Schema::table('orders', function (Blueprint $table) {
             if (!Schema::hasColumn('orders', 'ongkir_asli')) {
-                $table->decimal('ongkir_asli', 12, 2)->default(0)->after('shipping_cost');
+                 $table->decimal('ongkir_asli', 12, 2)->default(0);
             }
 
             if (!Schema::hasColumn('orders', 'diskon_ongkir')) {
-                $table->decimal('diskon_ongkir', 12, 2)->default(0)->after('shipping_discount');
+                 $table->decimal('diskon_ongkir', 12, 2)->default(0);
             }
 
             if (!Schema::hasColumn('orders', 'ongkir_dibayar')) {
-                $table->decimal('ongkir_dibayar', 12, 2)->default(0)->after('ongkir_asli');
+                 $table->decimal('ongkir_dibayar', 12, 2)->default(0);
             }
 
             if (!Schema::hasColumn('orders', 'total_pembayaran')) {
-                $table->decimal('total_pembayaran', 12, 2)->default(0)->after('total');
+                 $table->decimal('total_pembayaran', 12, 2)->default(0);
             }
         });
     }

@@ -31,13 +31,13 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn([
-                'product_discount',
+            $table->decimal('product_discount', 12, 2)->default(0);
+            $table->decimal('shipping_discount', 12, 2)->default(0);
                 'shipping_discount', 
-                'cod_verified',
-                'cod_verified_at',
+            $table->boolean('cod_verified')->default(false);
+            $table->timestamp('cod_verified_at')->nullable();
                 'delivery_distance_km'
-            ]);
+            $table->decimal('delivery_distance_km', 10, 2)->nullable();
         });
     }
 };

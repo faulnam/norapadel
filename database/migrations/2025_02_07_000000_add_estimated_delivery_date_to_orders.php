@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->string('estimated_delivery_date')->nullable()->after('courier_service_name');
+            $table->string('estimated_delivery_date')->nullable();
         });
     }
 

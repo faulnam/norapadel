@@ -14,13 +14,13 @@ return new class extends Migration
         Schema::table('orders', function (Blueprint $table) {
             // Only add columns if they don't exist
             if (!Schema::hasColumn('orders', 'refund_at')) {
-                $table->timestamp('refund_at')->nullable()->after('cancel_reason');
+                $table->timestamp('refund_at')->nullable();
             }
             if (!Schema::hasColumn('orders', 'refund_amount')) {
-                $table->decimal('refund_amount', 12, 2)->nullable()->after('refund_at');
+                $table->decimal('refund_amount', 12, 2)->nullable();
             }
             if (!Schema::hasColumn('orders', 'refund_status')) {
-                $table->string('refund_status')->nullable()->after('refund_amount');
+                $table->string('refund_status')->nullable();
             }
         });
     }
