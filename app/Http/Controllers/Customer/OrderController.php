@@ -32,16 +32,9 @@ class OrderController extends Controller
                 ->with('error', 'Keranjang belanja kosong.');
         }
 
-        // Calculate subtotal with product discounts
-        $subtotal = 0;
-        $productDiscount = 0;
-        
-        foreach ($cartItems as $item) {
-            $originalPrice = $item->product->price * $item->quantity;
-            $discountedPrice = $item->product->discounted_price * $item->quantity;
-            $subtotal += $originalPrice;
-            $productDiscount += ($originalPrice - $discountedPrice);
-        }
+        // Calculate subtotal with product discounts (use model accessors to keep logic consistent)
+        $subtotal = (float) $cartItems->sum('original_subtotal');
+        $productDiscount = (float) $cartItems->sum('discount_amount');
 
         // Get active shipping discount
         $shippingDiscountInfo = ShippingDiscount::active()->first();
@@ -103,16 +96,9 @@ class OrderController extends Controller
         try {
             DB::beginTransaction();
 
-            // Calculate subtotal with product discounts
-            $subtotal = 0;
-            $productDiscount = 0;
-            
-            foreach ($cartItems as $item) {
-                $originalPrice = $item->product->price * $item->quantity;
-                $discountedPrice = $item->product->discounted_price * $item->quantity;
-                $subtotal += $originalPrice;
-                $productDiscount += ($originalPrice - $discountedPrice);
-            }
+            // Calculate subtotal with product discounts (use model accessors to keep logic consistent)
+            $subtotal = (float) $cartItems->sum('original_subtotal');
+            $productDiscount = (float) $cartItems->sum('discount_amount');
 
             $shippingCost = (int) $validated['shipping_cost'];
             

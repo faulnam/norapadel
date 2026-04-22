@@ -54,6 +54,7 @@ return new class extends Migration
             $table->timestamp('delivered_at')->nullable();
             $table->timestamp('completed_at')->nullable();
             $table->text('delivery_notes')->nullable(); // Catatan dari kurir
+            $table->string('waybill_id')->nullable(); // Nomor resi / waybill
             $table->text('notes')->nullable();
             $table->text('cancel_reason')->nullable();
             $table->timestamps();
