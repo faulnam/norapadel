@@ -140,7 +140,7 @@
 
         <div class="hidden md:block">
             <x-landing.hero-product id="racket" title="NoraPadel" subtitle="Precision. Power. Performance."
-                image="{{ asset('banner.png') }}" alt="NoraPadel Racket" primary-text="Explore"
+                image="{{ Storage::url('banner.png') }}" alt="NoraPadel Racket" primary-text="Explore"
                 primary-href="{{ route('produk.index') }}" secondary-text="Buy Now"
                 secondary-href="{{ route('home') }}#products"
                 section-class="bg-[#f5f5f7] border-b-[14px] border-white" />
