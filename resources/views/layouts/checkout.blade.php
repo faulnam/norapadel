@@ -143,6 +143,59 @@
                     </ul>
                 </div>
             </div>
+
+            <div class="space-y-2 md:hidden">
+                <details class="group rounded-xl border border-black/10 bg-white px-4 py-3">
+                    <summary class="flex cursor-pointer list-none items-center justify-between text-xs font-semibold uppercase tracking-wide text-black">
+                        Shop
+                        <i class="fas fa-chevron-down text-[10px] text-zinc-500 transition group-open:rotate-180"></i>
+                    </summary>
+                    <ul class="mt-3 space-y-2 text-sm">
+                        <li><a href="{{ route('produk.index') }}" class="hover:underline">Racket</a></li>
+                        <li><a href="{{ route('produk.index') }}" class="hover:underline">Shoes</a></li>
+                        <li><a href="{{ route('produk.index') }}" class="hover:underline">Accessories</a></li>
+                    </ul>
+                </details>
+
+                <details class="group rounded-xl border border-black/10 bg-white px-4 py-3">
+                    <summary class="flex cursor-pointer list-none items-center justify-between text-xs font-semibold uppercase tracking-wide text-black">
+                        Support
+                        <i class="fas fa-chevron-down text-[10px] text-zinc-500 transition group-open:rotate-180"></i>
+                    </summary>
+                    <ul class="mt-3 space-y-2 text-sm">
+                        <li><a href="{{ route('tentang') }}" class="hover:underline">Help Center</a></li>
+                        <li><a href="{{ route('tentang') }}" class="hover:underline">Contact</a></li>
+                    </ul>
+                </details>
+
+                <details class="group rounded-xl border border-black/10 bg-white px-4 py-3">
+                    <summary class="flex cursor-pointer list-none items-center justify-between text-xs font-semibold uppercase tracking-wide text-black">
+                        Account
+                        <i class="fas fa-chevron-down text-[10px] text-zinc-500 transition group-open:rotate-180"></i>
+                    </summary>
+                    <ul class="mt-3 space-y-2 text-sm">
+                        @auth
+                            <li><a href="{{ route('customer.profile.index') }}" class="hover:underline">Dashboard</a></li>
+                            <li><a href="{{ route('customer.orders.index') }}" class="hover:underline">Orders</a></li>
+                        @else
+                            <li><a href="{{ route('login') }}" class="hover:underline">Sign In</a></li>
+                            <li><a href="{{ route('register') }}" class="hover:underline">Create Account</a></li>
+                        @endauth
+                    </ul>
+                </details>
+
+                <details class="group rounded-xl border border-black/10 bg-white px-4 py-3">
+                    <summary class="flex cursor-pointer list-none items-center justify-between text-xs font-semibold uppercase tracking-wide text-black">
+                        About NoraPadel
+                        <i class="fas fa-chevron-down text-[10px] text-zinc-500 transition group-open:rotate-180"></i>
+                    </summary>
+                    <ul class="mt-3 space-y-2 text-sm">
+                        <li><a href="{{ route('tentang') }}" class="hover:underline">Our Story</a></li>
+                        <li><a href="{{ route('galeri') }}" class="hover:underline">Gallery</a></li>
+                        <li><a href="{{ route('testimoni') }}" class="hover:underline">Testimonials</a></li>
+                    </ul>
+                </details>
+            </div>
         </div>
         <div
             class="mx-auto mt-10 w-full max-w-7xl border-t border-black/10 px-6 pt-5 text-xs text-zinc-400 md:px-10 lg:px-12">

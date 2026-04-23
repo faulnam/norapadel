@@ -498,7 +498,25 @@
                     @endif
                 </a>
             @endauth
+            <button type="button"
+                class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-black transition duration-300 hover:border-black/35 md:hidden"
+                data-mobile-menu-toggle aria-label="Toggle navigation" aria-expanded="false">
+                <i class="fas fa-bars text-sm"></i>
+            </button>
         </div>
+    </div>
+
+    <div class="hidden border-t border-black/10 bg-white/95 px-6 py-4 md:hidden" data-mobile-menu>
+        <nav class="flex flex-col gap-3 text-sm font-medium text-black/85">
+            <a href="{{ route('home') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Home</a>
+            <a href="{{ route('racket') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Racket</a>
+            <a href="{{ route('shoes') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Shoes</a>
+            <a href="{{ route('apparel') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Accessories</a>
+            @auth
+                <a href="{{ route('customer.orders.index') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Riwayat Pesanan</a>
+                <a href="{{ route('customer.profile.index') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Profil</a>
+            @endauth
+        </nav>
     </div>
 </header>
 
@@ -786,17 +804,56 @@
             </div>
         </div>
         
-        <!-- Mobile Footer -->
-        <div class="md:hidden">
-            <div class="text-center">
-                <h3 class="mb-4 text-lg font-semibold text-black">NoraPadel</h3>
-                <div class="flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs">
-                    <a href="{{ route('produk.index') }}" class="hover:underline">Shop</a>
-                    <a href="{{ route('tentang') }}" class="hover:underline">Support</a>
-                    <a href="{{ route('customer.profile.index') }}" class="hover:underline">Account</a>
-                    <a href="{{ route('galeri') }}" class="hover:underline">Gallery</a>
-                </div>
-            </div>
+        <div class="space-y-2 md:hidden">
+            <details class="group rounded-xl border border-black/10 bg-white px-4 py-3">
+                <summary class="flex cursor-pointer list-none items-center justify-between text-xs font-semibold uppercase tracking-wide text-black">
+                    Shop
+                    <i class="fas fa-chevron-down text-[10px] text-zinc-500 transition group-open:rotate-180"></i>
+                </summary>
+                <ul class="mt-3 space-y-2 text-sm">
+                    <li><a href="{{ route('produk.index') }}" class="hover:underline">Racket</a></li>
+                    <li><a href="{{ route('produk.index') }}" class="hover:underline">Shoes</a></li>
+                    <li><a href="{{ route('produk.index') }}" class="hover:underline">Accessories</a></li>
+                </ul>
+            </details>
+            <details class="group rounded-xl border border-black/10 bg-white px-4 py-3">
+                <summary class="flex cursor-pointer list-none items-center justify-between text-xs font-semibold uppercase tracking-wide text-black">
+                    Support
+                    <i class="fas fa-chevron-down text-[10px] text-zinc-500 transition group-open:rotate-180"></i>
+                </summary>
+                <ul class="mt-3 space-y-2 text-sm">
+                    <li><a href="{{ route('tentang') }}" class="hover:underline">Help Center</a></li>
+                    <li><a href="{{ route('tentang') }}" class="hover:underline">Shipping</a></li>
+                    <li><a href="{{ route('tentang') }}" class="hover:underline">Returns</a></li>
+                    <li><a href="{{ route('tentang') }}" class="hover:underline">Contact</a></li>
+                </ul>
+            </details>
+            <details class="group rounded-xl border border-black/10 bg-white px-4 py-3">
+                <summary class="flex cursor-pointer list-none items-center justify-between text-xs font-semibold uppercase tracking-wide text-black">
+                    Account
+                    <i class="fas fa-chevron-down text-[10px] text-zinc-500 transition group-open:rotate-180"></i>
+                </summary>
+                <ul class="mt-3 space-y-2 text-sm">
+                    @auth
+                        <li><a href="{{ route('customer.profile.index') }}" class="hover:underline">Dashboard</a></li>
+                        <li><a href="{{ route('customer.orders.index') }}" class="hover:underline">Orders</a></li>
+                    @else
+                        <li><a href="{{ route('login') }}" class="hover:underline">Sign In</a></li>
+                        <li><a href="{{ route('register') }}" class="hover:underline">Create Account</a></li>
+                    @endauth
+                </ul>
+            </details>
+            <details class="group rounded-xl border border-black/10 bg-white px-4 py-3">
+                <summary class="flex cursor-pointer list-none items-center justify-between text-xs font-semibold uppercase tracking-wide text-black">
+                    About NoraPadel
+                    <i class="fas fa-chevron-down text-[10px] text-zinc-500 transition group-open:rotate-180"></i>
+                </summary>
+                <ul class="mt-3 space-y-2 text-sm">
+                    <li><a href="{{ route('tentang') }}" class="hover:underline">Our Story</a></li>
+                    <li><a href="{{ route('galeri') }}" class="hover:underline">Gallery</a></li>
+                    <li><a href="{{ route('testimoni') }}" class="hover:underline">Testimonials</a></li>
+                </ul>
+            </details>
         </div>
     </div>
     <div class="mx-auto mt-8 w-full max-w-7xl border-t border-black/10 px-6 pt-5 text-xs text-zinc-400 md:px-10 lg:px-12">
@@ -807,6 +864,19 @@
 @push('scripts')
 <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const mobileMenuToggle = document.querySelector('[data-mobile-menu-toggle]');
+        const mobileMenu = document.querySelector('[data-mobile-menu]');
+
+        if (mobileMenuToggle && mobileMenu) {
+            mobileMenuToggle.addEventListener('click', function () {
+                mobileMenu.classList.toggle('hidden');
+                mobileMenuToggle.setAttribute('aria-expanded', String(!mobileMenu.classList.contains('hidden')));
+            });
+        }
+    });
+</script>
 <script>
     const STORE_LAT = {{ config('branding.store_latitude', -7.4674) }};
     const STORE_LNG = {{ config('branding.store_longitude', 112.5274) }};
@@ -1187,6 +1257,7 @@
     }
 
     function selectCourier(rate) {
+        const shippingPrice = Math.max(0, Number(rate.price) || 0);
         const selectedServiceCode = (rate.courier_service_code || rate.courier_type || '').toString().trim().toLowerCase();
 
         // Update hidden inputs
@@ -1194,7 +1265,7 @@
         document.getElementById('courier_name').value = rate.courier_name;
         document.getElementById('courier_service_code').value = selectedServiceCode;
         document.getElementById('courier_service_name').value = rate.courier_service_name;
-        document.getElementById('shipping_cost_input').value = rate.price;
+    document.getElementById('shipping_cost_input').value = shippingPrice;
         document.getElementById('delivery_distance_km').value = rate.distance_km || 0;
         document.getElementById('delivery_distance_minutes').value = rate.duration_minutes || 60;
 
@@ -1212,14 +1283,15 @@
         // Calculate shipping discount
         let shippingDiscount = 0;
         if (SHIPPING_DISCOUNT && SUBTOTAL >= SHIPPING_DISCOUNT.minSubtotal) {
-            shippingDiscount = rate.price * (SHIPPING_DISCOUNT.percent / 100);
+            shippingDiscount = shippingPrice * (SHIPPING_DISCOUNT.percent / 100);
             if (SHIPPING_DISCOUNT.maxDiscount && shippingDiscount > SHIPPING_DISCOUNT.maxDiscount) {
                 shippingDiscount = SHIPPING_DISCOUNT.maxDiscount;
             }
         }
+        shippingDiscount = Math.max(0, Math.min(shippingPrice, shippingDiscount));
 
         // Update summary
-        document.getElementById('displayShippingCost').textContent = formatRupiah(rate.price);
+    document.getElementById('displayShippingCost').textContent = formatRupiah(shippingPrice);
         document.getElementById('displayShippingCost').classList.remove('text-muted');
 
         if (shippingDiscount > 0) {
@@ -1229,7 +1301,7 @@
             document.getElementById('shippingDiscountRow').style.display = 'none';
         }
 
-        const finalTotal = SUBTOTAL + rate.price - shippingDiscount;
+    const finalTotal = Math.max(0, SUBTOTAL + shippingPrice - shippingDiscount);
         document.getElementById('displayTotal').textContent = formatRupiah(finalTotal);
 
         // Enable submit button

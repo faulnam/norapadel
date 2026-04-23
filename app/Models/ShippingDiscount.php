@@ -65,19 +65,23 @@ class ShippingDiscount extends Model
      */
     public function calculateDiscount(float $shippingCost, float $subtotal): float
     {
+        $shippingCost = max(0, $shippingCost);
+        $subtotal = max(0, $subtotal);
+
         // Check if meets minimum subtotal requirement
         if ($this->min_subtotal && $subtotal < $this->min_subtotal) {
             return 0;
         }
 
-        $discount = $shippingCost * ($this->discount_percent / 100);
+        $discount = $shippingCost * (max(0, (float) $this->discount_percent) / 100);
 
         // Apply max discount cap
         if ($this->max_discount && $discount > $this->max_discount) {
             $discount = $this->max_discount;
         }
 
-        return $discount;
+        // Diskon ongkir tidak boleh melebihi ongkir asli.
+        return max(0, min($shippingCost, (float) $discount));
     }
 
     /**

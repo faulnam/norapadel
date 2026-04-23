@@ -96,4 +96,20 @@ return [
         'whatsapp' => env('BRAND_WHATSAPP', '6281277889900'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Home Mobile Hero Slides
+    |--------------------------------------------------------------------------
+    |
+    | Khusus carousel mobile di halaman home (3 slide).
+    | Bisa diisi path relatif public/ (contoh: storage/home/mobile-1.jpg)
+    | atau URL penuh (https://...).
+    |
+    */
+    'home_mobile_slides' => [
+        env('HOME_MOBILE_SLIDE_1', 'storage/2.png'),
+        env('HOME_MOBILE_SLIDE_2', 'storage/shoes.png'),
+        env('HOME_MOBILE_SLIDE_3', 'storage/3.png'),
+    ],
+
 ];

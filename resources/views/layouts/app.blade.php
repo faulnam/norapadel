@@ -826,7 +826,7 @@
     @stack('styles')
 </head>
 <body>
-    @unless(request()->routeIs('home', 'racket', 'shoes', 'apparel', 'shop', 'login', 'register', 'customer.products.*', 'customer.cart.*', 'customer.profile.*'))
+    @unless(request()->routeIs('home', 'racket', 'shoes', 'apparel', 'shop', 'login', 'register', 'customer.products.*', 'customer.cart.*', 'customer.profile.*', 'customer.checkout'))
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg sticky-top" id="mainNavbar">
         <div class="container">
@@ -1056,7 +1056,7 @@
 
     <x-site-footer />
 
-    @unless(request()->routeIs('home', 'racket', 'shoes', 'apparel', 'shop', 'login', 'register', 'customer.products.*', 'customer.cart.*', 'customer.profile.*'))
+    @unless(request()->routeIs('home', 'racket', 'shoes', 'apparel', 'shop', 'login', 'register', 'customer.products.*', 'customer.cart.*', 'customer.profile.*', 'customer.checkout'))
     <!-- Mobile Bottom Navigation -->
     <nav class="mobile-bottom-nav">
         <div class="mobile-bottom-nav-inner">

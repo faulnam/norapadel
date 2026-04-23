@@ -17,7 +17,7 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $query = Order::with('user', 'items')
-            ->whereNull('biteship_order_id');
+            ->withoutBiteshipOrder();
 
         // Search by order number or customer name
         if ($request->filled('search')) {

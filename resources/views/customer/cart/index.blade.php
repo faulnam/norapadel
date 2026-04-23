@@ -61,8 +61,8 @@
                     <div>
                         @foreach($cartItems as $item)
                             <div class="border-b border-black/6 p-6 last:border-0">
-                                <div class="flex gap-4">
-                                    <div class="relative shrink-0">
+                                <div class="flex flex-col gap-4 sm:flex-row">
+                                    <div class="relative mx-auto shrink-0 sm:mx-0">
                                         <img src="{{ $item->product->image ? asset('storage/' . $item->product->image) : 'https://via.placeholder.com/80' }}" 
                                              alt="{{ $item->product->name }}" class="h-20 w-20 rounded-xl object-cover">
                                         @if($item->product->hasActiveDiscount())
@@ -90,7 +90,7 @@
                                             </form>
                                         </div>
                                         
-                                        <div class="mt-4 flex items-center justify-between">
+                                        <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                                             <form action="{{ route('customer.cart.update', $item) }}" method="POST" class="inline-flex">
                                                 @csrf
                                                 @method('PATCH')
@@ -174,4 +174,20 @@
 
 @push('styles')
 <script src="https://cdn.tailwindcss.com"></script>
+@endpush
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const mobileMenuToggle = document.querySelector('[data-mobile-menu-toggle]');
+        const mobileMenu = document.querySelector('[data-mobile-menu]');
+
+        if (mobileMenuToggle && mobileMenu) {
+            mobileMenuToggle.addEventListener('click', function () {
+                mobileMenu.classList.toggle('hidden');
+                mobileMenuToggle.setAttribute('aria-expanded', String(!mobileMenu.classList.contains('hidden')));
+            });
+        }
+    });
+</script>
 @endpush

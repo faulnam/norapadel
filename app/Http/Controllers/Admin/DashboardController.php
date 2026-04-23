@@ -16,7 +16,7 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        $orderQuery = Order::whereNull('biteship_order_id');
+        $orderQuery = Order::query()->withoutBiteshipOrder();
 
         // Statistics
         $totalOrders = (clone $orderQuery)->count();
@@ -44,7 +44,7 @@ class DashboardController extends Controller
         for ($i = 5; $i >= 0; $i--) {
             $date = Carbon::now()->subMonths($i);
             $revenue = Order::where('payment_status', 'paid')
-                ->whereNull('biteship_order_id')
+                ->withoutBiteshipOrder()
                 ->whereYear('created_at', $date->year)
                 ->whereMonth('created_at', $date->month)
                 ->sum('total');

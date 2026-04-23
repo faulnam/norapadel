@@ -3,11 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Schema;
 
 class Order extends Model
 {
     use HasFactory;
+
+    protected static ?bool $hasBiteshipOrderIdColumn = null;
 
     protected $fillable = [
         'order_number',
@@ -191,6 +195,48 @@ class Order extends Model
     public function testimonial()
     {
         return $this->hasOne(Testimonial::class);
+    }
+
+    /**
+     * Cek apakah kolom biteship_order_id tersedia di tabel orders.
+     */
+    public static function supportsBiteshipOrderId(): bool
+    {
+        if (static::$hasBiteshipOrderIdColumn !== null) {
+            return static::$hasBiteshipOrderIdColumn;
+        }
+
+        try {
+            static::$hasBiteshipOrderIdColumn = Schema::hasColumn('orders', 'biteship_order_id');
+        } catch (\Throwable $e) {
+            static::$hasBiteshipOrderIdColumn = false;
+        }
+
+        return static::$hasBiteshipOrderIdColumn;
+    }
+
+    /**
+     * Scope order manual/non-Biteship untuk dashboard/admin.
+     */
+    public function scopeWithoutBiteshipOrder(Builder $query): Builder
+    {
+        if (!static::supportsBiteshipOrderId()) {
+            return $query;
+        }
+
+        return $query->whereNull('biteship_order_id');
+    }
+
+    /**
+     * Scope pencarian order berdasarkan biteship_order_id yang aman saat kolom belum ada.
+     */
+    public function scopeWhereBiteshipOrderId(Builder $query, string $biteshipOrderId): Builder
+    {
+        if (!static::supportsBiteshipOrderId()) {
+            return $query->whereRaw('1 = 0');
+        }
+
+        return $query->where('biteship_order_id', $biteshipOrderId);
     }
 
     /**
@@ -433,11 +479,28 @@ class Order extends Model
      */
     public function getTotalAmountAttribute(): float
     {
+        $canonicalTotal = null;
+
         if (array_key_exists('total_pembayaran', $this->attributes) && $this->attributes['total_pembayaran'] !== null) {
-            return (float) $this->attributes['total_pembayaran'];
+            $canonicalTotal = (float) $this->attributes['total_pembayaran'];
         }
 
-        return (float) $this->total;
+        $legacyTotal = (float) ($this->attributes['total'] ?? 0);
+
+        // Fallback ke kolom legacy `total` bila canonical masih default 0 tapi total legacy sudah valid.
+        if ($canonicalTotal !== null) {
+            if ($canonicalTotal > 0) {
+                return $canonicalTotal;
+            }
+
+            if ($legacyTotal > 0) {
+                return $legacyTotal;
+            }
+
+            return max(0, $canonicalTotal);
+        }
+
+        return max(0, $legacyTotal);
     }
 
     /**

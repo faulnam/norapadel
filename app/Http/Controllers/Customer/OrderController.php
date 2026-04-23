@@ -100,17 +100,23 @@ class OrderController extends Controller
             $subtotal = (float) $cartItems->sum('original_subtotal');
             $productDiscount = (float) $cartItems->sum('discount_amount');
 
-            $shippingCost = (int) $validated['shipping_cost'];
+            $shippingCost = max(0, (float) $validated['shipping_cost']);
+            $netSubtotal = max(0, $subtotal - $productDiscount);
             
             // Calculate shipping discount
             $shippingDiscount = 0;
             $activeShippingDiscount = ShippingDiscount::active()->first();
             if ($activeShippingDiscount) {
-                $shippingDiscount = $activeShippingDiscount->calculateDiscount($shippingCost, $subtotal - $productDiscount);
+                $shippingDiscount = $activeShippingDiscount->calculateDiscount($shippingCost, $netSubtotal);
             }
 
+            // Guard tambahan agar diskon ongkir tidak pernah melebihi ongkir.
+            $shippingDiscount = max(0, min($shippingCost, (float) $shippingDiscount));
+
+            $shippingPaid = max(0, $shippingCost - $shippingDiscount);
+
             // Calculate final total
-            $total = $subtotal - $productDiscount + $shippingCost - $shippingDiscount;
+            $total = max(0, $netSubtotal + $shippingPaid);
 
             $deliveryNotes = null;
             if (!empty($validated['courier_service_code'])) {
@@ -126,6 +132,10 @@ class OrderController extends Controller
                 'shipping_discount' => $shippingDiscount,
                 'shipping_cost' => $shippingCost,
                 'total' => $total,
+                'ongkir_asli' => $shippingCost,
+                'diskon_ongkir' => $shippingDiscount,
+                'ongkir_dibayar' => $shippingPaid,
+                'total_pembayaran' => $total,
                 'shipping_name' => $validated['shipping_name'],
                 'shipping_phone' => $validated['shipping_phone'],
                 'shipping_address' => $validated['shipping_address'],

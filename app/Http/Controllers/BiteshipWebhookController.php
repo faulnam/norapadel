@@ -44,7 +44,7 @@ class BiteshipWebhookController extends Controller
             ], 200);
         }
 
-        $order = Order::where('biteship_order_id', $biteshipOrderId)
+        $order = Order::whereBiteshipOrderId($biteshipOrderId)
             ->orWhere('biteship_draft_order_id', $biteshipOrderId)
             ->first();
 

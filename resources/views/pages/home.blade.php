@@ -2013,6 +2013,37 @@
 @section('title', 'NoraPadel — Precision. Power. Performance.')
 
 @section('content')
+    @php
+        $desktopHeroImages = [
+            asset('storage/2.png'),
+            asset('storage/shoes.png'),
+            asset('storage/3.png'),
+        ];
+
+        $mobileHeroSlides = collect(config('branding.home_mobile_slides', []))
+            ->filter(fn ($value) => filled($value))
+            ->take(3)
+            ->values();
+
+        while ($mobileHeroSlides->count() < 3) {
+            $mobileHeroSlides->push($desktopHeroImages[$mobileHeroSlides->count()] ?? $desktopHeroImages[0]);
+        }
+
+        $mobileHeroSlides = $mobileHeroSlides->map(function ($path, $index) use ($desktopHeroImages) {
+            $rawPath = trim((string) $path);
+
+            if ($rawPath === '') {
+                return $desktopHeroImages[$index] ?? $desktopHeroImages[0];
+            }
+
+            if (preg_match('/^(https?:)?\/\//i', $rawPath) || str_starts_with($rawPath, 'data:') || str_starts_with($rawPath, '/')) {
+                return $rawPath;
+            }
+
+            return asset(ltrim($rawPath, '/'));
+        })->values();
+    @endphp
+
     <div class="bg-white text-black antialiased">
     <header class="fixed left-0 top-0 z-50 w-full border-b border-black/6 bg-white/80 backdrop-blur-xl md:sticky">
             <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-10 lg:px-12">
@@ -2059,6 +2090,55 @@
 
     <main class="pt-16 md:pt-0">
 
+    <section class="relative -mt-16 border-b-8 border-white bg-[#f5f5f7] pt-16 md:hidden">
+        <div class="px-4 py-6">
+            <div class="relative overflow-hidden rounded-3xl shadow-[0_18px_38px_rgba(0,0,0,0.12)]" data-mobile-hero-carousel>
+                <div class="flex transition-transform duration-500 ease-out" data-mobile-hero-track>
+                    @foreach($mobileHeroSlides as $index => $slideImage)
+                        <div class="w-full shrink-0">
+                            <img
+                                src="{{ $slideImage }}"
+                                alt="NoraPadel Mobile Slide {{ $index + 1 }}"
+                                class="h-[56vh] w-full object-cover"
+                                loading="{{ $index === 0 ? 'eager' : 'lazy' }}"
+                            >
+                        </div>
+                    @endforeach
+                </div>
+
+                <button
+                    type="button"
+                    class="absolute left-3 top-1/2 -translate-y-1/2 rounded-full border border-white/60 bg-black/35 px-3 py-2 text-white backdrop-blur transition hover:bg-black/55"
+                    data-mobile-hero-prev
+                    aria-label="Slide sebelumnya"
+                >
+                    <i class="fas fa-chevron-left text-xs"></i>
+                </button>
+                <button
+                    type="button"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 rounded-full border border-white/60 bg-black/35 px-3 py-2 text-white backdrop-blur transition hover:bg-black/55"
+                    data-mobile-hero-next
+                    aria-label="Slide berikutnya"
+                >
+                    <i class="fas fa-chevron-right text-xs"></i>
+                </button>
+
+                <div class="absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2" data-mobile-hero-dots>
+                    @foreach($mobileHeroSlides as $index => $slideImage)
+                        <button
+                            type="button"
+                            class="h-2.5 w-2.5 rounded-full border border-white/80 bg-white/50 transition"
+                            data-mobile-hero-dot="{{ $index }}"
+                            aria-label="Ke slide {{ $index + 1 }}"
+                        ></button>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="hidden md:block">
+
     <x-landing.hero-product
             id="racket"
             title="NoraPadel Racket"
@@ -2097,6 +2177,7 @@
             secondary-href="{{ auth()->check() ? route('customer.products.index') : route('login') }}"
             section-class="bg-[#f5f5f7] border-b-8 border-white"
         />
+    </div>
 
         <section class="np-fade-section bg-[#f5f5f7] py-20 lg:py-24">
             <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
@@ -2220,6 +2301,72 @@
                     mobileMenu.classList.toggle('hidden');
                     mobileMenuToggle.setAttribute('aria-expanded', String(!mobileMenu.classList.contains('hidden')));
                 });
+            }
+
+            // === MOBILE HERO CAROUSEL (KHUSUS MOBILE, DESKTOP TIDAK DIUBAH) ===
+            const mobileCarousel = document.querySelector('[data-mobile-hero-carousel]');
+            if (mobileCarousel) {
+                const track = mobileCarousel.querySelector('[data-mobile-hero-track]');
+                const slides = track ? Array.from(track.children) : [];
+                const dots = Array.from(mobileCarousel.querySelectorAll('[data-mobile-hero-dot]'));
+                const prevBtn = mobileCarousel.querySelector('[data-mobile-hero-prev]');
+                const nextBtn = mobileCarousel.querySelector('[data-mobile-hero-next]');
+
+                if (track && slides.length > 0) {
+                    let currentIndex = 0;
+                    let autoplayTimer = null;
+
+                    const updateSlider = (index) => {
+                        currentIndex = (index + slides.length) % slides.length;
+                        track.style.transform = `translateX(-${currentIndex * 100}%)`;
+
+                        dots.forEach((dot, dotIndex) => {
+                            const isActive = dotIndex === currentIndex;
+                            dot.classList.toggle('bg-white', isActive);
+                            dot.classList.toggle('bg-white/50', !isActive);
+                            dot.classList.toggle('scale-110', isActive);
+                        });
+                    };
+
+                    const stopAutoplay = () => {
+                        if (autoplayTimer) {
+                            clearInterval(autoplayTimer);
+                            autoplayTimer = null;
+                        }
+                    };
+
+                    const startAutoplay = () => {
+                        stopAutoplay();
+                        autoplayTimer = setInterval(() => {
+                            updateSlider(currentIndex + 1);
+                        }, 4500);
+                    };
+
+                    prevBtn?.addEventListener('click', () => {
+                        updateSlider(currentIndex - 1);
+                        startAutoplay();
+                    });
+
+                    nextBtn?.addEventListener('click', () => {
+                        updateSlider(currentIndex + 1);
+                        startAutoplay();
+                    });
+
+                    dots.forEach((dot) => {
+                        dot.addEventListener('click', () => {
+                            updateSlider(Number(dot.dataset.mobileHeroDot || 0));
+                            startAutoplay();
+                        });
+                    });
+
+                    mobileCarousel.addEventListener('mouseenter', stopAutoplay);
+                    mobileCarousel.addEventListener('mouseleave', startAutoplay);
+                    mobileCarousel.addEventListener('touchstart', stopAutoplay, { passive: true });
+                    mobileCarousel.addEventListener('touchend', startAutoplay, { passive: true });
+
+                    updateSlider(0);
+                    startAutoplay();
+                }
             }
 
             // === ANIMASI 3D SCROLL BARU (ORYZO.AI STYLE) ===
