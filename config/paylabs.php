@@ -2,22 +2,16 @@
 
 return [
     'merchant_id' => env('PAYLABS_MERCHANT_ID'),
-    'api_key' => env('PAYLABS_API_KEY'),
     'sandbox' => env('PAYLABS_SANDBOX', true),
-    // Mock mode hanya untuk testing internal UI tanpa hit API Paylabs.
-    // Jangan aktifkan di staging/production jika ingin transaksi real.
     'mock_mode' => env('PAYLABS_MOCK_MODE', false),
     
     // API URLs
-    'base_url' => env('PAYLABS_BASE_URL') ?: (env('PAYLABS_SANDBOX', true)
-        ? 'https://sandbox.paylabs.co.id/api'
-        : 'https://api.paylabs.co.id/api'),
+    'base_url' => env('PAYLABS_BASE_URL', 'https://api.paylabs.co.id'),
 
     // HTTP Client Settings
     'timeout' => (int) env('PAYLABS_TIMEOUT', 30),
     'connect_timeout' => (int) env('PAYLABS_CONNECT_TIMEOUT', 10),
     'verify_ssl' => env('PAYLABS_VERIFY_SSL', true),
-    'ca_bundle' => env('PAYLABS_CA_BUNDLE'),
     'private_key_path' => env('PAYLABS_PRIVATE_KEY_PATH'),
     'public_key_path' => env('PAYLABS_PUBLIC_KEY_PATH'),
     

@@ -282,7 +282,6 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'customer'])->
     Route::post('/payment-paylabs/{order}/process', [\App\Http\Controllers\Customer\PaylabsPaymentController::class, 'process'])->name('payment.paylabs.process');
     Route::get('/payment-paylabs/{order}/waiting', [\App\Http\Controllers\Customer\PaylabsPaymentController::class, 'waiting'])->name('payment.paylabs.waiting');
     Route::get('/payment-paylabs/{order}/check-status', [\App\Http\Controllers\Customer\PaylabsPaymentController::class, 'checkStatus'])->name('payment.paylabs.check-status');
-    Route::post('/payment-paylabs/{order}/simulate', [\App\Http\Controllers\Customer\PaylabsPaymentController::class, 'simulatePayment'])->name('payment.paylabs.simulate');
     Route::get('/payment-paylabs/{order}/callback', [\App\Http\Controllers\PaylabsWebhookController::class, 'handleCallback'])->name('payment.paylabs.callback');
     
     // Testimonials

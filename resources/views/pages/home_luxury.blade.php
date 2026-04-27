@@ -346,7 +346,7 @@
                         </div>
 
                         @php
-                            // Collect gallery thumbnails
+                            // Collect gallery thumbnails only
                             $marqueeCards = collect();
                             foreach ($smallGalleryItems as $idx => $gi) {
                                 $marqueeCards->push([
@@ -354,17 +354,6 @@
                                     'image' => $gi->image_url,
                                     'title' => $gi->title,
                                     'link' => route('galeri'),
-                                ]);
-                            }
-
-                            // Add testimonial images
-                            $testimonialImages = $testimonials->filter(fn($t) => $t->image)->take(6);
-                            foreach ($testimonialImages as $ti) {
-                                $marqueeCards->push([
-                                    'type' => 'testimonial',
-                                    'image' => $ti->image_url,
-                                    'title' => $ti->user->name,
-                                    'link' => route('testimoni'),
                                 ]);
                             }
 

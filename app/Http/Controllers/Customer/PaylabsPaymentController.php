@@ -152,9 +152,8 @@ class PaylabsPaymentController extends Controller
 
         $paymentChannel = $order->payment_channel;
         $expiryTime = $paymentData['expired_at'] ?? now()->addHours(24)->toIso8601String();
-    $canSimulate = app()->environment('local') || (bool) config('paylabs.mock_mode', false);
 
-    return view('customer.payment.paylabs-waiting', compact('order', 'paymentData', 'paymentChannel', 'expiryTime', 'canSimulate'));
+        return view('customer.payment.paylabs-waiting', compact('order', 'paymentData', 'paymentChannel', 'expiryTime'));
     }
 
     /**
@@ -197,41 +196,5 @@ class PaylabsPaymentController extends Controller
         ]);
     }
 
-    /**
-     * Simulate payment (for testing sandbox)
-     */
-    public function simulatePayment(Order $order)
-    {
-        if ($order->user_id !== auth()->id()) {
-            abort(403);
-        }
 
-        $canSimulate = app()->environment('local') || (bool) config('paylabs.mock_mode', false);
-        if (!$canSimulate) {
-            abort(404);
-        }
-
-        if ($order->payment_status === Order::PAYMENT_PAID) {
-            return redirect()->route('customer.orders.show', $order)
-                ->with('info', 'Pesanan sudah dibayar.');
-        }
-
-        $mockTransactionId = (string) ($order->paylabs_transaction_id ?: ('MOCK-SIM-' . strtoupper(uniqid())));
-
-        $paymentData = json_decode((string) $order->payment_data, true) ?? [];
-        $paymentData['simulated_paid_at'] = now()->toIso8601String();
-        $paymentData['simulated'] = true;
-
-        $order->update([
-            'payment_status' => Order::PAYMENT_PAID,
-            'status' => Order::STATUS_PROCESSING,
-            'paid_at' => now(),
-            'paylabs_transaction_id' => $mockTransactionId,
-            'payment_gateway' => 'paylabs',
-            'payment_data' => json_encode($paymentData),
-        ]);
-
-        return redirect()->route('customer.orders.show', $order)
-            ->with('success', 'Simulasi pembayaran berhasil. Pesanan masuk tahap processing.');
-    }
 }
