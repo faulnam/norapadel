@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Services\BiteshipService;
 use App\Services\WebPushService;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 
 class OrderObserver
 {
@@ -126,6 +127,10 @@ class OrderObserver
                     'biteship_sync_status=synced' . (!empty($order->biteship_draft_order_id) ? '; source=draft_order; draft_id=' . $order->biteship_draft_order_id : '')
                 ),
             ], fn ($value) => $value !== null && $value !== '');
+
+            if (Schema::hasColumn('orders', 'awb_number')) {
+                $payload['awb_number'] = $data['awb_number'] ?? ($data['waybill_id'] ?? null);
+            }
 
             $payload['delivery_notes'] = $this->appendDeliveryNote(
                 (string) ($payload['delivery_notes'] ?? $order->delivery_notes),

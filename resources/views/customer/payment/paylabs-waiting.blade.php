@@ -154,6 +154,16 @@
                 </button>
             </div>
 
+            @if($canSimulate ?? false)
+                <form action="{{ route('customer.payment.paylabs.simulate', $order) }}" method="POST" class="mt-3">
+                    @csrf
+                    <button type="submit"
+                            class="w-full rounded-xl bg-emerald-600 py-3 text-center text-sm font-medium text-white hover:bg-emerald-700">
+                        <i class="fas fa-flask me-2"></i>Simulasi Pembayaran Berhasil
+                    </button>
+                </form>
+            @endif
+
         </div>
     </div>
 </div>

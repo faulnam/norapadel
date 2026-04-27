@@ -17,6 +17,7 @@ use App\Services\WebPushService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Schema;
 
 class OrderController extends Controller
 {
@@ -58,9 +59,9 @@ class OrderController extends Controller
             'shipping_cost' => 'required|numeric|min:0',
             'delivery_date' => 'required|date',
             'delivery_time_slot' => 'required|string',
-            'courier_code' => 'nullable|string',
+            'courier_code' => 'required|string',
             'courier_name' => 'nullable|string',
-            'courier_service_code' => 'required_with:courier_code|nullable|string|max:50',
+            'courier_service_code' => 'required|string|max:50',
             'courier_service_name' => 'nullable|string',
             'estimated_delivery_date' => 'nullable|string',
             'notes' => 'nullable|string|max:500',
@@ -100,8 +101,8 @@ class OrderController extends Controller
             $subtotal = (float) $cartItems->sum('original_subtotal');
             $productDiscount = (float) $cartItems->sum('discount_amount');
 
-            $shippingCost = max(0, (float) $validated['shipping_cost']);
-            $netSubtotal = max(0, $subtotal - $productDiscount);
+            $shippingCost = max(0, (int) round((float) $validated['shipping_cost']));
+            $netSubtotal = max(0, (int) round($subtotal - $productDiscount));
             
             // Calculate shipping discount
             $shippingDiscount = 0;
@@ -111,12 +112,12 @@ class OrderController extends Controller
             }
 
             // Guard tambahan agar diskon ongkir tidak pernah melebihi ongkir.
-            $shippingDiscount = max(0, min($shippingCost, (float) $shippingDiscount));
+            $shippingDiscount = max(0, min($shippingCost, (int) round((float) $shippingDiscount)));
 
             $shippingPaid = max(0, $shippingCost - $shippingDiscount);
 
             // Calculate final total
-            $total = max(0, $netSubtotal + $shippingPaid);
+            $total = max(0, (int) round($netSubtotal + $shippingPaid));
 
             $deliveryNotes = null;
             if (!empty($validated['courier_service_code'])) {
@@ -124,8 +125,7 @@ class OrderController extends Controller
                 $deliveryNotes = 'biteship_courier_service_code=' . $selectedServiceCode;
             }
 
-            // Create order
-            $order = Order::create([
+            $orderPayload = [
                 'user_id' => auth()->id(),
                 'subtotal' => $subtotal,
                 'product_discount' => $productDiscount,
@@ -154,7 +154,10 @@ class OrderController extends Controller
                 'notes' => $validated['notes'],
                 'status' => Order::STATUS_PENDING_PAYMENT,
                 'payment_status' => Order::PAYMENT_UNPAID,
-            ]);
+            ];
+
+            // Create order
+            $order = Order::create($orderPayload);
 
             // Create order items and reduce stock
             foreach ($cartItems as $item) {
@@ -173,10 +176,7 @@ class OrderController extends Controller
 
             // Saat checkout pending payment: buat Draft Order di Biteship (bukan shipment).
             // Shipment tetap dibuat setelah payment sukses oleh observer.
-            if (
-                !empty($order->courier_code)
-                && empty($order->biteship_draft_order_id)
-            ) {
+            if (empty($order->biteship_draft_order_id)) {
                 try {
                     /** @var BiteshipService $biteship */
                     $biteship = app(BiteshipService::class);
@@ -213,6 +213,8 @@ class OrderController extends Controller
                             'order_number' => $order->order_number,
                             'message' => $errorMessage,
                         ]);
+
+                        throw new \RuntimeException('Gagal sinkron draft order ke Biteship: ' . $errorMessage);
                     }
                 } catch (\Throwable $e) {
                     $order->fill([
@@ -223,6 +225,8 @@ class OrderController extends Controller
                         'order_number' => $order->order_number,
                         'error' => $e->getMessage(),
                     ]);
+
+                    throw new \RuntimeException('Checkout dibatalkan karena sinkronisasi Biteship gagal: ' . $e->getMessage());
                 }
             }
 
@@ -347,6 +351,10 @@ class OrderController extends Controller
 
                 if (!empty($courier['waybill_id'])) {
                     $updates['waybill_id'] = $courier['waybill_id'];
+
+                    if (Schema::hasColumn('orders', 'awb_number')) {
+                        $updates['awb_number'] = $courier['waybill_id'];
+                    }
                 }
 
                 if (!empty($data['label_url'])) {

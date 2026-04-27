@@ -164,7 +164,7 @@ class BiteshipService
 
         return $formatted;
     }
-    
+
     /**
      * Determine service category based on courier and service name
      * 
@@ -492,6 +492,9 @@ class BiteshipService
             $destinationLongitude = (float) ($orderData['destination_longitude'] ?? 0);
             $orderNote = trim((string) ($orderData['order_note'] ?? ''));
 
+            // Deteksi apakah ini kurir instant (Grab, GoSend, dll)
+            $isInstantCourier = in_array($courierCode, ['grab', 'grabexpress', 'gojek', 'gosend'], true);
+
             $payload = [
                 'shipper_contact_name' => $orderData['shipper_contact_name'] ?? ($orderData['origin_contact_name'] ?? config('branding.name', 'NoraPadel')),
                 'shipper_contact_phone' => $orderData['shipper_contact_phone'] ?? ($orderData['origin_contact_phone'] ?? config('branding.phone', '081234567890')),
@@ -501,35 +504,47 @@ class BiteshipService
                 'origin_contact_phone' => $orderData['origin_contact_phone'] ?? config('branding.phone', '081234567890'),
                 'origin_address' => $orderData['origin_address'] ?? config('branding.address', 'Toko NoraPadel'),
                 'origin_note' => $orderData['origin_note'] ?? 'Pickup dari toko',
-                'origin_latitude' => $originLatitude,
-                'origin_longitude' => $originLongitude,
-                'origin_postal_code' => $orderData['origin_postal_code'] ?? config('biteship.origin.postal_code'),
-                'origin_coordinate_latitude' => $originLatitude,
-                'origin_coordinate_longitude' => $originLongitude,
-                'origin_coordinate' => [
-                    'latitude' => $originLatitude,
-                    'longitude' => $originLongitude,
-                ],
                 
                 'destination_contact_name' => $orderData['destination_contact_name'],
                 'destination_contact_phone' => $orderData['destination_contact_phone'],
                 'destination_address' => $orderData['destination_address'],
                 'destination_note' => $orderData['destination_note'] ?? '',
-                'destination_latitude' => $destinationLatitude,
-                'destination_longitude' => $destinationLongitude,
-                'destination_postal_code' => $orderData['destination_postal_code'] ?? '61219',
-                'destination_coordinate_latitude' => $destinationLatitude,
-                'destination_coordinate_longitude' => $destinationLongitude,
-                'destination_coordinate' => [
-                    'latitude' => $destinationLatitude,
-                    'longitude' => $destinationLongitude,
-                ],
                 
                 'courier_company' => $courierCode,
                 'courier_type' => $courierType,
                 'delivery_type' => $orderData['delivery_type'] ?? 'now',
                 'items' => $orderData['items'],
             ];
+
+            // Untuk kurir instant: WAJIB pakai coordinate, postal_code OPTIONAL
+            if ($isInstantCourier) {
+                $payload['origin_coordinate'] = [
+                    'latitude' => $originLatitude,
+                    'longitude' => $originLongitude,
+                ];
+                $payload['destination_coordinate'] = [
+                    'latitude' => $destinationLatitude,
+                    'longitude' => $destinationLongitude,
+                ];
+            } else {
+                // Untuk kurir regular: postal_code WAJIB, coordinate OPTIONAL tapi sangat membantu
+                $payload['origin_postal_code'] = $orderData['origin_postal_code'] ?? config('biteship.origin.postal_code');
+                $payload['destination_postal_code'] = $orderData['destination_postal_code'] ?? '61219';
+                
+                // Tetap kirim coordinate jika tersedia untuk akurasi lebih baik
+                if ($originLatitude && $originLongitude) {
+                    $payload['origin_coordinate'] = [
+                        'latitude' => $originLatitude,
+                        'longitude' => $originLongitude,
+                    ];
+                }
+                if ($destinationLatitude && $destinationLongitude) {
+                    $payload['destination_coordinate'] = [
+                        'latitude' => $destinationLatitude,
+                        'longitude' => $destinationLongitude,
+                    ];
+                }
+            }
 
             if ($orderNote !== '') {
                 $payload['order_note'] = $orderNote;
@@ -550,14 +565,17 @@ class BiteshipService
             $isCodOrder = filter_var(($orderData['is_cod'] ?? false), FILTER_VALIDATE_BOOLEAN)
                 || in_array($rawPaymentMethod, ['cod', 'cash_on_delivery'], true);
 
-            Log::info('Biteship createOrder request payment meta', [
+            Log::info('Biteship createOrder request', [
                 'reference_id' => $payloadWithPayment['reference_id'] ?? null,
                 'courier_company' => $payloadWithPayment['courier_company'] ?? null,
                 'courier_type' => $payloadWithPayment['courier_type'] ?? null,
+                'is_instant_courier' => $isInstantCourier,
+                'has_origin_coordinate' => isset($payloadWithPayment['origin_coordinate']),
+                'has_destination_coordinate' => isset($payloadWithPayment['destination_coordinate']),
+                'has_origin_postal_code' => isset($payloadWithPayment['origin_postal_code']),
+                'has_destination_postal_code' => isset($payloadWithPayment['destination_postal_code']),
                 'is_cod_order' => $isCodOrder,
                 'payment_method' => $paymentPayload['payment_method'] ?? null,
-                'is_cod_payload' => $paymentPayload['is_cod'] ?? null,
-                'cash_on_delivery_amount' => data_get($paymentPayload, 'cash_on_delivery.amount'),
             ]);
 
             $response = Http::withoutVerifying()->withHeaders([
@@ -653,6 +671,9 @@ class BiteshipService
             $destinationLongitude = (float) ($orderData['destination_longitude'] ?? 0);
             $orderNote = trim((string) ($orderData['order_note'] ?? ''));
 
+            // Deteksi apakah ini kurir instant (Grab, GoSend, dll)
+            $isInstantCourier = in_array($courierCode, ['grab', 'grabexpress', 'gojek', 'gosend'], true);
+
             $payload = [
                 'shipper_contact_name' => $orderData['shipper_contact_name'] ?? ($orderData['origin_contact_name'] ?? config('branding.name', 'NoraPadel')),
                 'shipper_contact_phone' => $orderData['shipper_contact_phone'] ?? ($orderData['origin_contact_phone'] ?? config('branding.phone', '081234567890')),
@@ -662,21 +683,11 @@ class BiteshipService
                 'origin_contact_phone' => $orderData['origin_contact_phone'] ?? config('branding.phone', '081234567890'),
                 'origin_address' => $orderData['origin_address'] ?? config('branding.address', 'Toko NoraPadel'),
                 'origin_note' => $orderData['origin_note'] ?? 'Pickup dari toko',
-                'origin_latitude' => $originLatitude,
-                'origin_longitude' => $originLongitude,
-                'origin_postal_code' => $orderData['origin_postal_code'] ?? config('biteship.origin.postal_code'),
-                'origin_coordinate_latitude' => $originLatitude,
-                'origin_coordinate_longitude' => $originLongitude,
 
                 'destination_contact_name' => $orderData['destination_contact_name'],
                 'destination_contact_phone' => $orderData['destination_contact_phone'],
                 'destination_address' => $orderData['destination_address'],
                 'destination_note' => $orderData['destination_note'] ?? '',
-                'destination_latitude' => $destinationLatitude,
-                'destination_longitude' => $destinationLongitude,
-                'destination_postal_code' => $orderData['destination_postal_code'] ?? '61219',
-                'destination_coordinate_latitude' => $destinationLatitude,
-                'destination_coordinate_longitude' => $destinationLongitude,
 
                 'courier_company' => $courierCode,
                 'courier_type' => $courierType,
@@ -684,6 +695,36 @@ class BiteshipService
                 'items' => $orderData['items'],
                 'is_draft' => true,
             ];
+
+            // Untuk kurir instant: WAJIB pakai coordinate, postal_code OPTIONAL
+            if ($isInstantCourier) {
+                $payload['origin_coordinate'] = [
+                    'latitude' => $originLatitude,
+                    'longitude' => $originLongitude,
+                ];
+                $payload['destination_coordinate'] = [
+                    'latitude' => $destinationLatitude,
+                    'longitude' => $destinationLongitude,
+                ];
+            } else {
+                // Untuk kurir regular: postal_code WAJIB, coordinate OPTIONAL tapi sangat membantu
+                $payload['origin_postal_code'] = $orderData['origin_postal_code'] ?? config('biteship.origin.postal_code');
+                $payload['destination_postal_code'] = $orderData['destination_postal_code'] ?? '61219';
+                
+                // Tetap kirim coordinate jika tersedia untuk akurasi lebih baik
+                if ($originLatitude && $originLongitude) {
+                    $payload['origin_coordinate'] = [
+                        'latitude' => $originLatitude,
+                        'longitude' => $originLongitude,
+                    ];
+                }
+                if ($destinationLatitude && $destinationLongitude) {
+                    $payload['destination_coordinate'] = [
+                        'latitude' => $destinationLatitude,
+                        'longitude' => $destinationLongitude,
+                    ];
+                }
+            }
 
             if ($orderNote !== '') {
                 $payload['order_note'] = $orderNote;
@@ -704,6 +745,11 @@ class BiteshipService
                 'reference_id' => $payloadWithPayment['reference_id'] ?? null,
                 'courier_company' => $payloadWithPayment['courier_company'] ?? null,
                 'courier_type' => $payloadWithPayment['courier_type'] ?? null,
+                'is_instant_courier' => $isInstantCourier,
+                'has_origin_coordinate' => isset($payloadWithPayment['origin_coordinate']),
+                'has_destination_coordinate' => isset($payloadWithPayment['destination_coordinate']),
+                'has_origin_postal_code' => isset($payloadWithPayment['origin_postal_code']),
+                'has_destination_postal_code' => isset($payloadWithPayment['destination_postal_code']),
                 'payment_method' => $payloadWithPayment['payment_method'] ?? null,
             ]);
 
@@ -815,10 +861,10 @@ class BiteshipService
             'courier_type' => $courierTypeOverride ? strtolower(trim($courierTypeOverride)) : null,
             'delivery_type' => 'now',
             'reference_id' => $order->order_number,
-            'is_cod' => $order->isCod(),
-            'payment_method' => $order->isCod() ? 'cash_on_delivery' : 'online_payment',
+            'is_cod' => false,
+            'payment_method' => 'online_payment',
             'total_amount' => (int) round((float) $order->total),
-            'cash_on_delivery_amount' => $order->isCod() ? (int) round((float) $order->total) : 0,
+            'cash_on_delivery_amount' => 0,
             'items' => $items,
         ];
 
@@ -1416,10 +1462,10 @@ class BiteshipService
             'courier_type' => $courierTypeOverride ? strtolower(trim($courierTypeOverride)) : null,
             'delivery_type' => 'now',
             'reference_id' => $order->order_number,
-            'is_cod' => $order->isCod(),
-            'payment_method' => $order->isCod() ? 'cash_on_delivery' : 'online_payment',
+            'is_cod' => false,
+            'payment_method' => 'online_payment',
             'total_amount' => (int) round((float) $order->total),
-            'cash_on_delivery_amount' => $order->isCod() ? (int) round((float) $order->total) : 0,
+            'cash_on_delivery_amount' => 0,
             'items' => $items,
         ];
 
@@ -1443,6 +1489,7 @@ class BiteshipService
                 'biteship_order_id' => $this->extractBiteshipOrderId($raw),
                 'tracking_id' => $courier['tracking_id'] ?? null,
                 'waybill_id' => $courier['waybill_id'] ?? null,
+                'awb_number' => $courier['waybill_id'] ?? null,
                 'courier_company' => $courier['company'] ?? null,
                 'courier_type' => $courier['type'] ?? null,
                 'status' => $raw['status'] ?? null,

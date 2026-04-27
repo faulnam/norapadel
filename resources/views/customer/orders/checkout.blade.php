@@ -651,7 +651,7 @@
                             @endphp
                             <input type="hidden" name="delivery_date" value="{{ $deliveryInfo['date'] }}">
                             <input type="hidden" name="delivery_time_slot" value="{{ $deliveryInfo['time_slot'] }}">
-                            
+
                             <div class="mb-0">
                                 <label class="form-label">Catatan (Opsional)</label>
                                 <textarea class="form-control" name="notes" rows="2" placeholder="Catatan untuk penjual...">{{ old('notes') }}</textarea>
@@ -726,7 +726,7 @@
                                 <span>Ongkos Kirim</span>
                                 <span id="displayShippingCost" class="text-muted">Belum dihitung</span>
                             </div>
-                            
+
                             <div class="summary-item text-success" id="shippingDiscountRow" style="display: none;">
                                 <span>Diskon Ongkir</span>
                                 <span id="displayShippingDiscount">-Rp 0</span>
@@ -761,49 +761,6 @@
 <!-- Footer -->
 <footer class="border-t border-black/10 bg-white py-10 text-sm text-zinc-500">
     <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
-        <div class="hidden grid-cols-2 gap-8 md:grid md:grid-cols-4">
-            <div>
-                <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">Shop</h3>
-                <ul class="space-y-2">
-                    <li><a href="{{ route('produk.index') }}" class="hover:underline">Racket</a></li>
-                    <li><a href="{{ route('produk.index') }}" class="hover:underline">Shoes</a></li>
-                    <li><a href="{{ route('produk.index') }}" class="hover:underline">Accessories</a></li>
-                    <li><a href="{{ route('produk.index') }}" class="hover:underline">Shop</a></li>
-                </ul>
-            </div>
-            <div>
-                <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">Support</h3>
-                <ul class="space-y-2">
-                    <li><a href="{{ route('tentang') }}" class="hover:underline">Help Center</a></li>
-                    <li><a href="{{ route('tentang') }}" class="hover:underline">Shipping</a></li>
-                    <li><a href="{{ route('tentang') }}" class="hover:underline">Returns</a></li>
-                    <li><a href="{{ route('tentang') }}" class="hover:underline">Contact</a></li>
-                </ul>
-            </div>
-            <div>
-                <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">Account</h3>
-                <ul class="space-y-2">
-                    @auth
-                        <li><a href="{{ route('customer.profile.index') }}" class="hover:underline">Dashboard</a></li>
-                        <li><a href="{{ route('customer.orders.index') }}" class="hover:underline">Orders</a></li>
-                        <li><a href="{{ route('customer.notifications.index') }}" class="hover:underline">Notifications</a></li>
-                    @else
-                        <li><a href="{{ route('login') }}" class="hover:underline">Sign In</a></li>
-                        <li><a href="{{ route('register') }}" class="hover:underline">Create Account</a></li>
-                    @endauth
-                </ul>
-            </div>
-            <div>
-                <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">About NoraPadel</h3>
-                <ul class="space-y-2">
-                    <li><a href="{{ route('tentang') }}" class="hover:underline">Our Story</a></li>
-                    <li><a href="{{ route('galeri') }}" class="hover:underline">Gallery</a></li>
-                    <li><a href="{{ route('testimoni') }}" class="hover:underline">Testimonials</a></li>
-                    <li><a href="{{ route('tentang') }}" class="hover:underline">Careers</a></li>
-                </ul>
-            </div>
-        </div>
-        
         <div class="space-y-2 md:hidden">
             <details class="group rounded-xl border border-black/10 bg-white px-4 py-3">
                 <summary class="flex cursor-pointer list-none items-center justify-between text-xs font-semibold uppercase tracking-wide text-black">
@@ -908,7 +865,32 @@
     
     document.addEventListener('DOMContentLoaded', function() {
         initMap();
+        recalculateOrderTotal();
     });
+
+    function getShippingDiscount(shippingPrice) {
+        let shippingDiscount = 0;
+        if (SHIPPING_DISCOUNT && SUBTOTAL >= SHIPPING_DISCOUNT.minSubtotal) {
+            shippingDiscount = shippingPrice * (SHIPPING_DISCOUNT.percent / 100);
+            if (SHIPPING_DISCOUNT.maxDiscount && shippingDiscount > SHIPPING_DISCOUNT.maxDiscount) {
+                shippingDiscount = SHIPPING_DISCOUNT.maxDiscount;
+            }
+        }
+
+        return normalizeRupiahAmount(Math.max(0, Math.min(shippingPrice, shippingDiscount)));
+    }
+
+    function normalizeRupiahAmount(value) {
+        return Math.max(0, Math.round(Number(value) || 0));
+    }
+
+    function recalculateOrderTotal() {
+        const shippingPrice = normalizeRupiahAmount(document.getElementById('shipping_cost_input').value);
+        const shippingDiscount = getShippingDiscount(shippingPrice);
+
+        const finalTotal = normalizeRupiahAmount(SUBTOTAL + shippingPrice - shippingDiscount);
+        document.getElementById('displayTotal').textContent = formatRupiah(finalTotal);
+    }
     
     function initMap() {
         // Create map
@@ -1257,7 +1239,7 @@
     }
 
     function selectCourier(rate) {
-        const shippingPrice = Math.max(0, Number(rate.price) || 0);
+        const shippingPrice = normalizeRupiahAmount(rate.price);
         const selectedServiceCode = (rate.courier_service_code || rate.courier_type || '').toString().trim().toLowerCase();
 
         // Update hidden inputs
@@ -1280,15 +1262,7 @@
         }
         estimatedDateInput.value = rate.estimated_date || rate.duration || '2-3 hari'; // Default 60 menit jika tidak ada
 
-        // Calculate shipping discount
-        let shippingDiscount = 0;
-        if (SHIPPING_DISCOUNT && SUBTOTAL >= SHIPPING_DISCOUNT.minSubtotal) {
-            shippingDiscount = shippingPrice * (SHIPPING_DISCOUNT.percent / 100);
-            if (SHIPPING_DISCOUNT.maxDiscount && shippingDiscount > SHIPPING_DISCOUNT.maxDiscount) {
-                shippingDiscount = SHIPPING_DISCOUNT.maxDiscount;
-            }
-        }
-        shippingDiscount = Math.max(0, Math.min(shippingPrice, shippingDiscount));
+        const shippingDiscount = getShippingDiscount(shippingPrice);
 
         // Update summary
     document.getElementById('displayShippingCost').textContent = formatRupiah(shippingPrice);
@@ -1301,8 +1275,7 @@
             document.getElementById('shippingDiscountRow').style.display = 'none';
         }
 
-    const finalTotal = Math.max(0, SUBTOTAL + shippingPrice - shippingDiscount);
-        document.getElementById('displayTotal').textContent = formatRupiah(finalTotal);
+        recalculateOrderTotal();
 
         // Enable submit button
         document.getElementById('submitBtn').disabled = false;
@@ -1325,7 +1298,8 @@
     }
 
     function formatRupiah(number) {
-        return 'Rp ' + number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        const normalized = Math.round(Number(number) || 0);
+        return 'Rp ' + normalized.toLocaleString('id-ID');
     }
 
     // Form validation before submit

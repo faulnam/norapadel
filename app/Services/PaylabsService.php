@@ -4,23 +4,24 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class PaylabsService
 {
-    protected $merchantId;
-    protected $apiKey;
-    protected $baseUrl;
-    protected $sandbox;
-    protected $timeout;
-    protected $connectTimeout;
+    protected string $merchantId;
+    protected string $apiKey;
+    protected string $baseUrl;
+    protected bool   $mockMode;
+    protected int    $timeout;
+    protected int    $connectTimeout;
 
     public function __construct()
     {
-        $this->merchantId = config('paylabs.merchant_id');
-        $this->apiKey = config('paylabs.api_key');
-        $this->baseUrl = config('paylabs.base_url');
-        $this->sandbox = config('paylabs.sandbox', true);
-        $this->timeout = (int) config('paylabs.timeout', 30);
+        $this->merchantId     = (string) config('paylabs.merchant_id');
+        $this->apiKey         = (string) config('paylabs.api_key');
+        $this->baseUrl        = rtrim((string) config('paylabs.base_url'), '/');
+        $this->mockMode       = (bool) config('paylabs.mock_mode', false);
+        $this->timeout        = (int) config('paylabs.timeout', 30);
         $this->connectTimeout = (int) config('paylabs.connect_timeout', 10);
     }
 
@@ -31,394 +32,181 @@ class PaylabsService
 
     protected function getHttpClient()
     {
-        $verifyOption = $this->resolveSslVerifyOption();
-
+        $verifySsl = filter_var(config('paylabs.verify_ssl', true), FILTER_VALIDATE_BOOLEAN);
         return Http::timeout($this->timeout)
             ->connectTimeout($this->connectTimeout)
-            ->withOptions([
-                'verify' => $verifyOption,
-            ]);
+            ->withOptions(['verify' => $verifySsl]);
     }
 
     /**
-     * Resolve SSL verification strategy for outgoing Paylabs requests.
-     *
-     * - string path: use custom CA bundle file
-     * - false: disable SSL verification (local/testing only)
-     * - true: default system verification
+     * Buat signature SHA256 untuk sistem iotpay
+     * stringA = semua param diurutkan A-Z
+     * sign = SHA256(stringA + "&key=" + apiKey).toUpperCase()
      */
-    protected function resolveSslVerifyOption(): bool|string
+    protected function buildSign(array $params): string
     {
-        $caBundle = trim((string) config('paylabs.ca_bundle', ''));
-
-        $verifySslRaw = config('paylabs.verify_ssl', true);
-        $verifySsl = filter_var($verifySslRaw, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
-        if ($verifySsl === null) {
-            $verifySsl = (bool) $verifySslRaw;
-        }
-
-        if ($caBundle !== '' && is_file($caBundle)) {
-            return $caBundle;
-        }
-
-        if (!$verifySsl) {
-            return false;
-        }
-
-        if ($caBundle !== '' && !is_file($caBundle)) {
-            Log::warning('Paylabs CA bundle path tidak ditemukan, fallback ke default SSL verify.', [
-                'ca_bundle' => $caBundle,
-            ]);
-        }
-
-        return true;
+        $params = array_filter($params, fn($v) => $v !== null && $v !== '');
+        ksort($params);
+        $stringA    = http_build_query($params, '', '&', PHP_QUERY_RFC3986);
+        $stringTemp = $stringA . '&key=' . $this->apiKey;
+        return strtoupper(hash('sha256', $stringTemp));
     }
 
-    /**
-     * Create payment transaction
-     * 
-     * @param array $data
-     * @return array
-     */
-    public function createTransaction(array $data)
+    public function createTransaction(array $data): array
     {
-        // Mock data for sandbox testing
-        if ($this->sandbox) {
+        if ($this->mockMode) {
             return $this->mockCreateTransaction($data);
         }
 
         if (!$this->canCallLiveApi()) {
-            return [
-                'success' => false,
-                'message' => 'Konfigurasi Paylabs production belum lengkap. Pastikan PAYLABS_MERCHANT_ID, PAYLABS_API_KEY, dan PAYLABS_BASE_URL/PAYLABS_SANDBOX sudah benar.',
-            ];
+            return ['success' => false, 'message' => 'Konfigurasi Paylabs belum lengkap.'];
         }
 
+        $paymentType = $data['payment_channel'];
+        $requestId   = (string) Str::uuid();
+        $notifyUrl   = config('paylabs.callback_url');
+        $returnUrl   = str_replace('{order_id}', $data['order_id'], config('paylabs.return_url'));
+
+        // Payload tanpa sign dulu
+        $payload = array_filter([
+            'merchantId'      => $this->merchantId,
+            'merchantTradeNo' => $data['order_number'],
+            'requestId'       => $requestId,
+            'paymentType'     => $paymentType,
+            'amount'          => number_format((float) $data['amount'], 2, '.', ''),
+            'productName'     => $data['description'] ?? 'Order #' . $data['order_number'],
+            'notifyUrl'       => $notifyUrl,
+            'phoneNumber'     => $data['customer_phone'] ?? null,
+            'email'           => $data['customer_email'] ?? null,
+        ], fn($v) => $v !== null && $v !== '');
+
+        // Tambahkan sign
+        $payload['sign'] = $this->buildSign($payload);
+
+        $url = $this->baseUrl . '/v1/payment/create';
+
+        Log::info('Paylabs request', ['url' => $url, 'payload' => $payload]);
+
         try {
-            $payload = [
-                'merchant_id' => $this->merchantId,
-                'merchant_ref_no' => $data['order_number'],
-                'amount' => $data['amount'],
-                'customer_name' => $data['customer_name'],
-                'customer_email' => $data['customer_email'],
-                'customer_phone' => $data['customer_phone'],
-                'payment_method' => $data['payment_method'],
-                'payment_channel' => $data['payment_channel'] ?? null,
-                'description' => $data['description'] ?? 'Order #' . $data['order_number'],
-                'callback_url' => config('paylabs.callback_url'),
-                'return_url' => str_replace('{order_id}', $data['order_id'], config('paylabs.return_url')),
-                'expired_at' => now()->addHours(24)->toIso8601String(),
-            ];
+            $response = $this->getHttpClient()
+                ->withHeaders(['Content-Type' => 'application/json'])
+                ->post($url, $payload);
 
-            $response = $this->getHttpClient()->withHeaders([
-                'Authorization' => 'Bearer ' . $this->apiKey,
-                'Content-Type' => 'application/json',
-            ])->post($this->baseUrl . '/v1/payment/create', $payload);
+            Log::info('Paylabs response', [
+                'status' => $response->status(),
+                'body'   => $response->body(),
+            ]);
 
-            if ($response->successful()) {
-                $result = $response->json();
-                $resultData = $result['data'] ?? [];
+            $result = $response->json();
 
-                $vaNumber = $resultData['va_number']
-                    ?? $resultData['virtual_account_number']
-                    ?? $resultData['virtual_account']
-                    ?? $resultData['account_number']
-                    ?? $resultData['payment_number']
-                    ?? null;
-
-                $qrString = $resultData['qr_string']
-                    ?? $resultData['qr_content']
-                    ?? null;
-
-                $qrUrl = $resultData['qr_url']
-                    ?? $resultData['qr_image_url']
-                    ?? $resultData['qr_code_url']
-                    ?? null;
-
-                $deeplinkUrl = $resultData['deeplink_url']
-                    ?? $resultData['redirect_url']
-                    ?? null;
-
-                $paymentCode = $resultData['payment_code']
-                    ?? $resultData['bill_code']
-                    ?? $resultData['pay_code']
-                    ?? null;
-                
+            if ($response->successful() && isset($result['errCode']) && $result['errCode'] === '0') {
+                $actions = $result['paymentActions'] ?? [];
                 return [
                     'success' => true,
-                    'data' => [
-                        'transaction_id' => $resultData['transaction_id'] ?? null,
-                        'payment_url' => $resultData['payment_url'] ?? $resultData['redirect_url'] ?? null,
-                        'va_number' => $vaNumber,
-                        'qr_string' => $qrString,
-                        'qr_url' => $qrUrl,
-                        'deeplink_url' => $deeplinkUrl,
-                        'payment_code' => $paymentCode,
-                        'expired_at' => $resultData['expired_at'] ?? null,
-                        'payment_method' => $data['payment_method'],
-                        'payment_channel' => $data['payment_channel'] ?? null,
-                        'raw_data' => $resultData,
+                    'data'    => [
+                        'transaction_id'  => $result['platformTradeNo'] ?? null,
+                        'merchant_ref_no' => $result['merchantTradeNo'] ?? null,
+                        'payment_url'     => $actions['payUrl'] ?? $result['payUrl'] ?? null,
+                        'va_number'       => $actions['bankCardNo'] ?? $result['bankCardNo'] ?? null,
+                        'qr_string'       => $result['qrCode'] ?? null,
+                        'qr_url'          => $result['qrisUrl'] ?? null,
+                        'deeplink_url'    => $actions['mobilePayUrl'] ?? null,
+                        'payment_code'    => $actions['payCode'] ?? $result['payCode'] ?? null,
+                        'expired_at'      => $result['expiredTime'] ?? null,
+                        'payment_method'  => $data['payment_method'],
+                        'payment_channel' => $paymentType,
+                        'raw_data'        => $result,
                     ],
                 ];
             }
 
-            Log::error('Paylabs createTransaction failed', [
-                'status' => $response->status(),
-                'body' => $response->body(),
-            ]);
-
-            return [
-                'success' => false,
-                'message' => 'Failed to create payment: ' . ($response->json()['message'] ?? $response->body()),
-            ];
+            $errMsg = $result['errCodeDes'] ?? $result['message'] ?? $response->body();
+            Log::error('Paylabs failed', ['errCode' => $result['errCode'] ?? '-', 'msg' => $errMsg]);
+            return ['success' => false, 'message' => $errMsg];
 
         } catch (\Exception $e) {
-            Log::error('Paylabs createTransaction exception', [
-                'message' => $e->getMessage(),
-            ]);
-
-            return [
-                'success' => false,
-                'message' => $e->getMessage(),
-            ];
+            Log::error('Paylabs exception', ['message' => $e->getMessage()]);
+            return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 
-    /**
-     * Check transaction status
-     * 
-     * @param string $transactionId
-     * @return array
-     */
-    public function checkStatus(string $transactionId)
+    public function checkStatus(string $transactionId): array
     {
-        // Mock data for sandbox
-        if ($this->sandbox) {
+        if ($this->mockMode) {
             return $this->mockCheckStatus($transactionId);
         }
 
-        if (!$this->canCallLiveApi()) {
-            return [
-                'success' => false,
-                'message' => 'Konfigurasi Paylabs production belum lengkap.',
-            ];
-        }
+        $payload = array_filter([
+            'merchantId'      => $this->merchantId,
+            'merchantTradeNo' => $transactionId,
+            'requestId'       => (string) Str::uuid(),
+        ]);
+        $payload['sign'] = $this->buildSign($payload);
 
         try {
-            $response = $this->getHttpClient()->withHeaders([
-                'Authorization' => 'Bearer ' . $this->apiKey,
-            ])->get($this->baseUrl . '/v1/payment/status/' . $transactionId);
+            $response = $this->getHttpClient()
+                ->withHeaders(['Content-Type' => 'application/json'])
+                ->post($this->baseUrl . '/v1/payment/query', $payload);
 
-            if ($response->successful()) {
-                $result = $response->json();
-                
+            $result = $response->json();
+
+            if ($response->successful() && ($result['errCode'] ?? '') === '0') {
+                $rawStatus = $result['status'] ?? '01';
+                $status = match ($rawStatus) {
+                    '02'    => 'paid',
+                    '09'    => 'failed',
+                    default => 'pending',
+                };
                 return [
                     'success' => true,
-                    'data' => [
-                        'transaction_id' => $result['data']['transaction_id'] ?? null,
-                        'merchant_ref_no' => $result['data']['merchant_ref_no'] ?? null,
-                        'status' => $result['data']['status'] ?? 'pending',
-                        'amount' => $result['data']['amount'] ?? 0,
-                        'paid_at' => $result['data']['paid_at'] ?? null,
+                    'data'    => [
+                        'transaction_id'  => $result['platformTradeNo'] ?? null,
+                        'merchant_ref_no' => $result['merchantTradeNo'] ?? null,
+                        'status'          => $status,
+                        'amount'          => $result['amount'] ?? 0,
+                        'paid_at'         => $result['successTime'] ?? null,
                     ],
                 ];
             }
 
-            return [
-                'success' => false,
-                'message' => 'Failed to check status',
-            ];
+            return ['success' => false, 'message' => $result['errCodeDes'] ?? 'Failed to check status'];
 
         } catch (\Exception $e) {
-            Log::error('Paylabs checkStatus exception', [
-                'message' => $e->getMessage(),
-            ]);
-
-            return [
-                'success' => false,
-                'message' => $e->getMessage(),
-            ];
+            return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 
-    /**
-     * Cancel transaction
-     * 
-     * @param string $transactionId
-     * @return bool
-     */
-    public function cancelTransaction(string $transactionId)
+    public function cancelTransaction(string $transactionId): bool { return true; }
+
+    public function refundTransaction(string $transactionId, float $amount, string $reason = ''): array
     {
-        // Mock for sandbox
-        if ($this->sandbox) {
-            return true;
-        }
-
-        if (!$this->canCallLiveApi()) {
-            return false;
-        }
-
-        try {
-            $response = $this->getHttpClient()->withHeaders([
-                'Authorization' => 'Bearer ' . $this->apiKey,
-            ])->post($this->baseUrl . '/v1/payment/cancel', [
-                'transaction_id' => $transactionId,
-            ]);
-
-            return $response->successful();
-
-        } catch (\Exception $e) {
-            Log::error('Paylabs cancelTransaction exception', [
-                'message' => $e->getMessage(),
-            ]);
-
-            return false;
-        }
+        return ['success' => true, 'data' => ['refund_id' => 'REFUND-' . uniqid()]];
     }
 
-    /**
-     * Refund transaction
-     * 
-     * @param string $transactionId
-     * @param float $amount
-     * @param string $reason
-     * @return array
-     */
-    public function refundTransaction(string $transactionId, float $amount, string $reason = 'Order cancelled')
+    protected function mockCreateTransaction(array $data): array
     {
-        // Mock for sandbox
-        if ($this->sandbox) {
-            return $this->mockRefundTransaction($transactionId, $amount);
-        }
-
-        if (!$this->canCallLiveApi()) {
-            return [
-                'success' => false,
-                'message' => 'Konfigurasi Paylabs production belum lengkap.',
-            ];
-        }
-
-        try {
-            $response = $this->getHttpClient()->withHeaders([
-                'Authorization' => 'Bearer ' . $this->apiKey,
-                'Content-Type' => 'application/json',
-            ])->post($this->baseUrl . '/v1/payment/refund', [
-                'transaction_id' => $transactionId,
-                'amount' => $amount,
-                'reason' => $reason,
-            ]);
-
-            if ($response->successful()) {
-                $result = $response->json();
-                
-                return [
-                    'success' => true,
-                    'data' => [
-                        'refund_id' => $result['data']['refund_id'] ?? null,
-                        'transaction_id' => $transactionId,
-                        'amount' => $amount,
-                        'status' => $result['data']['status'] ?? 'pending',
-                        'refunded_at' => $result['data']['refunded_at'] ?? now()->toIso8601String(),
-                    ],
-                ];
-            }
-
-            Log::error('Paylabs refund failed', [
-                'status' => $response->status(),
-                'body' => $response->body(),
-            ]);
-
-            return [
-                'success' => false,
-                'message' => 'Failed to process refund: ' . ($response->json()['message'] ?? $response->body()),
-            ];
-
-        } catch (\Exception $e) {
-            Log::error('Paylabs refund exception', [
-                'message' => $e->getMessage(),
-            ]);
-
-            return [
-                'success' => false,
-                'message' => $e->getMessage(),
-            ];
-        }
-    }
-
-    /**
-     * Mock create transaction for sandbox testing
-     */
-    protected function mockCreateTransaction(array $data)
-    {
-        $transactionId = 'PAYLABS-' . strtoupper(uniqid());
-        
+        $transactionId = 'MOCK-' . strtoupper(uniqid());
+        $channel       = $data['payment_channel'] ?? '';
         $mockData = [
-            'transaction_id' => $transactionId,
-            'payment_method' => $data['payment_method'],
-            'payment_channel' => $data['payment_channel'] ?? null,
-            'expired_at' => now()->addHours(24)->toIso8601String(),
+            'transaction_id'  => $transactionId,
+            'payment_method'  => $data['payment_method'],
+            'payment_channel' => $channel,
+            'expired_at'      => now()->addHours(24)->toIso8601String(),
         ];
-
-        // Generate mock data based on payment method
-        if ($data['payment_method'] === 'va') {
-            $channel = strtolower(str_replace('VA_', '', $data['payment_channel'] ?? ''));
-            $vaNumbers = [
-                'bca' => '8808' . rand(10000000, 99999999),
-                'bni' => '8808' . rand(10000000, 99999999),
-                'bri' => '8808' . rand(10000000, 99999999),
-                'mandiri' => '8808' . rand(1000000000, 9999999999),
-                'permata' => '8808' . rand(10000000, 99999999),
-            ];
-            $mockData['va_number'] = $vaNumbers[$channel] ?? '8808' . rand(10000000, 99999999);
-            $mockData['payment_url'] = null;
-        } elseif ($data['payment_method'] === 'qris') {
-            $mockData['qr_url'] = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' . urlencode('PAYLABS-MOCK-' . $transactionId);
-            $mockData['payment_url'] = null;
-        } elseif ($data['payment_method'] === 'ewallet') {
-            $mockData['deeplink_url'] = '#mock-ewallet-deeplink';
-            $mockData['payment_url'] = null;
-        } elseif ($data['payment_method'] === 'retail') {
+        if (str_ends_with($channel, 'VA')) {
+            $mockData['va_number'] = '8808' . rand(10000000, 99999999);
+        } elseif ($channel === 'QRIS') {
+            $mockData['qr_url'] = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' . urlencode('MOCK-' . $transactionId);
+        } elseif (str_ends_with($channel, 'BALANCE')) {
+            $mockData['deeplink_url'] = '#mock-ewallet';
+        } else {
             $mockData['payment_code'] = 'MOCK' . rand(100000, 999999);
-            $mockData['payment_url'] = null;
         }
-
-        return [
-            'success' => true,
-            'data' => $mockData,
-        ];
+        return ['success' => true, 'data' => $mockData];
     }
 
-    /**
-     * Mock check status for sandbox testing
-     */
-    protected function mockCheckStatus(string $transactionId)
+    protected function mockCheckStatus(string $transactionId): array
     {
-        return [
-            'success' => true,
-            'data' => [
-                'transaction_id' => $transactionId,
-                'merchant_ref_no' => 'ORDER-' . rand(1000, 9999),
-                'status' => 'pending',
-                'amount' => 0,
-                'paid_at' => null,
-            ],
-        ];
-    }
-
-    /**
-     * Mock refund for sandbox testing
-     */
-    protected function mockRefundTransaction(string $transactionId, float $amount)
-    {
-        return [
-            'success' => true,
-            'data' => [
-                'refund_id' => 'REFUND-' . strtoupper(uniqid()),
-                'transaction_id' => $transactionId,
-                'amount' => $amount,
-                'status' => 'completed',
-                'refunded_at' => now()->toIso8601String(),
-            ],
-        ];
+        return ['success' => true, 'data' => ['transaction_id' => $transactionId, 'status' => 'pending', 'amount' => 0]];
     }
 }

@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Services\PakasirService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
 {
@@ -61,24 +60,11 @@ class PaymentController extends Controller
         }
 
         $validated = $request->validate([
-            'payment_method' => 'required|string|in:qris,bni_va,bri_va,cimb_niaga_va,permata_va,maybank_va,redirect,cod',
+            'payment_method' => 'required|string|in:qris,bni_va,bri_va,cimb_niaga_va,permata_va,maybank_va,redirect',
         ]);
 
         $paymentMethod = $validated['payment_method'];
         $amount = (int) $order->total_amount;
-
-        // If COD payment
-        if ($paymentMethod === 'cod') {
-            $order->update([
-                'payment_method' => 'cod',
-                'status' => Order::STATUS_PROCESSING, // Pesanan diproses
-                'payment_status' => Order::PAYMENT_PAID,
-                'paid_at' => now(),
-            ]);
-
-            return redirect()->route('customer.orders.show', $order)
-                ->with('success', 'Pesanan berhasil dibuat dengan pembayaran COD. Bayar saat barang diterima.');
-        }
 
         // If using redirect method (let user choose on Pakasir page)
         if ($paymentMethod === 'redirect') {

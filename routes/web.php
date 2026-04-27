@@ -213,7 +213,6 @@ Route::prefix('courier')->name('courier.')->middleware(['auth', 'courier'])->gro
     Route::post('/deliveries/{order}/pickup', [CourierDelivery::class, 'pickUp'])->name('deliveries.pickup');
     Route::post('/deliveries/{order}/start', [CourierDelivery::class, 'startDelivery'])->name('deliveries.start');
     Route::post('/deliveries/{order}/delivered', [CourierDelivery::class, 'markDelivered'])->name('deliveries.delivered');
-    Route::post('/deliveries/{order}/verify-cod', [CourierDelivery::class, 'verifyCod'])->name('deliveries.verify-cod');
     
     // Location Tracking
     Route::post('/location/update', [CourierDelivery::class, 'updateLocation'])->name('location.update');
@@ -277,26 +276,6 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'customer'])->
     Route::post('/payment/{order}/simulate', [PaymentController::class, 'simulatePayment'])->name('payment.simulate');
     Route::get('/payment/{order}/redirect', [PaymentController::class, 'redirect'])->name('payment.redirect');
     Route::get('/payment/{order}/callback', [PakasirWebhookController::class, 'handleCallback'])->name('payment.callback');
-    
-    // Payment COD
-    Route::get('/payment/{order}/cod', function(\App\Models\Order $order) {
-        if ($order->user_id !== auth()->id()) {
-            abort(403);
-        }
-        
-        // Update order to COD with processing status
-        $order->update([
-            'payment_gateway' => 'cod',
-            'payment_channel' => 'cash_on_delivery',
-            'payment_method' => 'cod',
-            'payment_status' => 'paid', // Set as paid for COD
-            'status' => 'processing', // Langsung ke processing
-            'paid_at' => now(),
-        ]);
-        
-        return redirect()->route('customer.orders.show', $order)
-            ->with('success', 'Pesanan berhasil dikonfirmasi! Pesanan Anda sedang diproses. Bayar saat barang diterima (COD).');
-    })->name('payment.cod');
     
     // Payment Gateway (Paylabs)
     Route::get('/payment-paylabs/{order}', [\App\Http\Controllers\Customer\PaylabsPaymentController::class, 'show'])->name('payment.paylabs.show');
