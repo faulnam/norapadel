@@ -813,9 +813,7 @@
             </details>
         </div>
     </div>
-    <div class="mx-auto mt-8 w-full max-w-7xl border-t border-black/10 px-6 pt-5 text-xs text-zinc-400 md:px-10 lg:px-12">
-        © {{ now()->year }} NoraPadel. All rights reserved.
-    </div>
+    
 </footer>
 
 @push('scripts')

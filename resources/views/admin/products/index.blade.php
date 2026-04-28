@@ -132,8 +132,8 @@
                 </tbody>
             </table>
         </div>
-
-        {{ $products->links() }}
+<br>
+        {{ $products->links('pagination.admin') }}
     </div>
 </div>
 @endsection

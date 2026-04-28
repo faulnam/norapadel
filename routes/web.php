@@ -89,6 +89,32 @@ Route::post('/webhook/pakasir', [PakasirWebhookController::class, 'handleWebhook
 // Paylabs Webhook (no auth required)
 Route::post('/webhook/paylabs', [\App\Http\Controllers\PaylabsWebhookController::class, 'handleWebhook'])->name('webhook.paylabs');
 
+// Extract Public Key (temporary route for debugging)
+Route::get('/extract-public-key', function () {
+    $privateKeyPath = storage_path('app/paylabs/private-key.pem');
+    $publicKeyPath = storage_path('app/paylabs/public-key-correct.pem');
+
+    $privateKeyContent = file_get_contents($privateKeyPath);
+    $privateKey = openssl_pkey_get_private($privateKeyContent);
+
+    if ($privateKey === false) {
+        return response("Failed to load private key: " . openssl_error_string(), 500);
+    }
+
+    $publicKeyDetails = openssl_pkey_get_details($privateKey);
+    $publicKeyPem = $publicKeyDetails['key'];
+
+    file_put_contents($publicKeyPath, $publicKeyPem);
+    openssl_free_key($privateKey);
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Public key extracted successfully!',
+        'saved_to' => $publicKeyPath,
+        'public_key' => $publicKeyPem,
+    ]);
+})->name('extract.public.key');
+
 // Biteship Webhook (no auth required)
 Route::post('/webhook/biteship', [BiteshipWebhookController::class, 'handleWebhook'])->name('webhook.biteship');
 

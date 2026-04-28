@@ -57,12 +57,5 @@
     </div>
 </div>
 
-<!-- Footer -->
-<footer class="border-t border-black/10 bg-white py-10 text-sm text-zinc-500">
-    <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
-        <div class="text-center">
-            <p>© {{ now()->year }} NoraPadel. All rights reserved.</p>
-        </div>
-    </div>
-</footer>
+
 @endsection

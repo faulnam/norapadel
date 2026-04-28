@@ -67,9 +67,9 @@ class PaylabsPaymentController extends Controller
             'order_id' => $order->id,
             'order_number' => $order->order_number,
             'amount' => (int) $order->total_amount,
-            'customer_name' => $order->user->name,
-            'customer_email' => $order->user->email,
-            'customer_phone' => $order->user->phone,
+            'customer_name' => $order->shipping_name ?: ($order->user->name ?: 'Customer'),
+            'customer_email' => $order->user->email ?: '',
+            'customer_phone' => $order->shipping_phone ?: ($order->user->phone ?: '08000000000'),
             'payment_method' => $paymentMethod,
             'payment_channel' => $paymentChannel,
         ]);

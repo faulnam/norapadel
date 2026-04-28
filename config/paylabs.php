@@ -2,6 +2,7 @@
 
 return [
     'merchant_id' => env('PAYLABS_MERCHANT_ID'),
+    'api_key' => env('PAYLABS_API_KEY'),
     'sandbox' => env('PAYLABS_SANDBOX', true),
     'mock_mode' => env('PAYLABS_MOCK_MODE', false),
     
@@ -18,24 +19,24 @@ return [
     // Payment Methods
     'payment_methods' => [
         'va' => [
-            'bca' => 'BCA Virtual Account',
-            'bni' => 'BNI Virtual Account',
-            'bri' => 'BRI Virtual Account',
-            'mandiri' => 'Mandiri Virtual Account',
-            'permata' => 'Permata Virtual Account',
-            'cimb' => 'CIMB Niaga Virtual Account',
+            'VA_BCA'     => 'BCA Virtual Account',
+            'VA_BNI'     => 'BNI Virtual Account',
+            'VA_BRI'     => 'BRI Virtual Account',
+            'VA_MANDIRI' => 'Mandiri Virtual Account',
+            'VA_PERMATA' => 'Permata Virtual Account',
+            'VA_CIMB'    => 'CIMB Niaga Virtual Account',
         ],
-        'qris' => 'QRIS',
+        'qris'    => ['QRIS' => 'QRIS'],
         'ewallet' => [
-            'ovo' => 'OVO',
-            'dana' => 'DANA',
-            'gopay' => 'GoPay',
-            'shopeepay' => 'ShopeePay',
-            'linkaja' => 'LinkAja',
+            'EWALLET_OVO'       => 'OVO',
+            'EWALLET_DANA'      => 'DANA',
+            'EWALLET_GOPAY'     => 'GoPay',
+            'EWALLET_SHOPEEPAY' => 'ShopeePay',
+            'EWALLET_LINKAJA'   => 'LinkAja',
         ],
         'retail' => [
-            'alfamart' => 'Alfamart',
-            'indomaret' => 'Indomaret',
+            'RETAIL_ALFAMART'  => 'Alfamart',
+            'RETAIL_INDOMARET' => 'Indomaret',
         ],
     ],
     

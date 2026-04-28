@@ -43,71 +43,84 @@ class PaylabsService
             ->withOptions(['verify' => $verifySsl]);
     }
 
-    /**
-     * Generate timestamp format: 2022-09-16T16:58:47.964+07:00
-     */
     protected function generateTimestamp(): string
     {
-        $now = now(config('app.timezone', 'Asia/Jakarta'));
-        return $now->format('Y-m-d\TH:i:s.') .
-               substr($now->format('u'), 0, 3) .
-               $now->format('P');
+        $dt = now('Asia/Jakarta');
+        $milliseconds = str_pad((string)floor($dt->micro / 1000), 3, '0', STR_PAD_LEFT);
+        return $dt->format('Y-m-d\TH:i:s') . '.' . $milliseconds . '+07:00';
     }
 
-    /**
-     * Minify JSON - hapus whitespace/newline di luar string
-     */
     protected function minifyJson(array $body): string
     {
-        $body = array_filter($body, fn($v) => $v !== null && $v !== '');
-        return json_encode($body, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        return json_encode($body, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
 
     /**
-     * Build RSA SHA256withRSA signature
-     * stringContent = POST:endpoint:lowercase(sha256hex(minifiedBody)):timestamp
+     * RSA SHA256withRSA signature untuk v4.8.1
+     * Format: POST:endpoint:lowercase(sha256(body)):timestamp
      */
-    protected function buildSignature(string $endpoint, string $minifiedBody, string $timestamp): string
+    protected function buildSignatureRSA(string $endpoint, string $minifiedBody, string $timestamp): string
     {
-        $bodyHash      = strtolower(hash('sha256', $minifiedBody));
-        $stringContent = "POST:{$endpoint}:{$bodyHash}:{$timestamp}";
+        // Hash body dengan SHA256 dan lowercase
+        $bodyHash = strtolower(hash('sha256', $minifiedBody));
+        
+        // Format: POST:endpoint:bodyHash:timestamp
+        $stringToSign = "POST:{$endpoint}:{$bodyHash}:{$timestamp}";
 
+        Log::debug('Paylabs signature debug', [
+            'endpoint' => $endpoint,
+            'body' => $minifiedBody,
+            'bodyHash' => $bodyHash,
+            'timestamp' => $timestamp,
+            'stringToSign' => $stringToSign,
+        ]);
+
+        // Load private key
         $privateKeyContent = file_get_contents($this->privateKeyPath);
-        $privateKey        = openssl_pkey_get_private($privateKeyContent);
+        $privateKey = openssl_pkey_get_private($privateKeyContent);
 
         if ($privateKey === false) {
-            throw new \RuntimeException('Failed to load private key');
+            $error = openssl_error_string();
+            Log::error('Failed to load private key', ['error' => $error]);
+            throw new \RuntimeException('Failed to load private key: ' . $error);
         }
 
-        $signed = openssl_sign($stringContent, $rawSignature, $privateKey, OPENSSL_ALGO_SHA256);
-
-        if (!$signed) {
-            throw new \RuntimeException('Failed to sign request');
+        // Sign dengan SHA256
+        $success = openssl_sign($stringToSign, $signature, $privateKey, OPENSSL_ALGO_SHA256);
+        
+        if (!$success) {
+            $error = openssl_error_string();
+            Log::error('Failed to sign', ['error' => $error]);
+            throw new \RuntimeException('Failed to sign: ' . $error);
         }
 
-        return base64_encode($rawSignature);
+        openssl_free_key($privateKey);
+
+        // Base64 encode
+        $signatureBase64 = base64_encode($signature);
+        
+        Log::debug('Paylabs signature result', [
+            'length' => strlen($signatureBase64),
+            'full_signature' => $signatureBase64,
+        ]);
+
+        return $signatureBase64;
     }
 
-    /**
-     * Build headers + signature
-     */
     protected function buildHeaders(string $endpoint, array $body, string $requestId, string $timestamp): array
     {
         $minified  = $this->minifyJson($body);
-        $signature = $this->buildSignature($endpoint, $minified, $timestamp);
+        $signature = $this->buildSignatureRSA($endpoint, $minified, $timestamp);
 
         return [
-            'Content-Type'  => 'application/json;charset=utf-8',
-            'X-TIMESTAMP'   => $timestamp,
-            'X-SIGNATURE'   => $signature,
-            'X-PARTNER-ID'  => $this->merchantId,
-            'X-REQUEST-ID'  => $requestId,
+            'Content-Type' => 'application/json;charset=utf-8',
+            'X-TIMESTAMP'  => $timestamp,
+            'X-SIGNATURE'  => $signature,
+            'X-PARTNER-ID' => $this->merchantId,
+            'X-REQUEST-ID' => $requestId,
         ];
     }
 
-    /**
-     * Create payment - coba berbagai endpoint yang mungkin
-     */
     public function createTransaction(array $data): array
     {
         if ($this->mockMode) {
@@ -115,72 +128,60 @@ class PaylabsService
         }
 
         if (!$this->canCallLiveApi()) {
-            return ['success' => false, 'message' => 'Konfigurasi Paylabs belum lengkap. Pastikan private key dan public key sudah ada.'];
+            return ['success' => false, 'message' => 'Konfigurasi Paylabs belum lengkap.'];
         }
 
-        // Coba endpoint v2.1 dulu (yang ada di playground)
-        $endpoint  = '/payment/v2.1/va/create';
-        $requestId = (string) Str::uuid();
-        $timestamp = $this->generateTimestamp();
+        $paymentChannel = $data['payment_channel'] ?? 'QRIS';
+        $requestId      = (string) Str::uuid();
+        $timestamp      = $this->generateTimestamp();
+        $returnUrl      = str_replace('{order_id}', $data['order_id'], config('paylabs.return_url'));
 
-        $returnUrl = str_replace('{order_id}', $data['order_id'], config('paylabs.return_url'));
+        $payerName  = trim((string) ($data['customer_name']  ?? 'Customer')) ?: 'Customer';
+        $payerPhone = trim((string) ($data['customer_phone'] ?? '08000000000')) ?: '08000000000';
 
-        $body = array_filter([
-            'requestId'       => $requestId,
-            'merchantId'      => $this->merchantId,
-            'merchantTradeNo' => $data['order_number'],
-            'paymentType'     => $data['payment_channel'] ?? 'QRIS',
-            'amount'          => number_format((float) $data['amount'], 2, '.', ''),
-            'productName'     => $data['description'] ?? 'Order #' . $data['order_number'],
-            'phoneNumber'     => $data['customer_phone'] ?? '08000000000',
-            'notifyUrl'       => config('paylabs.callback_url'),
-            'redirectUrl'     => $returnUrl,
-        ], fn($v) => $v !== null && $v !== '');
+        [$endpoint, $body] = $this->buildEndpointAndBody(
+            $paymentChannel, $requestId, $data, $payerName, $payerPhone, $returnUrl
+        );
 
         $headers = $this->buildHeaders($endpoint, $body, $requestId, $timestamp);
         $url     = $this->baseUrl . $endpoint;
 
         Log::info('Paylabs createTransaction request', [
-            'url' => $url,
+            'url'      => $url,
             'endpoint' => $endpoint,
-            'body' => $body,
-            'headers' => array_merge($headers, ['X-SIGNATURE' => '***HIDDEN***']),
-            'timestamp' => $timestamp,
+            'body'     => $body,
+            'headers'  => array_merge($headers, ['X-SIGNATURE' => '***HIDDEN***']),
         ]);
 
         try {
-            $minified = $this->minifyJson($body);
             $response = $this->getHttpClient()
                 ->withHeaders($headers)
-                ->withBody($minified, 'application/json')
+                ->withBody($this->minifyJson($body), 'application/json')
                 ->post($url);
 
             Log::info('Paylabs createTransaction response', [
                 'status' => $response->status(),
-                'headers' => $response->headers(),
                 'body'   => $response->body(),
             ]);
 
-            // Cek apakah response HTML (404)
             if (str_contains($response->body(), '<!DOCTYPE html>')) {
-                Log::error('Paylabs endpoint not found (404)', ['endpoint' => $endpoint]);
-                return ['success' => false, 'message' => 'Endpoint tidak ditemukan. Silakan hubungi CS Paylabs untuk endpoint yang benar.'];
+                return ['success' => false, 'message' => 'Endpoint tidak ditemukan (404).'];
             }
 
             $result = $response->json();
 
-            if ($response->successful() && ($result['errCode'] ?? '') === '0') {
+            if (($result['errCode'] ?? '') === '0') {
                 return [
                     'success' => true,
                     'data'    => [
-                        'transaction_id'  => $result['merchantTradeNo'] ?? null,
+                        'transaction_id'  => $result['platformTradeNo'] ?? $result['merchantTradeNo'] ?? null,
                         'merchant_ref_no' => $result['merchantTradeNo'] ?? null,
                         'payment_url'     => $result['url'] ?? $result['payUrl'] ?? null,
                         'qr_url'          => $result['qrCode'] ?? $result['qrisUrl'] ?? null,
-                        'va_number'       => $result['bankCardNo'] ?? null,
+                        'va_number'       => $result['vaCode'] ?? null,
                         'expired_at'      => $result['expiredTime'] ?? now()->addHours(24)->toIso8601String(),
                         'payment_method'  => $data['payment_method'],
-                        'payment_channel' => $data['payment_channel'] ?? null,
+                        'payment_channel' => $paymentChannel,
                         'raw_data'        => $result,
                     ],
                 ];
@@ -188,24 +189,115 @@ class PaylabsService
 
             $errMsg = $result['errCodeDes'] ?? $result['message'] ?? $response->body();
             Log::error('Paylabs createTransaction failed', [
-                'errCode' => $result['errCode'] ?? '-',
-                'msg' => $errMsg,
+                'errCode'       => $result['errCode'] ?? '-',
+                'msg'           => $errMsg,
                 'full_response' => $result,
             ]);
             return ['success' => false, 'message' => $errMsg];
 
         } catch (\Exception $e) {
-            Log::error('Paylabs createTransaction exception', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
+            Log::error('Paylabs createTransaction exception', ['message' => $e->getMessage()]);
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 
-    /**
-     * Check payment status
-     */
+    protected function buildEndpointAndBody(
+        string $channel,
+        string $requestId,
+        array $data,
+        string $payerName,
+        string $payerPhone,
+        string $returnUrl
+    ): array {
+        $amount    = number_format((float) $data['amount'], 2, '.', '');
+        $goodsInfo = $data['description'] ?? 'Order #' . $data['order_number'];
+        $notifyUrl = config('paylabs.callback_url');
+
+        // QRIS - exact order from Signature Playground
+        if ($channel === 'QRIS') {
+            return [
+                '/payment/v2.1/qris/create',
+                [
+                    'requestId'       => $requestId,
+                    'merchantId'      => $this->merchantId,
+                    'merchantTradeNo' => $data['order_number'],
+                    'paymentType'     => 'QRIS',
+                    'amount'          => $amount,
+                    'productName'     => $goodsInfo,
+                ],
+            ];
+        }
+
+        // Virtual Account - exact order from Signature Playground
+        if (str_starts_with($channel, 'VA_')) {
+            $bankCode = strtoupper(substr($channel, 3));
+            $vaTypeMap = [
+                'BCA'     => 'BCAVA',
+                'BNI'     => 'BNIVA',
+                'BRI'     => 'BRIVA',
+                'MANDIRI' => 'MandiriVA',
+                'PERMATA' => 'PermataVA',
+                'CIMB'    => 'CIMBVA',
+                'BTN'     => 'BTNVA',
+            ];
+            $paymentType = $vaTypeMap[$bankCode] ?? ($bankCode . 'VA');
+            
+            return [
+                '/payment/v2.1/va/create',
+                [
+                    'requestId'       => $requestId,
+                    'merchantId'      => $this->merchantId,
+                    'merchantTradeNo' => $data['order_number'],
+                    'paymentType'     => $paymentType,
+                    'amount'          => $amount,
+                    'productName'     => $goodsInfo,
+                    'payer'           => $payerName,
+                ],
+            ];
+        }
+
+        // E-Wallet
+        if (str_starts_with($channel, 'EWALLET_')) {
+            $walletType = strtoupper(substr($channel, 8));
+            $expiredTime = now('Asia/Jakarta')->addHours(24)->format('Y-m-d\TH:i:s.v') . '+07:00';
+            return [
+                '/payment/v2.3/h5/createLink',
+                [
+                    'amount'          => $amount,
+                    'expiredTime'     => $expiredTime,
+                    'merchantId'      => $this->merchantId,
+                    'merchantTradeNo' => $data['order_number'],
+                    'notifyUrl'       => $notifyUrl,
+                    'payer'           => $payerName,
+                    'paymentType'     => $walletType,
+                    'phoneNumber'     => $payerPhone,
+                    'productName'     => $goodsInfo,
+                    'redirectUrl'     => $returnUrl,
+                    'requestId'       => $requestId,
+                ],
+            ];
+        }
+
+        // H5 fallback
+        $expiredTime = now('Asia/Jakarta')->addHours(24)->format('Y-m-d\TH:i:s.v') . '+07:00';
+        return [
+            '/payment/v2.3/h5/createLink',
+            [
+                'amount'          => $amount,
+                'expiredTime'     => $expiredTime,
+                'merchantId'      => $this->merchantId,
+                'merchantTradeNo' => $data['order_number'],
+                'notifyUrl'       => $notifyUrl,
+                'payer'           => $payerName,
+                'paymentType'     => 'SHOPEEPAY',
+                'phoneNumber'     => $payerPhone,
+                'productName'     => $goodsInfo,
+                'redirectUrl'     => $returnUrl,
+                'requestId'       => $requestId,
+            ],
+        ];
+    }
+
     public function checkStatus(string $transactionId): array
     {
         if ($this->mockMode) {
@@ -216,31 +308,28 @@ class PaylabsService
             return ['success' => false, 'message' => 'Konfigurasi Paylabs belum lengkap.'];
         }
 
-        $endpoint  = '/payment/v2.3/query';
+        $endpoint  = '/payment/v2.3/qris/query';
         $requestId = (string) Str::uuid();
         $timestamp = $this->generateTimestamp();
 
         $body = [
             'merchantId'      => $this->merchantId,
-            'merchantTradeNo' => $transactionId,
             'requestId'       => $requestId,
+            'merchantTradeNo' => $transactionId,
         ];
 
         $headers = $this->buildHeaders($endpoint, $body, $requestId, $timestamp);
-        $url     = $this->baseUrl . $endpoint;
 
         try {
-            $minified = $this->minifyJson($body);
             $response = $this->getHttpClient()
                 ->withHeaders($headers)
-                ->withBody($minified, 'application/json')
-                ->post($url);
+                ->withBody($this->minifyJson($body), 'application/json')
+                ->post($this->baseUrl . $endpoint);
 
             $result = $response->json();
 
-            if ($response->successful() && ($result['errCode'] ?? '') === '0') {
-                $rawStatus = $result['status'] ?? '01';
-                $status = match ($rawStatus) {
+            if (($result['errCode'] ?? '') === '0') {
+                $status = match ($result['status'] ?? '01') {
                     '02'    => 'paid',
                     '09'    => 'failed',
                     default => 'pending',
@@ -274,11 +363,10 @@ class PaylabsService
 
     protected function mockCreateTransaction(array $data): array
     {
-        $transactionId = 'MOCK-' . strtoupper(uniqid());
         return [
             'success' => true,
             'data'    => [
-                'transaction_id'  => $transactionId,
+                'transaction_id'  => 'MOCK-' . strtoupper(uniqid()),
                 'payment_url'     => route('customer.payment.paylabs.waiting', ['order' => $data['order_id']]),
                 'payment_method'  => $data['payment_method'],
                 'payment_channel' => $data['payment_channel'] ?? null,
