@@ -12,6 +12,7 @@ class Cart extends Model
     protected $fillable = [
         'user_id',
         'product_id',
+        'product_variant_id',
         'quantity',
     ];
 
@@ -31,15 +32,30 @@ class Cart extends Model
         return $this->belongsTo(Product::class);
     }
 
+    public function variant()
+    {
+        return $this->belongsTo(ProductVariant::class, 'product_variant_id');
+    }
+
+    /**
+     * Get unit price (variant-aware)
+     */
+    public function getUnitPriceAttribute(): float
+    {
+        if ($this->product_variant_id && $this->variant) {
+            return $this->variant->final_price;
+        }
+        return $this->product->hasActiveDiscount()
+            ? $this->product->discounted_price
+            : $this->product->price;
+    }
+
     /**
      * Get subtotal (uses discounted price if available)
      */
     public function getSubtotalAttribute(): float
     {
-        $price = $this->product->hasActiveDiscount() 
-            ? $this->product->discounted_price 
-            : $this->product->price;
-        return $price * $this->quantity;
+        return $this->unit_price * $this->quantity;
     }
 
     /**

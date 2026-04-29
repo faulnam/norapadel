@@ -50,7 +50,11 @@
                             <div class="mb-3">
                                 <label for="stock" class="form-label">Stok <span class="text-danger">*</span></label>
                                 <input type="number" class="form-control @error('stock') is-invalid @enderror" 
-                                       id="stock" name="stock" value="{{ old('stock', $product->stock) }}" min="0" required>
+                                       id="stock" name="stock" value="{{ old('stock', $product->stock) }}" min="0"
+                                       {{ $product->has_variants ? 'readonly' : 'required' }}>
+                                @if($product->has_variants)
+                                    <small class="text-muted">Stok dihitung otomatis dari varian.</small>
+                                @endif
                                 @error('stock')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -184,6 +188,70 @@
             </div>
             
             <hr>
+
+            <!-- Varian Produk -->
+            <div class="mb-3">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="has_variants" name="has_variants" value="1"
+                        {{ old('has_variants', $product->has_variants) ? 'checked' : '' }} onchange="toggleVariants(this)">
+                    <label class="form-check-label fw-semibold" for="has_variants">
+                        <i class="fas fa-layer-group me-1"></i>Produk ini memiliki Varian
+                    </label>
+                </div>
+                <small class="text-muted">Aktifkan jika produk memiliki pilihan warna, ukuran, dll.</small>
+            </div>
+
+            <div id="variantsSection" style="display:{{ old('has_variants', $product->has_variants) ? 'block' : 'none' }}">
+                <div class="card border-primary mb-3">
+                    <div class="card-header bg-primary bg-opacity-10 d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-layer-group me-1"></i>Daftar Varian</span>
+                        <button type="button" class="btn btn-sm btn-primary" onclick="addVariant()">
+                            <i class="fas fa-plus me-1"></i>Tambah Varian
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="variantsList">
+                            @foreach($product->variants as $vi => $variant)
+                            <div class="border rounded p-3 mb-3 variant-item">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <strong>Varian #{{ $vi + 1 }}</strong>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeVariant(this)"><i class="fas fa-trash"></i></button>
+                                </div>
+                                <input type="hidden" name="variants[{{ $vi }}][id]" value="{{ $variant->id }}">
+                                <div class="row g-2">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Nama Varian <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" name="variants[{{ $vi }}][name]" value="{{ $variant->name }}" required>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Stok <span class="text-danger">*</span></label>
+                                        <input type="number" class="form-control" name="variants[{{ $vi }}][stock]" value="{{ $variant->stock }}" min="0" required>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Tambahan Harga</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">Rp</span>
+                                            <input type="number" class="form-control" name="variants[{{ $vi }}][price_adjustment]" value="{{ $variant->price_adjustment }}" step="100">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label">Gambar</label>
+                                        @if($variant->image)
+                                            <img src="{{ asset('storage/' . $variant->image) }}" class="img-fluid rounded mb-1" style="max-height:60px;">
+                                        @endif
+                                        <input type="file" class="form-control" name="variants[{{ $vi }}][image]" accept="image/*" onchange="previewVariantImage(this)">
+                                        <div class="variant-img-preview mt-1"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                        <p id="variantsEmpty" style="display:{{ $product->variants->count() ? 'none' : 'block' }}" class="text-muted text-center py-3">Belum ada varian.</p>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
             
             <div class="d-flex justify-content-end gap-2">
                 <a href="{{ route('admin.products.index') }}" class="btn btn-secondary">
@@ -202,12 +270,73 @@
 function previewImage(input) {
     const preview = document.getElementById('imagePreview');
     preview.innerHTML = '';
-    
     if (input.files && input.files[0]) {
         const reader = new FileReader();
-        reader.onload = function(e) {
-            preview.innerHTML = `<img src="${e.target.result}" class="img-fluid rounded" style="max-height: 200px;">`;
-        };
+        reader.onload = e => preview.innerHTML = `<img src="${e.target.result}" class="img-fluid rounded" style="max-height:200px;">`;
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+let variantCount = {{ $product->variants->count() }};
+
+function toggleVariants(cb) {
+    const section = document.getElementById('variantsSection');
+    const stockInput = document.getElementById('stock');
+    section.style.display = cb.checked ? 'block' : 'none';
+    stockInput.readOnly = cb.checked;
+    if (cb.checked) stockInput.removeAttribute('required');
+    else stockInput.setAttribute('required', '');
+}
+
+function addVariant(data = {}) {
+    const i = variantCount++;
+    const list = document.getElementById('variantsList');
+    document.getElementById('variantsEmpty').style.display = 'none';
+    const div = document.createElement('div');
+    div.className = 'border rounded p-3 mb-3 variant-item';
+    div.innerHTML = `
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <strong>Varian Baru</strong>
+            <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeVariant(this)"><i class="fas fa-trash"></i></button>
+        </div>
+        <div class="row g-2">
+            <div class="col-md-4">
+                <label class="form-label">Nama Varian <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" name="variants[${i}][name]" placeholder="cth: Merah, XL" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Stok <span class="text-danger">*</span></label>
+                <input type="number" class="form-control" name="variants[${i}][stock]" min="0" value="0" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Tambahan Harga</label>
+                <div class="input-group">
+                    <span class="input-group-text">Rp</span>
+                    <input type="number" class="form-control" name="variants[${i}][price_adjustment]" value="0" step="100">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Gambar</label>
+                <input type="file" class="form-control" name="variants[${i}][image]" accept="image/*" onchange="previewVariantImage(this)">
+                <div class="variant-img-preview mt-1"></div>
+            </div>
+        </div>`;
+    list.appendChild(div);
+}
+
+function removeVariant(btn) {
+    btn.closest('.variant-item').remove();
+    if (!document.querySelectorAll('.variant-item').length) {
+        document.getElementById('variantsEmpty').style.display = 'block';
+    }
+}
+
+function previewVariantImage(input) {
+    const preview = input.nextElementSibling;
+    preview.innerHTML = '';
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => preview.innerHTML = `<img src="${e.target.result}" class="img-fluid rounded" style="max-height:80px;">`;
         reader.readAsDataURL(input.files[0]);
     }
 }

@@ -63,7 +63,7 @@
                             <div class="border-b border-black/6 p-6 last:border-0">
                                 <div class="flex flex-col gap-4 sm:flex-row">
                                     <div class="relative mx-auto shrink-0 sm:mx-0">
-                                        <img src="{{ $item->product->image ? asset('storage/' . $item->product->image) : 'https://via.placeholder.com/80' }}" 
+                                        <img src="{{ $item->variant && $item->variant->image ? asset('storage/' . $item->variant->image) : ($item->product->image ? asset('storage/' . $item->product->image) : 'https://via.placeholder.com/80') }}" 
                                              alt="{{ $item->product->name }}" class="h-20 w-20 rounded-xl object-cover">
                                         @if($item->product->hasActiveDiscount())
                                             <span class="absolute left-0 top-0 rounded-br-lg rounded-tl-lg bg-rose-500 px-1.5 py-0.5 text-[10px] font-semibold text-white">-{{ $item->product->formatted_discount_percent }}</span>
@@ -74,7 +74,14 @@
                                         <div class="flex items-start justify-between">
                                             <div>
                                                 <h6 class="text-base font-semibold text-black">{{ $item->product->name }}</h6>
-                                                @if($item->product->hasActiveDiscount())
+                                                @if($item->variant)
+                                                    <p class="mt-0.5 text-xs text-zinc-500">
+                                                        <i class="fas fa-tag mr-1"></i>Varian: <span class="font-medium">{{ $item->variant->name }}</span>
+                                                    </p>
+                                                @endif
+                                                @if($item->variant)
+                                                    <p class="mt-1 text-sm font-medium text-emerald-600">{{ $item->variant->formatted_final_price }}</p>
+                                                @elseif($item->product->hasActiveDiscount())
                                                     <p class="mt-1 text-sm font-medium text-emerald-600">{{ $item->product->formatted_discounted_price }}</p>
                                                     <p class="text-xs text-zinc-400 line-through">{{ $item->product->formatted_price }}</p>
                                                 @else
@@ -98,8 +105,11 @@
                                                     <button type="submit" name="quantity" value="{{ $item->quantity - 1 }}" class="flex h-8 w-8 items-center justify-center rounded-lg border border-black/10 text-black transition hover:bg-black/5" 
                                                             {{ $item->quantity <= 1 ? 'disabled' : '' }}>-</button>
                                                     <input type="text" class="h-8 w-12 rounded-lg border border-black/10 text-center text-sm" value="{{ $item->quantity }}" readonly>
+                                                    @php
+                                                        $maxStock = $item->variant ? $item->variant->stock : $item->product->stock;
+                                                    @endphp
                                                     <button type="submit" name="quantity" value="{{ $item->quantity + 1 }}" class="flex h-8 w-8 items-center justify-center rounded-lg border border-black/10 text-black transition hover:bg-black/5"
-                                                            {{ $item->quantity >= $item->product->stock ? 'disabled' : '' }}>+</button>
+                                                            {{ $item->quantity >= $maxStock ? 'disabled' : '' }}>+</button>
                                                 </div>
                                             </form>
                                             

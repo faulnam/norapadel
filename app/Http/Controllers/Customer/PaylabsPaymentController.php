@@ -105,9 +105,16 @@ class PaylabsPaymentController extends Controller
         }
 
         $paymentData = json_decode($order->payment_data, true) ?? [];
+        
+        // Debug log
+        \Log::info('Payment Data for waiting page', [
+            'order_id' => $order->id,
+            'payment_data' => $paymentData,
+        ]);
 
         $vaNumber = (string) (
             $paymentData['va_number']
+            ?? $paymentData['vaCode']
             ?? $paymentData['virtual_account_number']
             ?? $paymentData['virtual_account']
             ?? $paymentData['account_number']
@@ -115,9 +122,16 @@ class PaylabsPaymentController extends Controller
             ?? '-'
         );
 
-        $qrString = (string) ($paymentData['qr_string'] ?? $paymentData['qr_content'] ?? '');
+        $qrString = (string) (
+            $paymentData['qrCode']
+            ?? $paymentData['qr_code']
+            ?? $paymentData['qr_string']
+            ?? $paymentData['qr_content']
+            ?? ''
+        );
         $qrUrl = (string) (
-            $paymentData['qr_url']
+            $paymentData['qrisUrl']
+            ?? $paymentData['qr_url']
             ?? $paymentData['qr_image_url']
             ?? $paymentData['qr_code_url']
             ?? ''
@@ -130,6 +144,11 @@ class PaylabsPaymentController extends Controller
                 $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' . urlencode($qrString);
             }
         }
+        
+        \Log::info('QR Data extracted', [
+            'qrString' => substr($qrString, 0, 50),
+            'qrUrl' => $qrUrl,
+        ]);
 
         $deeplinkUrl = (string) (
             $paymentData['deeplink_url']

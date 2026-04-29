@@ -16,8 +16,9 @@
         <div class="row g-5">
             <div class="col-lg-5">
                 <div class="product-gallery">
-                <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}" 
-                         alt="{{ $product->name }}" class="img-fluid rounded-3">
+                <img id="mainProductImage"
+                     src="{{ $product->image_url }}" 
+                     alt="{{ $product->name }}" class="img-fluid rounded-3">
                 </div>
             </div>
             
@@ -39,23 +40,103 @@
                     
                     <div class="product-price-box mb-4">
                         @if($product->hasActiveDiscount())
-                            <span class="price">{{ $product->formatted_discounted_price }}</span>
+                            <span class="price" id="displayPrice">{{ $product->formatted_discounted_price }}</span>
                             <span class="text-decoration-line-through text-muted">{{ $product->formatted_price }}</span>
                             <span class="badge bg-danger">Hemat {{ $product->formatted_savings_amount }}</span>
                         @else
-                            <span class="price">{{ $product->formatted_price }}</span>
+                            <span class="price" id="displayPrice">{{ $product->formatted_price }}</span>
                         @endif
+                        <span class="stock" id="stockBadge">
                         @if($product->stock > 0)
-                            <span class="stock text-success"><i class="fas fa-check-circle me-1"></i>Stok tersedia</span>
+                            <span class="text-success"><i class="fas fa-check-circle me-1"></i>Stok tersedia</span>
                         @else
-                            <span class="stock text-danger"><i class="fas fa-times-circle me-1"></i>Stok habis</span>
+                            <span class="text-danger"><i class="fas fa-times-circle me-1"></i>Stok habis</span>
                         @endif
+                        </span>
                     </div>
                     
                     <div class="product-description mb-4">
                         <h6>Deskripsi</h6>
                         <p class="text-gray">{{ $product->description }}</p>
                     </div>
+                    
+                    {{-- Varian Section (Di atas tombol beli) --}}
+                    @if($product->has_variants && $product->activeVariants->count() > 0)
+                        <div class="mb-4 p-3 border rounded" style="background: #f8f9fa;" id="variantSection">
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <h6 class="mb-0 fw-bold">Pilih Varian <span class="text-danger">*</span></h6>
+                                <span id="variantSelectedLabel" class="badge bg-success" style="display:none;">
+                                    <i class="fas fa-check me-1"></i>Dipilih
+                                </span>
+                            </div>
+                            
+                            {{-- Grid Varian dengan Gambar --}}
+                            <div class="row g-2 mb-3">
+                                @foreach($product->activeVariants as $variant)
+                                <div class="col-4 col-sm-3 col-md-2">
+                                    <button type="button"
+                                        class="variant-card-btn w-100 p-2 border rounded position-relative bg-white"
+                                        data-variant-id="{{ $variant->id }}"
+                                        data-variant-name="{{ $variant->name }}"
+                                        data-variant-stock="{{ $variant->stock }}"
+                                        data-variant-price="{{ $variant->formatted_final_price }}"
+                                        data-variant-image="{{ $variant->image_url }}"
+                                        onclick="selectVariant(this)"
+                                        {{ $variant->stock <= 0 ? 'disabled' : '' }}
+                                        style="border: 2px solid #dee2e6; transition: all 0.2s; cursor: pointer; {{ $variant->stock <= 0 ? 'opacity: 0.5; cursor: not-allowed;' : '' }}">
+                                        
+                                        {{-- Checkmark Badge --}}
+                                        <div class="variant-check position-absolute" style="top: 4px; right: 4px; display: none;">
+                                            <span class="badge bg-dark rounded-circle d-flex align-items-center justify-center" style="width: 20px; height: 20px; padding: 0;">
+                                                <i class="fas fa-check" style="font-size: 10px;"></i>
+                                            </span>
+                                        </div>
+                                        
+                                        {{-- Gambar Varian --}}
+                                        <div class="variant-image mb-2" style="aspect-ratio: 1; overflow: hidden; border-radius: 6px; background: #f8f9fa;">
+                                            <img src="{{ $variant->image_url }}" 
+                                                 alt="{{ $variant->name }}"
+                                                 class="w-100 h-100"
+                                                 style="object-fit: cover;"
+                                                 onerror="this.src='{{ $product->image_url }}'">
+                                        </div>
+                                        
+                                        {{-- Nama Varian --}}
+                                        <div class="text-center" style="font-size: 0.75rem; font-weight: 600; color: #212529;">
+                                            {{ $variant->name }}
+                                        </div>
+                                        
+                                        {{-- Stock Badge --}}
+                                        @if($variant->stock <= 0)
+                                            <div class="text-center mt-1">
+                                                <small class="badge bg-danger" style="font-size: 0.65rem;">Habis</small>
+                                            </div>
+                                        @elseif($variant->stock <= 5)
+                                            <div class="text-center mt-1">
+                                                <small class="badge bg-warning text-dark" style="font-size: 0.65rem;">{{ $variant->stock }}</small>
+                                            </div>
+                                        @endif
+                                        
+                                        {{-- Price Adjustment --}}
+                                        @if($variant->price_adjustment != 0)
+                                            <div class="text-center mt-1">
+                                                <small class="badge {{ $variant->price_adjustment > 0 ? 'bg-primary' : 'bg-success' }}" style="font-size: 0.65rem;">
+                                                    {{ $variant->price_adjustment > 0 ? '+' : '' }}{{ number_format(abs($variant->price_adjustment), 0) }}
+                                                </small>
+                                            </div>
+                                        @endif
+                                    </button>
+                                </div>
+                                @endforeach
+                            </div>
+                            
+                            {{-- Hint Message --}}
+                            <div id="variantHint" class="alert alert-danger py-2 px-3 mb-0" style="font-size: 0.875rem;">
+                                <i class="fas fa-exclamation-circle me-1"></i>
+                                <span>Pilih varian terlebih dahulu</span>
+                            </div>
+                        </div>
+                    @endif
                     
                     <div class="product-features mb-4">
                         <h6>Keunggulan Produk</h6>
@@ -81,7 +162,26 @@
                     
                     <div class="product-actions">
                         @auth
-                            @if($product->stock > 0)
+                            @if($product->has_variants && $product->activeVariants->count() > 0)
+                                {{-- Form dengan Varian (Varian selector sudah di atas) --}}
+                                <form action="{{ route('customer.cart.add', $product) }}" method="POST" id="addToCartForm">
+                                    @csrf
+                                    <input type="hidden" name="variant_id" id="selectedVariantId" required>
+                                    
+                                    <div class="d-flex gap-3">
+                                        <div class="quantity-selector">
+                                            <button type="button" class="qty-btn" onclick="decreaseQty()" disabled id="qtyMinus">-</button>
+                                            <input type="number" name="quantity" id="quantity" value="1" min="1" max="1" disabled>
+                                            <button type="button" class="qty-btn" onclick="increaseQty()" disabled id="qtyPlus">+</button>
+                                        </div>
+                                        <button type="submit" class="btn btn-accent btn-lg flex-grow-1" id="addCartBtn" disabled>
+                                            <i class="fas fa-shopping-cart me-2"></i>Tambah ke Keranjang
+                                        </button>
+                                    </div>
+                                </form>
+                            
+                            @elseif($product->stock > 0)
+                                {{-- Produk tanpa varian --}}
                                 <form action="{{ route('customer.cart.add', $product) }}" method="POST" class="d-flex gap-3">
                                     @csrf
                                     <div class="quantity-selector">
@@ -93,12 +193,15 @@
                                         <i class="fas fa-shopping-cart me-2"></i>Tambah ke Keranjang
                                     </button>
                                 </form>
+                            
                             @else
+                                {{-- Stok Habis --}}
                                 <button class="btn btn-secondary btn-lg w-100" disabled>
                                     <i class="fas fa-times me-2"></i>Stok Habis
                                 </button>
                             @endif
                         @else
+                            {{-- Not Logged In --}}
                             <a href="{{ route('login') }}" class="btn btn-accent btn-lg w-100">
                                 <i class="fas fa-sign-in-alt me-2"></i>Masuk untuk Membeli
                             </a>
@@ -164,6 +267,7 @@
 @endsection
 
 @push('styles')
+<script src="https://cdn.tailwindcss.com"></script>
 <style>
     .product-gallery {
         position: relative;
@@ -451,6 +555,26 @@
             font-size: 0.75rem;
         }
     }
+
+    .variant-btn {
+        min-width: 70px;
+        font-size: 0.875rem;
+        transition: all 0.2s;
+    }
+    .variant-btn.btn-primary {
+        box-shadow: 0 0 0 3px rgba(var(--bs-primary-rgb), 0.25);
+    }
+    .variant-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    #mainProductImage {
+        transition: opacity 0.25s ease;
+    }
+    .qty-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
 </style>
 @endpush
 
@@ -458,17 +582,127 @@
 <script>
     function decreaseQty() {
         const input = document.getElementById('quantity');
-        if (input.value > 1) {
-            input.value = parseInt(input.value) - 1;
-        }
+        if (input.value > 1) input.value = parseInt(input.value) - 1;
     }
     
     function increaseQty() {
         const input = document.getElementById('quantity');
         const max = parseInt(input.getAttribute('max'));
-        if (parseInt(input.value) < max) {
-            input.value = parseInt(input.value) + 1;
+        if (parseInt(input.value) < max) input.value = parseInt(input.value) + 1;
+    }
+
+    function selectVariant(btn) {
+        // Remove active state from all variants
+        document.querySelectorAll('.variant-card-btn').forEach(card => {
+            card.style.borderColor = '#dee2e6';
+            card.style.backgroundColor = '#ffffff';
+            card.style.transform = 'scale(1)';
+            const check = card.querySelector('.variant-check');
+            if (check) check.style.display = 'none';
+        });
+
+        // Add active state to selected variant
+        btn.style.borderColor = '#000000';
+        btn.style.backgroundColor = '#f8f9fa';
+        btn.style.transform = 'scale(1.05)';
+        const check = btn.querySelector('.variant-check');
+        if (check) check.style.display = 'block';
+
+        const stock = parseInt(btn.dataset.variantStock);
+        const image = btn.dataset.variantImage;
+        const price = btn.dataset.variantPrice;
+        const name = btn.dataset.variantName;
+
+        // Update main image with smooth fade effect
+        const img = document.getElementById('mainProductImage');
+        if (img) {
+            img.style.transition = 'opacity 0.3s ease';
+            img.style.opacity = '0';
+            setTimeout(() => { 
+                img.src = image; 
+                img.style.opacity = '1'; 
+            }, 300);
+        }
+
+        // Update price
+        const priceEl = document.getElementById('displayPrice');
+        if (priceEl) {
+            priceEl.style.transition = 'color 0.3s ease';
+            priceEl.style.color = '#28a745';
+            priceEl.textContent = price;
+            setTimeout(() => { priceEl.style.color = ''; }, 500);
+        }
+
+        // Update stock badge
+        const stockBadge = document.getElementById('stockBadge');
+        if (stockBadge) {
+            if (stock > 0) {
+                stockBadge.innerHTML = `<span class="text-success"><i class="fas fa-check-circle me-1"></i>Stok tersedia (${stock})</span>`;
+            } else {
+                stockBadge.innerHTML = `<span class="text-danger"><i class="fas fa-times-circle me-1"></i>Stok habis</span>`;
+            }
+        }
+
+        // Update quantity input
+        const qtyInput = document.getElementById('quantity');
+        if (qtyInput) {
+            qtyInput.max = stock;
+            qtyInput.value = Math.min(parseInt(qtyInput.value) || 1, stock || 1);
+            qtyInput.disabled = stock <= 0;
+        }
+
+        // Enable/disable quantity buttons
+        const qtyMinus = document.getElementById('qtyMinus');
+        const qtyPlus = document.getElementById('qtyPlus');
+        if (qtyMinus) qtyMinus.disabled = stock <= 0;
+        if (qtyPlus) qtyPlus.disabled = stock <= 0;
+
+        // Update hidden variant id
+        const variantInput = document.getElementById('selectedVariantId');
+        if (variantInput) variantInput.value = btn.dataset.variantId;
+
+        // Enable/disable add to cart button
+        const addBtn = document.getElementById('addCartBtn');
+        if (addBtn) addBtn.disabled = stock <= 0;
+
+        // Update hint message with animation
+        const hint = document.getElementById('variantHint');
+        const selectedLabel = document.getElementById('variantSelectedLabel');
+        
+        if (hint) {
+            hint.style.transition = 'all 0.3s ease';
+            if (stock > 0) {
+                hint.className = 'alert alert-success py-2 px-3 mb-0';
+                hint.style.fontSize = '0.875rem';
+                hint.innerHTML = `<i class="fas fa-check-circle me-1"></i><span>Varian dipilih: <strong>${name}</strong></span>`;
+                if (selectedLabel) selectedLabel.style.display = 'inline-block';
+            } else {
+                hint.className = 'alert alert-danger py-2 px-3 mb-0';
+                hint.style.fontSize = '0.875rem';
+                hint.innerHTML = `<i class="fas fa-times-circle me-1"></i><span>Varian <strong>${name}</strong> stok habis</span>`;
+                if (selectedLabel) selectedLabel.style.display = 'none';
+            }
         }
     }
+
+    // Add hover effect to variant cards
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.variant-card-btn').forEach(btn => {
+            if (!btn.disabled) {
+                btn.addEventListener('mouseenter', function() {
+                    if (this.style.borderColor !== 'rgb(0, 0, 0)') {
+                        this.style.borderColor = '#6c757d';
+                        this.style.transform = 'scale(1.02)';
+                    }
+                });
+                btn.addEventListener('mouseleave', function() {
+                    if (this.style.borderColor !== 'rgb(0, 0, 0)') {
+                        this.style.borderColor = '#dee2e6';
+                        this.style.transform = 'scale(1)';
+                    }
+                });
+            }
+        });
+    });
 </script>
 @endpush

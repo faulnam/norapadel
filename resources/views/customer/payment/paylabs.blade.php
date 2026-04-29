@@ -99,38 +99,6 @@
                 </div>
             </div>
 
-            <!-- E-Wallet -->
-            <div class="rounded-2xl bg-white p-6 shadow-sm">
-                <h3 class="mb-4 text-base font-semibold text-black"><i class="fas fa-wallet me-2"></i>E-Wallet</h3>
-                <div class="grid gap-3 sm:grid-cols-2">
-                    @foreach(['OVO', 'DANA', 'ShopeePay', 'LinkAja', 'GoPay'] as $wallet)
-                    <label class="payment-option">
-                        <input type="radio" name="payment_channel" value="EWALLET_{{ strtoupper($wallet) }}" required>
-                        <div class="option-content">
-                            <i class="fas fa-wallet"></i>
-                            <span>{{ $wallet }}</span>
-                        </div>
-                    </label>
-                    @endforeach
-                </div>
-            </div>
-
-            <!-- Retail -->
-            <div class="rounded-2xl bg-white p-6 shadow-sm">
-                <h3 class="mb-4 text-base font-semibold text-black"><i class="fas fa-store me-2"></i>Retail</h3>
-                <div class="grid gap-3 sm:grid-cols-2">
-                    @foreach(['Alfamart', 'Indomaret'] as $retail)
-                    <label class="payment-option">
-                        <input type="radio" name="payment_channel" value="RETAIL_{{ strtoupper($retail) }}" required>
-                        <div class="option-content">
-                            <i class="fas fa-store"></i>
-                            <span>{{ $retail }}</span>
-                        </div>
-                    </label>
-                    @endforeach
-                </div>
-            </div>
-
             <div class="flex gap-3">
                 <a href="{{ route('customer.payment.select-gateway', $order) }}" 
                    class="flex-1 rounded-xl border border-zinc-300 bg-white py-3 text-center text-sm font-medium text-black transition hover:bg-zinc-50">

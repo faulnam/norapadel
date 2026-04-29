@@ -332,6 +332,8 @@ class PageController extends Controller
             abort(404);
         }
 
+        $product->load('activeVariants');
+
         $relatedProducts = Product::active()
             ->where('is_featured', false)
             ->where('id', '!=', $product->id)

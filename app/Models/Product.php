@@ -25,6 +25,7 @@ class Product extends Model
         'category',
         'is_active',
         'is_featured',
+        'has_variants',
     ];
 
     protected $casts = [
@@ -35,6 +36,7 @@ class Product extends Model
         'weight' => 'integer',
         'is_active' => 'boolean',
         'is_featured' => 'boolean',
+        'has_variants' => 'boolean',
     ];
 
     // Categories
@@ -148,6 +150,16 @@ class Product extends Model
     public function cartItems()
     {
         return $this->hasMany(Cart::class);
+    }
+
+    public function variants()
+    {
+        return $this->hasMany(ProductVariant::class)->orderBy('sort_order');
+    }
+
+    public function activeVariants()
+    {
+        return $this->hasMany(ProductVariant::class)->where('is_active', true)->orderBy('sort_order');
     }
 
     /**

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Customer;
 use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
@@ -14,7 +15,7 @@ class CartController extends Controller
      */
     public function index()
     {
-        $cartItems = auth()->user()->cart()->with('product')->get();
+        $cartItems = auth()->user()->cart()->with(['product', 'variant'])->get();
         
         // Calculate total using discounted prices
         $total = $cartItems->sum(function ($item) {
@@ -30,32 +31,61 @@ class CartController extends Controller
     public function add(Request $request, Product $product)
     {
         $request->validate([
-            'quantity' => 'required|integer|min:1'
+            'quantity' => 'required|integer|min:1',
+            'variant_id' => 'nullable|integer|exists:product_variants,id',
         ]);
 
-        $quantity = $request->quantity;
+        // Jika produk punya varian DAN ada varian aktif, WAJIB pilih varian
+        $hasActiveVariants = $product->has_variants && $product->activeVariants()->exists();
+        
+        if ($hasActiveVariants && !$request->variant_id) {
+            return back()->with('error', 'Silakan pilih varian produk terlebih dahulu.');
+        }
 
-        // Check stock
-        if ($product->stock < $quantity) {
-            return back()->with('error', 'Stok tidak mencukupi.');
+        $quantity = $request->quantity;
+        $variantId = $request->variant_id;
+
+        // Validate variant belongs to product
+        $variant = null;
+        if ($variantId) {
+            $variant = ProductVariant::where('id', $variantId)
+                ->where('product_id', $product->id)
+                ->where('is_active', true)
+                ->first();
+            
+            if (!$variant) {
+                return back()->with('error', 'Varian tidak valid atau tidak aktif.');
+            }
+            
+            if ($variant->stock < $quantity) {
+                return back()->with('error', 'Stok varian tidak mencukupi.');
+            }
+        } else {
+            // Produk tanpa varian atau varian tidak dipilih
+            if ($product->stock < $quantity) {
+                return back()->with('error', 'Stok tidak mencukupi.');
+            }
         }
 
         $cartItem = Cart::where('user_id', auth()->id())
             ->where('product_id', $product->id)
+            ->where('product_variant_id', $variantId)
             ->first();
 
         if ($cartItem) {
             $newQuantity = $cartItem->quantity + $quantity;
+            $maxStock = $variant ? $variant->stock : $product->stock;
             
-            if ($product->stock < $newQuantity) {
+            if ($maxStock < $newQuantity) {
                 return back()->with('error', 'Stok tidak mencukupi.');
             }
-
+            
             $cartItem->update(['quantity' => $newQuantity]);
         } else {
             Cart::create([
                 'user_id' => auth()->id(),
                 'product_id' => $product->id,
+                'product_variant_id' => $variantId,
                 'quantity' => $quantity,
             ]);
         }

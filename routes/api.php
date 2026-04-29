@@ -21,6 +21,23 @@ Route::middleware('web')->group(function () {
     Route::get('/push/vapid-key', [PushNotificationController::class, 'getVapidKey']);
     Route::post('/push/subscribe', [PushNotificationController::class, 'subscribe']);
     Route::post('/push/unsubscribe', [PushNotificationController::class, 'unsubscribe']);
+    
+    // Product variants (public)
+    Route::get('/products/{product}/variants', function (\App\Models\Product $product) {
+        return response()->json([
+            'has_variants' => $product->has_variants,
+            'variants' => $product->activeVariants->map(function ($variant) {
+                return [
+                    'id' => $variant->id,
+                    'name' => $variant->name,
+                    'stock' => $variant->stock,
+                    'price_adjustment' => $variant->price_adjustment,
+                    'price' => $variant->formatted_final_price,
+                    'image' => $variant->image_url,
+                ];
+            }),
+        ]);
+    });
 });
 
 Route::middleware('auth:sanctum')->group(function () {

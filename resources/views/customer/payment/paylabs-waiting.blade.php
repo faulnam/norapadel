@@ -51,6 +51,7 @@
                 </p>
             </div>
 
+
             <!-- Payment Instructions -->
             <div class="text-left mb-6">
                 @if(str_starts_with($paymentChannel, 'VA_'))
@@ -137,12 +138,6 @@
                 @endif
             </div>
 
-            <!-- Status -->
-            <div class="mb-6 py-4">
-                <div class="animate-spin h-8 w-8 border-4 border-zinc-200 border-t-black rounded-full mx-auto mb-3"></div>
-                <p class="text-sm text-zinc-600">Menunggu pembayaran...</p>
-            </div>
-
             <div class="flex gap-3">
                 <a href="{{ route('customer.orders.show', $order) }}" 
                    class="flex-1 rounded-xl border border-zinc-300 bg-white py-3 text-center text-sm font-medium text-black hover:bg-zinc-50">
@@ -168,14 +163,7 @@
     </div>
 </div>
 
-<!-- Footer -->
-<footer class="border-t border-black/10 bg-white py-10 text-sm text-zinc-500">
-    <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
-        <div class="text-center">
-            <p>© {{ now()->year }} NoraPadel. All rights reserved.</p>
-        </div>
-    </div>
-</footer>
+
 
 <script>
 function copyText(elementId) {
@@ -185,19 +173,45 @@ function copyText(elementId) {
     });
 }
 
-// Auto check payment status every 5 seconds
-let checkInterval = setInterval(checkPaymentStatus, 5000);
-
 function checkPaymentStatus() {
+    const button = event.target;
+    const originalText = button.innerHTML;
+    button.disabled = true;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Mengecek...';
+    
     fetch('{{ route('customer.payment.paylabs.check-status', $order) }}')
         .then(response => response.json())
         .then(data => {
             if (data.status === 'paid' || data.paid) {
-                clearInterval(checkInterval);
-                window.location.href = '{{ route('customer.orders.show', $order) }}';
+                // Show success message
+                document.querySelector('.rounded-2xl.bg-white').innerHTML = `
+                    <div class="text-center py-12">
+                        <div class="mb-6 flex h-20 w-20 mx-auto items-center justify-center rounded-full bg-emerald-100">
+                            <i class="fas fa-check text-3xl text-emerald-600"></i>
+                        </div>
+                        <h1 class="text-2xl font-semibold text-black mb-2">Pembayaran Berhasil!</h1>
+                        <p class="text-zinc-600 mb-6">Terima kasih, pembayaran Anda telah diterima</p>
+                        <div class="animate-spin h-8 w-8 border-4 border-zinc-200 border-t-emerald-600 rounded-full mx-auto mb-3"></div>
+                        <p class="text-sm text-zinc-600">Mengalihkan ke halaman pesanan...</p>
+                    </div>
+                `;
+                
+                // Redirect after 2 seconds
+                setTimeout(() => {
+                    window.location.href = '{{ route('customer.orders.show', $order) }}';
+                }, 2000);
+            } else {
+                alert('Pembayaran belum diterima. Silakan coba lagi.');
+                button.disabled = false;
+                button.innerHTML = originalText;
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Gagal mengecek status. Silakan coba lagi.');
+            button.disabled = false;
+            button.innerHTML = originalText;
+        });
 }
 
 // Countdown timer
@@ -208,7 +222,6 @@ const countdownInterval = setInterval(() => {
 
     if (distance < 0) {
         clearInterval(countdownInterval);
-        clearInterval(checkInterval);
         document.querySelector('.bg-amber-50').innerHTML = '<p class="text-sm text-red-600"><i class="fas fa-times-circle me-2"></i><strong>Pembayaran expired</strong></p>';
     }
 }, 1000);

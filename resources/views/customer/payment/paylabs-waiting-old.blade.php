@@ -94,15 +94,7 @@
                         @endif
                     </div>
 
-                    <!-- Payment Status -->
-                    <div class="payment-status mb-4">
-                        <div class="status-indicator">
-                            <div class="spinner-border text-primary" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                            <p class="mt-2 mb-0">Menunggu pembayaran...</p>
-                        </div>
-                    </div>
+                    
 
                     <div class="d-flex gap-2">
                         <a href="{{ route('customer.orders.show', $order) }}" class="btn btn-outline-secondary flex-grow-1">

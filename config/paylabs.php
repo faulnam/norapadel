@@ -18,25 +18,28 @@ return [
     
     // Payment Methods
     'payment_methods' => [
+        // VA belum diaktifkan oleh Paylabs untuk Merchant ID 011367
+        // Hubungi CS Paylabs untuk aktivasi
         'va' => [
-            'VA_BCA'     => 'BCA Virtual Account',
-            'VA_BNI'     => 'BNI Virtual Account',
-            'VA_BRI'     => 'BRI Virtual Account',
-            'VA_MANDIRI' => 'Mandiri Virtual Account',
-            'VA_PERMATA' => 'Permata Virtual Account',
-            'VA_CIMB'    => 'CIMB Niaga Virtual Account',
+            // 'VA_BCA'     => 'BCA Virtual Account',
+            // 'VA_BNI'     => 'BNI Virtual Account',
+            // 'VA_BRI'     => 'BRI Virtual Account',
+            // 'VA_MANDIRI' => 'Mandiri Virtual Account',
+            // 'VA_PERMATA' => 'Permata Virtual Account',
+            // 'VA_CIMB'    => 'CIMB Niaga Virtual Account',
         ],
         'qris'    => ['QRIS' => 'QRIS'],
+        // E-Wallet dan Retail belum ditest, nonaktifkan dulu
         'ewallet' => [
-            'EWALLET_OVO'       => 'OVO',
-            'EWALLET_DANA'      => 'DANA',
-            'EWALLET_GOPAY'     => 'GoPay',
-            'EWALLET_SHOPEEPAY' => 'ShopeePay',
-            'EWALLET_LINKAJA'   => 'LinkAja',
+            // 'EWALLET_OVO'       => 'OVO',
+            // 'EWALLET_DANA'      => 'DANA',
+            // 'EWALLET_GOPAY'     => 'GoPay',
+            // 'EWALLET_SHOPEEPAY' => 'ShopeePay',
+            // 'EWALLET_LINKAJA'   => 'LinkAja',
         ],
         'retail' => [
-            'RETAIL_ALFAMART'  => 'Alfamart',
-            'RETAIL_INDOMARET' => 'Indomaret',
+            // 'RETAIL_ALFAMART'  => 'Alfamart',
+            // 'RETAIL_INDOMARET' => 'Indomaret',
         ],
     ],
     

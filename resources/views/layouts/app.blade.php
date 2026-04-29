@@ -1024,13 +1024,30 @@
                                     <div id="npModalOldPrice" class="np-product-price-old d-none"></div>
                                 </div>
 
+                                {{-- Varian Section (dinamis via JS) --}}
+                                <div id="npModalVariants" class="mt-3 mb-3 d-none">
+                                    <div class="mb-2">
+                                        <small class="fw-bold text-dark">Pilih Varian <span class="text-danger">*</span></small>
+                                    </div>
+                                    
+                                    <select class="form-select form-select-sm" id="npModalVariantSelect" style="max-width: 300px;">
+                                        <option value="">-- Pilih Varian --</option>
+                                    </select>
+                                    
+                                    <small id="npModalVariantHint" class="text-muted d-block mt-1">
+                                        <i class="fas fa-info-circle me-1"></i>Pilih varian yang tersedia
+                                    </small>
+                                </div>
+
                                 <div class="np-product-actions">
                                     @auth
+                                    
                                         @if(auth()->user()->isCustomer())
                                             <form id="npModalCartForm" action="{{ route('customer.cart.add', ['product' => 1]) }}" data-action-template="{{ route('customer.cart.add', ['product' => '__PRODUCT_ID__']) }}" method="POST" class="d-flex gap-2 align-items-center">
                                                 @csrf
+                                                <input type="hidden" name="variant_id" id="npModalVariantId">
                                                 <input type="hidden" name="quantity" value="1">
-                                                <button type="submit" class="btn np-product-buy-btn">
+                                                <button type="submit" class="btn np-product-buy-btn" id="npModalBuyBtn">
                                                     <i class="fas fa-shopping-bag me-2"></i>Beli
                                                 </button>
                                             </form>
@@ -1159,12 +1176,130 @@
             const modalDescription = document.getElementById('npModalDescription');
             const modalPrice = document.getElementById('npModalPrice');
             const modalOldPrice = document.getElementById('npModalOldPrice');
+            const modalVariantsSection = document.getElementById('npModalVariants');
+            const modalVariantSelect = document.getElementById('npModalVariantSelect');
+            const modalVariantHint = document.getElementById('npModalVariantHint');
+            const modalVariantIdInput = document.getElementById('npModalVariantId');
+            const modalBuyBtn = document.getElementById('npModalBuyBtn');
             const cartForm = document.getElementById('npModalCartForm');
             const fallbackImage = '{{ asset(config('branding.logo', 'storage/logo.png')) }}';
+
+            let currentProductId = null;
 
             const toText = (value, fallback = '') => {
                 const clean = (value || '').toString().trim();
                 return clean.length ? clean : fallback;
+            };
+
+            const loadVariants = async (productId) => {
+                console.log('🔍 Loading variants for product:', productId);
+                try {
+                    const response = await fetch(`/api/products/${productId}/variants`);
+                    const data = await response.json();
+                    console.log('📦 Variant data received:', data);
+
+                    if (data.has_variants && data.variants && data.variants.length > 0) {
+                        console.log('✅ Product has variants:', data.variants.length);
+                        
+                        // Clear dropdown
+                        modalVariantSelect.innerHTML = '<option value="">-- Pilih Varian --</option>';
+                        
+                        // Populate dropdown dengan varian dari database
+                        data.variants.forEach(variant => {
+                            const option = document.createElement('option');
+                            option.value = variant.id;
+                            option.textContent = `${variant.name} - ${variant.price}`;
+                            option.dataset.stock = variant.stock;
+                            option.dataset.image = variant.image;
+                            option.dataset.price = variant.price;
+                            option.disabled = variant.stock <= 0;
+                            
+                            if (variant.stock <= 0) {
+                                option.textContent += ' (Habis)';
+                            } else if (variant.stock <= 5) {
+                                option.textContent += ` (Sisa ${variant.stock})`;
+                            }
+                            
+                            modalVariantSelect.appendChild(option);
+                        });
+                        
+                        // TAMPILKAN section varian dengan Bootstrap class
+                        console.log('🎯 Showing variant section...');
+                        modalVariantsSection.classList.remove('d-none');
+                        modalVariantsSection.classList.add('d-block');
+                        console.log('✅ Variant section classes:', modalVariantsSection.className);
+                        
+                        // Disable button sampai varian dipilih
+                        if (modalBuyBtn) modalBuyBtn.disabled = true;
+                        
+                        // Event listener untuk dropdown
+                        modalVariantSelect.onchange = function() {
+                            const selectedOption = this.options[this.selectedIndex];
+                            
+                            if (this.value) {
+                                // Update hidden input
+                                if (modalVariantIdInput) {
+                                    modalVariantIdInput.value = this.value;
+                                }
+                                
+                                // Update gambar jika ada
+                                const variantImage = selectedOption.dataset.image;
+                                if (variantImage && variantImage !== 'null') {
+                                    modalImage.style.opacity = '0';
+                                    setTimeout(() => {
+                                        modalImage.src = variantImage;
+                                        modalImage.style.opacity = '1';
+                                    }, 200);
+                                }
+                                
+                                // Update harga
+                                const variantPrice = selectedOption.dataset.price;
+                                if (variantPrice) {
+                                    modalPrice.textContent = variantPrice;
+                                }
+                                
+                                // Enable button
+                                const stock = parseInt(selectedOption.dataset.stock);
+                                if (modalBuyBtn) {
+                                    modalBuyBtn.disabled = stock <= 0;
+                                }
+                                
+                                // Update hint
+                                if (modalVariantHint) {
+                                    if (stock > 0) {
+                                        modalVariantHint.className = 'text-success d-block mt-1';
+                                        modalVariantHint.innerHTML = `<i class="fas fa-check-circle me-1"></i>Varian dipilih: <strong>${selectedOption.textContent.split(' - ')[0]}</strong>`;
+                                    } else {
+                                        modalVariantHint.className = 'text-danger d-block mt-1';
+                                        modalVariantHint.innerHTML = `<i class="fas fa-times-circle me-1"></i>Varian ini stok habis`;
+                                    }
+                                }
+                            } else {
+                                // Reset jika tidak ada yang dipilih
+                                if (modalVariantIdInput) modalVariantIdInput.value = '';
+                                if (modalBuyBtn) modalBuyBtn.disabled = true;
+                                if (modalVariantHint) {
+                                    modalVariantHint.className = 'text-muted d-block mt-1';
+                                    modalVariantHint.innerHTML = '<i class="fas fa-info-circle me-1"></i>Pilih varian yang tersedia';
+                                }
+                            }
+                        };
+                        
+                    } else {
+                        console.log('ℹ️ No variants for this product');
+                        // SEMBUNYIKAN section varian untuk produk tanpa varian
+                        modalVariantsSection.classList.remove('d-block');
+                        modalVariantsSection.classList.add('d-none');
+                        if (modalBuyBtn) modalBuyBtn.disabled = false;
+                        if (modalVariantIdInput) modalVariantIdInput.value = '';
+                    }
+                } catch (error) {
+                    console.error('❌ Error loading variants:', error);
+                    // SEMBUNYIKAN section varian jika error
+                    modalVariantsSection.classList.remove('d-block');
+                    modalVariantsSection.classList.add('d-none');
+                    if (modalBuyBtn) modalBuyBtn.disabled = false;
+                }
             };
 
             const openProductModal = (trigger) => {
@@ -1177,6 +1312,8 @@
                 const image = toText(dataset.productImage, fallbackImage);
                 const price = toText(dataset.productPrice, '-');
                 const oldPrice = toText(dataset.productOldPrice);
+
+                currentProductId = productId;
 
                 modalImage.src = image;
                 modalImage.alt = name;
@@ -1198,6 +1335,11 @@
                     cartForm.action = actionTemplate.replace('__PRODUCT_ID__', productId);
                 }
 
+                // Load varian
+                if (productId) {
+                    loadVariants(productId);
+                }
+
                 modal.show();
             };
 
@@ -1205,8 +1347,30 @@
                 const trigger = event.target.closest('[data-product-trigger]');
                 if (!trigger) return;
 
+                console.log('🖱️ Product clicked:', trigger.dataset.productName);
                 event.preventDefault();
                 openProductModal(trigger);
+            });
+
+            // Reset modal saat ditutup
+            modalEl.addEventListener('hidden.bs.modal', () => {
+                // SEMBUNYIKAN section varian
+                modalVariantsSection.classList.remove('d-block');
+                modalVariantsSection.classList.add('d-none');
+                
+                // Reset dropdown ke default
+                if (modalVariantSelect) {
+                    modalVariantSelect.innerHTML = '<option value="">-- Pilih Varian --</option>';
+                    modalVariantSelect.value = '';
+                    modalVariantSelect.disabled = false;
+                }
+                if (modalVariantIdInput) modalVariantIdInput.value = '';
+                if (modalBuyBtn) modalBuyBtn.disabled = false;
+                if (modalVariantHint) {
+                    modalVariantHint.className = 'text-muted d-block mt-1';
+                    modalVariantHint.innerHTML = '<i class="fas fa-info-circle me-1"></i>Pilih varian yang tersedia';
+                }
+                currentProductId = null;
             });
         })();
     </script>

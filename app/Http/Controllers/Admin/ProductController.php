@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -83,39 +84,36 @@ class ProductController extends Controller
             'discount_percent' => 'nullable|numeric|min:0|max:100',
             'discount_start' => 'nullable|date',
             'discount_end' => 'nullable|date|after_or_equal:discount_start',
-            'stock' => 'required|integer|min:0',
+            'stock' => 'required_without:has_variants|integer|min:0|nullable',
             'category' => 'required|in:original,pedas,shoes',
             'weight' => 'required|integer|min:1|max:50000',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'is_active' => 'boolean',
-        ], [
-            'name.required' => 'Nama produk wajib diisi.',
-            'description.required' => 'Deskripsi produk wajib diisi.',
-            'price.required' => 'Harga wajib diisi.',
-            'price.numeric' => 'Harga harus berupa angka.',
-            'stock.required' => 'Stok wajib diisi.',
-            'stock.integer' => 'Stok harus berupa angka.',
-            'category.required' => 'Kategori wajib dipilih.',
-            'weight.required' => 'Berat wajib diisi.',
-            'weight.integer' => 'Berat harus berupa angka bulat (gram).',
-            'weight.min' => 'Berat minimal 1 gram.',
-            'image.image' => 'File harus berupa gambar.',
-            'image.max' => 'Ukuran gambar maksimal 2MB.',
+            'variants' => 'nullable|array',
+            'variants.*.name' => 'required_with:variants|string|max:100',
+            'variants.*.stock' => 'required_with:variants|integer|min:0',
+            'variants.*.price_adjustment' => 'nullable|numeric',
+            'variants.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+
+        $hasVariants = $request->boolean('has_variants');
 
         $imagePath = null;
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('products', 'public');
         }
 
-        // If marking as featured, unfeature other products in the same category
         if ($request->boolean('is_featured')) {
             Product::where('category', $validated['category'])
                 ->where('is_featured', true)
                 ->update(['is_featured' => false]);
         }
 
-        Product::create([
+        $totalStock = $hasVariants
+            ? collect($request->input('variants', []))->sum('stock')
+            : ($validated['stock'] ?? 0);
+
+        $product = Product::create([
             'name' => $validated['name'],
             'slug' => $this->generateUniqueSlug($validated['name']),
             'description' => $validated['description'],
@@ -123,13 +121,30 @@ class ProductController extends Controller
             'discount_percent' => $validated['discount_percent'] ?? 0,
             'discount_start' => $validated['discount_start'] ?? null,
             'discount_end' => $validated['discount_end'] ?? null,
-            'stock' => $validated['stock'],
+            'stock' => $totalStock,
             'category' => $validated['category'],
             'weight' => $validated['weight'],
             'image' => $imagePath,
             'is_active' => $request->boolean('is_active', true),
             'is_featured' => $request->boolean('is_featured'),
+            'has_variants' => $hasVariants,
         ]);
+
+        if ($hasVariants && $request->has('variants')) {
+            foreach ($request->input('variants', []) as $i => $variantData) {
+                $variantImage = null;
+                if ($request->hasFile("variants.{$i}.image")) {
+                    $variantImage = $request->file("variants.{$i}.image")->store('products/variants', 'public');
+                }
+                $product->variants()->create([
+                    'name' => $variantData['name'],
+                    'stock' => $variantData['stock'],
+                    'price_adjustment' => $variantData['price_adjustment'] ?? 0,
+                    'image' => $variantImage,
+                    'sort_order' => $i,
+                ]);
+            }
+        }
 
         return redirect()->route('admin.products.index')
             ->with('success', 'Produk berhasil ditambahkan.');
@@ -156,36 +171,40 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        $validated = $request->validate([
+        $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'discount_percent' => 'nullable|numeric|min:0|max:100',
             'discount_start' => 'nullable|date',
             'discount_end' => 'nullable|date|after_or_equal:discount_start',
-            'stock' => 'required|integer|min:0',
+            'stock' => 'nullable|integer|min:0',
             'category' => 'required|in:original,pedas,shoes',
             'weight' => 'required|integer|min:1|max:50000',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'is_active' => 'boolean',
+            'variants' => 'nullable|array',
+            'variants.*.name' => 'required_with:variants|string|max:100',
+            'variants.*.stock' => 'required_with:variants|integer|min:0',
+            'variants.*.price_adjustment' => 'nullable|numeric',
+            'variants.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Update basic fields (without slug)
-        $product->name = $validated['name'];
-        $product->description = $validated['description'];
-        $product->price = $validated['price'];
-        $product->discount_percent = $validated['discount_percent'] ?? 0;
-        $product->discount_start = $validated['discount_start'] ?? null;
-        $product->discount_end = $validated['discount_end'] ?? null;
-        $product->stock = $validated['stock'];
-        $product->category = $validated['category'];
-        $product->weight = $validated['weight'];
-        $product->is_active = $request->boolean('is_active', true);
+        $hasVariants = $request->boolean('has_variants');
 
-        // Handle featured toggle
+        $product->name = $request->name;
+        $product->description = $request->description;
+        $product->price = $request->price;
+        $product->discount_percent = $request->discount_percent ?? 0;
+        $product->discount_start = $request->discount_start ?? null;
+        $product->discount_end = $request->discount_end ?? null;
+        $product->category = $request->category;
+        $product->weight = $request->weight;
+        $product->is_active = $request->boolean('is_active', true);
+        $product->has_variants = $hasVariants;
+
         $newFeatured = $request->boolean('is_featured');
         if ($newFeatured && !$product->is_featured) {
-            // Unfeature other products in the same category
             Product::where('category', $product->category)
                 ->where('id', '!=', $product->id)
                 ->where('is_featured', true)
@@ -193,20 +212,65 @@ class ProductController extends Controller
         }
         $product->is_featured = $newFeatured;
 
-        // Only update slug if name actually changed (compare trimmed values)
         $oldName = trim($product->getOriginal('name'));
-        $newName = trim($validated['name']);
-        
-        if ($oldName !== $newName) {
-            $product->slug = $this->generateUniqueSlug($newName, $product->id);
+        if ($oldName !== trim($request->name)) {
+            $product->slug = $this->generateUniqueSlug($request->name, $product->id);
         }
 
-        // Handle image upload
         if ($request->hasFile('image')) {
-            if ($product->image) {
-                Storage::disk('public')->delete($product->image);
-            }
+            if ($product->image) Storage::disk('public')->delete($product->image);
             $product->image = $request->file('image')->store('products', 'public');
+        }
+
+        // Handle variants
+        if ($hasVariants && $request->has('variants')) {
+            // Delete removed variants
+            $keepIds = collect($request->input('variants', []))->pluck('id')->filter()->values();
+            $product->variants()->whereNotIn('id', $keepIds)->each(function ($v) {
+                if ($v->image) Storage::disk('public')->delete($v->image);
+                $v->delete();
+            });
+
+            $totalStock = 0;
+            foreach ($request->input('variants', []) as $i => $variantData) {
+                $variantImage = null;
+                if ($request->hasFile("variants.{$i}.image")) {
+                    $variantImage = $request->file("variants.{$i}.image")->store('products/variants', 'public');
+                }
+
+                if (!empty($variantData['id'])) {
+                    $variant = ProductVariant::find($variantData['id']);
+                    if ($variant && $variant->product_id === $product->id) {
+                        if ($variantImage && $variant->image) Storage::disk('public')->delete($variant->image);
+                        $variant->update([
+                            'name' => $variantData['name'],
+                            'stock' => $variantData['stock'],
+                            'price_adjustment' => $variantData['price_adjustment'] ?? 0,
+                            'sort_order' => $i,
+                            'image' => $variantImage ?? $variant->image,
+                        ]);
+                        $totalStock += $variantData['stock'];
+                        continue;
+                    }
+                }
+
+                $product->variants()->create([
+                    'name' => $variantData['name'],
+                    'stock' => $variantData['stock'],
+                    'price_adjustment' => $variantData['price_adjustment'] ?? 0,
+                    'image' => $variantImage,
+                    'sort_order' => $i,
+                ]);
+                $totalStock += $variantData['stock'];
+            }
+            $product->stock = $totalStock;
+        } else {
+            // No variants - delete all existing variants
+            $product->variants()->each(function ($v) {
+                if ($v->image) Storage::disk('public')->delete($v->image);
+                $v->delete();
+            });
+            $product->stock = $request->input('stock', 0);
         }
 
         $product->save();
