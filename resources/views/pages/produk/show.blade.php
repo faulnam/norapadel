@@ -223,7 +223,7 @@
                 <div class="col-6 col-md-3">
                     <div class="product-card">
                         <div class="product-image">
-                       <img src="{{ $related->image ? asset('storage/' . $related->image) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}" 
+                       <img src="{{ $related->image_url ?: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}" 
                                  alt="{{ $related->name }}">
                             @if($related->hasActiveDiscount())
                                 <div class="position-absolute top-0 end-0 m-2">
@@ -251,7 +251,7 @@
                                     data-product-name="{{ e($related->name) }}"
                                     data-product-category="{{ e($related->category_label) }}"
                                     data-product-description="{{ e(\Illuminate\Support\Str::limit(strip_tags($related->description ?? ''), 180)) }}"
-                                    data-product-image="{{ $related->image ? asset('storage/' . $related->image) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}"
+                                    data-product-image="{{ $related->image_url ?: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}"
                                     data-product-price="{{ $related->hasActiveDiscount() ? $related->formatted_discounted_price : $related->formatted_price }}"
                                     data-product-old-price="{{ $related->hasActiveDiscount() ? $related->formatted_price : '' }}"
                                 >Detail</button>

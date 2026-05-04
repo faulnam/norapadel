@@ -63,10 +63,42 @@ class PaylabsPaymentController extends Controller
             return back()->with('error', 'Metode pembayaran tidak valid.');
         }
 
+        // Get total amount - ensure it's at least 1000 (Paylabs minimum)
+        $totalAmount = (float) $order->total_amount;
+        
+        // Validate minimum amount
+        if ($totalAmount < 1000) {
+            \Log::error('Paylabs payment amount too low', [
+                'order_number' => $order->order_number,
+                'total_amount' => $totalAmount,
+                'order_total' => $order->total,
+                'order_total_pembayaran' => $order->total_pembayaran,
+            ]);
+            
+            return back()->with('error', 'Total pembayaran minimal Rp 1.000. Total saat ini: Rp ' . number_format($totalAmount, 0, ',', '.'));
+        }
+
+        // Check if payment already exists and still valid
+        if ($order->paylabs_transaction_id && $order->payment_data) {
+            $paymentData = json_decode($order->payment_data, true);
+            $expiredAt = $paymentData['expired_at'] ?? null;
+            
+            // If payment exists and not expired, redirect to waiting page
+            if ($expiredAt && now()->lt(\Carbon\Carbon::parse($expiredAt))) {
+                \Log::info('Reusing existing Paylabs transaction', [
+                    'order_number' => $order->order_number,
+                    'transaction_id' => $order->paylabs_transaction_id,
+                ]);
+                
+                return redirect()->route('customer.payment.paylabs.waiting', $order)
+                    ->with('info', 'Menggunakan pembayaran yang sudah dibuat sebelumnya.');
+            }
+        }
+
         $result = $this->paylabs->createTransaction([
             'order_id' => $order->id,
             'order_number' => $order->order_number,
-            'amount' => (int) $order->total_amount,
+            'amount' => $totalAmount,
             'customer_name' => $order->shipping_name ?: ($order->user->name ?: 'Customer'),
             'customer_email' => $order->user->email ?: '',
             'customer_phone' => $order->shipping_phone ?: ($order->user->phone ?: '08000000000'),
@@ -75,6 +107,17 @@ class PaylabsPaymentController extends Controller
         ]);
 
         if (!$result['success']) {
+            // If duplicate error and payment data exists, redirect to waiting page
+            if (str_contains($result['message'], 'Duplicate') && $order->paylabs_transaction_id) {
+                \Log::warning('Duplicate Paylabs transaction, redirecting to waiting page', [
+                    'order_number' => $order->order_number,
+                    'transaction_id' => $order->paylabs_transaction_id,
+                ]);
+                
+                return redirect()->route('customer.payment.paylabs.waiting', $order)
+                    ->with('info', 'Pembayaran sudah dibuat sebelumnya. Silakan selesaikan pembayaran.');
+            }
+            
             return back()->with('error', 'Gagal membuat pembayaran: ' . $result['message']);
         }
 
@@ -193,25 +236,36 @@ class PaylabsPaymentController extends Controller
 
         $result = $this->paylabs->checkStatus($order->paylabs_transaction_id);
 
+        Log::info('Paylabs checkStatus result', [
+            'order_id' => $order->id,
+            'order_number' => $order->order_number,
+            'result' => $result,
+        ]);
+
         if (!$result['success']) {
             return response()->json($result);
         }
 
-        $status = $result['data']['status'];
+        $status = $result['data']['status'] ?? 'pending';
 
-        // Update order if paid
-        if ($status === 'paid' || $status === 'success') {
+        // Update order if paid - support multiple status values
+        if (in_array($status, ['paid', 'success', '02']) || $status === '02') {
             $order->update([
                 'payment_status' => Order::PAYMENT_PAID,
                 'paid_at' => now(),
                 'status' => Order::STATUS_PROCESSING,
+            ]);
+            
+            Log::info('Paylabs payment confirmed via checkStatus', [
+                'order_id' => $order->id,
+                'order_number' => $order->order_number,
             ]);
         }
 
         return response()->json([
             'success' => true,
             'status' => $status,
-            'paid' => in_array($status, ['paid', 'success']),
+            'paid' => in_array($status, ['paid', 'success', '02']) || $status === '02',
         ]);
     }
 

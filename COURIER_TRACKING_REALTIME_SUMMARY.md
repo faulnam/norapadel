@@ -109,12 +109,12 @@ if (data.progress) {
 **Estimated duration:** 60 minutes
 **Progress:** 30/60 = 50%
 
-**Store location:** (-7.4674, 112.5274)
+**Store location:** (-7.278417, 112.632583)
 **Destination:** (-7.4700, 112.5300)
 
 **Current position:**
-- Lat: -7.4674 + (-7.4700 - -7.4674) × 0.5 = -7.4687
-- Lng: 112.5274 + (112.5300 - 112.5274) × 0.5 = 112.5287
+- Lat: -7.278417 + (-7.2800 - -7.278417) × 0.5 = -7.2792
+- Lng: 112.632583 + (112.6340 - 112.632583) × 0.5 = 112.6333
 
 **Plus random offset** for realistic movement
 

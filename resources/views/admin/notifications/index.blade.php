@@ -29,9 +29,9 @@
                             </h6>
                             <p class="mb-1 text-muted">{{ $notification->data['message'] ?? '' }}</p>
                             @if(isset($notification->data['order_number']))
-                                <a href="{{ route('admin.orders.show', $notification->data['order_id']) }}" class="text-primary small">
-                                    Lihat Pesanan #{{ $notification->data['order_number'] }}
-                                </a>
+                                <span class="text-muted small">
+                                    Pesanan #{{ $notification->data['order_number'] }}
+                                </span>
                             @endif
                         </div>
                         <small class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>

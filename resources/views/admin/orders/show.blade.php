@@ -865,6 +865,20 @@
                         Diverifikasi {{ $order->payment_verified_at->format('d/m/Y H:i') }}
                     </div>
                     @endif
+
+                    @if($order->payment_gateway === 'paylabs' && $order->paylabs_transaction_id && $order->payment_status !== 'paid')
+                    <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-color);">
+                        <form action="{{ route('admin.orders.check-paylabs-status', $order) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="action-btn action-btn-outline" style="width: 100%;">
+                                <i class="fas fa-sync-alt"></i> Cek Status Pembayaran Paylabs
+                            </button>
+                        </form>
+                        <p style="font-size: 11px; color: var(--text-muted); margin-top: 8px; text-align: center;">
+                            Gunakan ini jika customer sudah bayar tapi status belum update
+                        </p>
+                    </div>
+                    @endif
                 </div>
             </div>
             

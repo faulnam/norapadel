@@ -28,8 +28,8 @@ class ShippingController extends Controller
                 'destination_longitude' => 'nullable|numeric',
             ]);
 
-            $destinationLatitude = (float) ($request->destination_latitude ?? -7.2575);
-            $destinationLongitude = (float) ($request->destination_longitude ?? 112.7521);
+            $destinationLatitude = (float) ($request->destination_latitude ?? -7.278417);
+            $destinationLongitude = (float) ($request->destination_longitude ?? 112.632583);
             $destinationPostalCode = $this->resolveDestinationPostalCode($request, $destinationLatitude, $destinationLongitude);
 
             if ($destinationPostalCode === null) {

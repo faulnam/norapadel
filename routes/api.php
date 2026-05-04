@@ -24,9 +24,10 @@ Route::middleware('web')->group(function () {
     
     // Product variants (public)
     Route::get('/products/{product}/variants', function (\App\Models\Product $product) {
+        $activeVariants = $product->activeVariants;
         return response()->json([
-            'has_variants' => $product->has_variants,
-            'variants' => $product->activeVariants->map(function ($variant) {
+            'has_variants' => $activeVariants->isNotEmpty(),
+            'variants' => $activeVariants->map(function ($variant) {
                 return [
                     'id' => $variant->id,
                     'name' => $variant->name,

@@ -12,8 +12,8 @@ fetch('/customer/shipping/rates', {
         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
     },
     body: JSON.stringify({
-        destination_latitude: -7.2575,
-        destination_longitude: 112.7521
+    destination_latitude: -7.278417,
+    destination_longitude: 112.632583
     })
 })
 .then(r => r.json())
@@ -82,8 +82,8 @@ SELECT id, name, weight FROM products;
 ```php
 $biteship = app(\App\Services\BiteshipService::class);
 $result = $biteship->getRates([
-    'destination_latitude' => -7.2575,
-    'destination_longitude' => 112.7521,
+    'destination_latitude' => -7.278417,
+    'destination_longitude' => 112.632583,
     'items' => [
         [
             'name' => 'Test Product',

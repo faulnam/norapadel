@@ -10,8 +10,8 @@
 
 - [ ] Pastikan koordinat toko sudah benar di `.env`
   ```
-  BITESHIP_ORIGIN_LAT=-7.2575
-  BITESHIP_ORIGIN_LNG=112.7521
+   BITESHIP_ORIGIN_LAT=-7.278417
+   BITESHIP_ORIGIN_LNG=112.632583
   BITESHIP_ORIGIN_POSTAL_CODE=61219
   ```
 
@@ -216,7 +216,7 @@ tail -f storage/logs/laravel.log | grep Biteship
 
 3. **Test Koordinat di Google Maps**
    - Buka Google Maps
-   - Input koordinat: `-7.2575, 112.7521`
+   - Input koordinat: `-7.278417, 112.632583`
    - Pastikan lokasi benar
 
 ### Jika Postal Code Invalid

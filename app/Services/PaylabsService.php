@@ -210,9 +210,28 @@ class PaylabsService
         string $payerPhone,
         string $returnUrl
     ): array {
-        $amount    = number_format((float) $data['amount'], 2, '.', '');
+        // Ensure amount is at least 1000 (Paylabs minimum)
+        $rawAmount = (float) ($data['amount'] ?? 0);
+        
+        if ($rawAmount < 1000) {
+            Log::error('Paylabs amount below minimum', [
+                'raw_amount' => $rawAmount,
+                'order_number' => $data['order_number'] ?? 'unknown',
+            ]);
+            throw new \InvalidArgumentException('Amount must be at least 1000.00 (Rp 1.000)');
+        }
+        
+        // Format amount as decimal with 2 digits (required by Paylabs)
+        $amount = number_format($rawAmount, 2, '.', '');
         $goodsInfo = $data['description'] ?? 'Order #' . $data['order_number'];
         $notifyUrl = config('paylabs.callback_url');
+
+        Log::info('Paylabs buildEndpointAndBody', [
+            'channel' => $channel,
+            'raw_amount' => $rawAmount,
+            'formatted_amount' => $amount,
+            'order_number' => $data['order_number'] ?? 'unknown',
+        ]);
 
         // QRIS - exact order from Signature Playground
         if ($channel === 'QRIS') {
@@ -309,57 +328,189 @@ class PaylabsService
             return ['success' => false, 'message' => 'Konfigurasi Paylabs belum lengkap.'];
         }
 
-        $endpoint  = '/payment/v2.3/qris/query';
+        // Try multiple endpoints for checking status
+        $endpoints = [
+            '/payment/v2.1/qris/query',
+            '/payment/v2.3/qris/query',
+            '/payment/v2.1/query',
+        ];
+
+        foreach ($endpoints as $endpoint) {
+            $requestId = (string) Str::uuid();
+            $timestamp = $this->generateTimestamp();
+
+            // Use merchantTradeNo (order number) for query
+            $body = [
+                'requestId'       => $requestId,
+                'merchantId'      => $this->merchantId,
+                'merchantTradeNo' => $transactionId, // This is actually order number
+            ];
+
+            $headers = $this->buildHeaders($endpoint, $body, $requestId, $timestamp);
+
+            Log::info('Paylabs checkStatus request', [
+                'endpoint' => $endpoint,
+                'merchantTradeNo' => $transactionId,
+                'body' => $body,
+            ]);
+
+            try {
+                $response = $this->getHttpClient()
+                    ->withHeaders($headers)
+                    ->withBody($this->minifyJson($body), 'application/json')
+                    ->post($this->baseUrl . $endpoint);
+
+                $result = $response->json();
+
+                Log::info('Paylabs checkStatus response', [
+                    'endpoint' => $endpoint,
+                    'status_code' => $response->status(),
+                    'result' => $result,
+                ]);
+
+                // Skip if 404 or HTML response
+                if ($response->status() === 404 || str_contains($response->body(), '<!DOCTYPE html>')) {
+                    continue;
+                }
+
+                if (($result['errCode'] ?? '') === '0') {
+                    $rawStatus = $result['status'] ?? $result['tradeStatus'] ?? '01';
+                    
+                    // Map Paylabs status codes to our status
+                    $status = match ($rawStatus) {
+                        '02', 'SUCCESS', 'PAID', 'paid', 'success' => 'paid',
+                        '09', 'FAILED', 'failed' => 'failed',
+                        '03', 'EXPIRED', 'expired' => 'expired',
+                        default => 'pending',
+                    };
+                    
+                    Log::info('Paylabs status mapped', [
+                        'raw_status' => $rawStatus,
+                        'mapped_status' => $status,
+                    ]);
+                    
+                    return [
+                        'success' => true,
+                        'data'    => [
+                            'transaction_id'  => $result['platformTradeNo'] ?? null,
+                            'merchant_ref_no' => $result['merchantTradeNo'] ?? null,
+                            'status'          => $status,
+                            'raw_status'      => $rawStatus,
+                            'amount'          => $result['amount'] ?? 0,
+                            'paid_at'         => $result['successTime'] ?? null,
+                        ],
+                    ];
+                }
+
+                // If error but not 404, try next endpoint
+                if (($result['errCode'] ?? '') !== '') {
+                    $errMsg = $result['errCodeDes'] ?? $result['message'] ?? 'Failed to check status';
+                    Log::warning('Paylabs checkStatus API error, trying next endpoint', [
+                        'endpoint' => $endpoint,
+                        'errCode' => $result['errCode'],
+                        'errMsg' => $errMsg,
+                    ]);
+                    continue;
+                }
+
+            } catch (\Exception $e) {
+                Log::error('Paylabs checkStatus exception', [
+                    'endpoint' => $endpoint,
+                    'message' => $e->getMessage(),
+                ]);
+                continue;
+            }
+        }
+
+        return ['success' => false, 'message' => 'Tidak dapat mengecek status pembayaran. Silakan hubungi admin.'];
+    }
+
+    public function cancelTransaction(string $transactionId): bool { return true; }
+
+    /**
+     * Refund transaction via Paylabs API
+     * 
+     * @param string $transactionId Platform trade number dari Paylabs
+     * @param float $amount Jumlah yang akan di-refund
+     * @param string $reason Alasan refund
+     * @return array
+     */
+    public function refundTransaction(string $transactionId, float $amount, string $reason = ''): array
+    {
+        if ($this->mockMode) {
+            return $this->mockRefundTransaction($transactionId, $amount, $reason);
+        }
+
+        if (!$this->canCallLiveApi()) {
+            return ['success' => false, 'message' => 'Konfigurasi Paylabs belum lengkap.'];
+        }
+
+        $endpoint = '/payment/v2.1/refund';
         $requestId = (string) Str::uuid();
         $timestamp = $this->generateTimestamp();
+        $refundAmount = number_format($amount, 2, '.', '');
 
         $body = [
-            'merchantId'      => $this->merchantId,
-            'requestId'       => $requestId,
-            'merchantTradeNo' => $transactionId,
+            'requestId' => $requestId,
+            'merchantId' => $this->merchantId,
+            'platformTradeNo' => $transactionId,
+            'refundAmount' => $refundAmount,
+            'reason' => $reason ?: 'Order cancelled by customer',
         ];
 
         $headers = $this->buildHeaders($endpoint, $body, $requestId, $timestamp);
+        $url = $this->baseUrl . $endpoint;
+
+        Log::info('Paylabs refundTransaction request', [
+            'url' => $url,
+            'endpoint' => $endpoint,
+            'body' => $body,
+            'headers' => array_merge($headers, ['X-SIGNATURE' => '***HIDDEN***']),
+        ]);
 
         try {
             $response = $this->getHttpClient()
                 ->withHeaders($headers)
                 ->withBody($this->minifyJson($body), 'application/json')
-                ->post($this->baseUrl . $endpoint);
+                ->post($url);
+
+            Log::info('Paylabs refundTransaction response', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+
+            if (str_contains($response->body(), '<!DOCTYPE html>')) {
+                return ['success' => false, 'message' => 'Endpoint tidak ditemukan (404).'];
+            }
 
             $result = $response->json();
 
             if (($result['errCode'] ?? '') === '0') {
-                $status = match ($result['status'] ?? '01') {
-                    '02'    => 'paid',
-                    '09'    => 'failed',
-                    default => 'pending',
-                };
                 return [
                     'success' => true,
-                    'data'    => [
-                        'transaction_id'  => $result['platformTradeNo'] ?? null,
-                        'merchant_ref_no' => $result['merchantTradeNo'] ?? null,
-                        'status'          => $status,
-                        'amount'          => $result['amount'] ?? 0,
-                        'paid_at'         => $result['successTime'] ?? null,
+                    'data' => [
+                        'refund_id' => $result['refundTradeNo'] ?? $result['platformRefundNo'] ?? null,
+                        'transaction_id' => $result['platformTradeNo'] ?? $transactionId,
+                        'amount' => $result['refundAmount'] ?? $amount,
+                        'status' => $result['status'] ?? 'completed',
+                        'refunded_at' => $result['refundTime'] ?? now()->toIso8601String(),
+                        'raw_data' => $result,
                     ],
                 ];
             }
 
-            return ['success' => false, 'message' => $result['errCodeDes'] ?? 'Failed to check status'];
+            $errMsg = $result['errCodeDes'] ?? $result['message'] ?? $response->body();
+            Log::error('Paylabs refundTransaction failed', [
+                'errCode' => $result['errCode'] ?? '-',
+                'msg' => $errMsg,
+                'full_response' => $result,
+            ]);
+            return ['success' => false, 'message' => $errMsg];
 
         } catch (\Exception $e) {
-            Log::error('Paylabs checkStatus exception', ['message' => $e->getMessage()]);
+            Log::error('Paylabs refundTransaction exception', ['message' => $e->getMessage()]);
             return ['success' => false, 'message' => $e->getMessage()];
         }
-    }
-
-    public function cancelTransaction(string $transactionId): bool { return true; }
-
-    public function refundTransaction(string $transactionId, float $amount, string $reason = ''): array
-    {
-        return ['success' => true, 'data' => ['refund_id' => 'REFUND-' . uniqid()]];
     }
 
     protected function mockCreateTransaction(array $data): array
@@ -379,5 +530,25 @@ class PaylabsService
     protected function mockCheckStatus(string $transactionId): array
     {
         return ['success' => true, 'data' => ['transaction_id' => $transactionId, 'status' => 'pending', 'amount' => 0]];
+    }
+
+    protected function mockRefundTransaction(string $transactionId, float $amount, string $reason): array
+    {
+        Log::info('Paylabs MOCK refund', [
+            'transaction_id' => $transactionId,
+            'amount' => $amount,
+            'reason' => $reason,
+        ]);
+
+        return [
+            'success' => true,
+            'data' => [
+                'refund_id' => 'REFUND-MOCK-' . strtoupper(uniqid()),
+                'transaction_id' => $transactionId,
+                'amount' => $amount,
+                'status' => 'completed',
+                'refunded_at' => now()->toIso8601String(),
+            ],
+        ];
     }
 }

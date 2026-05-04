@@ -13,3 +13,9 @@ Schedule::command('orders:cancel-expired')
     ->hourly()
     ->withoutOverlapping()
     ->runInBackground();
+
+// Schedule auto-check Paylabs payment status every 5 minutes
+Schedule::command('paylabs:check-status')
+    ->everyFiveMinutes()
+    ->withoutOverlapping()
+    ->runInBackground();

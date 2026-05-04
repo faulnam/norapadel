@@ -23,8 +23,8 @@ return [
     
     'origin' => [
         'postal_code' => '60119',
-        'latitude' => -7.4674,
-        'longitude' => 112.5274,
+    'latitude' => -7.278417,
+    'longitude' => 112.632583,
     ],
 ];
 ```
@@ -139,8 +139,8 @@ Body:
 ```json
 {
     "destination_postal_code": "61219",
-    "destination_latitude": -7.2575,
-    "destination_longitude": 112.7521
+    "destination_latitude": -7.278417,
+    "destination_longitude": 112.632583
 }
 ```
 

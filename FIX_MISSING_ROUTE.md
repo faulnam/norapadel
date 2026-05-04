@@ -103,8 +103,8 @@ updateInterval = setInterval(updateCourierLocation, 5000);
         "address": "Jl. Customer Address"
     },
     "store": {
-        "latitude": -7.4674,
-        "longitude": 112.5274
+    "latitude": -7.278417,
+    "longitude": 112.632583
     },
     "courier": {
         "name": "John Doe",

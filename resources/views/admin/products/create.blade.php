@@ -99,6 +99,7 @@
                                 </div>
                             </div>
                             <small class="text-muted">Kosongkan tanggal jika diskon berlaku selamanya.</small>
+                            <div id="discountedPricePreview" class="mt-2 text-sm text-emerald-700" style="display:none;"></div>
                         </div>
                     </div>
                     
@@ -281,6 +282,68 @@ function previewVariantImage(input) {
     }
 }
 
+function formatRupiah(value) {
+    return 'Rp ' + Math.round(value).toLocaleString('id-ID');
+}
+
+function setupDiscountAutoApply() {
+    const priceInput = document.getElementById('price');
+    const discountInput = document.getElementById('discount_percent');
+    const preview = document.getElementById('discountedPricePreview');
+    const form = priceInput?.closest('form');
+
+    if (!priceInput || !discountInput || !form || !preview) {
+        return;
+    }
+
+    const getBasePrice = () => {
+        const stored = priceInput.dataset.originalPrice;
+        if (stored) {
+            return parseFloat(stored);
+        }
+        const current = parseFloat(priceInput.value || '0');
+        if (!isNaN(current) && current > 0) {
+            priceInput.dataset.originalPrice = current.toString();
+        }
+        return current;
+    };
+
+    const applyDiscount = () => {
+        const discount = parseFloat(discountInput.value || '0');
+        const basePrice = getBasePrice();
+
+        if (!basePrice || isNaN(basePrice) || discount <= 0) {
+            if (priceInput.dataset.originalPrice) {
+                priceInput.value = priceInput.dataset.originalPrice;
+            }
+            preview.style.display = 'none';
+            preview.textContent = '';
+            return;
+        }
+
+        const discounted = basePrice - (basePrice * (discount / 100));
+        priceInput.value = Math.max(0, Math.round(discounted));
+        preview.style.display = 'block';
+        preview.textContent = `Harga setelah diskon: ${formatRupiah(discounted)} (harga akan tersimpan setelah dipotong)`;
+    };
+
+    priceInput.addEventListener('input', () => {
+        if (!discountInput.value || parseFloat(discountInput.value || '0') <= 0) {
+            priceInput.dataset.originalPrice = priceInput.value;
+        }
+    });
+
+    discountInput.addEventListener('input', applyDiscount);
+
+    form.addEventListener('submit', () => {
+        const discount = parseFloat(discountInput.value || '0');
+        if (!discount || discount <= 0) {
+            return;
+        }
+        discountInput.value = '0';
+    });
+}
+
 // Restore old input on validation error
 @if(old('has_variants'))
 document.getElementById('has_variants').checked = true;
@@ -290,6 +353,8 @@ toggleVariants(document.getElementById('has_variants'));
 addVariant({{ json_encode($v) }});
 @endforeach
 @endif
+
+document.addEventListener('DOMContentLoaded', setupDiscountAutoApply);
 </script>
 @endpush
 @endsection

@@ -838,11 +838,15 @@ class OrderController extends Controller
 
     /**
      * Process refund for cancelled order
+     * Handles both payment refund (Paylabs) and shipping cost refund (Biteship)
      */
     protected function processRefund(Order $order): array
     {
         try {
             $refundAmount = (float) $order->total;
+            $paymentRefundSuccess = false;
+            $shippingRefundSuccess = false;
+            $refundMessages = [];
 
             // Update order with pending refund
             $order->update([
@@ -851,48 +855,100 @@ class OrderController extends Controller
                 'refund_at' => now(),
             ]);
 
-            // Process refund via Paylabs if payment was made through gateway
-            if ($order->payment_gateway === 'paylabs' && $order->payment_gateway_transaction_id) {
+            // 1. REFUND PAYMENT via Paylabs (if applicable)
+            if ($order->payment_gateway === 'paylabs' && !empty($order->payment_gateway_transaction_id)) {
                 $paylabs = app(\App\Services\PaylabsService::class);
-                $refundResult = $paylabs->refundTransaction(
+                $paymentRefundResult = $paylabs->refundTransaction(
                     $order->payment_gateway_transaction_id,
                     $refundAmount,
                     'Order cancelled by customer'
                 );
 
-                if ($refundResult['success']) {
-                    $order->update([
-                        'refund_status' => Order::REFUND_COMPLETED,
-                        'refund_transaction_id' => $refundResult['data']['refund_id'] ?? null,
-                    ]);
+                if ($paymentRefundResult['success']) {
+                    $paymentRefundSuccess = true;
+                    $refundMessages[] = 'Refund pembayaran berhasil via Paylabs';
 
-                    \Log::info("Paylabs refund completed for order #{$order->order_number}", [
-                        'refund_id' => $refundResult['data']['refund_id'] ?? null,
+                    \Log::info("Paylabs payment refund completed for order #{$order->order_number}", [
+                        'refund_id' => $paymentRefundResult['data']['refund_id'] ?? null,
                         'amount' => $refundAmount,
                     ]);
-
-                    return ['success' => true, 'message' => 'Refund berhasil diproses via Paylabs'];
                 } else {
-                    // Refund failed, keep as pending for manual processing
-                    \Log::error("Paylabs refund failed for order #{$order->order_number}", [
-                        'error' => $refundResult['message'] ?? 'Unknown error',
+                    $refundMessages[] = 'Refund pembayaran gagal: ' . ($paymentRefundResult['message'] ?? 'Unknown error');
+                    
+                    \Log::error("Paylabs payment refund failed for order #{$order->order_number}", [
+                        'error' => $paymentRefundResult['message'] ?? 'Unknown error',
                     ]);
-
-                    return ['success' => false, 'message' => $refundResult['message'] ?? 'Gagal memproses refund'];
                 }
+            } else {
+                // For manual payment or other gateways
+                $paymentRefundSuccess = true;
+                $refundMessages[] = 'Refund pembayaran akan diproses manual oleh admin';
+                
+                \Log::info("Manual payment refund marked for order #{$order->order_number}", [
+                    'amount' => $refundAmount,
+                    'payment_method' => $order->payment_method,
+                ]);
             }
 
-            // For manual payment or other gateways, mark as completed immediately
-            $order->update([
-                'refund_status' => Order::REFUND_COMPLETED,
-            ]);
+            // 2. REFUND SHIPPING COST via Biteship (if applicable)
+            if (!empty($order->biteship_order_id) && $order->shipping_cost > 0) {
+                $biteship = app(\App\Services\BiteshipService::class);
+                $shippingRefundResult = $biteship->refundShippingCost(
+                    $order->biteship_order_id,
+                    (float) $order->shipping_cost,
+                    'Order cancelled - refund shipping cost'
+                );
 
-            \Log::info("Manual refund completed for order #{$order->order_number}", [
-                'amount' => $refundAmount,
-                'payment_method' => $order->payment_method,
-            ]);
+                if ($shippingRefundResult['success']) {
+                    $shippingRefundSuccess = true;
+                    
+                    if ($shippingRefundResult['auto_refund'] ?? false) {
+                        $refundMessages[] = 'Refund ongkir akan diproses otomatis oleh Biteship';
+                    } else if ($shippingRefundResult['requires_manual_refund'] ?? false) {
+                        $refundMessages[] = 'Refund ongkir akan diproses manual oleh admin';
+                    }
 
-            return ['success' => true, 'message' => 'Refund berhasil diproses'];
+                    \Log::info("Biteship shipping refund processed for order #{$order->order_number}", [
+                        'amount' => $order->shipping_cost,
+                        'auto_refund' => $shippingRefundResult['auto_refund'] ?? false,
+                    ]);
+                } else {
+                    // Shipping refund failed, but don't block the whole refund process
+                    $refundMessages[] = 'Refund ongkir akan diproses manual: ' . ($shippingRefundResult['message'] ?? 'Unknown error');
+                    
+                    \Log::warning("Biteship shipping refund failed for order #{$order->order_number}", [
+                        'error' => $shippingRefundResult['message'] ?? 'Unknown error',
+                    ]);
+                }
+            } else {
+                $shippingRefundSuccess = true; // No shipping refund needed
+            }
+
+            // Determine final refund status
+            if ($paymentRefundSuccess && $shippingRefundSuccess) {
+                $order->update([
+                    'refund_status' => Order::REFUND_COMPLETED,
+                    'refund_transaction_id' => $paymentRefundResult['data']['refund_id'] ?? null,
+                ]);
+
+                return [
+                    'success' => true,
+                    'message' => implode('. ', $refundMessages),
+                ];
+            } else if ($paymentRefundSuccess || $shippingRefundSuccess) {
+                // Partial success - keep as pending
+                return [
+                    'success' => true,
+                    'message' => implode('. ', $refundMessages),
+                    'partial' => true,
+                ];
+            } else {
+                // Both failed
+                return [
+                    'success' => false,
+                    'message' => implode('. ', $refundMessages),
+                ];
+            }
 
         } catch (\Exception $e) {
             \Log::error("Refund error for order #{$order->order_number}: " . $e->getMessage());
@@ -1037,8 +1093,8 @@ class OrderController extends Controller
         // If no real location, simulate for demo (like Shopee)
         if (!$location) {
             // Get store and destination coordinates
-            $storeLat = (float) config('branding.store_latitude', -7.4674);
-            $storeLng = (float) config('branding.store_longitude', 112.5274);
+            $storeLat = (float) config('branding.store_latitude', -7.278417);
+            $storeLng = (float) config('branding.store_longitude', 112.632583);
             $destLat = (float) $order->shipping_latitude;
             $destLng = (float) $order->shipping_longitude;
             
@@ -1112,8 +1168,8 @@ class OrderController extends Controller
                 'address' => $order->shipping_address,
             ],
             'store' => [
-                'latitude' => (float) config('branding.store_latitude', -7.4674),
-                'longitude' => (float) config('branding.store_longitude', 112.5274),
+                'latitude' => (float) config('branding.store_latitude', -7.278417),
+                'longitude' => (float) config('branding.store_longitude', 112.632583),
             ],
             'courier' => [
                 'name' => $order->courier->name ?? $order->courier_driver_name,

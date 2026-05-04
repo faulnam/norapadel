@@ -81,8 +81,8 @@ return [
     |
     */
 
-    'store_latitude' => env('STORE_LATITUDE', -7.4674),
-    'store_longitude' => env('STORE_LONGITUDE', 112.5274),
+    'store_latitude' => env('STORE_LATITUDE', -7.278417),
+    'store_longitude' => env('STORE_LONGITUDE', 112.632583),
 
     /*
     |--------------------------------------------------------------------------

@@ -454,7 +454,7 @@
                     <div class="space-y-4">
                         @foreach($order->items as $item)
                         <div class="flex items-start gap-3">
-                            <img src="{{ $item->product && $item->product->image ? asset('storage/' . $item->product->image) : 'https://via.placeholder.com/60' }}" 
+                       <img src="{{ $item->product ? $item->product->image_url : 'https://via.placeholder.com/60' }}" 
                                  class="h-14 w-14 rounded-lg object-cover flex-shrink-0" alt="{{ $item->product_name }}">
                             <div class="flex-1 min-w-0">
                                 <p class="text-sm font-medium text-black line-clamp-2">{{ $item->product_name }}</p>

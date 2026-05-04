@@ -8,8 +8,8 @@ return [
     
     // Origin address (your store)
     'origin' => [
-        'latitude' => env('BITESHIP_ORIGIN_LAT', env('BRANDING_STORE_LATITUDE', -7.4674)),
-        'longitude' => env('BITESHIP_ORIGIN_LNG', env('BRANDING_STORE_LONGITUDE', 112.5274)),
+    'latitude' => env('BITESHIP_ORIGIN_LAT', env('BRANDING_STORE_LATITUDE', -7.278417)),
+    'longitude' => env('BITESHIP_ORIGIN_LNG', env('BRANDING_STORE_LONGITUDE', 112.632583)),
         'postal_code' => env('BITESHIP_ORIGIN_POSTAL_CODE', env('BRANDING_STORE_POSTAL_CODE', '61219')),
     ],
     

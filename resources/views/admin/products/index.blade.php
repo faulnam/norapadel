@@ -58,7 +58,7 @@
                     @forelse($products as $product)
                         <tr>
                             <td>
-                                <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://via.placeholder.com/50' }}" 
+                          <img src="{{ $product->image_url ?: 'https://via.placeholder.com/50' }}" 
                                      alt="{{ $product->name }}" class="rounded" style="width: 50px; height: 50px; object-fit: cover;">
                             </td>
                             <td>

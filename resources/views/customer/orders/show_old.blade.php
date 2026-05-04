@@ -719,7 +719,7 @@
                     <div class="detail-card-body">
                         @foreach($order->items as $item)
                             <div class="item-row">
-                                <img src="{{ $item->product && $item->product->image ? asset('storage/' . $item->product->image) : 'https://via.placeholder.com/50' }}" alt="{{ $item->product_name }}" class="item-img">
+                                <img src="{{ $item->product ? $item->product->image_url : 'https://via.placeholder.com/50' }}" alt="{{ $item->product_name }}" class="item-img">
                                 <div class="flex-grow-1">
                                     <div class="item-name">{{ $item->product_name }}</div>
                                     <div class="item-qty">{{ $item->formatted_price }} × {{ $item->quantity }}</div>
@@ -1245,8 +1245,8 @@ let isPopupOpen = false;
 
 const ORDER_ID = {{ $order->id }};
 const DESTINATION = {
-    lat: {{ $order->shipping_latitude ?? -7.4674 }},
-    lng: {{ $order->shipping_longitude ?? 112.5274 }}
+    lat: {{ $order->shipping_latitude ?? -7.278417 }},
+    lng: {{ $order->shipping_longitude ?? 112.632583 }}
 };
 
 // Open tracking popup

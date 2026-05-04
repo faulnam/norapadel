@@ -13,8 +13,8 @@ return [
     'timeout' => (int) env('PAYLABS_TIMEOUT', 30),
     'connect_timeout' => (int) env('PAYLABS_CONNECT_TIMEOUT', 10),
     'verify_ssl' => env('PAYLABS_VERIFY_SSL', true),
-    'private_key_path' => env('PAYLABS_PRIVATE_KEY_PATH'),
-    'public_key_path' => env('PAYLABS_PUBLIC_KEY_PATH'),
+    'private_key_path' => env('PAYLABS_PRIVATE_KEY_PATH', storage_path('app/paylabs/private-key.pem')),
+    'public_key_path' => env('PAYLABS_PUBLIC_KEY_PATH', storage_path('app/paylabs/public-key.pem')),
     
     // Payment Methods
     'payment_methods' => [

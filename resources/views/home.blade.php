@@ -105,7 +105,7 @@
                 <div class="col-md-6 col-lg-4">
                     <div class="card h-100 product-card">
                         <div class="position-relative">
-                            <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=400' }}" 
+                       <img src="{{ $product->image_url ?: 'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=400' }}" 
                                  class="card-img-top" alt="{{ $product->name }}" style="height: 200px; object-fit: cover;">
                             @if($product->hasActiveDiscount())
                                 <span class="position-absolute top-0 end-0 m-2 badge bg-danger">-{{ $product->formatted_discount_percent }}</span>

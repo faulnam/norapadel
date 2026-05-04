@@ -83,7 +83,7 @@
                         <div class="mb-3" style="max-height: 200px; overflow-y: auto;">
                             @foreach($soldOutProducts->take(5) as $product)
                                 <div class="d-flex align-items-center gap-3 py-2 border-bottom">
-                                    <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://via.placeholder.com/50' }}" 
+                             <img src="{{ $product->image_url ?: 'https://via.placeholder.com/50' }}" 
                                          alt="{{ $product->name }}" 
                                          class="rounded" 
                                          style="width: 50px; height: 50px; object-fit: cover;">

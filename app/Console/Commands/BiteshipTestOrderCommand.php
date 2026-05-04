@@ -84,8 +84,8 @@ class BiteshipTestOrderCommand extends Command
     protected function getTestOrderData(string $courier): array
     {
         // Koordinat toko (Surabaya)
-        $originLat = (float) config('biteship.origin.latitude', -7.2575);
-        $originLng = (float) config('biteship.origin.longitude', 112.7521);
+    $originLat = (float) config('biteship.origin.latitude', -7.278417);
+    $originLng = (float) config('biteship.origin.longitude', 112.632583);
         $originPostalCode = config('biteship.origin.postal_code', '61219');
 
         // Koordinat tujuan test (Surabaya - area berbeda)

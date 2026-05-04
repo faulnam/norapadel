@@ -201,8 +201,8 @@
                                 <tr>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            @if($item->product && $item->product->image)
-                                                <img src="{{ asset('storage/' . $item->product->image) }}" 
+                                            @if($item->product)
+                                                <img src="{{ $item->product->image_url }}" 
                                                      class="rounded me-3" style="width: 50px; height: 50px; object-fit: cover;">
                                             @else
                                                 <div class="bg-light rounded me-3 d-flex align-items-center justify-content-center" 

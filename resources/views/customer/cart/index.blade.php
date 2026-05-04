@@ -63,7 +63,7 @@
                             <div class="border-b border-black/6 p-6 last:border-0">
                                 <div class="flex flex-col gap-4 sm:flex-row">
                                     <div class="relative mx-auto shrink-0 sm:mx-0">
-                                        <img src="{{ $item->variant && $item->variant->image ? asset('storage/' . $item->variant->image) : ($item->product->image ? asset('storage/' . $item->product->image) : 'https://via.placeholder.com/80') }}" 
+                                <img src="{{ $item->variant ? $item->variant->image_url : ($item->product ? $item->product->image_url : 'https://via.placeholder.com/80') }}" 
                                              alt="{{ $item->product->name }}" class="h-20 w-20 rounded-xl object-cover">
                                         @if($item->product->hasActiveDiscount())
                                             <span class="absolute left-0 top-0 rounded-br-lg rounded-tl-lg bg-rose-500 px-1.5 py-0.5 text-[10px] font-semibold text-white">-{{ $item->product->formatted_discount_percent }}</span>

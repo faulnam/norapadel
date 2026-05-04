@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\User;
+use App\Services\PaylabsService;
 use Illuminate\Http\Request;
 use App\Notifications\OrderStatusChanged;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -176,6 +177,37 @@ class OrderController extends Controller
         $biteshipLabel = $order->label_url;
         
         return view('admin.orders.receipt', compact('order', 'biteshipLabel'));
+    }
+
+    /**
+     * Manual check Paylabs payment status
+     */
+    public function checkPaylabsStatus(Order $order, PaylabsService $paylabs)
+    {
+        if ($order->payment_gateway !== 'paylabs' || !$order->paylabs_transaction_id) {
+            return back()->with('error', 'Order ini bukan menggunakan Paylabs atau tidak memiliki transaction ID.');
+        }
+
+        $result = $paylabs->checkStatus($order->paylabs_transaction_id);
+
+        if (!$result['success']) {
+            return back()->with('error', 'Gagal mengecek status: ' . $result['message']);
+        }
+
+        $status = $result['data']['status'] ?? 'pending';
+        $rawStatus = $result['data']['raw_status'] ?? $status;
+
+        if (in_array($status, ['paid', 'success']) || $status === '02') {
+            $order->update([
+                'payment_status' => Order::PAYMENT_PAID,
+                'paid_at' => now(),
+                'status' => Order::STATUS_PROCESSING,
+            ]);
+
+            return back()->with('success', "Status pembayaran berhasil diupdate menjadi PAID (status dari Paylabs: {$rawStatus})");
+        }
+
+        return back()->with('info', "Status pembayaran di Paylabs: {$rawStatus} (belum paid)");
     }
 
 

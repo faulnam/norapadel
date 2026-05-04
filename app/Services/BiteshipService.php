@@ -321,8 +321,8 @@ class BiteshipService
         );
 
         // Hitung jarak
-        $storeLat = config('biteship.origin.latitude', -7.4674);
-        $storeLng = config('biteship.origin.longitude', 112.5274);
+    $storeLat = config('biteship.origin.latitude', -7.278417);
+    $storeLng = config('biteship.origin.longitude', 112.632583);
         $distance = $this->haversine(
             $storeLat,
             $storeLng,
@@ -343,8 +343,8 @@ class BiteshipService
 
     private function detectZone(float $lat, float $lng): string
     {
-        $storeLat = config('biteship.origin.latitude', -7.4674);
-        $storeLng = config('biteship.origin.longitude', 112.5274);
+    $storeLat = config('biteship.origin.latitude', -7.278417);
+    $storeLng = config('biteship.origin.longitude', 112.632583);
 
         // Hitung jarak dari toko ke tujuan (km)
         $distance = $this->haversine($storeLat, $storeLng, $lat, $lng);
@@ -1240,6 +1240,111 @@ class BiteshipService
                 'message' => $e->getMessage(),
             ];
         }
+    }
+
+    /**
+     * Request refund for shipping cost from Biteship.
+     * 
+     * Note: Biteship tidak memiliki endpoint refund khusus.
+     * Refund ongkir biasanya otomatis diproses jika order dibatalkan sebelum pickup.
+     * Method ini untuk tracking dan logging purposes.
+     * 
+     * @param string $orderId Biteship order ID
+     * @param float $amount Jumlah ongkir yang akan di-refund
+     * @param string $reason Alasan refund
+     * @return array
+     */
+    public function refundShippingCost(string $orderId, float $amount, string $reason = ''): array
+    {
+        if (trim($orderId) === '') {
+            return [
+                'success' => false,
+                'message' => 'Biteship order ID kosong.',
+            ];
+        }
+
+        // Check order status first
+        $orderDetail = $this->getOrder($orderId);
+        
+        if (!($orderDetail['success'] ?? false)) {
+            return [
+                'success' => false,
+                'message' => 'Gagal mengambil detail order dari Biteship: ' . ($orderDetail['message'] ?? 'Unknown error'),
+            ];
+        }
+
+        $data = $orderDetail['data'] ?? [];
+        $status = strtolower((string) ($data['status'] ?? ''));
+        $courier = $data['courier'] ?? [];
+        $waybillId = $courier['waybill_id'] ?? null;
+
+        Log::info('Biteship refund shipping cost check', [
+            'order_id' => $orderId,
+            'status' => $status,
+            'waybill_id' => $waybillId,
+            'amount' => $amount,
+            'reason' => $reason,
+        ]);
+
+        // Statuses yang eligible untuk refund otomatis (belum pickup)
+        $eligibleForAutoRefund = [
+            'confirmed', 'allocated', 'pending', 'created',
+        ];
+
+        // Statuses yang sudah terlalu jauh (tidak bisa refund otomatis)
+        $notEligibleStatuses = [
+            'picked', 'picking_up', 'dropping_off', 'delivered', 'completed',
+        ];
+
+        if (in_array($status, $notEligibleStatuses, true)) {
+            return [
+                'success' => false,
+                'message' => 'Order sudah dalam proses pengiriman, tidak dapat refund ongkir otomatis. Status: ' . $status,
+                'requires_manual_refund' => true,
+                'data' => [
+                    'order_id' => $orderId,
+                    'status' => $status,
+                    'amount' => $amount,
+                ],
+            ];
+        }
+
+        if (in_array($status, $eligibleForAutoRefund, true)) {
+            // Cancel order untuk trigger auto refund
+            $cancelResult = $this->cancelOrder($orderId, $reason ?: 'Order cancelled - refund shipping cost');
+
+            if ($cancelResult['success'] ?? false) {
+                return [
+                    'success' => true,
+                    'message' => 'Order berhasil dibatalkan. Refund ongkir akan diproses otomatis oleh Biteship.',
+                    'auto_refund' => true,
+                    'data' => [
+                        'order_id' => $orderId,
+                        'cancelled_status' => $cancelResult['status'] ?? 'cancelled',
+                        'amount' => $amount,
+                        'refund_method' => 'auto',
+                    ],
+                ];
+            }
+
+            return [
+                'success' => false,
+                'message' => 'Gagal membatalkan order untuk refund: ' . ($cancelResult['message'] ?? 'Unknown error'),
+                'requires_manual_refund' => true,
+            ];
+        }
+
+        // Status lainnya (cancelled, returned, dll)
+        return [
+            'success' => true,
+            'message' => 'Order dengan status "' . $status . '" akan diproses refund manual oleh admin.',
+            'requires_manual_refund' => true,
+            'data' => [
+                'order_id' => $orderId,
+                'status' => $status,
+                'amount' => $amount,
+            ],
+        ];
     }
 
     /**

@@ -16,8 +16,8 @@ Tambahkan ke file `.env`:
 ```env
 BITESHIP_API_KEY=your-testing-api-key-here
 BITESHIP_SANDBOX=true
-BITESHIP_ORIGIN_LAT=-7.2575
-BITESHIP_ORIGIN_LNG=112.7521
+BITESHIP_ORIGIN_LAT=-7.278417
+BITESHIP_ORIGIN_LNG=112.632583
 BITESHIP_ORIGIN_POSTAL_CODE=61219
 ```
 
@@ -65,8 +65,8 @@ Migration akan menambahkan field berikut ke tabel `orders`:
   "success": true,
   "data": {
     "origin": {
-      "latitude": -7.4674,
-      "longitude": 112.5274
+  "latitude": -7.278417,
+  "longitude": 112.632583
     },
     "destination": {
       "latitude": -6.2088,

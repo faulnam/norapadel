@@ -833,8 +833,8 @@
     });
 </script>
 <script>
-    const STORE_LAT = {{ config('branding.store_latitude', -7.4674) }};
-    const STORE_LNG = {{ config('branding.store_longitude', 112.5274) }};
+    const STORE_LAT = {{ config('branding.store_latitude', -7.278417) }};
+    const STORE_LNG = {{ config('branding.store_longitude', 112.632583) }};
     // Subtotal setelah diskon produk
     const SUBTOTAL = {{ $subtotal - $productDiscount }};
     const SHIPPING_RATE_PER_KM = 1500; // Rp 1.500 per KM
@@ -858,8 +858,8 @@
     let storeMarker;
     
     // Default center (Sidoarjo)
-    const defaultLat = {{ old('shipping_latitude') ?: config('branding.store_latitude', -7.4674) }};
-    const defaultLng = {{ old('shipping_longitude') ?: config('branding.store_longitude', 112.5274) }};
+    const defaultLat = {{ old('shipping_latitude') ?: config('branding.store_latitude', -7.278417) }};
+    const defaultLng = {{ old('shipping_longitude') ?: config('branding.store_longitude', 112.632583) }};
     
     document.addEventListener('DOMContentLoaded', function() {
         initMap();

@@ -51,6 +51,14 @@
                 </p>
             </div>
 
+            <div class="mb-6 rounded-xl bg-blue-50 border border-blue-200 p-3">
+                <p class="text-xs text-blue-800 flex items-center justify-center gap-2">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Status pembayaran akan dicek otomatis setiap 10 detik</span>
+                    <span id="auto-check-indicator" class="inline-block w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
+                </p>
+            </div>
+
 
             <!-- Payment Instructions -->
             <div class="text-left mb-6">
@@ -173,16 +181,32 @@ function copyText(elementId) {
     });
 }
 
-function checkPaymentStatus() {
-    const button = event.target;
-    const originalText = button.innerHTML;
-    button.disabled = true;
-    button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Mengecek...';
+let isChecking = false;
+let checkInterval = null;
+
+function checkPaymentStatus(isAutoCheck = false) {
+    if (isChecking) return;
+    
+    isChecking = true;
+    const button = document.querySelector('button[onclick*="checkPaymentStatus"]');
+    const originalText = button ? button.innerHTML : '';
+    
+    if (button && !isAutoCheck) {
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Mengecek...';
+    }
     
     fetch('{{ route('customer.payment.paylabs.check-status', $order) }}')
         .then(response => response.json())
         .then(data => {
-            if (data.status === 'paid' || data.paid) {
+            console.log('Payment status check:', data);
+            
+            if (data.paid || data.status === 'paid' || data.status === 'success' || data.status === '02') {
+                // Stop auto-check
+                if (checkInterval) {
+                    clearInterval(checkInterval);
+                }
+                
                 // Show success message
                 document.querySelector('.rounded-2xl.bg-white').innerHTML = `
                     <div class="text-center py-12">
@@ -201,18 +225,41 @@ function checkPaymentStatus() {
                     window.location.href = '{{ route('customer.orders.show', $order) }}';
                 }, 2000);
             } else {
-                alert('Pembayaran belum diterima. Silakan coba lagi.');
-                button.disabled = false;
-                button.innerHTML = originalText;
+                if (!isAutoCheck) {
+                    alert('Pembayaran belum diterima. Silakan coba lagi atau tunggu beberapa saat.');
+                }
+                
+                if (button) {
+                    button.disabled = false;
+                    button.innerHTML = originalText;
+                }
+                isChecking = false;
             }
         })
         .catch(error => {
-            console.error('Error:', error);
-            alert('Gagal mengecek status. Silakan coba lagi.');
-            button.disabled = false;
-            button.innerHTML = originalText;
+            console.error('Error checking payment status:', error);
+            
+            if (!isAutoCheck) {
+                alert('Gagal mengecek status. Silakan coba lagi.');
+            }
+            
+            if (button) {
+                button.disabled = false;
+                button.innerHTML = originalText;
+            }
+            isChecking = false;
         });
 }
+
+// Auto-check payment status every 10 seconds
+checkInterval = setInterval(() => {
+    checkPaymentStatus(true);
+}, 10000);
+
+// Check immediately on page load
+setTimeout(() => {
+    checkPaymentStatus(true);
+}, 2000);
 
 // Countdown timer
 const expiryTime = new Date('{{ $expiryTime }}').getTime();
@@ -222,8 +269,18 @@ const countdownInterval = setInterval(() => {
 
     if (distance < 0) {
         clearInterval(countdownInterval);
+        if (checkInterval) {
+            clearInterval(checkInterval);
+        }
         document.querySelector('.bg-amber-50').innerHTML = '<p class="text-sm text-red-600"><i class="fas fa-times-circle me-2"></i><strong>Pembayaran expired</strong></p>';
     }
 }, 1000);
+
+// Check when page becomes visible again (user switches back to tab)
+document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+        checkPaymentStatus(true);
+    }
+});
 </script>
 @endsection

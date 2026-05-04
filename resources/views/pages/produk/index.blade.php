@@ -55,7 +55,7 @@
                 <div class="col-6 col-md-4 col-lg-3">
                     <div class="product-card">
                         <div class="product-image">
-                       <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}" 
+                       <img src="{{ $product->image_url ?: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}" 
                                  alt="{{ $product->name }}">
                             <div class="product-badges">
                                 <span class="badge badge-{{ $product->category == 'original' ? 'primary' : 'accent' }}">
@@ -90,7 +90,7 @@
                                         data-product-name="{{ e($product->name) }}"
                                         data-product-category="{{ e($product->category_label) }}"
                                         data-product-description="{{ e(\Illuminate\Support\Str::limit(strip_tags($product->description ?? ''), 180)) }}"
-                                        data-product-image="{{ $product->image ? asset('storage/' . $product->image) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}"
+                                        data-product-image="{{ $product->image_url ?: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}"
                                         data-product-price="{{ $product->hasActiveDiscount() ? $product->formatted_discounted_price : $product->formatted_price }}"
                                         data-product-old-price="{{ $product->hasActiveDiscount() ? $product->formatted_price : '' }}"
                                     >

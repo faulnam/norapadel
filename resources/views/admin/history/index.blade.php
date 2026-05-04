@@ -91,17 +91,12 @@
                         <th>Status</th>
                         <th>Pembayaran</th>
                         <th>Tanggal</th>
-                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($orders as $order)
                         <tr>
-                            <td>
-                                <a href="{{ route('admin.history.show', $order) }}" class="fw-bold text-decoration-none">
-                                    {{ $order->order_number }}
-                                </a>
-                            </td>
+                            <td class="fw-bold">{{ $order->order_number }}</td>
                             <td>{{ $order->user->name }}</td>
                             <td>{{ $order->formatted_total }}</td>
                             <td>
@@ -115,15 +110,10 @@
                                 </span>
                             </td>
                             <td>{{ $order->created_at->format('d/m/Y H:i') }}</td>
-                            <td>
-                                <a href="{{ route('admin.history.show', $order) }}" class="btn btn-sm btn-outline-primary">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="text-center py-4">
+                            <td colspan="6" class="text-center py-4">
                                 <i class="fas fa-history fa-3x text-muted mb-3"></i>
                                 <p class="text-muted mb-0">Belum ada riwayat transaksi</p>
                             </td>

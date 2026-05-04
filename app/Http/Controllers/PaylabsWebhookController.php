@@ -13,7 +13,10 @@ class PaylabsWebhookController extends Controller
      */
     public function handleWebhook(Request $request)
     {
-        Log::info('Paylabs Webhook Received', $request->all());
+        Log::info('Paylabs Webhook Received', [
+            'all_data' => $request->all(),
+            'headers' => $request->headers->all(),
+        ]);
 
         if (config('paylabs.webhook.verify_signature', false)) {
             $headerName = (string) config('paylabs.webhook.signature_header', 'X-Paylabs-Signature');
@@ -28,9 +31,24 @@ class PaylabsWebhookController extends Controller
             }
         }
 
-        $transactionId = $request->input('transaction_id');
-        $status = $request->input('status');
-        $merchantRefNo = $request->input('merchant_ref_no');
+        // Support multiple field names from Paylabs
+        $transactionId = $request->input('transaction_id') 
+            ?? $request->input('platformTradeNo')
+            ?? $request->input('platform_trade_no');
+        
+        $status = $request->input('status') 
+            ?? $request->input('tradeStatus')
+            ?? $request->input('trade_status');
+        
+        $merchantRefNo = $request->input('merchant_ref_no')
+            ?? $request->input('merchantTradeNo')
+            ?? $request->input('merchant_trade_no');
+
+        Log::info('Paylabs Webhook Parsed', [
+            'transaction_id' => $transactionId,
+            'status' => $status,
+            'merchant_ref_no' => $merchantRefNo,
+        ]);
 
         // Find order by transaction ID or order number
         $order = Order::where('paylabs_transaction_id', $transactionId)
@@ -45,8 +63,11 @@ class PaylabsWebhookController extends Controller
             return response()->json(['message' => 'Order not found'], 404);
         }
 
-        // Update order based on status
-        if (in_array($status, ['paid', 'success'])) {
+        // Update order based on status (support multiple status formats)
+        // Status bisa: 'paid', 'success', '02' (paid code), 'SUCCESS', 'PAID'
+        $statusLower = strtolower((string)$status);
+        
+        if (in_array($statusLower, ['paid', 'success', '02']) || $status === '02') {
             $order->update([
                 'payment_status' => Order::PAYMENT_PAID,
                 'paid_at' => now(),
@@ -55,13 +76,21 @@ class PaylabsWebhookController extends Controller
 
             Log::info('Paylabs Webhook: Payment success', [
                 'order_number' => $order->order_number,
+                'order_id' => $order->id,
                 'transaction_id' => $transactionId,
+                'status' => $status,
             ]);
-        } elseif (in_array($status, ['failed', 'expired'])) {
+        } elseif (in_array($statusLower, ['failed', 'expired', '09']) || $status === '09') {
             Log::info('Paylabs Webhook: Payment failed/expired', [
                 'order_number' => $order->order_number,
                 'transaction_id' => $transactionId,
                 'status' => $status,
+            ]);
+        } else {
+            Log::warning('Paylabs Webhook: Unknown status', [
+                'order_number' => $order->order_number,
+                'status' => $status,
+                'status_lower' => $statusLower,
             ]);
         }
 

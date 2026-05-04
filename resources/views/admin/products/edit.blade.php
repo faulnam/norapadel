@@ -113,6 +113,7 @@
                             @else
                                 <small class="text-muted">Kosongkan tanggal jika diskon berlaku selamanya. Set diskon 0 untuk menonaktifkan.</small>
                             @endif
+                            <div id="discountedPricePreview" class="mt-2 text-sm text-emerald-700" style="display:none;"></div>
                         </div>
                     </div>
                     
@@ -153,7 +154,7 @@
                         <label for="image" class="form-label">Gambar Produk</label>
                         @if($product->image)
                             <div class="mb-2">
-                                <img src="{{ asset('storage/' . $product->image) }}" class="img-fluid rounded" style="max-height: 150px;">
+                                <img src="{{ $product->image_url }}" class="img-fluid rounded" style="max-height: 150px;">
                             </div>
                         @endif
                         <input type="file" class="form-control @error('image') is-invalid @enderror" 
@@ -340,6 +341,74 @@ function previewVariantImage(input) {
         reader.readAsDataURL(input.files[0]);
     }
 }
+
+function formatRupiah(value) {
+    return 'Rp ' + Math.round(value).toLocaleString('id-ID');
+}
+
+function setupDiscountAutoApply() {
+    const priceInput = document.getElementById('price');
+    const discountInput = document.getElementById('discount_percent');
+    const preview = document.getElementById('discountedPricePreview');
+    const form = priceInput?.closest('form');
+
+    if (!priceInput || !discountInput || !form || !preview) {
+        return;
+    }
+
+    if (!priceInput.dataset.originalPrice) {
+        priceInput.dataset.originalPrice = priceInput.value;
+    }
+
+    const getBasePrice = () => {
+        const stored = priceInput.dataset.originalPrice;
+        if (stored) {
+            return parseFloat(stored);
+        }
+        const current = parseFloat(priceInput.value || '0');
+        if (!isNaN(current) && current > 0) {
+            priceInput.dataset.originalPrice = current.toString();
+        }
+        return current;
+    };
+
+    const applyDiscount = () => {
+        const discount = parseFloat(discountInput.value || '0');
+        const basePrice = getBasePrice();
+
+        if (!basePrice || isNaN(basePrice) || discount <= 0) {
+            if (priceInput.dataset.originalPrice) {
+                priceInput.value = priceInput.dataset.originalPrice;
+            }
+            preview.style.display = 'none';
+            preview.textContent = '';
+            return;
+        }
+
+        const discounted = basePrice - (basePrice * (discount / 100));
+        priceInput.value = Math.max(0, Math.round(discounted));
+        preview.style.display = 'block';
+        preview.textContent = `Harga setelah diskon: ${formatRupiah(discounted)} (harga akan tersimpan setelah dipotong)`;
+    };
+
+    priceInput.addEventListener('input', () => {
+        if (!discountInput.value || parseFloat(discountInput.value || '0') <= 0) {
+            priceInput.dataset.originalPrice = priceInput.value;
+        }
+    });
+
+    discountInput.addEventListener('input', applyDiscount);
+
+    form.addEventListener('submit', () => {
+        const discount = parseFloat(discountInput.value || '0');
+        if (!discount || discount <= 0) {
+            return;
+        }
+        discountInput.value = '0';
+    });
+}
+
+document.addEventListener('DOMContentLoaded', setupDiscountAutoApply);
 </script>
 @endpush
 @endsection

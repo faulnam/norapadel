@@ -23,8 +23,8 @@ BITESHIP_SANDBOX=false
 Update file `config/biteship.php`:
 ```php
 'origin' => [
-    'latitude' => -7.4674,  // Koordinat toko Anda
-    'longitude' => 112.5274,
+   'latitude' => -7.278417,  // Koordinat toko Anda
+   'longitude' => 112.632583,
     'postal_code' => '60119', // Kode pos toko
 ],
 ```

@@ -122,7 +122,7 @@
                 @forelse($products->take(6) as $product)
                     <article class="group overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_15px_45px_-25px_rgba(15,23,42,0.25)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_20px_55px_-25px_rgba(15,23,42,0.35)]">
                         <div class="relative">
-                            <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=1000' }}" alt="{{ $product->name }}" class="h-56 w-full object-cover">
+                            <img src="{{ $product->image_url ?: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=1000' }}" alt="{{ $product->name }}" class="h-56 w-full object-cover">
                             <div class="absolute left-3 top-3 flex flex-wrap gap-2">
                                 <span class="rounded-full bg-slate-900/85 px-3 py-1 text-xs font-bold text-white">{{ $product->category_label }}</span>
                                 @if($product->hasActiveDiscount())
@@ -474,7 +474,7 @@
                 @forelse($products->take(4) as $product)
                     <div class="product-item">
                         <div class="product-img-wrap">
-                            <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=400' }}"
+                            <img src="{{ $product->image_url ?: 'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=400' }}"
                                 alt="{{ $product->name }}">
                             <div class="product-badge-wrap">
                                 <span

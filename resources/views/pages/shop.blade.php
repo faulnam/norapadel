@@ -75,12 +75,12 @@
                                 data-product-name="{{ e($section['latest']->name) }}"
                                 data-product-category="{{ e($section['latest']->category_label) }}"
                                 data-product-description="{{ e(\Illuminate\Support\Str::limit(strip_tags($section['latest']->description ?? ''), 180)) }}"
-                                data-product-image="{{ $section['latest']->image ? asset('storage/' . $section['latest']->image) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}"
+                                data-product-image="{{ $section['latest']->image_url ?: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}"
                                 data-product-price="{{ $section['latest']->hasActiveDiscount() ? $section['latest']->formatted_discounted_price : $section['latest']->formatted_price }}"
                                 data-product-old-price="{{ $section['latest']->hasActiveDiscount() ? $section['latest']->formatted_price : '' }}"
                             >
                                 <img
-                                    src="{{ $section['latest']->image ? asset('storage/' . $section['latest']->image) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}"
+                                    src="{{ $section['latest']->image_url ?: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}"
                                     alt="{{ $section['latest']->name }}"
                                     class="h-80 w-full object-cover transition duration-500 group-hover:scale-105 md:h-96"
                                     loading="lazy"
@@ -120,13 +120,13 @@
                                             data-product-name="{{ e($product->name) }}"
                                             data-product-category="{{ e($product->category_label) }}"
                                             data-product-description="{{ e(\Illuminate\Support\Str::limit(strip_tags($product->description ?? ''), 180)) }}"
-                                            data-product-image="{{ $product->image ? asset('storage/' . $product->image) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}"
+                                            data-product-image="{{ $product->image_url ?: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}"
                                             data-product-price="{{ $product->hasActiveDiscount() ? $product->formatted_discounted_price : $product->formatted_price }}"
                                             data-product-old-price="{{ $product->hasActiveDiscount() ? $product->formatted_price : '' }}"
                                         >
                                             <div class="relative">
                                                 <img
-                                                    src="{{ $product->image ? asset('storage/' . $product->image) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}"
+                                                    src="{{ $product->image_url ?: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}"
                                                     alt="{{ $product->name }}"
                                                     class="aspect-4/5 w-full object-cover transition duration-500 group-hover:scale-105"
                                                     loading="lazy"

@@ -177,8 +177,8 @@ $biteship->createOrder([
     'origin_contact_name' => 'NoraPadel',
     'origin_contact_phone' => '081234567890',
     'origin_address' => 'Toko NoraPadel',
-    'origin_latitude' => -7.4674,
-    'origin_longitude' => 112.5274,
+    'origin_latitude' => -7.278417,
+    'origin_longitude' => 112.632583,
     
     'destination_contact_name' => $order->shipping_name,
     'destination_contact_phone' => $order->shipping_phone,

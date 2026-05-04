@@ -141,6 +141,7 @@ class ProductController extends Controller
                     'stock' => $variantData['stock'],
                     'price_adjustment' => $variantData['price_adjustment'] ?? 0,
                     'image' => $variantImage,
+                    'is_active' => true,
                     'sort_order' => $i,
                 ]);
             }
@@ -248,6 +249,7 @@ class ProductController extends Controller
                             'price_adjustment' => $variantData['price_adjustment'] ?? 0,
                             'sort_order' => $i,
                             'image' => $variantImage ?? $variant->image,
+                            'is_active' => $variant->is_active ?? true,
                         ]);
                         $totalStock += $variantData['stock'];
                         continue;
@@ -259,6 +261,7 @@ class ProductController extends Controller
                     'stock' => $variantData['stock'],
                     'price_adjustment' => $variantData['price_adjustment'] ?? 0,
                     'image' => $variantImage,
+                    'is_active' => true,
                     'sort_order' => $i,
                 ]);
                 $totalStock += $variantData['stock'];

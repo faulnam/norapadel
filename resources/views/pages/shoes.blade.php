@@ -127,13 +127,13 @@
                             data-product-name="{{ e($product->name) }}"
                             data-product-category="{{ e($product->category_label) }}"
                             data-product-description="{{ e(\Illuminate\Support\Str::limit(strip_tags($product->description ?? ''), 180)) }}"
-                            data-product-image="{{ $product->image ? asset('storage/' . $product->image) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}"
+                            data-product-image="{{ $product->image_url ?: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}"
                             data-product-price="{{ $product->hasActiveDiscount() ? $product->formatted_discounted_price : $product->formatted_price }}"
                             data-product-old-price="{{ $product->hasActiveDiscount() ? $product->formatted_price : '' }}"
                         >
                             <div class="relative aspect-4/5 overflow-hidden bg-zinc-50">
                                 <img
-                                    src="{{ $product->image ? asset('storage/' . $product->image) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}"
+                                    src="{{ $product->image_url ?: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}"
                                     alt="{{ $product->name }}"
                                     class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                                     loading="lazy"
