@@ -14,17 +14,18 @@
                     @csrf
 
                     <div class="mb-3">
-                        <label for="image" class="form-label">Gambar Testimoni <span class="text-danger">*</span></label>
-                        <input type="file" class="form-control @error('image') is-invalid @enderror" 
-                               id="image" name="image" accept="image/*" required>
-                        @error('image')
+                        <label for="images" class="form-label">Gambar Testimoni <span class="text-danger">*</span></label>
+                        <input type="file" class="form-control @error('images') is-invalid @enderror" 
+                               id="images" name="images[]" accept="image/*" multiple required>
+                        @error('images')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
-                        <small class="text-muted">Format: JPG, PNG, WEBP. Maksimal 2MB</small>
+                        @error('images.*')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                        <small class="text-muted">Format: JPG, PNG, WEBP. Maksimal 2MB per gambar (maks 3).</small>
                         
-                        <div class="mt-3" id="imagePreview" style="display: none;">
-                            <img src="" alt="Preview" class="img-fluid rounded" style="max-height: 400px;">
-                        </div>
+                        <div class="mt-3 row g-2" id="imagePreview" style="display: none;"></div>
                     </div>
 
                     <div class="d-flex gap-2">
@@ -44,17 +45,27 @@
 
 @push('scripts')
 <script>
-document.getElementById('image').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const preview = document.getElementById('imagePreview');
-            preview.querySelector('img').src = e.target.result;
-            preview.style.display = 'block';
-        }
-        reader.readAsDataURL(file);
+document.getElementById('images').addEventListener('change', function(e) {
+    const preview = document.getElementById('imagePreview');
+    preview.innerHTML = '';
+    const files = Array.from(e.target.files || []).slice(0, 3);
+
+    if (!files.length) {
+        preview.style.display = 'none';
+        return;
     }
+
+    files.forEach((file) => {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const col = document.createElement('div');
+            col.className = 'col-6 col-md-4';
+            col.innerHTML = `<img src="${event.target.result}" alt="Preview" class="img-fluid rounded" style="max-height: 220px;">`;
+            preview.appendChild(col);
+        };
+        reader.readAsDataURL(file);
+    });
+    preview.style.display = 'flex';
 });
 </script>
 @endpush

@@ -44,18 +44,23 @@ class TestimonialController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'image' => 'required|image|mimes:jpeg,jpg,png,webp|max:2048',
+            'images' => 'required|array|max:3',
+            'images.*' => 'image|mimes:jpeg,jpg,png,webp|max:2048',
         ]);
 
-        $imagePath = $request->file('image')->store('testimonials', 'public');
+        $images = $request->file('images', []);
 
-        Testimonial::create([
-            'user_id' => auth()->id(),
-            'image' => $imagePath,
-            'content' => '',
-            'rating' => 5,
-            'is_approved' => true,
-        ]);
+        foreach ($images as $image) {
+            $imagePath = $image->store('testimonials', 'public');
+
+            Testimonial::create([
+                'user_id' => auth()->id(),
+                'image' => $imagePath,
+                'content' => '',
+                'rating' => 5,
+                'is_approved' => true,
+            ]);
+        }
 
         return redirect()->route('admin.testimonials.index')
             ->with('success', 'Testimoni berhasil ditambahkan.');

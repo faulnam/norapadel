@@ -138,6 +138,9 @@
                                         alt="{{ $product->name }}"
                                         class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                                         loading="lazy">
+                                    @if ($product->has_variants)
+                                        <span class="absolute right-3 top-3 rounded-full bg-black/80 px-2.5 py-1 text-[11px] font-semibold text-white">Varian</span>
+                                    @endif
                                     @if ($product->hasActiveDiscount())
                                         <span
                                             class="absolute left-3 top-3 rounded-full bg-rose-500 px-2.5 py-1 text-[11px] font-semibold text-white">-{{ $product->formatted_discount_percent }}</span>

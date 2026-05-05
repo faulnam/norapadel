@@ -226,12 +226,13 @@ let variantCount = 0;
 
 function toggleVariants(cb) {
     document.getElementById('variantsSection').style.display = cb.checked ? 'block' : 'none';
-    toggleHighlightFields();
+    toggleRequirementFields();
 }
 
-function toggleHighlightFields() {
+function toggleRequirementFields() {
     const isFeatured = document.getElementById('is_featured')?.checked;
     const hasVariants = document.getElementById('has_variants')?.checked;
+    const skipRequired = isFeatured || hasVariants;
     const requiredFields = ['name', 'description', 'price', 'stock', 'category', 'weight'];
     requiredFields.forEach((id) => {
         const field = document.getElementById(id);
@@ -240,7 +241,7 @@ function toggleHighlightFields() {
             field.removeAttribute('required');
             return;
         }
-        if (isFeatured) {
+        if (skipRequired) {
             field.removeAttribute('required');
         } else {
             field.setAttribute('required', 'required');
@@ -249,7 +250,7 @@ function toggleHighlightFields() {
 
     const imageInput = document.getElementById('image');
     if (imageInput) {
-        if (isFeatured) {
+        if (isFeatured && !hasVariants) {
             imageInput.setAttribute('required', 'required');
         } else {
             imageInput.removeAttribute('required');
@@ -260,9 +261,13 @@ function toggleHighlightFields() {
 document.addEventListener('DOMContentLoaded', () => {
     const featuredCheckbox = document.getElementById('is_featured');
     if (featuredCheckbox) {
-        featuredCheckbox.addEventListener('change', toggleHighlightFields);
-        toggleHighlightFields();
+        featuredCheckbox.addEventListener('change', toggleRequirementFields);
     }
+    const variantsCheckbox = document.getElementById('has_variants');
+    if (variantsCheckbox) {
+        variantsCheckbox.addEventListener('change', toggleRequirementFields);
+    }
+    toggleRequirementFields();
 });
 
 function addVariant(data = {}) {
@@ -294,9 +299,8 @@ function addVariant(data = {}) {
                 </div>
             </div>
             <div class="col-md-2">
-                <label class="form-label">Gambar</label>
-                <input type="file" class="form-control" name="variants[${i}][image]" accept="image/*" onchange="previewVariantImage(this)">
-                <div class="variant-img-preview mt-1"></div>
+                <label class="form-label">Catatan</label>
+                <div class="small text-muted">Gambar varian tidak diperlukan.</div>
             </div>
         </div>`;
     list.appendChild(div);
@@ -306,16 +310,6 @@ function removeVariant(btn) {
     btn.closest('.variant-item').remove();
     if (!document.querySelectorAll('.variant-item').length) {
         document.getElementById('variantsEmpty').style.display = 'block';
-    }
-}
-
-function previewVariantImage(input) {
-    const preview = input.nextElementSibling;
-    preview.innerHTML = '';
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = e => preview.innerHTML = `<img src="${e.target.result}" class="img-fluid rounded" style="max-height:80px;">`;
-        reader.readAsDataURL(input.files[0]);
     }
 }
 

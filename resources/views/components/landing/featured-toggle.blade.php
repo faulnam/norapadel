@@ -37,6 +37,9 @@
                             onerror="this.onerror=null;this.src='{{ $cardFallbackImage }}';"
                             loading="lazy"
                         >
+                        @if($product->has_variants)
+                            <span class="absolute right-2 top-2 z-20 inline-flex items-center rounded-full bg-black/85 px-2 py-1 text-[10px] font-semibold text-white shadow">Varian</span>
+                        @endif
                         @if($product->hasActiveDiscount())
                             <span class="absolute left-2 top-2 z-20 inline-flex items-center gap-1 rounded-full bg-rose-500 px-2 py-1 text-[10px] font-semibold text-white shadow">
                                 <i class="fas fa-tag text-[9px]"></i>

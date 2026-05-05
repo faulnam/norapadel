@@ -200,6 +200,9 @@
                                             class="h-[500px] w-full object-cover md:h-[600px] lg:h-[700px]"
                                             onerror="this.onerror=null;this.src='/images/logo.png';"
                                             loading="lazy">
+                                        @if($section['latest']->has_variants)
+                                            <span class="absolute right-3 top-3 rounded-full bg-black/80 px-2.5 py-1 text-[11px] font-semibold text-white">Varian</span>
+                                        @endif
                                         <span class="absolute left-3 top-3 rounded-full bg-black/70 px-2.5 py-1 text-[11px] font-semibold text-white">Highlight</span>
                                     </div>
                                     <div class="absolute inset-0 bg-linear-to-t from-black/65 via-black/20 to-transparent"></div>
@@ -228,6 +231,9 @@
                                             class="h-[500px] w-full object-cover transition duration-500 group-hover:scale-105 md:h-[600px] lg:h-[700px]"
                                             onerror="this.onerror=null;this.src='/images/logo.png';"
                                             loading="lazy">
+                                        @if($section['latest']->has_variants)
+                                            <span class="absolute right-3 top-3 rounded-full bg-black/80 px-2.5 py-1 text-[11px] font-semibold text-white">Varian</span>
+                                        @endif
                                         @if($section['latest']->hasActiveDiscount())
                                             <span class="absolute left-3 top-3 rounded-full bg-rose-500 px-2.5 py-1 text-[11px] font-semibold text-white">-{{ $section['latest']->formatted_discount_percent }}</span>
                                         @endif
@@ -278,6 +284,9 @@
                                                     class="aspect-4/5 w-full object-cover transition duration-500 group-hover:scale-105"
                                                     onerror="this.onerror=null;this.src='/images/logo.png';"
                                                     loading="lazy">
+                                                @if($product->has_variants)
+                                                    <span class="absolute right-3 top-3 rounded-full bg-black/80 px-2.5 py-1 text-[11px] font-semibold text-white">Varian</span>
+                                                @endif
                                                 @if($product->hasActiveDiscount())
                                                     <span class="absolute left-3 top-3 rounded-full bg-rose-500 px-2.5 py-1 text-[11px] font-semibold text-white">-{{ $product->formatted_discount_percent }}</span>
                                                 @endif
@@ -310,106 +319,41 @@
 
         <x-landing.featured-toggle :products="$products" section-class="bg-[#f5f5f7] pt-3 pb-20 lg:pt-5 lg:pb-24" section-id="products" />
 
-    <section id="testimonials" class="np-fade-section bg-white py-18 lg:py-22" data-gallery-showcase>
+    <section id="testimonials" class="np-fade-section bg-white py-18 lg:py-22" data-testimonial-showcase>
             <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
-                <div class="mb-8 text-center"><br><br>
-                    <h2 class="text-3xl font-semibold tracking-tight text-black sm:text-4xl lg:text-5xl">NoraPadel Gallery
-                    </h2>
-                    <p class="mx-auto mt-3 max-w-2xl text-zinc-600">Momen latihan, matchday, dan lifestyle premium
-                        NoraPadel dalam satu showcase yang bergerak dinamis.</p>
-                </div>
-
                 @php
-                    $galleryItems = $galleries->take(8);
-                    $smallGalleryItems = $galleryItems->take(4)->values();
-                    $marqueeItems = $smallGalleryItems->concat($smallGalleryItems);
+                    $testimonialItems = $testimonials->take(3);
                 @endphp
 
-                @if ($galleryItems->count() > 0)
+                @if ($testimonialItems->count() > 0)
                     <div class="relative overflow-hidden rounded-3xl border border-black/6 bg-zinc-50/40 px-2 py-2 shadow-[0_12px_38px_rgba(0,0,0,0.08)] md:px-4 md:py-4"
-                        data-gallery-hero>
-                        <div class="np-gallery-hero-track" data-gallery-track>
-                            @foreach ($galleryItems as $index => $gallery)
-                                <article class="np-gallery-hero-slide">
-                                    <img src="{{ $gallery->image_url }}" alt="{{ $gallery->title }}"
-                                        class="h-[500px] w-full object-cover md:h-[600px] lg:h-[700px]" loading="lazy">
-                                    <div class="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent">
-                                    </div>
-                                    <div class="absolute bottom-0 left-0 right-0 p-4 text-white md:p-6">
-                                        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/80">
-                                            Gallery Highlight</p>
-                                        <h3 class="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">
-                                            {{ $gallery->title }}</h3>
-                                        @if ($gallery->description)
-                                            <p class="mt-2 max-w-2xl text-sm text-white/85 md:text-base">
-                                                {{ \Illuminate\Support\Str::limit($gallery->description, 120) }}</p>
-                                        @endif
+                        data-testimonial-hero>
+                        <div class="np-testimonial-hero-track" data-testimonial-track>
+                            @foreach ($testimonialItems as $index => $testimonial)
+                                <article class="np-testimonial-hero-slide">
+                                    <div class="relative aspect-video overflow-hidden rounded-2xl">
+                                        <img src="{{ $testimonial->image_url ?? '/images/logo.png' }}" alt="Testimoni"
+                                            class="h-full w-full object-cover" loading="lazy">
+                                        <div class="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent">
+                                        </div>
+                                        
                                     </div>
                                 </article>
                             @endforeach
                         </div>
 
                         <div class="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/35 px-3 py-2 backdrop-blur"
-                            data-gallery-dots>
-                            @foreach ($galleryItems as $index => $gallery)
+                            data-testimonial-dots>
+                            @foreach ($testimonialItems as $index => $testimonial)
                                 <button type="button"
-                                    class="np-gallery-dot h-2.5 w-2.5 rounded-full bg-white/45 transition duration-300"
+                                    class="np-testimonial-dot h-2.5 w-2.5 rounded-full bg-white/45 transition duration-300"
                                     data-slide-to="{{ $index }}" aria-label="Slide {{ $index + 1 }}"></button>
                             @endforeach
                         </div>
                     </div>
-
-                    <div class="relative mt-6 overflow-hidden">
-                        <div
-                            class="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-linear-to-r from-white to-transparent">
-                        </div>
-                        <div
-                            class="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-linear-to-l from-white to-transparent">
-                        </div>
-
-                        @php
-                            // Collect gallery thumbnails only
-                            $marqueeCards = collect();
-                            foreach ($smallGalleryItems as $idx => $gi) {
-                                $marqueeCards->push([
-                                    'type' => 'gallery',
-                                    'image' => $gi->image_url,
-                                    'title' => $gi->title,
-                                    'link' => route('galeri'),
-                                ]);
-                            }
-
-                            // Duplicate for infinite scroll
-                            $allMarqueeCards = $marqueeCards->concat($marqueeCards);
-                        @endphp
-
-                        <div class="np-gallery-marquee" data-gallery-marquee>
-                            @foreach ($allMarqueeCards as $index => $card)
-                                @if ($card['type'] === 'gallery')
-                                    <a href="{{ $card['link'] }}"
-                                        class="group block w-40 shrink-0 overflow-hidden rounded-xl border border-black/6 bg-white shadow-[0_6px_24px_rgba(0,0,0,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(0,0,0,0.1)] sm:w-48 md:w-55">
-                                        <div class="relative">
-                                            <img src="{{ $card['image'] }}" alt="{{ $card['title'] }}"
-                                                class="h-24 w-full object-cover transition duration-500 group-hover:scale-105 sm:h-28"
-                                                loading="lazy">
-                                        </div>
-                                        <div class="px-3 py-2.5">
-                                            <p class="line-clamp-1 text-xs font-semibold tracking-tight text-zinc-800">
-                                                {{ $card['title'] }}</p>
-                                        </div>
-                                    </a>
-                                @else
-                                    <div class="block w-64 shrink-0 overflow-hidden rounded-xl border border-black/6 bg-white shadow-[0_6px_24px_rgba(0,0,0,0.06)] sm:w-80 md:w-96">
-                                        <div class="aspect-video">
-                                            <img src="{{ $card['image'] }}" alt="Testimoni"
-                                                class="h-full w-full object-contain"
-                                                loading="lazy">
-                                        </div>
-                                    </div>
-                                @endif
-                            @endforeach
-                        </div>
-                    </div>
+                @else
+                    <div class="rounded-2xl border border-dashed border-zinc-300 bg-white p-10 text-center text-zinc-500">
+                        Belum ada testimoni.</div>
                 @endif
             </div>
         </section>
@@ -460,14 +404,14 @@
             transform: translateY(0);
         }
 
-        .np-gallery-hero-track {
+        .np-testimonial-hero-track {
             display: flex;
             gap: 0.75rem;
             transition: transform 700ms ease;
             will-change: transform;
         }
 
-        .np-gallery-hero-slide {
+        .np-testimonial-hero-slide {
             position: relative;
             min-width: calc(100% - 2.5rem);
             overflow: hidden;
@@ -475,20 +419,9 @@
         }
 
         @media (min-width: 768px) {
-            .np-gallery-hero-slide {
+            .np-testimonial-hero-slide {
                 min-width: calc(100% - 7rem);
             }
-        }
-
-        .np-gallery-marquee {
-            display: flex;
-            gap: 1rem;
-            width: max-content;
-            animation: npMarquee 26s linear infinite;
-        }
-
-        .np-gallery-marquee:hover {
-            animation-play-state: paused;
         }
 
         .np-container-scroll-content h2,
@@ -514,36 +447,6 @@
             background-repeat: no-repeat;
         }
 
-        .np-testimonial-marquee {
-            display: flex;
-            gap: 1.25rem;
-            width: max-content;
-            animation: npTestimonialMarquee 32s linear infinite;
-        }
-
-        .np-testimonial-marquee:hover {
-            animation-play-state: paused;
-        }
-
-        @keyframes npMarquee {
-            0% {
-                transform: translateX(0);
-            }
-
-            100% {
-                transform: translateX(calc(-50% - 0.5rem));
-            }
-        }
-
-        @keyframes npTestimonialMarquee {
-            0% {
-                transform: translateX(0);
-            }
-
-            100% {
-                transform: translateX(calc(-50% - 0.625rem));
-            }
-        }
     </style>
 @endpush
 
@@ -553,7 +456,7 @@
             const revealEls = document.querySelectorAll('.np-fade-section');
             const heroImages = document.querySelectorAll('.np-parallax-image');
             const layoutSections = document.querySelectorAll('[data-featured-toggle]');
-            const galleryShowcase = document.querySelector('[data-gallery-showcase]');
+            const testimonialShowcase = document.querySelector('[data-testimonial-showcase]');
             const mobileMenuToggle = document.querySelector('[data-mobile-menu-toggle]');
             const mobileMenu = document.querySelector('[data-mobile-menu]');
 
@@ -777,15 +680,15 @@
                 });
             });
 
-            if (galleryShowcase) {
-                const viewport = galleryShowcase.querySelector('[data-gallery-hero]');
-                const track = galleryShowcase.querySelector('[data-gallery-track]');
-                const dots = galleryShowcase.querySelectorAll('.np-gallery-dot');
+            if (testimonialShowcase) {
+                const viewport = testimonialShowcase.querySelector('[data-testimonial-hero]');
+                const track = testimonialShowcase.querySelector('[data-testimonial-track]');
+                const dots = testimonialShowcase.querySelectorAll('.np-testimonial-dot');
 
                 if (viewport && track && dots.length > 0) {
                     let currentSlide = 0;
                     const totalSlides = dots.length;
-                    const slides = track.querySelectorAll('.np-gallery-hero-slide');
+                    const slides = track.querySelectorAll('.np-testimonial-hero-slide');
                     let intervalId;
 
                     const getTranslateX = (slideIndex) => {

@@ -61,6 +61,9 @@
                                 <span class="badge badge-{{ $product->category == 'original' ? 'primary' : 'accent' }}">
                                     {{ $product->category_label }}
                                 </span>
+                                @if($product->has_variants)
+                                    <span class="badge bg-dark ms-1">Varian</span>
+                                @endif
                                 @if($product->hasActiveDiscount())
                                     <span class="badge bg-danger ms-1">-{{ $product->formatted_discount_percent }}</span>
                                 @endif

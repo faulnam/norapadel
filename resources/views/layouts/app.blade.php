@@ -1039,7 +1039,7 @@
                                     </small>
                                 </div>
 
-                                <div class="np-product-actions">
+                                <div class="np-product-actions" id="npModalActions">
                                     @auth
                                     
                                         @if(auth()->user()->isCustomer())
@@ -1062,6 +1062,13 @@
                                             <i class="fas fa-shopping-cart"></i>
                                         </a>
                                     @endauth
+                                </div>
+                                <div id="npModalContact" class="alert alert-warning mt-3 d-none" role="alert">
+                                    <div class="fw-semibold mb-1">Produk ini memiliki varian.</div>
+                                    <div class="small">Silakan hubungi admin terlebih dahulu untuk pemesanan.</div>
+                                    <a href="{{ route('contact') }}" class="btn btn-outline-dark btn-sm mt-2">
+                                        <i class="fas fa-headset me-1"></i>Hubungi Admin
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -1182,6 +1189,8 @@
             const modalVariantIdInput = document.getElementById('npModalVariantId');
             const modalBuyBtn = document.getElementById('npModalBuyBtn');
             const cartForm = document.getElementById('npModalCartForm');
+            const modalActions = document.getElementById('npModalActions');
+            const modalContact = document.getElementById('npModalContact');
             const fallbackImage = '{{ asset(config('branding.logo', 'storage/logo.png')) }}';
 
             let currentProductId = null;
@@ -1200,93 +1209,19 @@
 
                     if (data.has_variants && data.variants && data.variants.length > 0) {
                         console.log('✅ Product has variants:', data.variants.length);
-                        
-                        // Clear dropdown
-                        modalVariantSelect.innerHTML = '<option value="">-- Pilih Varian --</option>';
-                        
-                        // Populate dropdown dengan varian dari database
-                        data.variants.forEach(variant => {
-                            const option = document.createElement('option');
-                            option.value = variant.id;
-                            option.textContent = `${variant.name} - ${variant.price}`;
-                            option.dataset.stock = variant.stock;
-                            option.dataset.image = variant.image;
-                            option.dataset.price = variant.price;
-                            option.disabled = variant.stock <= 0;
-                            
-                            if (variant.stock <= 0) {
-                                option.textContent += ' (Habis)';
-                            } else if (variant.stock <= 5) {
-                                option.textContent += ` (Sisa ${variant.stock})`;
-                            }
-                            
-                            modalVariantSelect.appendChild(option);
-                        });
-                        
-                        // TAMPILKAN section varian dengan Bootstrap class
-                        console.log('🎯 Showing variant section...');
-                        modalVariantsSection.classList.remove('d-none');
-                        modalVariantsSection.classList.add('d-block');
-                        console.log('✅ Variant section classes:', modalVariantsSection.className);
-                        
-                        // Disable button sampai varian dipilih
+
+                        if (modalActions) modalActions.classList.add('d-none');
+                        if (modalContact) modalContact.classList.remove('d-none');
+
+                        modalVariantsSection.classList.remove('d-block');
+                        modalVariantsSection.classList.add('d-none');
+                        if (modalVariantIdInput) modalVariantIdInput.value = '';
                         if (modalBuyBtn) modalBuyBtn.disabled = true;
-                        
-                        // Event listener untuk dropdown
-                        modalVariantSelect.onchange = function() {
-                            const selectedOption = this.options[this.selectedIndex];
-                            
-                            if (this.value) {
-                                // Update hidden input
-                                if (modalVariantIdInput) {
-                                    modalVariantIdInput.value = this.value;
-                                }
-                                
-                                // Update gambar jika ada
-                                const variantImage = selectedOption.dataset.image;
-                                if (variantImage && variantImage !== 'null') {
-                                    modalImage.style.opacity = '0';
-                                    setTimeout(() => {
-                                        modalImage.src = variantImage;
-                                        modalImage.style.opacity = '1';
-                                    }, 200);
-                                }
-                                
-                                // Update harga
-                                const variantPrice = selectedOption.dataset.price;
-                                if (variantPrice) {
-                                    modalPrice.textContent = variantPrice;
-                                }
-                                
-                                // Enable button
-                                const stock = parseInt(selectedOption.dataset.stock);
-                                if (modalBuyBtn) {
-                                    modalBuyBtn.disabled = stock <= 0;
-                                }
-                                
-                                // Update hint
-                                if (modalVariantHint) {
-                                    if (stock > 0) {
-                                        modalVariantHint.className = 'text-success d-block mt-1';
-                                        modalVariantHint.innerHTML = `<i class="fas fa-check-circle me-1"></i>Varian dipilih: <strong>${selectedOption.textContent.split(' - ')[0]}</strong>`;
-                                    } else {
-                                        modalVariantHint.className = 'text-danger d-block mt-1';
-                                        modalVariantHint.innerHTML = `<i class="fas fa-times-circle me-1"></i>Varian ini stok habis`;
-                                    }
-                                }
-                            } else {
-                                // Reset jika tidak ada yang dipilih
-                                if (modalVariantIdInput) modalVariantIdInput.value = '';
-                                if (modalBuyBtn) modalBuyBtn.disabled = true;
-                                if (modalVariantHint) {
-                                    modalVariantHint.className = 'text-muted d-block mt-1';
-                                    modalVariantHint.innerHTML = '<i class="fas fa-info-circle me-1"></i>Pilih varian yang tersedia';
-                                }
-                            }
-                        };
-                        
+                        return;
                     } else {
                         console.log('ℹ️ No variants for this product');
+                        if (modalActions) modalActions.classList.remove('d-none');
+                        if (modalContact) modalContact.classList.add('d-none');
                         // SEMBUNYIKAN section varian untuk produk tanpa varian
                         modalVariantsSection.classList.remove('d-block');
                         modalVariantsSection.classList.add('d-none');
@@ -1295,6 +1230,8 @@
                     }
                 } catch (error) {
                     console.error('❌ Error loading variants:', error);
+                    if (modalActions) modalActions.classList.remove('d-none');
+                    if (modalContact) modalContact.classList.add('d-none');
                     // SEMBUNYIKAN section varian jika error
                     modalVariantsSection.classList.remove('d-block');
                     modalVariantsSection.classList.add('d-none');
@@ -1314,6 +1251,9 @@
                 const oldPrice = toText(dataset.productOldPrice);
 
                 currentProductId = productId;
+
+                if (modalActions) modalActions.classList.remove('d-none');
+                if (modalContact) modalContact.classList.add('d-none');
 
                 modalImage.src = image;
                 modalImage.alt = name;

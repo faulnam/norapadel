@@ -31,6 +31,9 @@
                         <span class="badge" style="background: var(--gray-light); color: var(--gray);">
                             {{ $product->formatted_weight }}
                         </span>
+                        @if($product->has_variants)
+                            <span class="badge bg-dark">Varian</span>
+                        @endif
                         @if($product->hasActiveDiscount())
                             <span class="badge bg-danger">-{{ $product->formatted_discount_percent }}</span>
                         @endif
@@ -60,81 +63,10 @@
                         <p class="text-gray">{{ $product->description }}</p>
                     </div>
                     
-                    {{-- Varian Section (Di atas tombol beli) --}}
-                    @if($product->has_variants && $product->activeVariants->count() > 0)
-                        <div class="mb-4 p-3 border rounded" style="background: #f8f9fa;" id="variantSection">
-                            <div class="d-flex align-items-center justify-content-between mb-3">
-                                <h6 class="mb-0 fw-bold">Pilih Varian <span class="text-danger">*</span></h6>
-                                <span id="variantSelectedLabel" class="badge bg-success" style="display:none;">
-                                    <i class="fas fa-check me-1"></i>Dipilih
-                                </span>
-                            </div>
-                            
-                            {{-- Grid Varian dengan Gambar --}}
-                            <div class="row g-2 mb-3">
-                                @foreach($product->activeVariants as $variant)
-                                <div class="col-4 col-sm-3 col-md-2">
-                                    <button type="button"
-                                        class="variant-card-btn w-100 p-2 border rounded position-relative bg-white"
-                                        data-variant-id="{{ $variant->id }}"
-                                        data-variant-name="{{ $variant->name }}"
-                                        data-variant-stock="{{ $variant->stock }}"
-                                        data-variant-price="{{ $variant->formatted_final_price }}"
-                                        data-variant-image="{{ $variant->image_url }}"
-                                        onclick="selectVariant(this)"
-                                        {{ $variant->stock <= 0 ? 'disabled' : '' }}
-                                        style="border: 2px solid #dee2e6; transition: all 0.2s; cursor: pointer; {{ $variant->stock <= 0 ? 'opacity: 0.5; cursor: not-allowed;' : '' }}">
-                                        
-                                        {{-- Checkmark Badge --}}
-                                        <div class="variant-check position-absolute" style="top: 4px; right: 4px; display: none;">
-                                            <span class="badge bg-dark rounded-circle d-flex align-items-center justify-center" style="width: 20px; height: 20px; padding: 0;">
-                                                <i class="fas fa-check" style="font-size: 10px;"></i>
-                                            </span>
-                                        </div>
-                                        
-                                        {{-- Gambar Varian --}}
-                                        <div class="variant-image mb-2" style="aspect-ratio: 1; overflow: hidden; border-radius: 6px; background: #f8f9fa;">
-                                            <img src="{{ $variant->image_url }}" 
-                                                 alt="{{ $variant->name }}"
-                                                 class="w-100 h-100"
-                                                 style="object-fit: cover;"
-                                                 onerror="this.src='{{ $product->image_url }}'">
-                                        </div>
-                                        
-                                        {{-- Nama Varian --}}
-                                        <div class="text-center" style="font-size: 0.75rem; font-weight: 600; color: #212529;">
-                                            {{ $variant->name }}
-                                        </div>
-                                        
-                                        {{-- Stock Badge --}}
-                                        @if($variant->stock <= 0)
-                                            <div class="text-center mt-1">
-                                                <small class="badge bg-danger" style="font-size: 0.65rem;">Habis</small>
-                                            </div>
-                                        @elseif($variant->stock <= 5)
-                                            <div class="text-center mt-1">
-                                                <small class="badge bg-warning text-dark" style="font-size: 0.65rem;">{{ $variant->stock }}</small>
-                                            </div>
-                                        @endif
-                                        
-                                        {{-- Price Adjustment --}}
-                                        @if($variant->price_adjustment != 0)
-                                            <div class="text-center mt-1">
-                                                <small class="badge {{ $variant->price_adjustment > 0 ? 'bg-primary' : 'bg-success' }}" style="font-size: 0.65rem;">
-                                                    {{ $variant->price_adjustment > 0 ? '+' : '' }}{{ number_format(abs($variant->price_adjustment), 0) }}
-                                                </small>
-                                            </div>
-                                        @endif
-                                    </button>
-                                </div>
-                                @endforeach
-                            </div>
-                            
-                            {{-- Hint Message --}}
-                            <div id="variantHint" class="alert alert-danger py-2 px-3 mb-0" style="font-size: 0.875rem;">
-                                <i class="fas fa-exclamation-circle me-1"></i>
-                                <span>Pilih varian terlebih dahulu</span>
-                            </div>
+                    @if($product->has_variants)
+                        <div class="mb-4 alert alert-warning" role="alert">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Produk ini memiliki varian. Silakan hubungi admin terlebih dahulu untuk pemesanan.
                         </div>
                     @endif
                     
@@ -162,24 +94,14 @@
                     
                     <div class="product-actions">
                         @auth
-                            @if($product->has_variants && $product->activeVariants->count() > 0)
-                                {{-- Form dengan Varian (Varian selector sudah di atas) --}}
-                                <form action="{{ route('customer.cart.add', $product) }}" method="POST" id="addToCartForm">
-                                    @csrf
-                                    <input type="hidden" name="variant_id" id="selectedVariantId" required>
-                                    
-                                    <div class="d-flex gap-3">
-                                        <div class="quantity-selector">
-                                            <button type="button" class="qty-btn" onclick="decreaseQty()" disabled id="qtyMinus">-</button>
-                                            <input type="number" name="quantity" id="quantity" value="1" min="1" max="1" disabled>
-                                            <button type="button" class="qty-btn" onclick="increaseQty()" disabled id="qtyPlus">+</button>
-                                        </div>
-                                        <button type="submit" class="btn btn-accent btn-lg flex-grow-1" id="addCartBtn" disabled>
-                                            <i class="fas fa-shopping-cart me-2"></i>Tambah ke Keranjang
-                                        </button>
-                                    </div>
-                                </form>
-                            
+                            @if($product->has_variants)
+                                <div class="alert alert-warning w-100 mb-0">
+                                    <div class="fw-semibold">Produk ini memiliki varian.</div>
+                                    <div class="small">Hubungi admin terlebih dahulu untuk pemesanan.</div>
+                                    <a href="{{ route('contact') }}" class="btn btn-outline-dark btn-sm mt-2">
+                                        <i class="fas fa-headset me-1"></i>Hubungi Admin
+                                    </a>
+                                </div>
                             @elseif($product->stock > 0)
                                 {{-- Produk tanpa varian --}}
                                 <form action="{{ route('customer.cart.add', $product) }}" method="POST" class="d-flex gap-3">
@@ -225,6 +147,11 @@
                         <div class="product-image">
                        <img src="{{ $related->image_url ?: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}" 
                                  alt="{{ $related->name }}">
+                            @if($related->has_variants)
+                                <div class="position-absolute top-0 start-0 m-2">
+                                    <span class="badge bg-dark">Varian</span>
+                                </div>
+                            @endif
                             @if($related->hasActiveDiscount())
                                 <div class="position-absolute top-0 end-0 m-2">
                                     <span class="badge bg-danger">-{{ $related->formatted_discount_percent }}</span>

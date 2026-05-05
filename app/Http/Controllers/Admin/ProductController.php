@@ -78,30 +78,29 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $isFeatured = $request->boolean('is_featured');
+        $hasVariants = $request->boolean('has_variants');
+        $requiresDetails = !($isFeatured || $hasVariants);
 
         $validated = $request->validate([
-            'name' => $isFeatured ? 'nullable|string|max:255' : 'required|string|max:255',
-            'description' => $isFeatured ? 'nullable|string' : 'required|string',
-            'price' => $isFeatured ? 'nullable|numeric|min:0' : 'required|numeric|min:0',
+            'name' => $requiresDetails ? 'required|string|max:255' : 'nullable|string|max:255',
+            'description' => $requiresDetails ? 'required|string' : 'nullable|string',
+            'price' => $requiresDetails ? 'required|numeric|min:0' : 'nullable|numeric|min:0',
             'discount_percent' => 'nullable|numeric|min:0|max:100',
             'discount_start' => 'nullable|date',
             'discount_end' => 'nullable|date|after_or_equal:discount_start',
             'stock' => $isFeatured ? 'nullable|integer|min:0' : 'required_without:has_variants|integer|min:0|nullable',
-            'category' => $isFeatured ? 'nullable|in:original,pedas,shoes' : 'required|in:original,pedas,shoes',
-            'weight' => $isFeatured ? 'nullable|integer|min:1|max:50000' : 'required|integer|min:1|max:50000',
-            'image' => ($isFeatured ? 'required' : 'nullable') . '|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'category' => $requiresDetails ? 'required|in:original,pedas,shoes' : 'nullable|in:original,pedas,shoes',
+            'weight' => $requiresDetails ? 'required|integer|min:1|max:50000' : 'nullable|integer|min:1|max:50000',
+            'image' => (($isFeatured && !$hasVariants) ? 'required' : 'nullable') . '|image|mimes:jpeg,png,jpg,gif|max:2048',
             'is_active' => 'boolean',
             'variants' => 'nullable|array',
             'variants.*.name' => 'required_with:variants|string|max:100',
             'variants.*.stock' => 'required_with:variants|integer|min:0',
             'variants.*.price_adjustment' => 'nullable|numeric',
-            'variants.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $hasVariants = $request->boolean('has_variants');
-
-        $defaultName = 'Produk Highlight';
-        $defaultDescription = 'Produk highlight.';
+        $defaultName = $hasVariants ? 'Produk Varian' : 'Produk Highlight';
+        $defaultDescription = $hasVariants ? 'Produk ini memiliki varian.' : 'Produk highlight.';
         $defaultCategory = Product::CATEGORY_ORIGINAL;
         $defaultWeight = 50;
 
@@ -202,30 +201,29 @@ class ProductController extends Controller
     public function update(Request $request, Product $product)
     {
         $isFeatured = $request->boolean('is_featured');
+        $hasVariants = $request->boolean('has_variants');
+        $requiresDetails = !($isFeatured || $hasVariants);
 
         $validated = $request->validate([
-            'name' => $isFeatured ? 'nullable|string|max:255' : 'required|string|max:255',
-            'description' => $isFeatured ? 'nullable|string' : 'required|string',
-            'price' => $isFeatured ? 'nullable|numeric|min:0' : 'required|numeric|min:0',
+            'name' => $requiresDetails ? 'required|string|max:255' : 'nullable|string|max:255',
+            'description' => $requiresDetails ? 'required|string' : 'nullable|string',
+            'price' => $requiresDetails ? 'required|numeric|min:0' : 'nullable|numeric|min:0',
             'discount_percent' => 'nullable|numeric|min:0|max:100',
             'discount_start' => 'nullable|date',
             'discount_end' => 'nullable|date|after_or_equal:discount_start',
             'stock' => $isFeatured ? 'nullable|integer|min:0' : 'nullable|integer|min:0',
-            'category' => $isFeatured ? 'nullable|in:original,pedas,shoes' : 'required|in:original,pedas,shoes',
-            'weight' => $isFeatured ? 'nullable|integer|min:1|max:50000' : 'required|integer|min:1|max:50000',
+            'category' => $requiresDetails ? 'required|in:original,pedas,shoes' : 'nullable|in:original,pedas,shoes',
+            'weight' => $requiresDetails ? 'required|integer|min:1|max:50000' : 'nullable|integer|min:1|max:50000',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'is_active' => 'boolean',
             'variants' => 'nullable|array',
             'variants.*.name' => 'required_with:variants|string|max:100',
             'variants.*.stock' => 'required_with:variants|integer|min:0',
             'variants.*.price_adjustment' => 'nullable|numeric',
-            'variants.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $hasVariants = $request->boolean('has_variants');
-
-        $defaultName = $product->name ?: 'Produk Highlight';
-        $defaultDescription = $product->description ?: 'Produk highlight.';
+        $defaultName = $product->name ?: ($hasVariants ? 'Produk Varian' : 'Produk Highlight');
+        $defaultDescription = $product->description ?: ($hasVariants ? 'Produk ini memiliki varian.' : 'Produk highlight.');
         $defaultCategory = $product->category ?: Product::CATEGORY_ORIGINAL;
         $defaultWeight = $product->weight ?: 50;
 
