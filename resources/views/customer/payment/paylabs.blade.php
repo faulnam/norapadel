@@ -69,35 +69,85 @@
         <form action="{{ route('customer.payment.paylabs.process', $order) }}" method="POST" class="space-y-8">
             @csrf
 
+            @php
+                $paymentMethods = config('paylabs.payment_methods');
+                $vaList = $paymentMethods['va'] ?? [];
+                $qrisList = $paymentMethods['qris'] ?? [];
+                $ewalletList = $paymentMethods['ewallet'] ?? [];
+                $retailList = $paymentMethods['retail'] ?? [];
+            @endphp
+
             <!-- Virtual Account -->
+            @if(!empty($vaList))
             <div class="rounded-2xl bg-white p-6 shadow-sm">
                 <h3 class="mb-4 text-base font-semibold text-black"><i class="fas fa-university me-2"></i>Virtual Account</h3>
                 <div class="grid gap-3 sm:grid-cols-2">
-                    @foreach(['BCA', 'BNI', 'BRI', 'Mandiri', 'Permata'] as $bank)
+                    @foreach($vaList as $value => $label)
                     <label class="payment-option">
-                        <input type="radio" name="payment_channel" value="VA_{{ strtoupper($bank) }}" required>
+                        <input type="radio" name="payment_channel" value="{{ $value }}" required>
                         <div class="option-content">
                             <i class="fas fa-university"></i>
-                            <span>{{ $bank }}</span>
+                            <span>{{ $label }}</span>
                         </div>
                     </label>
                     @endforeach
                 </div>
             </div>
+            @endif
 
             <!-- QRIS -->
+            @if(!empty($qrisList))
             <div class="rounded-2xl bg-white p-6 shadow-sm">
                 <h3 class="mb-4 text-base font-semibold text-black"><i class="fas fa-qrcode me-2"></i>QRIS</h3>
                 <div class="grid gap-3 sm:grid-cols-2">
+                    @foreach($qrisList as $value => $label)
                     <label class="payment-option">
-                        <input type="radio" name="payment_channel" value="QRIS" required>
+                        <input type="radio" name="payment_channel" value="{{ $value }}" required>
                         <div class="option-content">
                             <i class="fas fa-qrcode"></i>
-                            <span>QRIS</span>
+                            <span>{{ $label }}</span>
                         </div>
                     </label>
+                    @endforeach
                 </div>
             </div>
+            @endif
+
+            <!-- E-Wallet -->
+            @if(!empty($ewalletList))
+            <div class="rounded-2xl bg-white p-6 shadow-sm">
+                <h3 class="mb-4 text-base font-semibold text-black"><i class="fas fa-wallet me-2"></i>E-Wallet</h3>
+                <div class="grid gap-3 sm:grid-cols-2">
+                    @foreach($ewalletList as $value => $label)
+                    <label class="payment-option">
+                        <input type="radio" name="payment_channel" value="{{ $value }}" required>
+                        <div class="option-content">
+                            <i class="fas fa-wallet"></i>
+                            <span>{{ $label }}</span>
+                        </div>
+                    </label>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
+            <!-- Retail -->
+            @if(!empty($retailList))
+            <div class="rounded-2xl bg-white p-6 shadow-sm">
+                <h3 class="mb-4 text-base font-semibold text-black"><i class="fas fa-store me-2"></i>Gerai Retail</h3>
+                <div class="grid gap-3 sm:grid-cols-2">
+                    @foreach($retailList as $value => $label)
+                    <label class="payment-option">
+                        <input type="radio" name="payment_channel" value="{{ $value }}" required>
+                        <div class="option-content">
+                            <i class="fas fa-store"></i>
+                            <span>{{ $label }}</span>
+                        </div>
+                    </label>
+                    @endforeach
+                </div>
+            </div>
+            @endif
 
             <div class="flex gap-3">
                 <a href="{{ route('customer.payment.select-gateway', $order) }}" 

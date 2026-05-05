@@ -157,8 +157,8 @@
                                 <img src="{{ $product->image_url }}" class="img-fluid rounded" style="max-height: 150px;">
                             </div>
                         @endif
-                        <input type="file" class="form-control @error('image') is-invalid @enderror" 
-                               id="image" name="image" accept="image/*" onchange="previewImage(this)">
+               <input type="file" class="form-control @error('image') is-invalid @enderror" 
+                   id="image" name="image" accept="image/*" onchange="previewImage(this)" data-has-image="{{ $product->image ? '1' : '0' }}">
                         @error('image')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -287,6 +287,36 @@ function toggleVariants(cb) {
     stockInput.readOnly = cb.checked;
     if (cb.checked) stockInput.removeAttribute('required');
     else stockInput.setAttribute('required', '');
+    toggleHighlightFields();
+}
+
+function toggleHighlightFields() {
+    const isFeatured = document.getElementById('is_featured')?.checked;
+    const hasVariants = document.getElementById('has_variants')?.checked;
+    const requiredFields = ['name', 'description', 'price', 'stock', 'category', 'weight'];
+    requiredFields.forEach((id) => {
+        const field = document.getElementById(id);
+        if (!field) return;
+        if (id === 'stock' && hasVariants) {
+            field.removeAttribute('required');
+            return;
+        }
+        if (isFeatured) {
+            field.removeAttribute('required');
+        } else {
+            field.setAttribute('required', 'required');
+        }
+    });
+
+    const imageInput = document.getElementById('image');
+    if (imageInput) {
+        const hasImage = imageInput.dataset.hasImage === '1';
+        if (isFeatured && !hasImage) {
+            imageInput.setAttribute('required', 'required');
+        } else {
+            imageInput.removeAttribute('required');
+        }
+    }
 }
 
 function addVariant(data = {}) {
@@ -408,7 +438,14 @@ function setupDiscountAutoApply() {
     });
 }
 
-document.addEventListener('DOMContentLoaded', setupDiscountAutoApply);
+document.addEventListener('DOMContentLoaded', () => {
+    setupDiscountAutoApply();
+    const featuredCheckbox = document.getElementById('is_featured');
+    if (featuredCheckbox) {
+        featuredCheckbox.addEventListener('change', toggleHighlightFields);
+        toggleHighlightFields();
+    }
+});
 </script>
 @endpush
 @endsection

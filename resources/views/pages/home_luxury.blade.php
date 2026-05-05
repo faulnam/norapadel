@@ -191,36 +191,58 @@
 
 
                         @if ($section['latest'])
-                            <button type="button"
-                                class="group relative block w-full overflow-hidden rounded-2xl border border-black/8 bg-white text-start shadow-[0_12px_34px_rgba(0,0,0,0.08)]"
-                                data-product-trigger data-product-id="{{ $section['latest']->id }}"
-                                data-product-name="{{ e($section['latest']->name) }}"
-                                data-product-category="{{ e($section['latest']->category_label) }}"
-                                data-product-description="{{ e(\Illuminate\Support\Str::limit(strip_tags($section['latest']->description ?? ''), 180)) }}"
-                                data-product-image="{{ $section['latest']->image_url }}"
-                                data-product-price="{{ $section['latest']->hasActiveDiscount() ? $section['latest']->formatted_discounted_price : $section['latest']->formatted_price }}"
-                                data-product-old-price="{{ $section['latest']->hasActiveDiscount() ? $section['latest']->formatted_price : '' }}">
-                                <div class="relative">
-                                    <img src="{{ $section['latest']->image_url }}"
-                                        alt="{{ $section['latest']->name }}"
-                                        class="h-[500px] w-full object-cover transition duration-500 group-hover:scale-105 md:h-[600px] lg:h-[700px]"
-                                        onerror="this.onerror=null;this.src='/images/logo.png';"
-                                        loading="lazy">
-                                    @if($section['latest']->hasActiveDiscount())
-                                        <span class="absolute left-3 top-3 rounded-full bg-rose-500 px-2.5 py-1 text-[11px] font-semibold text-white">-{{ $section['latest']->formatted_discount_percent }}</span>
-                                    @endif
+                            @if ($section['latest']->is_featured)
+                                <div
+                                    class="group relative block w-full cursor-default overflow-hidden rounded-2xl border border-black/8 bg-white text-start shadow-[0_12px_34px_rgba(0,0,0,0.08)]">
+                                    <div class="relative">
+                                        <img src="{{ $section['latest']->image_url }}"
+                                            alt="{{ $section['latest']->name }}"
+                                            class="h-[500px] w-full object-cover md:h-[600px] lg:h-[700px]"
+                                            onerror="this.onerror=null;this.src='/images/logo.png';"
+                                            loading="lazy">
+                                        <span class="absolute left-3 top-3 rounded-full bg-black/70 px-2.5 py-1 text-[11px] font-semibold text-white">Highlight</span>
+                                    </div>
+                                    <div class="absolute inset-0 bg-linear-to-t from-black/65 via-black/20 to-transparent"></div>
+                                    <div class="absolute bottom-0 left-0 right-0 p-4 text-white md:p-6">
+                                        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/80">Produk
+                                            Terbaru</p>
+                                        <h3 class="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">
+                                            {{ $section['latest']->name }}</h3>
+                                        <p class="mt-2 text-sm text-white/85 md:text-base">
+                                            {{ \Illuminate\Support\Str::limit($section['latest']->description, 120) }}</p>
+                                    </div>
                                 </div>
-                                <div class="absolute inset-0 bg-linear-to-t from-black/65 via-black/20 to-transparent">
-                                </div>
-                                <div class="absolute bottom-0 left-0 right-0 p-4 text-white md:p-6">
-                                    <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/80">Produk
-                                        Terbaru</p>
-                                    <h3 class="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">
-                                        {{ $section['latest']->name }}</h3>
-                                    <p class="mt-2 text-sm text-white/85 md:text-base">
-                                        {{ \Illuminate\Support\Str::limit($section['latest']->description, 120) }}</p>
-                                </div>
-                            </button>
+                            @else
+                                <button type="button"
+                                    class="group relative block w-full overflow-hidden rounded-2xl border border-black/8 bg-white text-start shadow-[0_12px_34px_rgba(0,0,0,0.08)]"
+                                    data-product-trigger data-product-id="{{ $section['latest']->id }}"
+                                    data-product-name="{{ e($section['latest']->name) }}"
+                                    data-product-category="{{ e($section['latest']->category_label) }}"
+                                    data-product-description="{{ e(\Illuminate\Support\Str::limit(strip_tags($section['latest']->description ?? ''), 180)) }}"
+                                    data-product-image="{{ $section['latest']->image_url }}"
+                                    data-product-price="{{ $section['latest']->hasActiveDiscount() ? $section['latest']->formatted_discounted_price : $section['latest']->formatted_price }}"
+                                    data-product-old-price="{{ $section['latest']->hasActiveDiscount() ? $section['latest']->formatted_price : '' }}">
+                                    <div class="relative">
+                                        <img src="{{ $section['latest']->image_url }}"
+                                            alt="{{ $section['latest']->name }}"
+                                            class="h-[500px] w-full object-cover transition duration-500 group-hover:scale-105 md:h-[600px] lg:h-[700px]"
+                                            onerror="this.onerror=null;this.src='/images/logo.png';"
+                                            loading="lazy">
+                                        @if($section['latest']->hasActiveDiscount())
+                                            <span class="absolute left-3 top-3 rounded-full bg-rose-500 px-2.5 py-1 text-[11px] font-semibold text-white">-{{ $section['latest']->formatted_discount_percent }}</span>
+                                        @endif
+                                    </div>
+                                    <div class="absolute inset-0 bg-linear-to-t from-black/65 via-black/20 to-transparent"></div>
+                                    <div class="absolute bottom-0 left-0 right-0 p-4 text-white md:p-6">
+                                        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/80">Produk
+                                            Terbaru</p>
+                                        <h3 class="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">
+                                            {{ $section['latest']->name }}</h3>
+                                        <p class="mt-2 text-sm text-white/85 md:text-base">
+                                            {{ \Illuminate\Support\Str::limit($section['latest']->description, 120) }}</p>
+                                    </div>
+                                </button>
+                            @endif
                         @endif
 
                         <div class="relative mt-5">

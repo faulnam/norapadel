@@ -879,6 +879,47 @@
                         </p>
                     </div>
                     @endif
+
+                    @if($order->refund_status)
+                    <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-color);">
+                        <div style="font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Refund Request</div>
+                        <div style="font-size: 13px; margin-bottom: 8px;">
+                            <span style="color: var(--text-muted);">Status:</span>
+                            <span class="status-badge {{ in_array($order->refund_status, ['completed']) ? 'success' : (in_array($order->refund_status, ['failed','rejected']) ? 'danger' : 'pending') }}">
+                                {{ ucfirst($order->refund_status) }}
+                            </span>
+                        </div>
+                        @if($order->refund_amount)
+                        <div style="font-size: 13px; margin-bottom: 8px;">
+                            <span style="color: var(--text-muted);">Jumlah:</span>
+                            <strong>Rp {{ number_format($order->refund_amount, 0, ',', '.') }}</strong>
+                        </div>
+                        @endif
+                        @if($order->refund_note)
+                        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px; background: #f9fafb; padding: 8px; border-radius: 6px;">
+                            {{ $order->refund_note }}
+                        </div>
+                        @endif
+
+                        @if($order->refund_status === 'pending')
+                        <div class="d-grid gap-2">
+                            <form action="{{ route('admin.orders.process-refund', $order) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="action-btn action-btn-success" onclick="return confirm('Proses refund Rp {{ number_format($order->refund_amount, 0, \',\', \'.\') }} ke customer?')">
+                                    <i class="fas fa-check"></i> Approve & Proses Refund
+                                </button>
+                            </form>
+                            <form action="{{ route('admin.orders.reject-refund', $order) }}" method="POST">
+                                @csrf
+                                <input type="text" name="reject_reason" class="form-control-minimal mb-2" placeholder="Alasan penolakan..." required>
+                                <button type="submit" class="action-btn action-btn-danger" onclick="return confirm('Tolak refund request ini?')">
+                                    <i class="fas fa-times"></i> Tolak Refund
+                                </button>
+                            </form>
+                        </div>
+                        @endif
+                    </div>
+                    @endif
                 </div>
             </div>
             

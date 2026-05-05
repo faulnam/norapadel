@@ -226,7 +226,44 @@ let variantCount = 0;
 
 function toggleVariants(cb) {
     document.getElementById('variantsSection').style.display = cb.checked ? 'block' : 'none';
+    toggleHighlightFields();
 }
+
+function toggleHighlightFields() {
+    const isFeatured = document.getElementById('is_featured')?.checked;
+    const hasVariants = document.getElementById('has_variants')?.checked;
+    const requiredFields = ['name', 'description', 'price', 'stock', 'category', 'weight'];
+    requiredFields.forEach((id) => {
+        const field = document.getElementById(id);
+        if (!field) return;
+        if (id === 'stock' && hasVariants) {
+            field.removeAttribute('required');
+            return;
+        }
+        if (isFeatured) {
+            field.removeAttribute('required');
+        } else {
+            field.setAttribute('required', 'required');
+        }
+    });
+
+    const imageInput = document.getElementById('image');
+    if (imageInput) {
+        if (isFeatured) {
+            imageInput.setAttribute('required', 'required');
+        } else {
+            imageInput.removeAttribute('required');
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const featuredCheckbox = document.getElementById('is_featured');
+    if (featuredCheckbox) {
+        featuredCheckbox.addEventListener('change', toggleHighlightFields);
+        toggleHighlightFields();
+    }
+});
 
 function addVariant(data = {}) {
     const i = variantCount++;

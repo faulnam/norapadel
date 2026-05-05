@@ -77,17 +77,19 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        $isFeatured = $request->boolean('is_featured');
+
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'price' => 'required|numeric|min:0',
+            'name' => $isFeatured ? 'nullable|string|max:255' : 'required|string|max:255',
+            'description' => $isFeatured ? 'nullable|string' : 'required|string',
+            'price' => $isFeatured ? 'nullable|numeric|min:0' : 'required|numeric|min:0',
             'discount_percent' => 'nullable|numeric|min:0|max:100',
             'discount_start' => 'nullable|date',
             'discount_end' => 'nullable|date|after_or_equal:discount_start',
-            'stock' => 'required_without:has_variants|integer|min:0|nullable',
-            'category' => 'required|in:original,pedas,shoes',
-            'weight' => 'required|integer|min:1|max:50000',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'stock' => $isFeatured ? 'nullable|integer|min:0' : 'required_without:has_variants|integer|min:0|nullable',
+            'category' => $isFeatured ? 'nullable|in:original,pedas,shoes' : 'required|in:original,pedas,shoes',
+            'weight' => $isFeatured ? 'nullable|integer|min:1|max:50000' : 'required|integer|min:1|max:50000',
+            'image' => ($isFeatured ? 'required' : 'nullable') . '|image|mimes:jpeg,png,jpg,gif|max:2048',
             'is_active' => 'boolean',
             'variants' => 'nullable|array',
             'variants.*.name' => 'required_with:variants|string|max:100',
@@ -98,13 +100,36 @@ class ProductController extends Controller
 
         $hasVariants = $request->boolean('has_variants');
 
+        $defaultName = 'Produk Highlight';
+        $defaultDescription = 'Produk highlight.';
+        $defaultCategory = Product::CATEGORY_ORIGINAL;
+        $defaultWeight = 50;
+
+        $name = trim((string) ($validated['name'] ?? ''));
+        if ($name === '') {
+            $name = $defaultName;
+        }
+
+        $description = trim((string) ($validated['description'] ?? ''));
+        if ($description === '') {
+            $description = $defaultDescription;
+        }
+
+        $category = $validated['category'] ?? $defaultCategory;
+        if ($category === '') {
+            $category = $defaultCategory;
+        }
+
+        $price = $validated['price'] ?? 0;
+        $weight = $validated['weight'] ?? $defaultWeight;
+
         $imagePath = null;
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('products', 'public');
         }
 
-        if ($request->boolean('is_featured')) {
-            Product::where('category', $validated['category'])
+        if ($isFeatured) {
+            Product::where('category', $category)
                 ->where('is_featured', true)
                 ->update(['is_featured' => false]);
         }
@@ -113,20 +138,24 @@ class ProductController extends Controller
             ? collect($request->input('variants', []))->sum('stock')
             : ($validated['stock'] ?? 0);
 
+        if ($isFeatured && $totalStock < 1) {
+            $totalStock = 1;
+        }
+
         $product = Product::create([
-            'name' => $validated['name'],
-            'slug' => $this->generateUniqueSlug($validated['name']),
-            'description' => $validated['description'],
-            'price' => $validated['price'],
+            'name' => $name,
+            'slug' => $this->generateUniqueSlug($name),
+            'description' => $description,
+            'price' => $price,
             'discount_percent' => $validated['discount_percent'] ?? 0,
             'discount_start' => $validated['discount_start'] ?? null,
             'discount_end' => $validated['discount_end'] ?? null,
             'stock' => $totalStock,
-            'category' => $validated['category'],
-            'weight' => $validated['weight'],
+            'category' => $category,
+            'weight' => $weight,
             'image' => $imagePath,
             'is_active' => $request->boolean('is_active', true),
-            'is_featured' => $request->boolean('is_featured'),
+            'is_featured' => $isFeatured,
             'has_variants' => $hasVariants,
         ]);
 
@@ -172,16 +201,18 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'price' => 'required|numeric|min:0',
+        $isFeatured = $request->boolean('is_featured');
+
+        $validated = $request->validate([
+            'name' => $isFeatured ? 'nullable|string|max:255' : 'required|string|max:255',
+            'description' => $isFeatured ? 'nullable|string' : 'required|string',
+            'price' => $isFeatured ? 'nullable|numeric|min:0' : 'required|numeric|min:0',
             'discount_percent' => 'nullable|numeric|min:0|max:100',
             'discount_start' => 'nullable|date',
             'discount_end' => 'nullable|date|after_or_equal:discount_start',
-            'stock' => 'nullable|integer|min:0',
-            'category' => 'required|in:original,pedas,shoes',
-            'weight' => 'required|integer|min:1|max:50000',
+            'stock' => $isFeatured ? 'nullable|integer|min:0' : 'nullable|integer|min:0',
+            'category' => $isFeatured ? 'nullable|in:original,pedas,shoes' : 'required|in:original,pedas,shoes',
+            'weight' => $isFeatured ? 'nullable|integer|min:1|max:50000' : 'required|integer|min:1|max:50000',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'is_active' => 'boolean',
             'variants' => 'nullable|array',
@@ -193,14 +224,37 @@ class ProductController extends Controller
 
         $hasVariants = $request->boolean('has_variants');
 
-        $product->name = $request->name;
-        $product->description = $request->description;
-        $product->price = $request->price;
+        $defaultName = $product->name ?: 'Produk Highlight';
+        $defaultDescription = $product->description ?: 'Produk highlight.';
+        $defaultCategory = $product->category ?: Product::CATEGORY_ORIGINAL;
+        $defaultWeight = $product->weight ?: 50;
+
+        $name = trim((string) ($validated['name'] ?? ''));
+        if ($name === '') {
+            $name = $defaultName;
+        }
+
+        $description = trim((string) ($validated['description'] ?? ''));
+        if ($description === '') {
+            $description = $defaultDescription;
+        }
+
+        $category = $validated['category'] ?? $defaultCategory;
+        if ($category === '') {
+            $category = $defaultCategory;
+        }
+
+        $price = $validated['price'] ?? $product->price ?? 0;
+        $weight = $validated['weight'] ?? $defaultWeight;
+
+        $product->name = $name;
+        $product->description = $description;
+        $product->price = $price;
         $product->discount_percent = $request->discount_percent ?? 0;
         $product->discount_start = $request->discount_start ?? null;
         $product->discount_end = $request->discount_end ?? null;
-        $product->category = $request->category;
-        $product->weight = $request->weight;
+        $product->category = $category;
+        $product->weight = $weight;
         $product->is_active = $request->boolean('is_active', true);
         $product->has_variants = $hasVariants;
 
@@ -214,8 +268,8 @@ class ProductController extends Controller
         $product->is_featured = $newFeatured;
 
         $oldName = trim($product->getOriginal('name'));
-        if ($oldName !== trim($request->name)) {
-            $product->slug = $this->generateUniqueSlug($request->name, $product->id);
+        if ($oldName !== trim($name)) {
+            $product->slug = $this->generateUniqueSlug($name, $product->id);
         }
 
         if ($request->hasFile('image')) {
@@ -266,6 +320,9 @@ class ProductController extends Controller
                 ]);
                 $totalStock += $variantData['stock'];
             }
+            if ($isFeatured && $totalStock < 1) {
+                $totalStock = 1;
+            }
             $product->stock = $totalStock;
         } else {
             // No variants - delete all existing variants
@@ -273,7 +330,11 @@ class ProductController extends Controller
                 if ($v->image) Storage::disk('public')->delete($v->image);
                 $v->delete();
             });
-            $product->stock = $request->input('stock', 0);
+            $stock = (int) $request->input('stock', 0);
+            if ($isFeatured && $stock < 1) {
+                $stock = 1;
+            }
+            $product->stock = $stock;
         }
 
         $product->save();

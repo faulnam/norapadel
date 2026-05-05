@@ -145,6 +145,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/orders/{order}/tracking', [\App\Http\Controllers\Admin\PickupController::class, 'getTracking'])->name('orders.tracking');
     Route::get('/orders/{order}/print-label', [\App\Http\Controllers\Admin\PickupController::class, 'printLabel'])->name('orders.print-label');
     Route::post('/orders/{order}/check-paylabs-status', [AdminOrder::class, 'checkPaylabsStatus'])->name('orders.check-paylabs-status');
+    Route::post('/orders/{order}/process-refund', [AdminOrder::class, 'processRefund'])->name('orders.process-refund');
+    Route::post('/orders/{order}/reject-refund', [AdminOrder::class, 'rejectRefund'])->name('orders.reject-refund');
     
     // Testimonials
     Route::get('/testimonials', [AdminTestimonial::class, 'index'])->name('testimonials.index');
@@ -285,6 +287,7 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'customer'])->
     Route::post('/orders/{order}/payment', [CustomerOrder::class, 'uploadPayment'])->name('orders.upload-payment');
     Route::patch('/orders/{order}/cancel', [CustomerOrder::class, 'cancel'])->name('orders.cancel');
     Route::get('/orders/{order}/cancel-status', [CustomerOrder::class, 'checkCancelStatus'])->name('orders.cancel-status');
+    Route::post('/orders/{order}/request-refund', [CustomerOrder::class, 'requestRefund'])->name('orders.request-refund');
     Route::patch('/orders/{order}/confirm', [CustomerOrder::class, 'confirmReceived'])->name('orders.confirm');
     
     // Payment Gateway Selection

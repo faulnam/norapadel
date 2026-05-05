@@ -676,7 +676,7 @@ class OrderController extends Controller
     /**
      * Cancel order
      * Customer can only cancel when status is 'processing'
-     * If paid via non-COD, will process refund
+     * Refund requires admin approval - tidak otomatis
      */
     public function cancel(Request $request, Order $order)
     {
@@ -684,88 +684,48 @@ class OrderController extends Controller
             abort(403);
         }
 
-        // Check if order can be cancelled (only when status is processing)
         if (!$order->canBeCancelled()) {
             if ($order->status === Order::STATUS_CANCELLED) {
                 return back()->with('error', 'Pesanan sudah dibatalkan.');
             }
-            
             if ($order->status === Order::STATUS_COMPLETED) {
                 return back()->with('error', 'Pesanan sudah selesai.');
             }
-            
             if (in_array($order->status, [Order::STATUS_READY_TO_SHIP, Order::STATUS_SHIPPED, Order::STATUS_DELIVERED])) {
                 return back()->with('error', 'Pesanan tidak dapat dibatalkan karena sudah dalam proses pengiriman.');
             }
-
             if ($order->status === Order::STATUS_PENDING_PAYMENT) {
                 return back()->with('error', 'Pesanan dengan status menunggu pembayaran akan otomatis dibatalkan setelah 24 jam.');
             }
-
             return back()->with('error', 'Pesanan tidak dapat dibatalkan.');
         }
 
         $reason = $request->input('cancel_reason', 'Dibatalkan oleh customer');
 
+        // Cancel di Biteship jika ada
         $biteshipCancelStatus = null;
-        $biteshipCancelStage = null;
+        $biteshipCancelStage  = null;
         $biteshipCancelAuditNote = null;
-
         $biteshipTargetId = !empty($order->biteship_order_id)
             ? (string) $order->biteship_order_id
             : (!empty($order->biteship_draft_order_id) ? (string) $order->biteship_draft_order_id : '');
 
         if ($biteshipTargetId !== '') {
-            /** @var BiteshipService $biteship */
             $biteship = app(BiteshipService::class);
-
             $cancelBiteship = $biteship->cancelOrder($biteshipTargetId, $reason);
 
             if (!($cancelBiteship['success'] ?? false)) {
-                $errorMessage = (string) ($cancelBiteship['message'] ?? 'Unknown error');
-
-                \Log::warning('Cancel order blocked: failed cancelling in Biteship', [
-                    'order_number' => $order->order_number,
-                    'biteship_order_id' => $biteshipTargetId,
-                    'message' => $errorMessage,
-                ]);
-
-                return back()->with('error', 'Pesanan belum dapat dibatalkan karena gagal sinkron ke Biteship. ' . $errorMessage);
+                return back()->with('error', 'Pesanan belum dapat dibatalkan karena gagal sinkron ke Biteship. ' . ($cancelBiteship['message'] ?? ''));
             }
 
-            $biteshipCancelStatus = strtolower(trim((string) (
-                $cancelBiteship['status']
-                ?? data_get($cancelBiteship, 'data.status')
-                ?? 'cancel_requested'
-            )));
-
-            if ($biteshipCancelStatus === '') {
-                $biteshipCancelStatus = 'cancel_requested';
-            }
-
-            $biteshipCancelStage = Order::normalizeBiteshipStage($biteshipCancelStatus);
-            if ($biteshipCancelStage === '') {
-                $biteshipCancelStage = Order::BITESHIP_STAGE_RETURN;
-            }
-
+            $biteshipCancelStatus = strtolower(trim((string) ($cancelBiteship['status'] ?? data_get($cancelBiteship, 'data.status') ?? 'cancel_requested')));
+            if ($biteshipCancelStatus === '') $biteshipCancelStatus = 'cancel_requested';
+            $biteshipCancelStage = Order::normalizeBiteshipStage($biteshipCancelStatus) ?: Order::BITESHIP_STAGE_RETURN;
             $biteshipCancelAuditNote = 'biteship_cancel_status=' . $biteshipCancelStatus . '; reason=' . trim((string) $reason);
         }
 
         try {
             DB::beginTransaction();
-
-            // Check if refund is needed (non-COD and paid)
-            $needsRefund = $order->requiresRefund();
-
-            if ($needsRefund) {
-                // Process refund
-                $refundResult = $this->processRefund($order);
-                
-                if (!$refundResult['success']) {
-                    DB::rollBack();
-                    return back()->with('error', 'Gagal memproses pengembalian dana. Silakan hubungi admin.');
-                }
-            }
 
             // Restore stock
             foreach ($order->items as $item) {
@@ -777,39 +737,37 @@ class OrderController extends Controller
             // Cancel order
             $order->cancelOrder($reason);
 
+            // Jika sudah bayar via gateway, set refund PENDING (butuh approval admin)
+            $needsRefund = $order->requiresRefund();
+            if ($needsRefund) {
+                $order->update([
+                    'refund_status' => Order::REFUND_PENDING,
+                    'refund_amount' => $order->total,
+                    'refund_at'     => now(),
+                    'refund_note'   => 'Pembatalan oleh customer: ' . $reason,
+                ]);
+            }
+
             if ($biteshipCancelAuditNote !== null) {
                 $order->fill([
                     'biteship_tracking_status' => $biteshipCancelStatus,
-                    'biteship_status_stage' => $biteshipCancelStage,
-                    'delivery_notes' => trim((string) (($order->delivery_notes ? $order->delivery_notes . "\n" : '') . $biteshipCancelAuditNote)),
+                    'biteship_status_stage'    => $biteshipCancelStage,
+                    'delivery_notes'           => trim((string) (($order->delivery_notes ? $order->delivery_notes . "\n" : '') . $biteshipCancelAuditNote)),
                 ])->saveQuietly();
             }
 
-            // Send notifications
-            $refundAmount = $needsRefund ? (float) $order->total : null;
-            
             // Notify admins
             $admins = User::where('role', 'admin')->get();
             if ($admins->isNotEmpty()) {
-                Notification::send($admins, new OrderCancelledNotification($order, $reason, $refundAmount));
+                Notification::send($admins, new OrderCancelledNotification($order, $reason, $needsRefund ? (float) $order->total : null));
             }
+            auth()->user()->notify(new OrderCancelledNotification($order, $reason, $needsRefund ? (float) $order->total : null));
 
-            // Notify customer
-            auth()->user()->notify(new OrderCancelledNotification($order, $reason, $refundAmount));
-
-            // Send push notification to admins
             try {
                 $webPush = app(WebPushService::class);
-                $pushMessage = "Pesanan #{$order->order_number} dari {$order->user->name} telah dibatalkan";
-                if ($refundAmount > 0) {
-                    $pushMessage .= " - Refund: " . $order->formatted_total;
-                }
-                $webPush->sendToAdmins(
-                    '❌ Pesanan Dibatalkan',
-                    $pushMessage,
-                    route('admin.orders.show', $order),
-                    'order_cancelled'
-                );
+                $pushMsg = "Pesanan #{$order->order_number} dari {$order->user->name} telah dibatalkan";
+                if ($needsRefund) $pushMsg .= ' - Menunggu proses refund: ' . $order->formatted_total;
+                $webPush->sendToAdmins('❌ Pesanan Dibatalkan', $pushMsg, route('admin.orders.show', $order), 'order_cancelled');
             } catch (\Exception $e) {
                 \Log::error('Push notification failed: ' . $e->getMessage());
             }
@@ -817,17 +775,11 @@ class OrderController extends Controller
             DB::commit();
 
             $message = 'Pesanan berhasil dibatalkan.';
-            
             if ($needsRefund) {
-                if ($order->refund_status === Order::REFUND_COMPLETED) {
-                    $message .= ' Dana sebesar ' . $order->formatted_total . ' akan dikembalikan dalam 1-3 hari kerja.';
-                } else if ($order->refund_status === Order::REFUND_PENDING) {
-                    $message .= ' Pengembalian dana sedang diproses.';
-                }
+                $message .= ' Pengembalian dana sebesar ' . $order->formatted_total . ' akan diproses oleh admin dalam 1-3 hari kerja.';
             }
 
-            return redirect()->route('customer.orders.index')
-                ->with('success', $message);
+            return redirect()->route('customer.orders.index')->with('success', $message);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -837,126 +789,118 @@ class OrderController extends Controller
     }
 
     /**
-     * Process refund for cancelled order
-     * Handles both payment refund (Paylabs) and shipping cost refund (Biteship)
+     * Customer request refund setelah barang diterima
+     * Harus japri admin dulu - ini hanya submit request, bukan proses refund langsung
+     */
+    public function requestRefund(Request $request, Order $order)
+    {
+        if ($order->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        // Hanya bisa request refund jika order sudah delivered atau completed
+        if (!in_array($order->status, [Order::STATUS_DELIVERED, Order::STATUS_COMPLETED])) {
+            return back()->with('error', 'Refund hanya bisa diajukan setelah barang diterima.');
+        }
+
+        // Cek apakah sudah ada refund request sebelumnya
+        if ($order->refund_status) {
+            return back()->with('error', 'Permintaan refund sudah pernah diajukan. Status: ' . $order->refund_status);
+        }
+
+        // Cek apakah sudah bayar
+        if ($order->payment_status !== Order::PAYMENT_PAID) {
+            return back()->with('error', 'Refund hanya bisa diajukan untuk pesanan yang sudah dibayar.');
+        }
+
+        $request->validate([
+            'refund_reason' => 'required|string|min:20|max:500',
+        ], [
+            'refund_reason.required' => 'Alasan refund wajib diisi.',
+            'refund_reason.min'      => 'Alasan refund minimal 20 karakter.',
+        ]);
+
+        // Set refund request - PENDING, butuh approval admin
+        $order->update([
+            'refund_status' => Order::REFUND_PENDING,
+            'refund_amount' => $order->total,
+            'refund_at'     => now(),
+            'refund_note'   => $request->refund_reason,
+        ]);
+
+        // Notify admins
+        $admins = User::where('role', 'admin')->get();
+        if ($admins->isNotEmpty()) {
+            Notification::send($admins, new OrderCancelledNotification($order, 'Refund request: ' . $request->refund_reason, (float) $order->total));
+        }
+
+        try {
+            $webPush = app(WebPushService::class);
+            $webPush->sendToAdmins(
+                '🔄 Request Refund Baru',
+                "Customer {$order->user->name} mengajukan refund untuk pesanan #{$order->order_number} - " . $order->formatted_total,
+                route('admin.orders.show', $order),
+                'refund_requested'
+            );
+        } catch (\Exception $e) {
+            \Log::error('Push notification failed: ' . $e->getMessage());
+        }
+
+        return back()->with('success', 'Permintaan refund berhasil diajukan. Admin akan menghubungi Anda dalam 1x24 jam untuk proses pengembalian dana.');
+    }
+
+    /**
+     * Process refund - dipanggil oleh ADMIN, bukan customer
+     * Ini yang benar-benar kirim refund ke Paylabs
      */
     protected function processRefund(Order $order): array
     {
         try {
             $refundAmount = (float) $order->total;
-            $paymentRefundSuccess = false;
-            $shippingRefundSuccess = false;
-            $refundMessages = [];
 
-            // Update order with pending refund
             $order->update([
-                'refund_status' => Order::REFUND_PENDING,
-                'refund_amount' => $refundAmount,
-                'refund_at' => now(),
+                'refund_status' => Order::REFUND_PROCESSING,
             ]);
 
-            // 1. REFUND PAYMENT via Paylabs (if applicable)
-            if ($order->payment_gateway === 'paylabs' && !empty($order->payment_gateway_transaction_id)) {
+            // Refund via Paylabs jika payment gateway paylabs
+            // Gunakan paylabs_transaction_id (field yang benar)
+            if ($order->payment_gateway === 'paylabs' && !empty($order->paylabs_transaction_id)) {
                 $paylabs = app(\App\Services\PaylabsService::class);
-                $paymentRefundResult = $paylabs->refundTransaction(
-                    $order->payment_gateway_transaction_id,
+                $result = $paylabs->refundTransaction(
+                    $order->paylabs_transaction_id,
                     $refundAmount,
-                    'Order cancelled by customer'
+                    'Order cancelled - refund by admin'
                 );
 
-                if ($paymentRefundResult['success']) {
-                    $paymentRefundSuccess = true;
-                    $refundMessages[] = 'Refund pembayaran berhasil via Paylabs';
+                if ($result['success']) {
+                    $order->update([
+                        'refund_status'         => Order::REFUND_COMPLETED,
+                        'refund_transaction_id' => $result['data']['refund_id'] ?? null,
+                    ]);
 
-                    \Log::info("Paylabs payment refund completed for order #{$order->order_number}", [
-                        'refund_id' => $paymentRefundResult['data']['refund_id'] ?? null,
-                        'amount' => $refundAmount,
+                    \Log::info("Paylabs refund completed for order #{$order->order_number}", [
+                        'refund_id' => $result['data']['refund_id'] ?? null,
+                        'amount'    => $refundAmount,
                     ]);
-                } else {
-                    $refundMessages[] = 'Refund pembayaran gagal: ' . ($paymentRefundResult['message'] ?? 'Unknown error');
-                    
-                    \Log::error("Paylabs payment refund failed for order #{$order->order_number}", [
-                        'error' => $paymentRefundResult['message'] ?? 'Unknown error',
-                    ]);
+
+                    return ['success' => true, 'message' => 'Refund berhasil diproses via Paylabs'];
                 }
-            } else {
-                // For manual payment or other gateways
-                $paymentRefundSuccess = true;
-                $refundMessages[] = 'Refund pembayaran akan diproses manual oleh admin';
-                
-                \Log::info("Manual payment refund marked for order #{$order->order_number}", [
-                    'amount' => $refundAmount,
-                    'payment_method' => $order->payment_method,
-                ]);
-            }
 
-            // 2. REFUND SHIPPING COST via Biteship (if applicable)
-            if (!empty($order->biteship_order_id) && $order->shipping_cost > 0) {
-                $biteship = app(\App\Services\BiteshipService::class);
-                $shippingRefundResult = $biteship->refundShippingCost(
-                    $order->biteship_order_id,
-                    (float) $order->shipping_cost,
-                    'Order cancelled - refund shipping cost'
-                );
-
-                if ($shippingRefundResult['success']) {
-                    $shippingRefundSuccess = true;
-                    
-                    if ($shippingRefundResult['auto_refund'] ?? false) {
-                        $refundMessages[] = 'Refund ongkir akan diproses otomatis oleh Biteship';
-                    } else if ($shippingRefundResult['requires_manual_refund'] ?? false) {
-                        $refundMessages[] = 'Refund ongkir akan diproses manual oleh admin';
-                    }
-
-                    \Log::info("Biteship shipping refund processed for order #{$order->order_number}", [
-                        'amount' => $order->shipping_cost,
-                        'auto_refund' => $shippingRefundResult['auto_refund'] ?? false,
-                    ]);
-                } else {
-                    // Shipping refund failed, but don't block the whole refund process
-                    $refundMessages[] = 'Refund ongkir akan diproses manual: ' . ($shippingRefundResult['message'] ?? 'Unknown error');
-                    
-                    \Log::warning("Biteship shipping refund failed for order #{$order->order_number}", [
-                        'error' => $shippingRefundResult['message'] ?? 'Unknown error',
-                    ]);
-                }
-            } else {
-                $shippingRefundSuccess = true; // No shipping refund needed
-            }
-
-            // Determine final refund status
-            if ($paymentRefundSuccess && $shippingRefundSuccess) {
-                $order->update([
-                    'refund_status' => Order::REFUND_COMPLETED,
-                    'refund_transaction_id' => $paymentRefundResult['data']['refund_id'] ?? null,
+                \Log::error("Paylabs refund failed for order #{$order->order_number}", [
+                    'error' => $result['message'] ?? 'Unknown error',
                 ]);
 
-                return [
-                    'success' => true,
-                    'message' => implode('. ', $refundMessages),
-                ];
-            } else if ($paymentRefundSuccess || $shippingRefundSuccess) {
-                // Partial success - keep as pending
-                return [
-                    'success' => true,
-                    'message' => implode('. ', $refundMessages),
-                    'partial' => true,
-                ];
-            } else {
-                // Both failed
-                return [
-                    'success' => false,
-                    'message' => implode('. ', $refundMessages),
-                ];
+                $order->update(['refund_status' => Order::REFUND_FAILED]);
+                return ['success' => false, 'message' => $result['message'] ?? 'Refund gagal'];
             }
+
+            // Untuk payment manual / transfer bank - admin proses manual
+            $order->update(['refund_status' => Order::REFUND_COMPLETED]);
+            return ['success' => true, 'message' => 'Refund manual berhasil ditandai selesai'];
 
         } catch (\Exception $e) {
             \Log::error("Refund error for order #{$order->order_number}: " . $e->getMessage());
-
-            $order->update([
-                'refund_status' => Order::REFUND_FAILED,
-            ]);
-
+            $order->update(['refund_status' => Order::REFUND_FAILED]);
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }

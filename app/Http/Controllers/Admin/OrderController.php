@@ -210,5 +210,66 @@ class OrderController extends Controller
         return back()->with('info', "Status pembayaran di Paylabs: {$rawStatus} (belum paid)");
     }
 
+    /**
+     * Admin approve dan proses refund
+     */
+    public function processRefund(Order $order)
+    {
+        if (!in_array($order->refund_status, [Order::REFUND_PENDING, Order::REFUND_FAILED])) {
+            return back()->with('error', 'Tidak ada refund yang perlu diproses untuk order ini.');
+        }
+
+        $order->update(['refund_status' => Order::REFUND_PROCESSING]);
+
+        // Proses refund via Paylabs jika payment gateway paylabs
+        if ($order->payment_gateway === 'paylabs' && !empty($order->paylabs_transaction_id)) {
+            $paylabs = app(PaylabsService::class);
+            $result = $paylabs->refundTransaction(
+                $order->paylabs_transaction_id,
+                (float) $order->refund_amount,
+                'Refund approved by admin'
+            );
+
+            if ($result['success']) {
+                $order->update([
+                    'refund_status'         => Order::REFUND_COMPLETED,
+                    'refund_transaction_id' => $result['data']['refund_id'] ?? null,
+                ]);
+
+                $order->user->notify(new OrderStatusChanged($order, 'Refund sebesar ' . $order->formatted_total . ' telah diproses dan akan masuk dalam 1-3 hari kerja.'));
+
+                return back()->with('success', 'Refund berhasil diproses via Paylabs. Dana akan masuk ke customer dalam 1-3 hari kerja.');
+            }
+
+            $order->update(['refund_status' => Order::REFUND_FAILED]);
+            return back()->with('error', 'Refund gagal: ' . ($result['message'] ?? 'Unknown error'));
+        }
+
+        // Untuk payment manual - admin tandai manual
+        $order->update(['refund_status' => Order::REFUND_COMPLETED]);
+        $order->user->notify(new OrderStatusChanged($order, 'Refund sebesar ' . $order->formatted_total . ' telah diproses oleh admin.'));
+
+        return back()->with('success', 'Refund manual berhasil ditandai selesai. Pastikan dana sudah ditransfer ke customer.');
+    }
+
+    /**
+     * Admin reject refund request
+     */
+    public function rejectRefund(Request $request, Order $order)
+    {
+        if ($order->refund_status !== Order::REFUND_PENDING) {
+            return back()->with('error', 'Tidak ada refund pending untuk order ini.');
+        }
+
+        $order->update([
+            'refund_status' => Order::REFUND_REJECTED,
+            'refund_note'   => $order->refund_note . ' | Ditolak admin: ' . $request->input('reject_reason', 'Tidak memenuhi syarat refund'),
+        ]);
+
+        $order->user->notify(new OrderStatusChanged($order, 'Permintaan refund Anda ditolak. Alasan: ' . $request->input('reject_reason', 'Tidak memenuhi syarat refund')));
+
+        return back()->with('success', 'Refund request berhasil ditolak.');
+    }
+
 
 }

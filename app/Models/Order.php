@@ -72,6 +72,8 @@ class Order extends Model
         'refund_at',
         'refund_amount',
         'refund_status',
+        'refund_transaction_id',
+        'refund_note',
         'courier_driver_name',
         'courier_driver_phone',
         'courier_driver_photo',
@@ -115,10 +117,12 @@ class Order extends Model
     const CANCEL_WAIT_MINUTES = 5;
 
     // Refund status
-    const REFUND_PENDING = 'pending';
-    const REFUND_PROCESSING = 'processing';
-    const REFUND_COMPLETED = 'completed';
-    const REFUND_FAILED = 'failed';
+    const REFUND_PENDING   = 'pending';    // Menunggu approval admin
+    const REFUND_APPROVED  = 'approved';   // Disetujui admin, sedang diproses
+    const REFUND_PROCESSING = 'processing'; // Sedang diproses ke payment gateway
+    const REFUND_COMPLETED = 'completed';  // Dana sudah dikembalikan
+    const REFUND_FAILED    = 'failed';     // Gagal
+    const REFUND_REJECTED  = 'rejected';   // Ditolak admin
 
     // Jam operasional pengiriman
     const DELIVERY_START_HOUR = 10; // 10:00
