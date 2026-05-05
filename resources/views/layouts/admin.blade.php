@@ -694,11 +694,7 @@
             <a href="{{ route('admin.staff.index') }}" class="nav-link {{ request()->routeIs('admin.staff.*') ? 'active' : '' }}">
                 <i class="fas fa-user-shield"></i> Staff
             </a>
-            
-            <a href="{{ route('admin.galleries.index') }}" class="nav-link {{ request()->routeIs('admin.galleries.*') ? 'active' : '' }}">
-                <i class="fas fa-images"></i> Galeri
-            </a>
-            
+        
             <a href="{{ route('admin.shipping-discounts.index') }}" class="nav-link {{ request()->routeIs('admin.shipping-discounts.*') ? 'active' : '' }}">
                 <i class="fas fa-tags"></i> Diskon Ongkir
             </a>
