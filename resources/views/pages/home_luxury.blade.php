@@ -207,10 +207,6 @@
                                     </div>
                                     <div class="absolute inset-0 bg-linear-to-t from-black/65 via-black/20 to-transparent"></div>
                                     <div class="absolute bottom-0 left-0 right-0 p-4 text-white md:p-6">
-                                        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/80">Produk
-                                            Terbaru</p>
-                                        <h3 class="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">
-                                            {{ $section['latest']->name }}</h3>
                                         <p class="mt-2 text-sm text-white/85 md:text-base">
                                             {{ \Illuminate\Support\Str::limit($section['latest']->description, 120) }}</p>
                                     </div>
