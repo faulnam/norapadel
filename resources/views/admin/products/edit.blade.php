@@ -120,7 +120,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="category" class="form-label">Kategori <span class="text-danger">*</span></label>
+                                <label for="category" class="form-label">Kategori Produk <span class="text-danger">*</span></label>
                                 <select class="form-select @error('category') is-invalid @enderror" id="category" name="category" required>
                                     <option value="">Pilih Kategori</option>
                                     @foreach(\App\Models\Product::categories() as $value => $label)
@@ -134,18 +134,30 @@
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="weight" class="form-label">Berat <span class="text-danger">*</span></label>
-                                <div class="input-group">
-                                    <input type="number" class="form-control @error('weight') is-invalid @enderror" 
-                                           id="weight" name="weight" value="{{ old('weight', $product->weight) }}" min="1" step="1" required>
-                                    <span class="input-group-text">gram</span>
-                                </div>
-                                @error('weight')
+                                <label for="package_type" class="form-label">Tipe Paket</label>
+                                <select class="form-select @error('package_type') is-invalid @enderror" id="package_type" name="package_type">
+                                    @foreach(\App\Models\Product::packageTypes() as $value => $label)
+                                        <option value="{{ $value }}" {{ old('package_type', $product->package_type ?? 'single') == $value ? 'selected' : '' }}>{{ $label }}</option>
+                                    @endforeach
+                                </select>
+                                @error('package_type')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                                <small class="text-muted">Isi berat produk dalam gram (contoh: 360, 900, 1200).</small>
                             </div>
                         </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="weight" class="form-label">Berat <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input type="number" class="form-control @error('weight') is-invalid @enderror" 
+                                   id="weight" name="weight" value="{{ old('weight', $product->weight) }}" min="1" step="1" required>
+                            <span class="input-group-text">gram</span>
+                        </div>
+                        @error('weight')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                        <small class="text-muted">Isi berat produk dalam gram (contoh: 360, 900, 1200).</small>
                     </div>
                 </div>
                 

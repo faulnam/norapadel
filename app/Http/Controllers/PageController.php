@@ -332,16 +332,21 @@ class PageController extends Controller
             abort(404);
         }
 
-        $product->load('activeVariants');
-
         $relatedProducts = Product::active()
+            ->inStock()
             ->where('is_featured', false)
             ->where('id', '!=', $product->id)
             ->where('category', $product->category)
             ->take(4)
             ->get();
 
-        return view('pages.produk.show', compact('product', 'relatedProducts'));
+        $testimonials = Testimonial::approved()
+            ->with('user')
+            ->latest()
+            ->take(6)
+            ->get();
+
+        return view('pages.product-detail', compact('product', 'relatedProducts', 'testimonials'));
     }
 
     /**

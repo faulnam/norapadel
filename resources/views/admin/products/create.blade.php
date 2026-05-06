@@ -106,7 +106,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="category" class="form-label">Kategori <span class="text-danger">*</span></label>
+                                <label for="category" class="form-label">Kategori Produk <span class="text-danger">*</span></label>
                                 <select class="form-select @error('category') is-invalid @enderror" id="category" name="category" required>
                                     <option value="">Pilih Kategori</option>
                                     @foreach(\App\Models\Product::categories() as $value => $label)
@@ -120,18 +120,30 @@
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="weight" class="form-label">Berat <span class="text-danger">*</span></label>
-                                <div class="input-group">
-                                    <input type="number" class="form-control @error('weight') is-invalid @enderror" 
-                                           id="weight" name="weight" value="{{ old('weight') }}" min="1" step="1" required>
-                                    <span class="input-group-text">gram</span>
-                                </div>
-                                @error('weight')
+                                <label for="package_type" class="form-label">Tipe Paket</label>
+                                <select class="form-select @error('package_type') is-invalid @enderror" id="package_type" name="package_type">
+                                    @foreach(\App\Models\Product::packageTypes() as $value => $label)
+                                        <option value="{{ $value }}" {{ old('package_type', 'single') == $value ? 'selected' : '' }}>{{ $label }}</option>
+                                    @endforeach
+                                </select>
+                                @error('package_type')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                                <small class="text-muted">Isi berat produk dalam gram (contoh: 360, 900, 1200).</small>
                             </div>
                         </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="weight" class="form-label">Berat <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input type="number" class="form-control @error('weight') is-invalid @enderror" 
+                                   id="weight" name="weight" value="{{ old('weight') }}" min="1" step="1" required>
+                            <span class="input-group-text">gram</span>
+                        </div>
+                        @error('weight')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                        <small class="text-muted">Isi berat produk dalam gram (contoh: 360, 900, 1200).</small>
                     </div>
                 </div>
                 
@@ -169,35 +181,6 @@
             
             <hr>
             
-            <!-- Varian Produk -->
-            <div class="mb-3">
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="has_variants" name="has_variants" value="1"
-                        {{ old('has_variants') ? 'checked' : '' }} onchange="toggleVariants(this)">
-                    <label class="form-check-label fw-semibold" for="has_variants">
-                        <i class="fas fa-layer-group me-1"></i>Produk ini memiliki Varian
-                    </label>
-                </div>
-                <small class="text-muted">Aktifkan jika produk memiliki pilihan warna, ukuran, dll. Stok akan dihitung otomatis dari total stok varian.</small>
-            </div>
-
-            <div id="variantsSection" style="display:none">
-                <div class="card border-primary mb-3">
-                    <div class="card-header bg-primary bg-opacity-10 d-flex justify-content-between align-items-center">
-                        <span><i class="fas fa-layer-group me-1"></i>Daftar Varian</span>
-                        <button type="button" class="btn btn-sm btn-primary" onclick="addVariant()">
-                            <i class="fas fa-plus me-1"></i>Tambah Varian
-                        </button>
-                    </div>
-                    <div class="card-body">
-                        <div id="variantsList"></div>
-                        <p id="variantsEmpty" class="text-muted text-center py-3">Belum ada varian. Klik "Tambah Varian" untuk menambahkan.</p>
-                    </div>
-                </div>
-            </div>
-
-            <hr>
-            
             <div class="d-flex justify-content-end gap-2">
                 <a href="{{ route('admin.products.index') }}" class="btn btn-secondary">
                     <i class="fas fa-arrow-left me-1"></i>Batal
@@ -219,97 +202,6 @@ function previewImage(input) {
         const reader = new FileReader();
         reader.onload = e => preview.innerHTML = `<img src="${e.target.result}" class="img-fluid rounded" style="max-height:200px;">`;
         reader.readAsDataURL(input.files[0]);
-    }
-}
-
-let variantCount = 0;
-
-function toggleVariants(cb) {
-    document.getElementById('variantsSection').style.display = cb.checked ? 'block' : 'none';
-    toggleRequirementFields();
-}
-
-function toggleRequirementFields() {
-    const isFeatured = document.getElementById('is_featured')?.checked;
-    const hasVariants = document.getElementById('has_variants')?.checked;
-    const skipRequired = isFeatured || hasVariants;
-    const requiredFields = ['name', 'description', 'price', 'stock', 'category', 'weight'];
-    requiredFields.forEach((id) => {
-        const field = document.getElementById(id);
-        if (!field) return;
-        if (id === 'stock' && hasVariants) {
-            field.removeAttribute('required');
-            return;
-        }
-        if (skipRequired) {
-            field.removeAttribute('required');
-        } else {
-            field.setAttribute('required', 'required');
-        }
-    });
-
-    const imageInput = document.getElementById('image');
-    if (imageInput) {
-        if (isFeatured && !hasVariants) {
-            imageInput.setAttribute('required', 'required');
-        } else {
-            imageInput.removeAttribute('required');
-        }
-    }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    const featuredCheckbox = document.getElementById('is_featured');
-    if (featuredCheckbox) {
-        featuredCheckbox.addEventListener('change', toggleRequirementFields);
-    }
-    const variantsCheckbox = document.getElementById('has_variants');
-    if (variantsCheckbox) {
-        variantsCheckbox.addEventListener('change', toggleRequirementFields);
-    }
-    toggleRequirementFields();
-});
-
-function addVariant(data = {}) {
-    const i = variantCount++;
-    const list = document.getElementById('variantsList');
-    document.getElementById('variantsEmpty').style.display = 'none';
-
-    const div = document.createElement('div');
-    div.className = 'border rounded p-3 mb-3 variant-item';
-    div.innerHTML = `
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <strong>Varian #${i + 1}</strong>
-            <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeVariant(this)"><i class="fas fa-trash"></i></button>
-        </div>
-        <div class="row g-2">
-            <div class="col-md-4">
-                <label class="form-label">Nama Varian <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" name="variants[${i}][name]" placeholder="cth: Merah, XL, Biru-L" required value="${data.name || ''}">
-            </div>
-            <div class="col-md-3">
-                <label class="form-label">Stok <span class="text-danger">*</span></label>
-                <input type="number" class="form-control" name="variants[${i}][stock]" min="0" required value="${data.stock || 0}">
-            </div>
-            <div class="col-md-3">
-                <label class="form-label">Tambahan Harga</label>
-                <div class="input-group">
-                    <span class="input-group-text">Rp</span>
-                    <input type="number" class="form-control" name="variants[${i}][price_adjustment]" value="${data.price_adjustment || 0}" step="100">
-                </div>
-            </div>
-            <div class="col-md-2">
-                <label class="form-label">Catatan</label>
-                <div class="small text-muted">Gambar varian tidak diperlukan.</div>
-            </div>
-        </div>`;
-    list.appendChild(div);
-}
-
-function removeVariant(btn) {
-    btn.closest('.variant-item').remove();
-    if (!document.querySelectorAll('.variant-item').length) {
-        document.getElementById('variantsEmpty').style.display = 'block';
     }
 }
 
@@ -374,16 +266,6 @@ function setupDiscountAutoApply() {
         discountInput.value = '0';
     });
 }
-
-// Restore old input on validation error
-@if(old('has_variants'))
-document.getElementById('has_variants').checked = true;
-toggleVariants(document.getElementById('has_variants'));
-@php $oldVariants = old('variants', []); @endphp
-@foreach($oldVariants as $v)
-addVariant({{ json_encode($v) }});
-@endforeach
-@endif
 
 document.addEventListener('DOMContentLoaded', setupDiscountAutoApply);
 </script>

@@ -52,6 +52,12 @@
         
         <div class="row g-4">
             @forelse($products as $product)
+                @php
+                    $soldCount = \App\Models\OrderItem::where('product_id', $product->id)
+                        ->whereHas('order', function($q) {
+                            $q->whereIn('status', ['completed', 'delivered']);
+                        })->sum('quantity');
+                @endphp
                 <div class="col-6 col-md-4 col-lg-3">
                     <div class="product-card">
                         <div class="product-image">
@@ -61,11 +67,18 @@
                                 <span class="badge badge-{{ $product->category == 'original' ? 'primary' : 'accent' }}">
                                     {{ $product->category_label }}
                                 </span>
-                                @if($product->has_variants)
-                                    <span class="badge bg-dark ms-1">Varian</span>
-                                @endif
                                 @if($product->hasActiveDiscount())
                                     <span class="badge bg-danger ms-1">-{{ $product->formatted_discount_percent }}</span>
+                                @endif
+                                @if($product->package_type === 'bundle')
+                                    <span class="badge bg-purple text-white ms-1">
+                                        <i class="fas fa-box-open me-1"></i>Bundle
+                                    </span>
+                                @endif
+                                @if($soldCount >= 5)
+                                    <span class="badge bg-warning text-white ms-1">
+                                        <i class="fas fa-fire me-1"></i>Best Seller
+                                    </span>
                                 @endif
                             </div>
                         </div>
@@ -85,21 +98,10 @@
                                     @endif
                                 </div>
                                 @if($product->stock > 0)
-                                    <button
-                                        type="button"
-                                        class="btn btn-sm btn-primary"
-                                        data-product-trigger
-                                        data-product-id="{{ $product->id }}"
-                                        data-product-name="{{ e($product->name) }}"
-                                        data-product-category="{{ e($product->category_label) }}"
-                                        data-product-description="{{ e(\Illuminate\Support\Str::limit(strip_tags($product->description ?? ''), 180)) }}"
-                                        data-product-image="{{ $product->image_url ?: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}"
-                                        data-product-price="{{ $product->hasActiveDiscount() ? $product->formatted_discounted_price : $product->formatted_price }}"
-                                        data-product-old-price="{{ $product->hasActiveDiscount() ? $product->formatted_price : '' }}"
-                                    >
+                                    <a href="{{ route('produk.show', $product) }}" class="btn btn-sm btn-primary">
                                         <i class="fas fa-eye d-md-none"></i>
                                         <span class="d-none d-md-inline">Detail</span>
-                                    </button>
+                                    </a>
                                 @else
                                     <span class="badge bg-secondary">Habis</span>
                                 @endif
@@ -131,6 +133,10 @@
 
 @push('styles')
 <style>
+    .bg-purple {
+        background-color: #9333ea !important;
+    }
+    
     .page-hero {
         background: var(--white);
         padding: 4rem 0;

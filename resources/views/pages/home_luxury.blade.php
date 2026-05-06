@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="bg-white text-black antialiased">
-    <header class="fixed left-0 top-0 z-50 w-full border-b border-black/6 bg-white/80 backdrop-blur-xl md:sticky">
+        <header class="fixed left-0 top-0 z-50 w-full border-b border-black/6 bg-white/80 backdrop-blur-xl md:sticky">
             <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-10 lg:px-12">
                 <a href="{{ route('home') }}" class="text-xl font-semibold tracking-tight text-black">NoraPadel</a>
 
@@ -17,11 +17,13 @@
                         class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Shoes</a>
                     <a href="{{ route('apparel') }}"
                         class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Accessories</a>
+                    <a href="{{ route('contact') }}"
+                        class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Contact</a>
                 </nav>
 
                 <div class="flex items-center gap-3 text-black/80">
                     @auth
-                        @if(auth()->user()->role === 'admin')
+                        @if (auth()->user()->role === 'admin')
                             <a href="{{ route('admin.dashboard') }}"
                                 class="inline-flex items-center gap-1.5 rounded-full border border-black/15 bg-black px-4 py-1.5 text-xs font-medium text-white transition duration-300 hover:bg-black/90"
                                 aria-label="Back to Dashboard">
@@ -29,10 +31,12 @@
                                 <span>Dashboard</span>
                             </a>
                         @elseif(auth()->user()->role === 'customer')
-                            <a href="{{ route('customer.orders.index') }}" class="transition duration-300 hover:text-black" aria-label="Riwayat Pesanan" title="Riwayat Pesanan">
+                            <a href="{{ route('customer.orders.index') }}" class="transition duration-300 hover:text-black"
+                                aria-label="Riwayat Pesanan" title="Riwayat Pesanan">
                                 <i class="fas fa-history text-sm"></i>
                             </a>
-                            <a href="{{ route('customer.profile.index') }}" class="transition duration-300 hover:text-black" aria-label="Profile" title="Profile">
+                            <a href="{{ route('customer.profile.index') }}" class="transition duration-300 hover:text-black"
+                                aria-label="Profile" title="Profile">
                                 <i class="fas fa-user text-sm"></i>
                             </a>
                         @endif
@@ -49,15 +53,17 @@
                         <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-black"
                             aria-label="Cart" title="Keranjang">
                             <i class="fas fa-shopping-bag text-sm"></i>
-                            @if(auth()->user()->role === 'customer')
+                            @if (auth()->user()->role === 'customer')
                                 @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
-                                @if($cartCount > 0)
-                                    <span class="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
+                                @if ($cartCount > 0)
+                                    <span
+                                        class="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
                                 @endif
                             @endif
                         </a>
                     @else
-                        <a href="{{ route('login') }}" class="transition duration-300 hover:text-black" aria-label="Cart" title="Keranjang">
+                        <a href="{{ route('login') }}" class="transition duration-300 hover:text-black" aria-label="Cart"
+                            title="Keranjang">
                             <i class="fas fa-shopping-bag text-sm"></i>
                         </a>
                     @endauth
@@ -81,296 +87,325 @@
         </header>
 
         <main class="pt-16 md:pt-0">
-        <section class="border-b-[14px] border-white bg-[#f5f5f7] md:hidden -mt-16" data-mobile-hero-carousel>
-            <div class="relative h-screen w-full overflow-hidden">
-                <div class="absolute inset-0 h-full overflow-hidden">
-                    <div class="flex h-full transition-transform duration-500 ease-out" data-mobile-hero-track>
-                        <article class="min-w-full">
-                            <img src="{{ asset('storage/banner.png') }}" alt="NoraPadel Racket"
-                                class="mx-auto h-full w-full scale-[1.08] object-contain pb-28" loading="lazy">
-                        </article>
+            <section class="border-b-[14px] border-white bg-[#f5f5f7] md:hidden -mt-16" data-mobile-hero-carousel>
+                <div class="relative h-screen w-full overflow-hidden">
+                    <div class="absolute inset-0 h-full overflow-hidden">
+                        <div class="flex h-full transition-transform duration-500 ease-out" data-mobile-hero-track>
+                            <article class="min-w-full">
+                                <img src="{{ asset('storage/banner.png') }}" alt="NoraPadel Racket"
+                                    class="mx-auto h-full w-full scale-[1.08] object-contain pb-28" loading="lazy">
+                            </article>
 
-                        <article class="min-w-full">
-                            <img src="{{ asset('storage/shoes.png') }}" alt="NoraPadel Shoes"
-                                class="mx-auto h-full w-full scale-[1.08] object-contain pb-28" loading="lazy">
-                        </article>
+                            <article class="min-w-full">
+                                <img src="{{ asset('storage/shoes.png') }}" alt="NoraPadel Shoes"
+                                    class="mx-auto h-full w-full scale-[1.08] object-contain pb-28" loading="lazy">
+                            </article>
 
-                        <article class="min-w-full">
-                            <img src="{{ asset('storage/3.png') }}" alt="NoraPadel Accessories"
-                                class="mx-auto h-full w-full scale-[1.08] object-contain pb-28" loading="lazy">
-                        </article>
+                            <article class="min-w-full">
+                                <img src="{{ asset('storage/3.png') }}" alt="NoraPadel Accessories"
+                                    class="mx-auto h-full w-full scale-[1.08] object-contain pb-28" loading="lazy">
+                            </article>
+                        </div>
+                    </div>
+
+                    <div
+                        class="pointer-events-none absolute inset-0 bg-linear-to-b from-[#f5f5f7]/70 via-[#f5f5f7]/35 to-[#f5f5f7]/75">
+                    </div>
+
+                    <div class="pointer-events-none absolute inset-x-0 bottom-20 z-20 px-6 text-center">
+                        <h2 class="text-3xl font-semibold tracking-tight text-black">NoraPadel</h2>
+                        <p class="mt-1 text-base text-zinc-700">Precision. Power. Performance.</p>
+                        <div class="pointer-events-auto mt-5 flex items-center justify-center gap-2">
+                            <a href="{{ route('produk.index') }}"
+                                class="inline-flex rounded-full border border-black/10 bg-white px-4 py-2 text-xs font-semibold text-black">Explore</a>
+                            <a href="{{ route('home') }}#products"
+                                class="inline-flex rounded-full bg-black px-4 py-2 text-xs font-semibold text-white">Buy
+                                Now</a>
+                        </div>
+                    </div>
+
+                    <button type="button"
+                        class="absolute left-3 top-1/2 z-20 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-black/10 bg-white/90 text-zinc-700 shadow"
+                        data-mobile-hero-prev aria-label="Hero sebelumnya">
+                        <i class="fas fa-chevron-left text-xs"></i>
+                    </button>
+                    <button type="button"
+                        class="absolute right-3 top-1/2 z-20 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-black/10 bg-white/90 text-zinc-700 shadow"
+                        data-mobile-hero-next aria-label="Hero berikutnya">
+                        <i class="fas fa-chevron-right text-xs"></i>
+                    </button>
+
+                    <div class="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/25 px-3 py-2 backdrop-blur"
+                        data-mobile-hero-dots>
+                        <button type="button" class="h-2.5 w-2.5 rounded-full bg-white" data-mobile-hero-to="0"
+                            aria-label="Slide 1"></button>
+                        <button type="button" class="h-2.5 w-2.5 rounded-full bg-white/45" data-mobile-hero-to="1"
+                            aria-label="Slide 2"></button>
+                        <button type="button" class="h-2.5 w-2.5 rounded-full bg-white/45" data-mobile-hero-to="2"
+                            aria-label="Slide 3"></button>
                     </div>
                 </div>
+            </section>
 
-                <div class="pointer-events-none absolute inset-0 bg-linear-to-b from-[#f5f5f7]/70 via-[#f5f5f7]/35 to-[#f5f5f7]/75"></div>
-
-                <div class="pointer-events-none absolute inset-x-0 bottom-20 z-20 px-6 text-center">
-                    <h2 class="text-3xl font-semibold tracking-tight text-black">NoraPadel</h2>
-                    <p class="mt-1 text-base text-zinc-700">Precision. Power. Performance.</p>
-                    <div class="pointer-events-auto mt-5 flex items-center justify-center gap-2">
-                        <a href="{{ route('produk.index') }}"
-                            class="inline-flex rounded-full border border-black/10 bg-white px-4 py-2 text-xs font-semibold text-black">Explore</a>
-                        <a href="{{ route('home') }}#products"
-                            class="inline-flex rounded-full bg-black px-4 py-2 text-xs font-semibold text-white">Buy Now</a>
-                    </div>
-                </div>
-
-                <button type="button"
-                    class="absolute left-3 top-1/2 z-20 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-black/10 bg-white/90 text-zinc-700 shadow"
-                    data-mobile-hero-prev aria-label="Hero sebelumnya">
-                    <i class="fas fa-chevron-left text-xs"></i>
-                </button>
-                <button type="button"
-                    class="absolute right-3 top-1/2 z-20 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-black/10 bg-white/90 text-zinc-700 shadow"
-                    data-mobile-hero-next aria-label="Hero berikutnya">
-                    <i class="fas fa-chevron-right text-xs"></i>
-                </button>
-
-                <div class="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/25 px-3 py-2 backdrop-blur"
-                    data-mobile-hero-dots>
-                    <button type="button" class="h-2.5 w-2.5 rounded-full bg-white" data-mobile-hero-to="0"
-                        aria-label="Slide 1"></button>
-                    <button type="button" class="h-2.5 w-2.5 rounded-full bg-white/45" data-mobile-hero-to="1"
-                        aria-label="Slide 2"></button>
-                    <button type="button" class="h-2.5 w-2.5 rounded-full bg-white/45" data-mobile-hero-to="2"
-                        aria-label="Slide 3"></button>
-                </div>
+            <div class="hidden md:block">
+                <x-landing.hero-product id="racket" title="NoraPadel" subtitle="Precision. Power. Performance."
+                    image="{{ Storage::url('banner.png') }}" alt="NoraPadel Racket" primary-text="Explore"
+                    primary-href="{{ route('produk.index') }}" secondary-text="Buy Now"
+                    secondary-href="{{ route('home') }}#products"
+                    section-class="bg-[#f5f5f7] border-b-[14px] border-white" />
             </div>
-        </section>
 
-        <div class="hidden md:block">
-            <x-landing.hero-product id="racket" title="NoraPadel" subtitle="Precision. Power. Performance."
-                image="{{ Storage::url('banner.png') }}" alt="NoraPadel Racket" primary-text="Explore"
-                primary-href="{{ route('produk.index') }}" secondary-text="Buy Now"
-                secondary-href="{{ route('home') }}#products"
-                section-class="bg-[#f5f5f7] border-b-[14px] border-white" />
-        </div>
-
-        <!-- Why Choose NoraPadel -->
-        <section class="np-fade-section bg-white py-12 lg:py-14">
-            <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
-                <div class="mb-8 text-center">
-                    <h2 class="text-3xl font-semibold tracking-tight text-black sm:text-4xl lg:text-5xl">Why Choose NoraPadel</h2>
-                    <p class="mx-auto mt-3 max-w-2xl text-zinc-600">Experience the difference with premium quality and exceptional service</p>
-                </div>
-                <div class="grid gap-6 md:grid-cols-3">
-                    <div class="group rounded-2xl border border-black/6 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-2 hover:shadow-xl">
-                        <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-black/5 text-black transition duration-300 group-hover:text-white">
-                            <i class="fas fa-shipping-fast text-xl"></i>
-                        </div>
-                        <h3 class="text-lg font-semibold text-black">Fast Delivery</h3>
-                        <p class="mt-2 text-sm text-zinc-600">Get your order delivered quickly with our reliable shipping partners</p>
+            <!-- Why Choose NoraPadel -->
+            <section class="np-fade-section bg-white py-12 lg:py-14">
+                <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
+                    <div class="mb-8 text-center">
+                        <h2 class="text-3xl font-semibold tracking-tight text-black sm:text-4xl lg:text-5xl">Why Choose
+                            NoraPadel</h2>
+                        <p class="mx-auto mt-3 max-w-2xl text-zinc-600">Experience the difference with premium quality and
+                            exceptional service</p>
                     </div>
-                    <div class="group rounded-2xl border border-black/6 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-2 hover:shadow-xl">
-                        <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-black/5 text-black transition duration-300 group-hover:text-white">
-                            <i class="fas fa-shield-alt text-xl"></i>
-                        </div>
-                        <h3 class="text-lg font-semibold text-black">Quality Guaranteed</h3>
-                        <p class="mt-2 text-sm text-zinc-600">100% authentic products with warranty and quality assurance</p>
-                    </div>
-                    <div class="group rounded-2xl border border-black/6 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-2 hover:shadow-xl">
-                        <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-black/5 text-black transition duration-300  group-hover:text-white">
-                            <i class="fas fa-headset text-xl"></i>
-                        </div>
-                        <h3 class="text-lg font-semibold text-black">24/7 Support</h3>
-                        <p class="mt-2 text-sm text-zinc-600">Our customer service team is always ready to help you</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="np-fade-section bg-white pt-6 pb-6 lg:pt-8 lg:pb-8">
-            <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
-                @php
-                    $section = $sections[0] ?? null;
-                @endphp
-
-                @if ($section)
-                    <section class="mb-14 last:mb-0 rounded-3xl border border-black/6 bg-zinc-50/40 p-3 md:p-4"
-                        data-shop-showcase>
-
-
-                        @if ($section['latest'])
-                            @if ($section['latest']->is_featured)
-                                <div
-                                    class="group relative block w-full cursor-default overflow-hidden rounded-2xl border border-black/8 bg-white text-start shadow-[0_12px_34px_rgba(0,0,0,0.08)]">
-                                    <div class="relative">
-                                        <img src="{{ $section['latest']->image_url }}"
-                                            alt="{{ $section['latest']->name }}"
-                                            class="h-[500px] w-full object-cover md:h-[600px] lg:h-[700px]"
-                                            onerror="this.onerror=null;this.src='/images/logo.png';"
-                                            loading="lazy">
-                                        @if($section['latest']->has_variants)
-                                            <span class="absolute right-3 top-3 rounded-full bg-black/80 px-2.5 py-1 text-[11px] font-semibold text-white">Varian</span>
-                                        @endif
-                                        <span class="absolute left-3 top-3 rounded-full bg-black/70 px-2.5 py-1 text-[11px] font-semibold text-white">Highlight</span>
-                                    </div>
-                                    <div class="absolute inset-0 bg-linear-to-t from-black/65 via-black/20 to-transparent"></div>
-                                    <div class="absolute bottom-0 left-0 right-0 p-4 text-white md:p-6">
-                                        <p class="mt-2 text-sm text-white/85 md:text-base">
-                                            {{ \Illuminate\Support\Str::limit($section['latest']->description, 120) }}</p>
-                                    </div>
-                                </div>
-                            @else
-                                <button type="button"
-                                    class="group relative block w-full overflow-hidden rounded-2xl border border-black/8 bg-white text-start shadow-[0_12px_34px_rgba(0,0,0,0.08)]"
-                                    data-product-trigger data-product-id="{{ $section['latest']->id }}"
-                                    data-product-name="{{ e($section['latest']->name) }}"
-                                    data-product-category="{{ e($section['latest']->category_label) }}"
-                                    data-product-description="{{ e(\Illuminate\Support\Str::limit(strip_tags($section['latest']->description ?? ''), 180)) }}"
-                                    data-product-image="{{ $section['latest']->image_url }}"
-                                    data-product-price="{{ $section['latest']->hasActiveDiscount() ? $section['latest']->formatted_discounted_price : $section['latest']->formatted_price }}"
-                                    data-product-old-price="{{ $section['latest']->hasActiveDiscount() ? $section['latest']->formatted_price : '' }}">
-                                    <div class="relative">
-                                        <img src="{{ $section['latest']->image_url }}"
-                                            alt="{{ $section['latest']->name }}"
-                                            class="h-[500px] w-full object-cover transition duration-500 group-hover:scale-105 md:h-[600px] lg:h-[700px]"
-                                            onerror="this.onerror=null;this.src='/images/logo.png';"
-                                            loading="lazy">
-                                        @if($section['latest']->has_variants)
-                                            <span class="absolute right-3 top-3 rounded-full bg-black/80 px-2.5 py-1 text-[11px] font-semibold text-white">Varian</span>
-                                        @endif
-                                        @if($section['latest']->hasActiveDiscount())
-                                            <span class="absolute left-3 top-3 rounded-full bg-rose-500 px-2.5 py-1 text-[11px] font-semibold text-white">-{{ $section['latest']->formatted_discount_percent }}</span>
-                                        @endif
-                                    </div>
-                                    <div class="absolute inset-0 bg-linear-to-t from-black/65 via-black/20 to-transparent"></div>
-                                    <div class="absolute bottom-0 left-0 right-0 p-4 text-white md:p-6">
-                                        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/80">Produk
-                                            Terbaru</p>
-                                        <h3 class="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">
-                                            {{ $section['latest']->name }}</h3>
-                                        <p class="mt-2 text-sm text-white/85 md:text-base">
-                                            {{ \Illuminate\Support\Str::limit($section['latest']->description, 120) }}</p>
-                                    </div>
-                                </button>
-                            @endif
-                        @endif
-
-                        <div class="relative mt-5">
+                    <div class="grid gap-6 md:grid-cols-3">
+                        <div
+                            class="group rounded-2xl border border-black/6 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-2 hover:shadow-xl">
                             <div
-                                class="pointer-events-none absolute inset-y-0 left-0 z-10 w-10 bg-linear-to-r from-zinc-50 to-transparent">
+                                class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-black/5 text-black transition duration-300 group-hover:text-white">
+                                <i class="fas fa-shipping-fast text-xl"></i>
                             </div>
-                            <div
-                                class="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 bg-linear-to-l from-zinc-50 to-transparent">
-                            </div>
-
-                            <button type="button"
-                                class="shop-slide-btn absolute left-2 top-1/2 z-20 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-black/10 bg-white/90 text-zinc-700 shadow transition hover:bg-white"
-                                data-slide-prev aria-label="Geser kiri">
-                                <i class="fas fa-chevron-left text-xs"></i>
-                            </button>
-
-                            <div class="overflow-x-scroll scroll-smooth px-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-                                data-slide-container>
-                                <div class="flex gap-4 py-1" data-slide-track>
-                                    @forelse($section['others'] as $product)
-                                        <button type="button"
-                                            class="group block w-56 shrink-0 overflow-hidden rounded-xl border border-black/6 bg-white text-start shadow-[0_6px_22px_rgba(0,0,0,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(0,0,0,0.1)]"
-                                            data-product-trigger data-product-id="{{ $product->id }}"
-                                            data-product-name="{{ e($product->name) }}"
-                                            data-product-category="{{ e($product->category_label) }}"
-                                            data-product-description="{{ e(\Illuminate\Support\Str::limit(strip_tags($product->description ?? ''), 180)) }}"
-                                            data-product-image="{{ $product->image_url }}"
-                                            data-product-price="{{ $product->hasActiveDiscount() ? $product->formatted_discounted_price : $product->formatted_price }}"
-                                            data-product-old-price="{{ $product->hasActiveDiscount() ? $product->formatted_price : '' }}">
-                                            <div class="relative">
-                                                <img src="{{ $product->image_url }}"
-                                                    alt="{{ $product->name }}"
-                                                    class="aspect-4/5 w-full object-cover transition duration-500 group-hover:scale-105"
-                                                    onerror="this.onerror=null;this.src='/images/logo.png';"
-                                                    loading="lazy">
-                                                @if($product->has_variants)
-                                                    <span class="absolute right-3 top-3 rounded-full bg-black/80 px-2.5 py-1 text-[11px] font-semibold text-white">Varian</span>
-                                                @endif
-                                                @if($product->hasActiveDiscount())
-                                                    <span class="absolute left-3 top-3 rounded-full bg-rose-500 px-2.5 py-1 text-[11px] font-semibold text-white">-{{ $product->formatted_discount_percent }}</span>
-                                                @endif
-                                            </div>
-                                            <div class="p-3">
-                                                <p class="line-clamp-1 text-sm font-semibold tracking-tight text-zinc-800">
-                                                    {{ $product->name }}</p>
-                                                <p class="mt-1 text-xs text-zinc-500">{{ $product->category_label }}</p>
-                                            </div>
-                                        </button>
-                                    @empty
-                                        <div
-                                            class="w-full rounded-xl border border-dashed border-zinc-300 bg-white p-6 text-center text-zinc-500">
-                                            Belum ada produk tambahan untuk kategori ini.</div>
-                                    @endforelse
-                                </div>
-                            </div>
-
-                            <button type="button"
-                                class="shop-slide-btn absolute right-2 top-1/2 z-20 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-black/10 bg-white/90 text-zinc-700 shadow transition hover:bg-white"
-                                data-slide-next aria-label="Geser kanan">
-                                <i class="fas fa-chevron-right text-xs"></i>
-                            </button>
+                            <h3 class="text-lg font-semibold text-black">Fast Delivery</h3>
+                            <p class="mt-2 text-sm text-zinc-600">Get your order delivered quickly with our reliable
+                                shipping partners</p>
                         </div>
-                    </section>
-                @endif
-            </div>
-        </section>
+                        <div
+                            class="group rounded-2xl border border-black/6 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-2 hover:shadow-xl">
+                            <div
+                                class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-black/5 text-black transition duration-300 group-hover:text-white">
+                                <i class="fas fa-shield-alt text-xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-black">Quality Guaranteed</h3>
+                            <p class="mt-2 text-sm text-zinc-600">100% authentic products with warranty and quality
+                                assurance</p>
+                        </div>
+                        <div
+                            class="group rounded-2xl border border-black/6 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-2 hover:shadow-xl">
+                            <div
+                                class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-black/5 text-black transition duration-300  group-hover:text-white">
+                                <i class="fas fa-headset text-xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-black">24/7 Support</h3>
+                            <p class="mt-2 text-sm text-zinc-600">Our customer service team is always ready to help you</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="np-fade-section bg-white pt-6 pb-6 lg:pt-8 lg:pb-8">
+                <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
+                    @php
+                        $section = $sections[0] ?? null;
+                    @endphp
+
+                    @if ($section)
+                        <section class="mb-14 last:mb-0 rounded-3xl border border-black/6 bg-zinc-50/40 p-3 md:p-4"
+                            data-shop-showcase>
 
 
-        <x-landing.featured-toggle :products="$products" section-class="bg-[#f5f5f7] pt-3 pb-20 lg:pt-5 lg:pb-24" section-id="products" />
-
-    <section id="testimonials" class="np-fade-section bg-white py-18 lg:py-22" data-testimonial-showcase>
-            <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
-                @php
-                    $testimonialItems = $testimonials->take(3);
-                @endphp
-
-                @if ($testimonialItems->count() > 0)
-                    <div class="relative overflow-hidden rounded-3xl border border-black/6 bg-zinc-50/40 px-2 py-2 shadow-[0_12px_38px_rgba(0,0,0,0.08)] md:px-4 md:py-4"
-                        data-testimonial-hero>
-                        <div class="np-testimonial-hero-track" data-testimonial-track>
-                            @foreach ($testimonialItems as $index => $testimonial)
-                                <article class="np-testimonial-hero-slide">
-                                    <div class="relative aspect-video overflow-hidden rounded-2xl">
-                                        <img src="{{ $testimonial->image_url ?? '/images/logo.png' }}" alt="Testimoni"
-                                            class="h-full w-full object-cover" loading="lazy">
-                                        <div class="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent">
+                            @if ($section['latest'])
+                                @if ($section['latest']->is_featured)
+                                    <a href="{{ route('produk.show', $section['latest']) }}"
+                                        class="group relative block w-full overflow-hidden rounded-2xl border border-black/8 bg-white text-start shadow-[0_12px_34px_rgba(0,0,0,0.08)]">
+                                        <div class="relative">
+                                            <img src="{{ $section['latest']->image_url }}"
+                                                alt="{{ $section['latest']->name }}"
+                                                class="h-[500px] w-full object-cover md:h-[600px] lg:h-[700px]"
+                                                onerror="this.onerror=null;this.src='/images/logo.png';" loading="lazy">
+                                            @if ($section['latest']->has_variants)
+                                                <span
+                                                    class="absolute right-3 top-3 rounded-full bg-black/80 px-2.5 py-1 text-[11px] font-semibold text-white">Varian</span>
+                                            @endif
+                                            <span
+                                                class="absolute left-3 top-3 rounded-full bg-black/70 px-2.5 py-1 text-[11px] font-semibold text-white">Highlight</span>
                                         </div>
-                                        
-                                    </div>
-                                </article>
-                            @endforeach
-                        </div>
+                                        <div
+                                            class="absolute inset-0 bg-linear-to-t from-black/65 via-black/20 to-transparent">
+                                        </div>
+                                        <div class="absolute bottom-0 left-0 right-0 p-4 text-white md:p-6">
+                                            <p class="mt-2 text-sm text-white/85 md:text-base">
+                                                {{ \Illuminate\Support\Str::limit($section['latest']->description, 120) }}
+                                            </p>
+                                        </div>
+                                    </a>
+                                @else
+                                    <a href="{{ route('produk.show', $section['latest']) }}"
+                                        class="group relative block w-full overflow-hidden rounded-2xl border border-black/8 bg-white text-start shadow-[0_12px_34px_rgba(0,0,0,0.08)]">
+                                        <div class="relative">
+                                            <img src="{{ $section['latest']->image_url }}"
+                                                alt="{{ $section['latest']->name }}"
+                                                class="h-[500px] w-full object-cover transition duration-500 group-hover:scale-105 md:h-[600px] lg:h-[700px]"
+                                                onerror="this.onerror=null;this.src='/images/logo.png';" loading="lazy">
+                                            @if ($section['latest']->has_variants)
+                                                <span
+                                                    class="absolute right-3 top-3 rounded-full bg-black/80 px-2.5 py-1 text-[11px] font-semibold text-white">Varian</span>
+                                            @endif
+                                            @if ($section['latest']->hasActiveDiscount())
+                                                <span
+                                                    class="absolute left-3 top-3 rounded-full bg-rose-500 px-2.5 py-1 text-[11px] font-semibold text-white">-{{ $section['latest']->formatted_discount_percent }}</span>
+                                            @endif
+                                        </div>
+                                        <div
+                                            class="absolute inset-0 bg-linear-to-t from-black/65 via-black/20 to-transparent">
+                                        </div>
+                                        <div class="absolute bottom-0 left-0 right-0 p-4 text-white md:p-6">
+                                            <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/80">
+                                                Produk
+                                                Terbaru</p>
+                                            <h3 class="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">
+                                                {{ $section['latest']->name }}</h3>
+                                            <p class="mt-2 text-sm text-white/85 md:text-base">
+                                                {{ \Illuminate\Support\Str::limit($section['latest']->description, 120) }}
+                                            </p>
+                                        </div>
+                                    </a>
+                                @endif
+                            @endif
 
-                        <div class="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/35 px-3 py-2 backdrop-blur"
-                            data-testimonial-dots>
-                            @foreach ($testimonialItems as $index => $testimonial)
+                                <div class="relative mt-5">
+                                <div
+                                    class="pointer-events-none absolute inset-y-0 left-0 z-10 w-10 bg-linear-to-r from-zinc-50 to-transparent">
+                                </div>
+                                <div
+                                    class="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 bg-linear-to-l from-zinc-50 to-transparent">
+                                </div>
+
                                 <button type="button"
-                                    class="np-testimonial-dot h-2.5 w-2.5 rounded-full bg-white/45 transition duration-300"
-                                    data-slide-to="{{ $index }}" aria-label="Slide {{ $index + 1 }}"></button>
-                            @endforeach
-                        </div>
-                    </div>
-                @else
-                    <div class="rounded-2xl border border-dashed border-zinc-300 bg-white p-10 text-center text-zinc-500">
-                        Belum ada testimoni.</div>
-                @endif
-            </div>
-        </section>
+                                    class="shop-slide-btn absolute left-2 top-1/2 z-20 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-black/10 bg-white/90 text-zinc-700 shadow transition hover:bg-white"
+                                    data-slide-prev aria-label="Geser kiri">
+                                    <i class="fas fa-chevron-left text-xs"></i>
+                                </button>
 
-        
+                                <div class="overflow-x-scroll scroll-smooth px-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                                    data-slide-container>
+                                    <div class="flex gap-4 py-1" data-slide-track>
+                                        @forelse($section['others'] as $product)
+                                            @php
+                                                $soldCount = \App\Models\OrderItem::where('product_id', $product->id)
+                                                    ->whereHas('order', function($q) {
+                                                        $q->whereIn('status', ['completed', 'delivered']);
+                                                    })->sum('quantity');
+                                            @endphp
+                                            <a href="{{ route('produk.show', $product) }}"
+                                                class="group block w-56 shrink-0 overflow-hidden rounded-xl border border-black/6 bg-white text-start shadow-[0_6px_22px_rgba(0,0,0,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(0,0,0,0.1)]">
+                                                <div class="relative">
+                                                    <img src="{{ $product->image_url }}" alt="{{ $product->name }}"
+                                                        class="aspect-4/5 w-full object-cover transition duration-500 group-hover:scale-105"
+                                                        onerror="this.onerror=null;this.src='/images/logo.png';"
+                                                        loading="lazy">
+                                                    @if ($product->has_variants)
+                                                        <span
+                                                            class="absolute right-3 top-3 rounded-full bg-black/80 px-2.5 py-1 text-[11px] font-semibold text-white">Varian</span>
+                                                    @endif
+                                                    @if ($product->hasActiveDiscount())
+                                                        <span
+                                                            class="absolute left-3 top-3 rounded-full bg-rose-500 px-2.5 py-1 text-[11px] font-semibold text-white">-{{ $product->formatted_discount_percent }}</span>
+                                                    @endif
+                                                    @if($product->package_type === 'bundle')
+                                                        <span class="absolute left-3 {{ $product->hasActiveDiscount() ? 'top-12' : 'top-3' }} rounded-full bg-purple-500 px-2.5 py-1 text-[11px] font-semibold text-white">Bundle</span>
+                                                    @endif
+                                                    @if($soldCount >= 5)
+                                                        <span class="absolute right-3 {{ $product->has_variants ? 'top-12' : 'top-3' }} rounded-full bg-amber-500 px-2.5 py-1 text-[11px] font-semibold text-white">Best Seller</span>
+                                                    @endif
+                                                </div>
+                                                <div class="p-3">
+                                                    <p
+                                                        class="line-clamp-1 text-sm font-semibold tracking-tight text-zinc-800">
+                                                        {{ $product->name }}</p>
+                                                    <p class="mt-1 text-xs text-zinc-500">{{ $product->category_label }}
+                                                    </p>
+                                                </div>
+                                            </a>
+                                        @empty
+                                            <div
+                                                class="w-full rounded-xl border border-dashed border-zinc-300 bg-white p-6 text-center text-zinc-500">
+                                                Belum ada produk tambahan untuk kategori ini.</div>
+                                        @endforelse
+                                    </div>
+                                </div>
 
-        <section class="np-fade-section bg-white py-16 lg:py-20">
-            <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
-                <div
-                    class="rounded-3xl border border-black/5 bg-linear-to-r from-zinc-100 to-white px-8 py-14 text-center shadow-[0_8px_34px_rgba(0,0,0,0.04)] lg:px-12">
-                    <h2 class="text-3xl font-semibold tracking-tight text-black sm:text-4xl lg:text-5xl">Level up your game
-                        with NoraPadel</h2>
-                    <p class="mx-auto mt-4 max-w-2xl text-zinc-600">Designed for players who expect precision craftsmanship
-                        and world-class performance in every detail.</p>
-                    <a href="{{ route('home') }}#products"
-                        class="mt-8 inline-flex rounded-full bg-[#0071e3] px-8 py-3 text-sm font-medium text-white transition duration-300 hover:scale-[1.02] hover:bg-[#0077ED]">
-                        Shop Collection
-                    </a>
+                                <button type="button"
+                                    class="shop-slide-btn absolute right-2 top-1/2 z-20 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-black/10 bg-white/90 text-zinc-700 shadow transition hover:bg-white"
+                                    data-slide-next aria-label="Geser kanan">
+                                    <i class="fas fa-chevron-right text-xs"></i>
+                                </button>
+                            </div>
+                        </section>
+                    @endif
                 </div>
-            </div>
-        </section>
+            </section>
+
+
+            <x-landing.featured-toggle :products="$products" section-class="bg-[#f5f5f7] pt-3 pb-20 lg:pt-5 lg:pb-24"
+                section-id="products" />
+
+            <section id="testimonials" class="np-fade-section bg-white py-18 lg:py-22" data-testimonial-showcase>
+                <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
+                    @php
+                        $testimonialItems = $testimonials->take(3);
+                    @endphp
+
+                    @if ($testimonialItems->count() > 0)
+                        <div class="relative overflow-hidden rounded-3xl border border-black/6 bg-zinc-50/40 px-2 py-2 shadow-[0_12px_38px_rgba(0,0,0,0.08)] md:px-4 md:py-4"
+                            data-testimonial-hero>
+                            <div class="np-testimonial-hero-track" data-testimonial-track>
+                                @foreach ($testimonialItems as $index => $testimonial)
+                                    <article class="np-testimonial-hero-slide">
+                                        <div class="relative aspect-video overflow-hidden rounded-2xl">
+                                            <img src="{{ $testimonial->image_url ?? '/images/logo.png' }}"
+                                                alt="Testimoni" class="h-full w-full object-cover" loading="lazy">
+                                            <div
+                                                class="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent">
+                                            </div>
+
+                                        </div>
+                                    </article>
+                                @endforeach
+                            </div>
+
+                            <div class="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/35 px-3 py-2 backdrop-blur"
+                                data-testimonial-dots>
+                                @foreach ($testimonialItems as $index => $testimonial)
+                                    <button type="button"
+                                        class="np-testimonial-dot h-2.5 w-2.5 rounded-full bg-white/45 transition duration-300"
+                                        data-slide-to="{{ $index }}"
+                                        aria-label="Slide {{ $index + 1 }}"></button>
+                                @endforeach
+                            </div>
+                        </div>
+                    @else
+                        <div
+                            class="rounded-2xl border border-dashed border-zinc-300 bg-white p-10 text-center text-zinc-500">
+                            Belum ada testimoni.</div>
+                    @endif
+                </div>
+            </section>
+
+
+
+            <section class="np-fade-section bg-white py-16 lg:py-20">
+                <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
+                    <div
+                        class="rounded-3xl border border-black/5 bg-linear-to-r from-zinc-100 to-white px-8 py-14 text-center shadow-[0_8px_34px_rgba(0,0,0,0.04)] lg:px-12">
+                        <h2 class="text-3xl font-semibold tracking-tight text-black sm:text-4xl lg:text-5xl">Level up your
+                            game
+                            with NoraPadel</h2>
+                        <p class="mx-auto mt-4 max-w-2xl text-zinc-600">Designed for players who expect precision
+                            craftsmanship
+                            and world-class performance in every detail.</p>
+                        <a href="{{ route('home') }}#products"
+                            class="mt-8 inline-flex rounded-full bg-[#0071e3] px-8 py-3 text-sm font-medium text-white transition duration-300 hover:scale-[1.02] hover:bg-[#0077ED]">
+                            Shop Collection
+                        </a>
+                    </div>
+                </div>
+            </section>
 
         </main>
     </div>
@@ -442,7 +477,6 @@
             background-position: center;
             background-repeat: no-repeat;
         }
-
     </style>
 @endpush
 
@@ -537,14 +571,14 @@
                     });
                     return;
                 }
-                
+
                 containers.forEach((container) => {
                     const card = container.querySelector('.np-container-scroll-card');
                     const content = container.querySelector('.np-container-scroll-content');
                     const title = content?.querySelector('h2');
                     const subtitle = content?.querySelector('p');
                     const cta = content?.querySelector('.mt-7');
-                    
+
                     if (!card || !content) return;
 
                     const rect = container.getBoundingClientRect();
@@ -554,20 +588,22 @@
 
                     // 3D rotation effect (starts at 20deg, ends at 0deg)
                     const rotateX = 20 - (20 * progress);
-                    
+
                     // Scale effect desktop (tetap seperti semula)
                     const startScale = 1.05;
                     const endScale = 1;
                     const scale = startScale + ((endScale - startScale) * progress);
-                    
+
                     // Translate Y for content (moves up as you scroll)
                     const translateY = -100 * progress;
 
                     // Apply transforms
-                    card.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
+                    card.style.transform =
+                        `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
 
                     if (title) title.style.transform = `translate3d(0, ${translateY.toFixed(2)}px, 0)`;
-                    if (subtitle) subtitle.style.transform = `translate3d(0, ${translateY.toFixed(2)}px, 0)`;
+                    if (subtitle) subtitle.style.transform =
+                    `translate3d(0, ${translateY.toFixed(2)}px, 0)`;
                     if (cta) cta.style.transform = `translate3d(0, ${translateY.toFixed(2)}px, 0)`;
                 });
             };

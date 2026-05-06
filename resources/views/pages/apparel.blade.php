@@ -17,6 +17,8 @@
                         class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Shoes</a>
                     <a href="{{ route('apparel') }}"
                         class="border-b border-black text-sm text-black transition duration-300">Accessories</a>
+                        <a href="{{ route('contact') }}"
+                        class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Contact</a>
                 </nav>
 
                 <div class="flex items-center gap-3 text-black/80">
@@ -92,7 +94,7 @@
                 </div>
                 <div class="relative w-full">
                     <img src="{{ asset('storage/aparell.png') }}" alt="NoraPadel Accessories"
-                        class="h-[40vh] w-full max-h-[420px] object-contain object-bottom sm:h-[45vh] lg:h-[55vh]"
+                        class="h-[25vh] w-full max-h-[250px] object-cover object-center sm:h-[28vh] md:h-[30vh]"
                         loading="lazy">
                 </div>
             </section>
@@ -124,15 +126,14 @@
 
                     <div class="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                         @forelse($products as $product)
-                            <button type="button"
-                                class="group flex h-full w-full flex-col overflow-hidden rounded-2xl border border-black/6 bg-white text-start shadow-[0_8px_26px_rgba(0,0,0,0.05)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(0,0,0,0.09)]"
-                                data-product-trigger data-product-id="{{ $product->id }}"
-                                data-product-name="{{ e($product->name) }}"
-                                data-product-category="{{ e($product->category_label) }}"
-                                data-product-description="{{ e(\Illuminate\Support\Str::limit(strip_tags($product->description ?? ''), 180)) }}"
-                                data-product-image="{{ $product->image_url ?: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}"
-                                data-product-price="{{ $product->hasActiveDiscount() ? $product->formatted_discounted_price : $product->formatted_price }}"
-                                data-product-old-price="{{ $product->hasActiveDiscount() ? $product->formatted_price : '' }}">
+                            @php
+                                $soldCount = \App\Models\OrderItem::where('product_id', $product->id)
+                                    ->whereHas('order', function($q) {
+                                        $q->whereIn('status', ['completed', 'delivered']);
+                                    })->sum('quantity');
+                            @endphp
+                            <a href="{{ route('produk.show', $product) }}" 
+                                class="group flex h-full w-full flex-col overflow-hidden rounded-2xl border border-black/6 bg-white text-start shadow-[0_8px_26px_rgba(0,0,0,0.05)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(0,0,0,0.09)]">
                                 <div class="relative aspect-4/5 overflow-hidden bg-zinc-50">
                                     <img src="{{ $product->image_url ?: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}"
                                         alt="{{ $product->name }}"
@@ -142,8 +143,13 @@
                                         <span class="absolute right-3 top-3 rounded-full bg-black/80 px-2.5 py-1 text-[11px] font-semibold text-white">Varian</span>
                                     @endif
                                     @if ($product->hasActiveDiscount())
-                                        <span
-                                            class="absolute left-3 top-3 rounded-full bg-rose-500 px-2.5 py-1 text-[11px] font-semibold text-white">-{{ $product->formatted_discount_percent }}</span>
+                                        <span class="absolute left-3 top-3 rounded-full bg-rose-500 px-2.5 py-1 text-[11px] font-semibold text-white">-{{ $product->formatted_discount_percent }}</span>
+                                    @endif
+                                    @if($product->package_type === 'bundle')
+                                        <span class="absolute left-3 {{ $product->hasActiveDiscount() ? 'top-12' : 'top-3' }} rounded-full bg-purple-500 px-2.5 py-1 text-[11px] font-semibold text-white">Bundle</span>
+                                    @endif
+                                    @if($soldCount >= 5)
+                                        <span class="absolute right-3 {{ $product->has_variants ? 'top-12' : 'top-3' }} rounded-full bg-amber-500 px-2.5 py-1 text-[11px] font-semibold text-white">Best Seller</span>
                                     @endif
                                 </div>
 
@@ -164,7 +170,7 @@
                                         @endif
                                     </div>
                                 </div>
-                            </button>
+                            </a>
                         @empty
                             <div
                                 class="col-span-full rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 p-12 text-center">

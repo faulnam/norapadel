@@ -23,9 +23,9 @@ class Product extends Model
         'weight',
         'image',
         'category',
+        'package_type',
         'is_active',
         'is_featured',
-        'has_variants',
     ];
 
     protected $casts = [
@@ -36,7 +36,6 @@ class Product extends Model
         'weight' => 'integer',
         'is_active' => 'boolean',
         'is_featured' => 'boolean',
-        'has_variants' => 'boolean',
     ];
 
     // Categories
@@ -50,6 +49,18 @@ class Product extends Model
             self::CATEGORY_ORIGINAL => 'Raket Padel',
             self::CATEGORY_PEDAS => 'Aksesori Padel',
             self::CATEGORY_SHOES => 'Shoes Padel',
+        ];
+    }
+
+    // Package Types
+    const PACKAGE_SINGLE = 'single';
+    const PACKAGE_BUNDLE = 'bundle';
+
+    public static function packageTypes(): array
+    {
+        return [
+            self::PACKAGE_SINGLE => 'Produk Satuan',
+            self::PACKAGE_BUNDLE => 'Paket Bundling',
         ];
     }
 
@@ -109,6 +120,14 @@ class Product extends Model
     }
 
     /**
+     * Get package type label
+     */
+    public function getPackageTypeLabelAttribute(): string
+    {
+        return self::packageTypes()[$this->package_type] ?? 'Produk Satuan';
+    }
+
+    /**
      * Check if product is in stock
      */
     public function inStock(): bool
@@ -152,19 +171,12 @@ class Product extends Model
         return $this->hasMany(Cart::class);
     }
 
-    public function variants()
+    /**
+     * Get testimonials for this product
+     */
+    public function testimonials()
     {
-        return $this->hasMany(ProductVariant::class)->orderBy('sort_order');
-    }
-
-    public function activeVariants()
-    {
-        return $this->hasMany(ProductVariant::class)
-            ->where(function ($query) {
-                $query->where('is_active', true)
-                    ->orWhereNull('is_active');
-            })
-            ->orderBy('sort_order');
+        return $this->hasMany(Testimonial::class);
     }
 
     /**

@@ -78,49 +78,21 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $isFeatured = $request->boolean('is_featured');
-        $hasVariants = $request->boolean('has_variants');
-        $requiresDetails = !($isFeatured || $hasVariants);
 
         $validated = $request->validate([
-            'name' => $requiresDetails ? 'required|string|max:255' : 'nullable|string|max:255',
-            'description' => $requiresDetails ? 'required|string' : 'nullable|string',
-            'price' => $requiresDetails ? 'required|numeric|min:0' : 'nullable|numeric|min:0',
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'price' => 'required|numeric|min:0',
             'discount_percent' => 'nullable|numeric|min:0|max:100',
             'discount_start' => 'nullable|date',
             'discount_end' => 'nullable|date|after_or_equal:discount_start',
-            'stock' => $isFeatured ? 'nullable|integer|min:0' : 'required_without:has_variants|integer|min:0|nullable',
-            'category' => $requiresDetails ? 'required|in:original,pedas,shoes' : 'nullable|in:original,pedas,shoes',
-            'weight' => $requiresDetails ? 'required|integer|min:1|max:50000' : 'nullable|integer|min:1|max:50000',
-            'image' => (($isFeatured && !$hasVariants) ? 'required' : 'nullable') . '|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'stock' => 'required|integer|min:0',
+            'category' => 'required|in:original,pedas,shoes',
+            'package_type' => 'nullable|in:single,bundle',
+            'weight' => 'required|integer|min:1|max:50000',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'is_active' => 'boolean',
-            'variants' => 'nullable|array',
-            'variants.*.name' => 'required_with:variants|string|max:100',
-            'variants.*.stock' => 'required_with:variants|integer|min:0',
-            'variants.*.price_adjustment' => 'nullable|numeric',
         ]);
-
-        $defaultName = $hasVariants ? 'Produk Varian' : 'Produk Highlight';
-        $defaultDescription = $hasVariants ? 'Produk ini memiliki varian.' : 'Produk highlight.';
-        $defaultCategory = Product::CATEGORY_ORIGINAL;
-        $defaultWeight = 50;
-
-        $name = trim((string) ($validated['name'] ?? ''));
-        if ($name === '') {
-            $name = $defaultName;
-        }
-
-        $description = trim((string) ($validated['description'] ?? ''));
-        if ($description === '') {
-            $description = $defaultDescription;
-        }
-
-        $category = $validated['category'] ?? $defaultCategory;
-        if ($category === '') {
-            $category = $defaultCategory;
-        }
-
-        $price = $validated['price'] ?? 0;
-        $weight = $validated['weight'] ?? $defaultWeight;
 
         $imagePath = null;
         if ($request->hasFile('image')) {
@@ -128,52 +100,27 @@ class ProductController extends Controller
         }
 
         if ($isFeatured) {
-            Product::where('category', $category)
+            Product::where('category', $validated['category'])
                 ->where('is_featured', true)
                 ->update(['is_featured' => false]);
         }
 
-        $totalStock = $hasVariants
-            ? collect($request->input('variants', []))->sum('stock')
-            : ($validated['stock'] ?? 0);
-
-        if ($isFeatured && $totalStock < 1) {
-            $totalStock = 1;
-        }
-
         $product = Product::create([
-            'name' => $name,
-            'slug' => $this->generateUniqueSlug($name),
-            'description' => $description,
-            'price' => $price,
+            'name' => $validated['name'],
+            'slug' => $this->generateUniqueSlug($validated['name']),
+            'description' => $validated['description'],
+            'price' => $validated['price'],
             'discount_percent' => $validated['discount_percent'] ?? 0,
             'discount_start' => $validated['discount_start'] ?? null,
             'discount_end' => $validated['discount_end'] ?? null,
-            'stock' => $totalStock,
-            'category' => $category,
-            'weight' => $weight,
+            'stock' => $validated['stock'],
+            'category' => $validated['category'],
+            'package_type' => $validated['package_type'] ?? 'single',
+            'weight' => $validated['weight'],
             'image' => $imagePath,
             'is_active' => $request->boolean('is_active', true),
             'is_featured' => $isFeatured,
-            'has_variants' => $hasVariants,
         ]);
-
-        if ($hasVariants && $request->has('variants')) {
-            foreach ($request->input('variants', []) as $i => $variantData) {
-                $variantImage = null;
-                if ($request->hasFile("variants.{$i}.image")) {
-                    $variantImage = $request->file("variants.{$i}.image")->store('products/variants', 'public');
-                }
-                $product->variants()->create([
-                    'name' => $variantData['name'],
-                    'stock' => $variantData['stock'],
-                    'price_adjustment' => $variantData['price_adjustment'] ?? 0,
-                    'image' => $variantImage,
-                    'is_active' => true,
-                    'sort_order' => $i,
-                ]);
-            }
-        }
 
         return redirect()->route('admin.products.index')
             ->with('success', 'Produk berhasil ditambahkan.');
@@ -201,60 +148,33 @@ class ProductController extends Controller
     public function update(Request $request, Product $product)
     {
         $isFeatured = $request->boolean('is_featured');
-        $hasVariants = $request->boolean('has_variants');
-        $requiresDetails = !($isFeatured || $hasVariants);
 
         $validated = $request->validate([
-            'name' => $requiresDetails ? 'required|string|max:255' : 'nullable|string|max:255',
-            'description' => $requiresDetails ? 'required|string' : 'nullable|string',
-            'price' => $requiresDetails ? 'required|numeric|min:0' : 'nullable|numeric|min:0',
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'price' => 'required|numeric|min:0',
             'discount_percent' => 'nullable|numeric|min:0|max:100',
             'discount_start' => 'nullable|date',
             'discount_end' => 'nullable|date|after_or_equal:discount_start',
-            'stock' => $isFeatured ? 'nullable|integer|min:0' : 'nullable|integer|min:0',
-            'category' => $requiresDetails ? 'required|in:original,pedas,shoes' : 'nullable|in:original,pedas,shoes',
-            'weight' => $requiresDetails ? 'required|integer|min:1|max:50000' : 'nullable|integer|min:1|max:50000',
+            'stock' => 'required|integer|min:0',
+            'category' => 'required|in:original,pedas,shoes',
+            'package_type' => 'nullable|in:single,bundle',
+            'weight' => 'required|integer|min:1|max:50000',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'is_active' => 'boolean',
-            'variants' => 'nullable|array',
-            'variants.*.name' => 'required_with:variants|string|max:100',
-            'variants.*.stock' => 'required_with:variants|integer|min:0',
-            'variants.*.price_adjustment' => 'nullable|numeric',
         ]);
 
-        $defaultName = $product->name ?: ($hasVariants ? 'Produk Varian' : 'Produk Highlight');
-        $defaultDescription = $product->description ?: ($hasVariants ? 'Produk ini memiliki varian.' : 'Produk highlight.');
-        $defaultCategory = $product->category ?: Product::CATEGORY_ORIGINAL;
-        $defaultWeight = $product->weight ?: 50;
-
-        $name = trim((string) ($validated['name'] ?? ''));
-        if ($name === '') {
-            $name = $defaultName;
-        }
-
-        $description = trim((string) ($validated['description'] ?? ''));
-        if ($description === '') {
-            $description = $defaultDescription;
-        }
-
-        $category = $validated['category'] ?? $defaultCategory;
-        if ($category === '') {
-            $category = $defaultCategory;
-        }
-
-        $price = $validated['price'] ?? $product->price ?? 0;
-        $weight = $validated['weight'] ?? $defaultWeight;
-
-        $product->name = $name;
-        $product->description = $description;
-        $product->price = $price;
+        $product->name = $validated['name'];
+        $product->description = $validated['description'];
+        $product->price = $validated['price'];
         $product->discount_percent = $request->discount_percent ?? 0;
         $product->discount_start = $request->discount_start ?? null;
         $product->discount_end = $request->discount_end ?? null;
-        $product->category = $category;
-        $product->weight = $weight;
+        $product->stock = $validated['stock'];
+        $product->category = $validated['category'];
+        $product->package_type = $validated['package_type'] ?? 'single';
+        $product->weight = $validated['weight'];
         $product->is_active = $request->boolean('is_active', true);
-        $product->has_variants = $hasVariants;
 
         $newFeatured = $request->boolean('is_featured');
         if ($newFeatured && !$product->is_featured) {
@@ -266,73 +186,13 @@ class ProductController extends Controller
         $product->is_featured = $newFeatured;
 
         $oldName = trim($product->getOriginal('name'));
-        if ($oldName !== trim($name)) {
-            $product->slug = $this->generateUniqueSlug($name, $product->id);
+        if ($oldName !== trim($validated['name'])) {
+            $product->slug = $this->generateUniqueSlug($validated['name'], $product->id);
         }
 
         if ($request->hasFile('image')) {
             if ($product->image) Storage::disk('public')->delete($product->image);
             $product->image = $request->file('image')->store('products', 'public');
-        }
-
-        // Handle variants
-        if ($hasVariants && $request->has('variants')) {
-            // Delete removed variants
-            $keepIds = collect($request->input('variants', []))->pluck('id')->filter()->values();
-            $product->variants()->whereNotIn('id', $keepIds)->each(function ($v) {
-                if ($v->image) Storage::disk('public')->delete($v->image);
-                $v->delete();
-            });
-
-            $totalStock = 0;
-            foreach ($request->input('variants', []) as $i => $variantData) {
-                $variantImage = null;
-                if ($request->hasFile("variants.{$i}.image")) {
-                    $variantImage = $request->file("variants.{$i}.image")->store('products/variants', 'public');
-                }
-
-                if (!empty($variantData['id'])) {
-                    $variant = ProductVariant::find($variantData['id']);
-                    if ($variant && $variant->product_id === $product->id) {
-                        if ($variantImage && $variant->image) Storage::disk('public')->delete($variant->image);
-                        $variant->update([
-                            'name' => $variantData['name'],
-                            'stock' => $variantData['stock'],
-                            'price_adjustment' => $variantData['price_adjustment'] ?? 0,
-                            'sort_order' => $i,
-                            'image' => $variantImage ?? $variant->image,
-                            'is_active' => $variant->is_active ?? true,
-                        ]);
-                        $totalStock += $variantData['stock'];
-                        continue;
-                    }
-                }
-
-                $product->variants()->create([
-                    'name' => $variantData['name'],
-                    'stock' => $variantData['stock'],
-                    'price_adjustment' => $variantData['price_adjustment'] ?? 0,
-                    'image' => $variantImage,
-                    'is_active' => true,
-                    'sort_order' => $i,
-                ]);
-                $totalStock += $variantData['stock'];
-            }
-            if ($isFeatured && $totalStock < 1) {
-                $totalStock = 1;
-            }
-            $product->stock = $totalStock;
-        } else {
-            // No variants - delete all existing variants
-            $product->variants()->each(function ($v) {
-                if ($v->image) Storage::disk('public')->delete($v->image);
-                $v->delete();
-            });
-            $stock = (int) $request->input('stock', 0);
-            if ($isFeatured && $stock < 1) {
-                $stock = 1;
-            }
-            $product->stock = $stock;
         }
 
         $product->save();

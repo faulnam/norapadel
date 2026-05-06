@@ -143,7 +143,7 @@
                                     @endif
                                 </div>
                                 @auth
-                                    <a href="{{ route('customer.products.show', $product) }}" class="inline-flex items-center rounded-full bg-slate-900 px-4 py-2 text-xs font-bold uppercase tracking-wide text-white transition hover:bg-emerald-600">
+                                    <a href="{{ route('produk.show', $product) }}" class="inline-flex items-center rounded-full bg-slate-900 px-4 py-2 text-xs font-bold uppercase tracking-wide text-white transition hover:bg-emerald-600">
                                         Beli
                                     </a>
                                 @else
@@ -504,7 +504,7 @@
                                     @endif
                                 </div>
                                 @auth
-                                    <a href="{{ route('customer.products.show', $product) }}" class="btn-product">
+                                    <a href="{{ route('produk.show', $product) }}" class="btn-product">
                                         <i class="fas fa-shopping-cart"></i>
                                         <span class="d-none d-sm-inline ms-1">Beli</span>
                                     </a>
@@ -2054,6 +2054,7 @@
                     <a href="{{ route('produk.index') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Racket</a>
                     <a href="{{ route('produk.index') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Shoes</a>
                     <a href="{{ route('produk.index') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Accessories</a>
+                    <a href="{{ route('contact') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Contact</a>
                 </nav>
 
                 <div class="flex items-center gap-3 text-black/80">
@@ -2084,6 +2085,7 @@
                     <a href="{{ route('produk.index') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Racket</a>
                     <a href="{{ route('produk.index') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Shoes</a>
                     <a href="{{ route('produk.index') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Accessories</a>
+                    <a href="{{ route('contact') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Contact</a>
                 </nav>
             </div>
         </header>

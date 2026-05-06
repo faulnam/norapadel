@@ -8,8 +8,7 @@
     <meta property="og:title" content="@yield('title', config('branding.name', 'Nora Padel'))">
     <meta property="og:description" content="{{ config('branding.tagline', 'Performa Maksimal, Game Makin Total') }}">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="{{ asset(config('branding.logo', 'storage/logo.png')) }}">
-    <link rel="icon" type="image/svg+xml" href="{{ asset(config('branding.favicon', 'storage/logo.png')) }}">
+  
     <title>@yield('title', 'Nora Padel - Performa Maksimal, Game Makin Total')</title>
     
     <!-- Bootstrap 5 CSS -->
@@ -830,13 +829,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg sticky-top" id="mainNavbar">
         <div class="container">
-            <a class="navbar-brand" href="{{ route('home') }}">
-                @if(request()->routeIs('help-center', 'contact', 'about'))
-                    <span class="text-dark">{{ config('branding.name', 'Nora Padel') }}</span>
-                @else
-                    <img src="{{ asset(config('branding.logo', 'storage/logo.png')) }}" alt="{{ config('branding.name', 'Nora Padel') }}" height="40" class="brand-logo">
-                @endif
-            </a>
+            
             
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -858,6 +851,9 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('testimoni') ? 'active' : '' }}" href="{{ route('testimoni') }}">Testimoni</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('contact') ? 'active' : '' }}" href="{{ route('contact') }}">Contact</a>
                     </li>
 
                     @guest
@@ -1172,147 +1168,8 @@
     </script>
 
     <script>
-        (function () {
-            const modalEl = document.getElementById('npProductModal');
-            if (!modalEl || typeof bootstrap === 'undefined') return;
-
-            const modal = new bootstrap.Modal(modalEl);
-            const modalImage = document.getElementById('npModalImage');
-            const modalCategory = document.getElementById('npModalCategory');
-            const modalTitle = document.getElementById('npProductModalTitle');
-            const modalDescription = document.getElementById('npModalDescription');
-            const modalPrice = document.getElementById('npModalPrice');
-            const modalOldPrice = document.getElementById('npModalOldPrice');
-            const modalVariantsSection = document.getElementById('npModalVariants');
-            const modalVariantSelect = document.getElementById('npModalVariantSelect');
-            const modalVariantHint = document.getElementById('npModalVariantHint');
-            const modalVariantIdInput = document.getElementById('npModalVariantId');
-            const modalBuyBtn = document.getElementById('npModalBuyBtn');
-            const cartForm = document.getElementById('npModalCartForm');
-            const modalActions = document.getElementById('npModalActions');
-            const modalContact = document.getElementById('npModalContact');
-            const fallbackImage = '{{ asset(config('branding.logo', 'storage/logo.png')) }}';
-
-            let currentProductId = null;
-
-            const toText = (value, fallback = '') => {
-                const clean = (value || '').toString().trim();
-                return clean.length ? clean : fallback;
-            };
-
-            const loadVariants = async (productId) => {
-                console.log('🔍 Loading variants for product:', productId);
-                try {
-                    const response = await fetch(`/api/products/${productId}/variants`);
-                    const data = await response.json();
-                    console.log('📦 Variant data received:', data);
-
-                    if (data.has_variants && data.variants && data.variants.length > 0) {
-                        console.log('✅ Product has variants:', data.variants.length);
-
-                        if (modalActions) modalActions.classList.add('d-none');
-                        if (modalContact) modalContact.classList.remove('d-none');
-
-                        modalVariantsSection.classList.remove('d-block');
-                        modalVariantsSection.classList.add('d-none');
-                        if (modalVariantIdInput) modalVariantIdInput.value = '';
-                        if (modalBuyBtn) modalBuyBtn.disabled = true;
-                        return;
-                    } else {
-                        console.log('ℹ️ No variants for this product');
-                        if (modalActions) modalActions.classList.remove('d-none');
-                        if (modalContact) modalContact.classList.add('d-none');
-                        // SEMBUNYIKAN section varian untuk produk tanpa varian
-                        modalVariantsSection.classList.remove('d-block');
-                        modalVariantsSection.classList.add('d-none');
-                        if (modalBuyBtn) modalBuyBtn.disabled = false;
-                        if (modalVariantIdInput) modalVariantIdInput.value = '';
-                    }
-                } catch (error) {
-                    console.error('❌ Error loading variants:', error);
-                    if (modalActions) modalActions.classList.remove('d-none');
-                    if (modalContact) modalContact.classList.add('d-none');
-                    // SEMBUNYIKAN section varian jika error
-                    modalVariantsSection.classList.remove('d-block');
-                    modalVariantsSection.classList.add('d-none');
-                    if (modalBuyBtn) modalBuyBtn.disabled = false;
-                }
-            };
-
-            const openProductModal = (trigger) => {
-                const dataset = trigger.dataset;
-
-                const productId = toText(dataset.productId);
-                const name = toText(dataset.productName, 'Produk NoraPadel');
-                const category = toText(dataset.productCategory, 'Produk');
-                const description = toText(dataset.productDescription, 'Detail produk belum tersedia.');
-                const image = toText(dataset.productImage, fallbackImage);
-                const price = toText(dataset.productPrice, '-');
-                const oldPrice = toText(dataset.productOldPrice);
-
-                currentProductId = productId;
-
-                if (modalActions) modalActions.classList.remove('d-none');
-                if (modalContact) modalContact.classList.add('d-none');
-
-                modalImage.src = image;
-                modalImage.alt = name;
-                modalCategory.textContent = category;
-                modalTitle.textContent = name;
-                modalDescription.textContent = description;
-                modalPrice.textContent = price;
-
-                if (oldPrice && oldPrice !== price) {
-                    modalOldPrice.textContent = oldPrice;
-                    modalOldPrice.classList.remove('d-none');
-                } else {
-                    modalOldPrice.textContent = '';
-                    modalOldPrice.classList.add('d-none');
-                }
-
-                if (cartForm && productId) {
-                    const actionTemplate = cartForm.dataset.actionTemplate || '';
-                    cartForm.action = actionTemplate.replace('__PRODUCT_ID__', productId);
-                }
-
-                // Load varian
-                if (productId) {
-                    loadVariants(productId);
-                }
-
-                modal.show();
-            };
-
-            document.addEventListener('click', function (event) {
-                const trigger = event.target.closest('[data-product-trigger]');
-                if (!trigger) return;
-
-                console.log('🖱️ Product clicked:', trigger.dataset.productName);
-                event.preventDefault();
-                openProductModal(trigger);
-            });
-
-            // Reset modal saat ditutup
-            modalEl.addEventListener('hidden.bs.modal', () => {
-                // SEMBUNYIKAN section varian
-                modalVariantsSection.classList.remove('d-block');
-                modalVariantsSection.classList.add('d-none');
-                
-                // Reset dropdown ke default
-                if (modalVariantSelect) {
-                    modalVariantSelect.innerHTML = '<option value="">-- Pilih Varian --</option>';
-                    modalVariantSelect.value = '';
-                    modalVariantSelect.disabled = false;
-                }
-                if (modalVariantIdInput) modalVariantIdInput.value = '';
-                if (modalBuyBtn) modalBuyBtn.disabled = false;
-                if (modalVariantHint) {
-                    modalVariantHint.className = 'text-muted d-block mt-1';
-                    modalVariantHint.innerHTML = '<i class="fas fa-info-circle me-1"></i>Pilih varian yang tersedia';
-                }
-                currentProductId = null;
-            });
-        })();
+        // Product modal functionality DISABLED - redirecting to detail page instead
+        // Modal popup has been replaced with direct navigation to product detail page
     </script>
 
     <script>
