@@ -181,8 +181,11 @@
                                 <i class="fas fa-credit-card mr-2"></i>Checkout
                             </a>
                         @else
-                            <a href="{{ route('login') }}" class="block w-full rounded-full bg-black px-6 py-3 text-center text-sm font-medium text-white transition hover:bg-black/90">
-                                <i class="fas fa-sign-in-alt mr-2"></i>Login untuk Checkout
+                            <a href="{{ route('customer.checkout') }}" class="block w-full rounded-full bg-black px-6 py-3 text-center text-sm font-medium text-white transition hover:bg-black/90">
+                                <i class="fas fa-credit-card mr-2"></i>Checkout sebagai Guest
+                            </a>
+                            <a href="{{ route('login') }}" class="block w-full mt-2 rounded-full border-2 border-black bg-transparent px-6 py-3 text-center text-sm font-medium text-black transition hover:bg-black hover:text-white">
+                                <i class="fas fa-sign-in-alt mr-2"></i>Login untuk Reward
                             </a>
                         @endif
                     </div>

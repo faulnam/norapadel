@@ -564,20 +564,46 @@
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Nama Penerima <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control @error('shipping_name') is-invalid @enderror" 
-                                           name="shipping_name" value="{{ old('shipping_name', auth()->user()->name) }}" required>
+                                           name="shipping_name" value="{{ old('shipping_name', auth()->check() ? auth()->user()->name : '') }}" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Nomor Telepon <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control @error('shipping_phone') is-invalid @enderror" 
-                                           name="shipping_phone" value="{{ old('shipping_phone', auth()->user()->phone) }}" required>
+                                           name="shipping_phone" value="{{ old('shipping_phone', auth()->check() ? auth()->user()->phone : '') }}" required>
                                 </div>
                             </div>
                             
                             <div class="mb-3">
                                 <label class="form-label">Alamat Lengkap <span class="text-danger">*</span></label>
                                 <textarea class="form-control @error('shipping_address') is-invalid @enderror" 
-                                          name="shipping_address" rows="3" required placeholder="Jalan, No. Rumah, RT/RW, Kelurahan, Kecamatan, Kota">{{ old('shipping_address', auth()->user()->address) }}</textarea>
+                                          name="shipping_address" rows="3" required placeholder="Jalan, No. Rumah, RT/RW, Kelurahan, Kecamatan, Kota">{{ old('shipping_address', auth()->check() ? auth()->user()->address : '') }}</textarea>
                             </div>
+
+                            @guest
+                            <!-- Guest Information -->
+                            <div class="alert alert-info mb-3" style="border-radius: 12px;">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>Checkout sebagai Guest</strong><br>
+                                <small>Isi data diri Anda untuk melanjutkan. Atau <a href="{{ route('login') }}" class="alert-link">login</a> untuk mendapatkan reward!</small>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Nama Lengkap <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control @error('guest_name') is-invalid @enderror" 
+                                           name="guest_name" value="{{ old('guest_name') }}" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Email <span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control @error('guest_email') is-invalid @enderror" 
+                                           name="guest_email" value="{{ old('guest_email') }}" required>
+                                </div>
+                                <div class="col-md-12 mb-3">
+                                    <label class="form-label">Nomor HP <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control @error('guest_phone') is-invalid @enderror" 
+                                           name="guest_phone" value="{{ old('guest_phone') }}" required>
+                                </div>
+                            </div>
+                            @endguest
 
                             <!-- Koordinat -->
                             <div class="coord-box mb-3">
@@ -699,7 +725,7 @@
                                             <span class="badge bg-danger ms-1" style="font-size: 10px;">-{{ $item->product->formatted_discount_percent }}</span>
                                         @endif
                                     </span>
-                                    <span>{{ $item->formatted_subtotal }}</span>
+                                    <span>Rp {{ number_format($item->subtotal, 0, ',', '.') }}</span>
                                 </div>
                             @endforeach
                             

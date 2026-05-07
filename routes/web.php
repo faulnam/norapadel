@@ -258,13 +258,18 @@ Route::prefix('courier')->name('courier.')->middleware(['auth', 'courier'])->gro
     Route::post('/notifications/mark-read', [CourierNotification::class, 'markAllAsRead'])->name('notifications.markRead');
 });
 
-// Customer Routes - Cart (accessible without login)
+// Customer Routes - Cart & Checkout (accessible without login)
 Route::post('/customer/cart/add/{product}', [CartController::class, 'add'])->name('customer.cart.add');
 Route::get('/customer/cart', [CartController::class, 'index'])->name('customer.cart.index');
 Route::patch('/customer/cart/{cart}', [CartController::class, 'update'])->name('customer.cart.update');
 Route::delete('/customer/cart/{cart}', [CartController::class, 'remove'])->name('customer.cart.remove');
 Route::delete('/customer/cart', [CartController::class, 'clear'])->name('customer.cart.clear');
 Route::get('/customer/cart/count', [CartController::class, 'count'])->name('customer.cart.count');
+
+// Guest Checkout
+Route::get('/customer/checkout', [CustomerOrder::class, 'checkout'])->name('customer.checkout');
+Route::post('/customer/checkout', [CustomerOrder::class, 'processCheckout'])->name('customer.checkout.process');
+Route::post('/customer/shipping/rates', [\App\Http\Controllers\Customer\ShippingController::class, 'getRates'])->name('customer.shipping.rates');
 
 // Customer Routes
 Route::prefix('customer')->name('customer.')->middleware(['auth', 'customer'])->group(function () {
@@ -280,9 +285,7 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'customer'])->
     // Shipping Rates (Biteship)
     Route::post('/shipping/rates', [\App\Http\Controllers\Customer\ShippingController::class, 'getRates'])->name('shipping.rates');
     
-    // Checkout & Orders
-    Route::get('/checkout', [CustomerOrder::class, 'checkout'])->name('checkout');
-    Route::post('/checkout', [CustomerOrder::class, 'processCheckout'])->name('checkout.process');
+    // Checkout & Orders (removed - moved to guest accessible routes)
     Route::get('/orders', [CustomerOrder::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [CustomerOrder::class, 'show'])->name('orders.show');
     Route::get('/orders/{order}/receipt', [CustomerOrder::class, 'receipt'])->name('orders.receipt');

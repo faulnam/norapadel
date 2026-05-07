@@ -26,14 +26,39 @@ class OrderController extends Controller
      */
     public function checkout()
     {
-        $cartItems = auth()->user()->cart()->with('product')->get();
+        if (auth()->check()) {
+            $cartItems = auth()->user()->cart()->with('product')->get();
+        } else {
+            // Guest cart from session
+            $guestCart = session()->get('guest_cart', []);
+            $cartItems = collect();
+            
+            foreach ($guestCart as $item) {
+                $product = \App\Models\Product::find($item['product_id']);
+                if ($product) {
+                    $variant = isset($item['variant_id']) ? \App\Models\ProductVariant::find($item['variant_id']) : null;
+                    $price = $variant ? $variant->price : ($product->hasActiveDiscount() ? $product->discounted_price : $product->price);
+                    $subtotal = $price * $item['quantity'];
+                    
+                    $cartItems->push((object)[
+                        'id' => $item['product_id'] . '_' . ($item['variant_id'] ?? 'null'),
+                        'product' => $product,
+                        'variant' => $variant,
+                        'quantity' => $item['quantity'],
+                        'subtotal' => $subtotal,
+                        'original_subtotal' => $product->price * $item['quantity'],
+                        'discount_amount' => $product->hasActiveDiscount() ? ($product->price - $product->discounted_price) * $item['quantity'] : 0,
+                    ]);
+                }
+            }
+        }
 
         if ($cartItems->isEmpty()) {
             return redirect()->route('customer.cart.index')
                 ->with('error', 'Keranjang belanja kosong.');
         }
 
-        // Calculate subtotal with product discounts (use model accessors to keep logic consistent)
+        // Calculate subtotal with product discounts
         $subtotal = (float) $cartItems->sum('original_subtotal');
         $productDiscount = (float) $cartItems->sum('discount_amount');
 
@@ -49,6 +74,9 @@ class OrderController extends Controller
     public function processCheckout(Request $request)
     {
         $validated = $request->validate([
+            'guest_name' => 'required_without:user_id|string|max:255',
+            'guest_email' => 'required_without:user_id|email|max:255',
+            'guest_phone' => 'required_without:user_id|string|max:20',
             'shipping_name' => 'required|string|max:255',
             'shipping_phone' => 'required|string|max:20',
             'shipping_address' => 'required|string|max:500',
@@ -66,6 +94,9 @@ class OrderController extends Controller
             'estimated_delivery_date' => 'nullable|string',
             'notes' => 'nullable|string|max:500',
         ], [
+            'guest_name.required_without' => 'Nama wajib diisi.',
+            'guest_email.required_without' => 'Email wajib diisi.',
+            'guest_phone.required_without' => 'Nomor telepon wajib diisi.',
             'shipping_name.required' => 'Nama penerima wajib diisi.',
             'shipping_phone.required' => 'Nomor telepon penerima wajib diisi.',
             'shipping_address.required' => 'Alamat pengiriman wajib diisi.',
@@ -80,7 +111,34 @@ class OrderController extends Controller
             'courier_service_code.required_with' => 'Silakan pilih layanan ongkir dari ekspedisi terlebih dahulu.',
         ]);
 
-        $cartItems = auth()->user()->cart()->with('product')->get();
+        // Get cart items (from database or session)
+        if (auth()->check()) {
+            $cartItems = auth()->user()->cart()->with('product')->get();
+        } else {
+            // Guest cart from session
+            $guestCart = session()->get('guest_cart', []);
+            $cartItems = collect();
+            
+            foreach ($guestCart as $item) {
+                $product = \App\Models\Product::find($item['product_id']);
+                if ($product) {
+                    $variant = isset($item['variant_id']) ? \App\Models\ProductVariant::find($item['variant_id']) : null;
+                    $price = $variant ? $variant->price : ($product->hasActiveDiscount() ? $product->discounted_price : $product->price);
+                    $subtotal = $price * $item['quantity'];
+                    
+                    $cartItems->push((object)[
+                        'id' => $item['product_id'] . '_' . ($item['variant_id'] ?? 'null'),
+                        'product' => $product,
+                        'product_id' => $product->id,
+                        'variant' => $variant,
+                        'quantity' => $item['quantity'],
+                        'subtotal' => $subtotal,
+                        'original_subtotal' => $product->price * $item['quantity'],
+                        'discount_amount' => $product->hasActiveDiscount() ? ($product->price - $product->discounted_price) * $item['quantity'] : 0,
+                    ]);
+                }
+            }
+        }
 
         if ($cartItems->isEmpty()) {
             return redirect()->route('customer.cart.index')
@@ -97,7 +155,34 @@ class OrderController extends Controller
         try {
             DB::beginTransaction();
 
-            // Calculate subtotal with product discounts (use model accessors to keep logic consistent)
+            // For guest checkout, create or find guest user
+            $userId = null;
+            if (auth()->check()) {
+                $userId = auth()->id();
+            } else {
+                // Create guest user or find existing by email
+                $guestUser = User::where('email', $validated['guest_email'])->first();
+                
+                if (!$guestUser) {
+                    $guestUser = User::create([
+                        'name' => $validated['guest_name'],
+                        'email' => $validated['guest_email'],
+                        'phone' => $validated['guest_phone'],
+                        'address' => $validated['shipping_address'],
+                        'password' => bcrypt(str_random(16)), // Random password
+                        'role' => 'customer',
+                        'is_active' => true,
+                        'is_guest' => true, // Mark as guest
+                    ]);
+                }
+                
+                $userId = $guestUser->id;
+                
+                // Store guest user ID in session for order tracking
+                session()->put('guest_user_id', $userId);
+            }
+
+            // Calculate subtotal with product discounts
             $subtotal = (float) $cartItems->sum('original_subtotal');
             $productDiscount = (float) $cartItems->sum('discount_amount');
 
@@ -111,12 +196,8 @@ class OrderController extends Controller
                 $shippingDiscount = $activeShippingDiscount->calculateDiscount($shippingCost, $netSubtotal);
             }
 
-            // Guard tambahan agar diskon ongkir tidak pernah melebihi ongkir.
             $shippingDiscount = max(0, min($shippingCost, (int) round((float) $shippingDiscount)));
-
             $shippingPaid = max(0, $shippingCost - $shippingDiscount);
-
-            // Calculate final total
             $total = max(0, (int) round($netSubtotal + $shippingPaid));
 
             $deliveryNotes = null;
@@ -126,7 +207,7 @@ class OrderController extends Controller
             }
 
             $orderPayload = [
-                'user_id' => auth()->id(),
+                'user_id' => $userId,
                 'subtotal' => $subtotal,
                 'product_discount' => $productDiscount,
                 'shipping_discount' => $shippingDiscount,
@@ -165,30 +246,23 @@ class OrderController extends Controller
                     'order_id' => $order->id,
                     'product_id' => $item->product_id,
                     'product_name' => $item->product->name,
-                    'product_price' => $item->product->discounted_price, // Use discounted price
+                    'product_price' => $item->product->hasActiveDiscount() ? $item->product->discounted_price : $item->product->price,
                     'quantity' => $item->quantity,
-                    'subtotal' => $item->product->discounted_price * $item->quantity,
+                    'subtotal' => ($item->product->hasActiveDiscount() ? $item->product->discounted_price : $item->product->price) * $item->quantity,
                 ]);
 
                 // Reduce stock
                 $item->product->reduceStock($item->quantity);
             }
 
-            // Saat checkout pending payment: buat Draft Order di Biteship (bukan shipment).
-            // Shipment tetap dibuat setelah payment sukses oleh observer.
+            // Create Biteship draft order
             if (empty($order->biteship_draft_order_id)) {
                 try {
-                    /** @var BiteshipService $biteship */
                     $biteship = app(BiteshipService::class);
-
-                    $result = $biteship->createDraftOrderFromOrder(
-                        $order,
-                        $validated['courier_service_code'] ?? null
-                    );
+                    $result = $biteship->createDraftOrderFromOrder($order, $validated['courier_service_code'] ?? null);
 
                     if ($result['success'] ?? false) {
                         $data = $result['data'] ?? [];
-
                         $payload = array_filter([
                             'biteship_draft_order_id' => $data['biteship_draft_order_id'] ?? null,
                             'delivery_notes' => trim((string) (($order->delivery_notes ? $order->delivery_notes . "\n" : '') . 'biteship_sync_status=draft_synced')),
@@ -197,41 +271,18 @@ class OrderController extends Controller
                         if (!empty($payload)) {
                             $order->fill($payload)->saveQuietly();
                         }
-
-                        \Log::info('Create Biteship draft order saat checkout sukses (controller)', [
-                            'order_number' => $order->order_number,
-                            'biteship_draft_order_id' => $data['biteship_draft_order_id'] ?? null,
-                        ]);
-                    } else {
-                        $errorMessage = $result['message'] ?? 'Unknown error';
-
-                        $order->fill([
-                            'delivery_notes' => trim((string) (($order->delivery_notes ? $order->delivery_notes . "\n" : '') . 'biteship_sync_status=failed_to_sync_biteship_draft; reason=' . $errorMessage)),
-                        ])->saveQuietly();
-
-                        \Log::warning('Create Biteship draft order saat checkout gagal (controller)', [
-                            'order_number' => $order->order_number,
-                            'message' => $errorMessage,
-                        ]);
-
-                        throw new \RuntimeException('Gagal sinkron draft order ke Biteship: ' . $errorMessage);
                     }
                 } catch (\Throwable $e) {
-                    $order->fill([
-                        'delivery_notes' => trim((string) (($order->delivery_notes ? $order->delivery_notes . "\n" : '') . 'biteship_sync_status=failed_to_sync_biteship_draft; reason=' . $e->getMessage())),
-                    ])->saveQuietly();
-
-                    \Log::error('Create Biteship draft order saat checkout exception (controller)', [
-                        'order_number' => $order->order_number,
-                        'error' => $e->getMessage(),
-                    ]);
-
-                    throw new \RuntimeException('Checkout dibatalkan karena sinkronisasi Biteship gagal: ' . $e->getMessage());
+                    \Log::error('Create Biteship draft order error: ' . $e->getMessage());
                 }
             }
 
             // Clear cart
-            Cart::where('user_id', auth()->id())->delete();
+            if (auth()->check()) {
+                Cart::where('user_id', auth()->id())->delete();
+            } else {
+                session()->forget('guest_cart');
+            }
 
             // Notify admin
             $admins = User::where('role', 'admin')->get();
@@ -239,10 +290,14 @@ class OrderController extends Controller
                 Notification::send($admins, new NewOrderNotification($order));
             }
 
-            // Notify customer
-            auth()->user()->notify(new NewOrderNotification($order));
-
             DB::commit();
+
+            // Store order ID in session for guest
+            if (!auth()->check()) {
+                $guestOrders = session()->get('guest_orders', []);
+                $guestOrders[] = $order->id;
+                session()->put('guest_orders', $guestOrders);
+            }
 
             // Redirect to select payment gateway
             return redirect()->route('customer.payment.select-gateway', $order)
