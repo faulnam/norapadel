@@ -88,7 +88,7 @@
                                                     <p class="mt-1 text-sm font-medium text-emerald-600">{{ $item->product->formatted_price }}</p>
                                                 @endif
                                             </div>
-                                            <form action="{{ route('customer.cart.remove', $item) }}" method="POST">
+                                            <form action="{{ auth()->check() ? route('customer.cart.remove', $item->id ?? $item->id) : route('customer.cart.remove', $item->id) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="text-rose-600 transition hover:text-rose-700">
@@ -98,7 +98,7 @@
                                         </div>
                                         
                                         <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                                            <form action="{{ route('customer.cart.update', $item) }}" method="POST" class="inline-flex">
+                                            <form action="{{ auth()->check() ? route('customer.cart.update', $item->id ?? $item->id) : route('customer.cart.update', $item->id) }}" method="POST" class="inline-flex">
                                                 @csrf
                                                 @method('PATCH')
                                                 <div class="flex items-center gap-2">
@@ -113,7 +113,7 @@
                                                 </div>
                                             </form>
                                             
-                                            <strong class="text-base font-semibold text-black">{{ $item->formatted_subtotal }}</strong>
+                                            <strong class="text-base font-semibold text-black">{{ is_object($item) && method_exists($item, 'getAttribute') ? $item->formatted_subtotal : 'Rp ' . number_format($item->subtotal, 0, ',', '.') }}</strong>
                                         </div>
                                     </div>
                                 </div>
@@ -138,8 +138,24 @@
                             <span class="font-medium text-black">{{ $cartItems->sum('quantity') }} pcs</span>
                         </div>
                         @php
-                            $totalDiscount = $cartItems->sum('discount_amount');
-                            $originalTotal = $cartItems->sum('original_subtotal');
+                            $totalDiscount = 0;
+                            $originalTotal = 0;
+                            foreach($cartItems as $item) {
+                                if(is_object($item) && method_exists($item, 'getAttribute')) {
+                                    $totalDiscount += $item->discount_amount ?? 0;
+                                    $originalTotal += $item->original_subtotal ?? $item->subtotal;
+                                } else {
+                                    // Guest cart - calculate discount
+                                    $product = $item->product;
+                                    $qty = $item->quantity;
+                                    if($product->hasActiveDiscount()) {
+                                        $originalTotal += $product->price * $qty;
+                                        $totalDiscount += ($product->price - $product->discounted_price) * $qty;
+                                    } else {
+                                        $originalTotal += $product->price * $qty;
+                                    }
+                                }
+                            }
                         @endphp
                         @if($totalDiscount > 0)
                             <div class="flex justify-between border-b border-black/6 py-3 text-sm">
@@ -160,9 +176,15 @@
                             <strong class="text-lg text-emerald-600">Rp {{ number_format($total, 0, ',', '.') }}</strong>
                         </div>
                         
-                        <a href="{{ route('customer.checkout') }}" class="block w-full rounded-full bg-black px-6 py-3 text-center text-sm font-medium text-white transition hover:bg-black/90">
-                            <i class="fas fa-credit-card mr-2"></i>Checkout
-                        </a>
+                        @if(auth()->check())
+                            <a href="{{ route('customer.checkout') }}" class="block w-full rounded-full bg-black px-6 py-3 text-center text-sm font-medium text-white transition hover:bg-black/90">
+                                <i class="fas fa-credit-card mr-2"></i>Checkout
+                            </a>
+                        @else
+                            <a href="{{ route('login') }}" class="block w-full rounded-full bg-black px-6 py-3 text-center text-sm font-medium text-white transition hover:bg-black/90">
+                                <i class="fas fa-sign-in-alt mr-2"></i>Login untuk Checkout
+                            </a>
+                        @endif
                     </div>
                 </div>
             </div>

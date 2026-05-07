@@ -41,6 +41,9 @@ class AuthController extends Controller
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
 
+            // Merge guest cart to user cart
+            app(\App\Http\Controllers\Customer\CartController::class)->mergeGuestCart();
+
             if (auth()->user()->isAdmin()) {
                 return redirect()->intended(route('admin.dashboard'));
             }
@@ -223,6 +226,9 @@ class AuthController extends Controller
         Cache::forget($cacheKey);
 
         Auth::login($user);
+
+        // Merge guest cart to user cart
+        app(\App\Http\Controllers\Customer\CartController::class)->mergeGuestCart();
 
         return response()->json([
             'message' => 'Registrasi berhasil! Akun Anda sudah aktif.',

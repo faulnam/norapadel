@@ -41,7 +41,10 @@ class PageController extends Controller
 
         $sections = $this->getShopSections();
 
-    return view('pages.home_luxury', compact('products', 'testimonials', 'galleries', 'stats', 'sections'));
+        $newArrivals = Product::active()->inStock()->where('is_featured', false)->latest()->take(4)->get();
+        $shopProducts = Product::active()->inStock()->where('is_featured', false)->latest()->take(15)->get();
+
+        return view('pages.home_luxury', compact('products', 'testimonials', 'galleries', 'stats', 'sections', 'newArrivals', 'shopProducts'));
     }
 
     /**
@@ -62,7 +65,27 @@ class PageController extends Controller
             });
         }
 
-        $products = $query->latest()->paginate(12)->withQueryString();
+        if ($request->filled('sort')) {
+            switch ($request->sort) {
+                case 'price_low':
+                    $query->orderBy('price', 'asc');
+                    break;
+                case 'price_high':
+                    $query->orderBy('price', 'desc');
+                    break;
+                case 'name':
+                    $query->orderBy('name', 'asc');
+                    break;
+                case 'newest':
+                default:
+                    $query->latest();
+                    break;
+            }
+        } else {
+            $query->latest();
+        }
+
+        $products = $query->paginate(12)->withQueryString();
 
         return view('pages.racket', [
             'products' => $products,
@@ -88,7 +111,27 @@ class PageController extends Controller
             });
         }
 
-        $products = $query->latest()->paginate(12)->withQueryString();
+        if ($request->filled('sort')) {
+            switch ($request->sort) {
+                case 'price_low':
+                    $query->orderBy('price', 'asc');
+                    break;
+                case 'price_high':
+                    $query->orderBy('price', 'desc');
+                    break;
+                case 'name':
+                    $query->orderBy('name', 'asc');
+                    break;
+                case 'newest':
+                default:
+                    $query->latest();
+                    break;
+            }
+        } else {
+            $query->latest();
+        }
+
+        $products = $query->paginate(12)->withQueryString();
 
         return view('pages.shoes', [
             'products' => $products,
@@ -114,7 +157,27 @@ class PageController extends Controller
             });
         }
 
-        $products = $query->latest()->paginate(12)->withQueryString();
+        if ($request->filled('sort')) {
+            switch ($request->sort) {
+                case 'price_low':
+                    $query->orderBy('price', 'asc');
+                    break;
+                case 'price_high':
+                    $query->orderBy('price', 'desc');
+                    break;
+                case 'name':
+                    $query->orderBy('name', 'asc');
+                    break;
+                case 'newest':
+                default:
+                    $query->latest();
+                    break;
+            }
+        } else {
+            $query->latest();
+        }
+
+        $products = $query->paginate(12)->withQueryString();
 
         return view('pages.apparel', [
             'products' => $products,
@@ -375,5 +438,72 @@ class PageController extends Controller
         $stats = $this->getStats();
 
         return view('pages.testimoni', compact('testimonials', 'stats'));
+    }
+
+    /**
+     * Show new arrivals page
+     */
+    public function newArrivals(Request $request)
+    {
+        $query = Product::active()
+            ->inStock()
+            ->where('is_featured', false);
+
+        if ($request->filled('q')) {
+            $keyword = trim((string) $request->q);
+            $query->where(function ($q) use ($keyword) {
+                $q->where('name', 'like', "%{$keyword}%")
+                    ->orWhere('description', 'like', "%{$keyword}%");
+            });
+        }
+
+        if ($request->filled('sort')) {
+            switch ($request->sort) {
+                case 'price_low':
+                    $query->orderBy('price', 'asc');
+                    break;
+                case 'price_high':
+                    $query->orderBy('price', 'desc');
+                    break;
+                case 'name':
+                    $query->orderBy('name', 'asc');
+                    break;
+                case 'newest':
+                default:
+                    $query->latest();
+                    break;
+            }
+        } else {
+            $query->latest();
+        }
+
+        $products = $query->paginate(12)->withQueryString();
+
+        return view('pages.new-arrivals', compact('products'));
+    }
+
+    /**
+     * Show shop category page
+     */
+    public function shopCategory(Request $request)
+    {
+        $query = Product::active()->inStock()->where('is_featured', false);
+
+        if ($request->filled('category')) {
+            $categoryMap = [
+                'racket' => Product::CATEGORY_ORIGINAL,
+                'shoes' => Product::CATEGORY_SHOES,
+                'accessories' => Product::CATEGORY_PEDAS,
+            ];
+
+            $category = $categoryMap[$request->category] ?? null;
+            if ($category) {
+                $query->where('category', $category);
+            }
+        }
+
+        $products = $query->latest()->paginate(15)->withQueryString();
+
+        return view('pages.shop-category', compact('products'));
     }
 }

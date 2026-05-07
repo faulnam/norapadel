@@ -2181,39 +2181,7 @@
         />
     </div>
 
-        <section class="np-fade-section bg-[#f5f5f7] py-20 lg:py-24">
-            <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
-                <h2 class="text-center text-4xl font-semibold tracking-tight text-black sm:text-5xl">Featured Products</h2>
-                <p class="mx-auto mt-3 max-w-2xl text-center text-zinc-600">Curated essentials for serious athletes and premium performance lifestyle.</p>
-
-                <div class="mt-12 grid grid-cols-2 gap-4 lg:grid-cols-2">
-                    <x-landing.featured-card
-                        title="Racket Pro Series"
-                        subtitle="Lightweight carbon frame with elite-level control."
-                        image="https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=900&q=80"
-                        href="{{ route('produk.index') }}"
-                    />
-                    <x-landing.featured-card
-                        title="Shoes Elite"
-                        subtitle="Explosive traction and responsive cushioning."
-                        image="https://images.unsplash.com/photo-1491553895911-0055eca6402d?auto=format&fit=crop&w=900&q=80"
-                        href="{{ route('produk.index') }}"
-                    />
-                    <x-landing.featured-card
-                        title="Accessories Set"
-                        subtitle="Breathable fit engineered for long rallies."
-                        image="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=80"
-                        href="{{ route('produk.index') }}"
-                    />
-                    <x-landing.featured-card
-                        title="Accessories Kit"
-                        subtitle="Everything you need to dominate each matchday."
-                        image="https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=900&q=80"
-                        href="{{ route('produk.index') }}"
-                    />
-                </div>
-            </div>
-        </section>
+        
 
     <section class="np-fade-section bg-white py-16 lg:py-20">
             <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">

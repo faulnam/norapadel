@@ -59,8 +59,8 @@ class Product extends Model
     public static function packageTypes(): array
     {
         return [
-            self::PACKAGE_SINGLE => 'Produk Satuan',
-            self::PACKAGE_BUNDLE => 'Paket Bundling',
+            self::PACKAGE_SINGLE => 'Paket Bersama',
+            self::PACKAGE_BUNDLE => 'Paket Hemat',
         ];
     }
 

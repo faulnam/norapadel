@@ -858,8 +858,15 @@
 
                     @guest
                         <li class="nav-item ms-lg-1 d-none d-lg-block">
-                            <a class="nav-link" href="{{ route('login') }}" aria-label="Keranjang (login terlebih dahulu)">
+                            <a class="nav-link position-relative" href="{{ route('customer.cart.index') }}" aria-label="Keranjang">
                                 <i class="fas fa-shopping-cart"></i>
+                                @php 
+                                    $guestCart = session()->get('guest_cart', []);
+                                    $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
+                                @endphp
+                                @if($guestCartCount > 0)
+                                    <span class="cart-badge">{{ $guestCartCount }}</span>
+                                @endif
                             </a>
                         </li>
                         <li class="nav-item ms-lg-3">
@@ -1134,6 +1141,17 @@
                     </a>
                 @endif
             @else
+                <a href="{{ route('customer.cart.index') }}" class="mobile-nav-item {{ request()->routeIs('customer.cart.*') ? 'active' : '' }}">
+                    <i class="fas fa-shopping-cart"></i>
+                    <br>
+                    @php 
+                        $guestCart = session()->get('guest_cart', []);
+                        $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
+                    @endphp
+                    @if($guestCartCount > 0)
+                        <span class="mobile-nav-badge">{{ $guestCartCount > 99 ? '99+' : $guestCartCount }}</span>
+                    @endif
+                </a>
                 <a href="{{ route('galeri') }}" class="mobile-nav-item {{ request()->routeIs('galeri') ? 'active' : '' }}">
                     <i class="fas fa-images"></i>
                     <br>

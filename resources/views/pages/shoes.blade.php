@@ -10,6 +10,7 @@
 
                 <nav class="hidden items-center gap-8 md:flex">
                     <a href="{{ route('home') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Home</a>
+                    <a href="{{ route('new-arrivals') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">New Arrivals</a>
                     <a href="{{ route('racket') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Racket</a>
                     <a href="{{ route('shoes') }}" class="border-b border-black text-sm text-black transition duration-300">Shoes</a>
                     <a href="{{ route('apparel') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Accessories</a>
@@ -52,8 +53,15 @@
                             @endif
                         </a>
                     @else
-                        <a href="{{ route('login') }}" class="transition duration-300 hover:text-black" aria-label="Cart">
+                        <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-black" aria-label="Cart">
                             <i class="fas fa-shopping-bag text-sm"></i>
+                            @php 
+                                $guestCart = session()->get('guest_cart', []);
+                                $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
+                            @endphp
+                            @if($guestCartCount > 0)
+                                <span class="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $guestCartCount > 9 ? '9+' : $guestCartCount }}</span>
+                            @endif
                         </a>
                     @endauth
                     <button
@@ -71,6 +79,7 @@
             <div class="hidden border-t border-black/10 bg-white/95 px-6 py-4 md:hidden" data-mobile-menu>
                 <nav class="flex flex-col gap-3 text-sm font-medium text-black/85">
                     <a href="{{ route('home') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Home</a>
+                    <a href="{{ route('new-arrivals') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">New Arrivals</a>
                     <a href="{{ route('racket') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Racket</a>
                     <a href="{{ route('shoes') }}" class="rounded-lg bg-black/5 px-2 py-1.5 text-black">Shoes</a>
                     <a href="{{ route('apparel') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Accessories</a>
@@ -101,25 +110,59 @@
                         <h2 class="text-2xl font-semibold leading-tight tracking-tight text-black sm:text-3xl md:text-4xl">Shoes Collection</h2>
                         <p class="mt-2 text-sm text-zinc-500 sm:text-base">Temukan sepatu performa tinggi dengan grip, stabilitas, dan kenyamanan maksimal di lapangan.</p>
                     </div>
-
-                    <form action="{{ route('shoes') }}" method="GET" class="flex w-full max-w-md items-center gap-2 rounded-full border border-black/10 bg-white p-1.5 shadow-[0_8px_24px_rgba(0,0,0,0.06)]">
-                        <div class="pl-3 text-zinc-400">
-                            <i class="fas fa-search text-sm"></i>
-                        </div>
-                        <input
-                            type="text"
-                            name="q"
-                            value="{{ $search }}"
-                            placeholder="Cari produk shoes..."
-                            class="h-10 w-full border-0 bg-transparent px-1 text-sm text-zinc-800 outline-none placeholder:text-zinc-400 focus:ring-0"
-                        >
-                        <button type="submit" class="inline-flex h-10 shrink-0 items-center rounded-full bg-zinc-900 px-4 text-sm font-medium text-white transition duration-300 hover:bg-zinc-800">
-                            Search
-                        </button>
-                    </form>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                <!-- Filter Section -->
+                <div class="mb-6 space-y-4">
+                    <div class="flex flex-col md:flex-row gap-3">
+                        <div class="flex-1">
+                            <input type="text" id="searchProduct" placeholder="Cari produk..." class="w-full px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition">
+                        </div>
+                        <div class="flex gap-2 flex-wrap">
+                            <select id="filterDiscount" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition">
+                                <option value="">Semua Diskon</option>
+                                <option value="yes">Ada Diskon</option>
+                                <option value="no">Tanpa Diskon</option>
+                            </select>
+                            <select id="filterBundle" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition">
+                                <option value="">Semua Produk</option>
+                                <option value="yes">Bundling Hemat</option>
+                                <option value="no">Produk Satuan</option>
+                            </select>
+                            <select id="filterPopular" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition">
+                                <option value="">Semua</option>
+                                <option value="yes">Sering Dibeli</option>
+                            </select>
+                            <button id="filterPrice" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm hover:bg-zinc-50 transition">
+                                <i class="fas fa-sliders-h mr-2"></i>Harga
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Price Range Filter -->
+                    <div id="priceRangeFilter" class="hidden bg-zinc-50 border border-zinc-200 rounded-xl p-4">
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <div>
+                                <label class="text-xs text-zinc-600 mb-1 block">Harga Min</label>
+                                <input type="number" id="minPrice" placeholder="0" class="w-full px-3 py-2 border border-zinc-300 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label class="text-xs text-zinc-600 mb-1 block">Harga Max</label>
+                                <input type="number" id="maxPrice" placeholder="999999999" class="w-full px-3 py-2 border border-zinc-300 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button id="applyPriceFilter" class="flex-1 bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition">
+                                Terapkan
+                            </button>
+                            <button id="resetPriceFilter" class="px-4 py-2 border border-zinc-300 rounded-lg text-sm hover:bg-white transition">
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="productGrid" class="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     @forelse($products as $product)
                         @php
                             $soldCount = \App\Models\OrderItem::where('product_id', $product->id)
@@ -127,49 +170,66 @@
                                     $q->whereIn('status', ['completed', 'delivered']);
                                 })->sum('quantity');
                         @endphp
-                        <a href="{{ route('produk.show', $product) }}"
-                            class="group flex h-full w-full flex-col overflow-hidden rounded-2xl border border-black/6 bg-white text-start shadow-[0_8px_26px_rgba(0,0,0,0.05)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(0,0,0,0.09)]">
-                            <div class="relative aspect-4/5 overflow-hidden bg-zinc-50">
-                                <img
-                                    src="{{ $product->image_url ?: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}"
-                                    alt="{{ $product->name }}"
-                                    class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                                    loading="lazy"
-                                >
-                                @if($product->has_variants)
-                                    <span class="absolute right-3 top-3 rounded-full bg-black/80 px-2.5 py-1 text-[11px] font-semibold text-white">Varian</span>
-                                @endif
-                                @if($product->hasActiveDiscount())
-                                    <span class="absolute left-3 top-3 rounded-full bg-rose-500 px-2.5 py-1 text-[11px] font-semibold text-white">-{{ $product->formatted_discount_percent }}</span>
-                                @endif
-                                @if($product->package_type === 'bundle')
-                                    <span class="absolute left-3 {{ $product->hasActiveDiscount() ? 'top-12' : 'top-3' }} rounded-full bg-purple-500 px-2.5 py-1 text-[11px] font-semibold text-white">Bundle</span>
-                                @endif
-                                @if($soldCount >= 5)
-                                    <span class="absolute right-3 {{ $product->has_variants ? 'top-12' : 'top-3' }} rounded-full bg-amber-500 px-2.5 py-1 text-[11px] font-semibold text-white">Best Seller</span>
-                                @endif
-                            </div>
-
-                            <div class="flex flex-1 flex-col p-4">
-                                <h3 class="line-clamp-2 text-base font-semibold tracking-tight text-black">{{ $product->name }}</h3>
-                                <p class="mt-1 text-xs text-zinc-500">{{ $product->category_label }}</p>
-
-                                <div class="mt-auto pt-4">
+                        <div class="product-item group flex h-full w-full flex-col overflow-hidden rounded-2xl border border-black/6 bg-white text-start shadow-[0_8px_26px_rgba(0,0,0,0.05)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(0,0,0,0.09)]" 
+                             data-name="{{ strtolower($product->name) }}" 
+                             data-price="{{ $product->hasActiveDiscount() ? $product->discounted_price : $product->price }}" 
+                             data-discount="{{ $product->hasActiveDiscount() ? 'yes' : 'no' }}"
+                             data-bundle="{{ $product->package_type === 'bundle' ? 'yes' : 'no' }}"
+                             data-sold="{{ $soldCount }}">
+                            <a href="{{ route('produk.show', $product) }}" class="block">
+                                <div class="relative aspect-4/5 overflow-hidden bg-zinc-50">
+                                    <img
+                                        src="{{ $product->image_url ?: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}"
+                                        alt="{{ $product->name }}"
+                                        class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                                        loading="lazy"
+                                    >
+                                    @if($product->has_variants)
+                                        <span class="absolute right-3 top-3 rounded-full bg-black/80 px-2.5 py-1 text-[11px] font-semibold text-white">Varian</span>
+                                    @endif
                                     @if($product->hasActiveDiscount())
-                                        <p class="text-sm font-semibold text-emerald-600 sm:text-base">{{ $product->formatted_discounted_price }}</p>
-                                        <p class="text-xs text-zinc-400 line-through">{{ $product->formatted_price }}</p>
-                                    @else
-                                        <p class="text-sm font-semibold text-emerald-600 sm:text-base">{{ $product->formatted_price }}</p>
+                                        <span class="absolute left-3 top-3 rounded-full bg-rose-500 px-2.5 py-1 text-[11px] font-semibold text-white">-{{ $product->formatted_discount_percent }}</span>
+                                    @endif
+                                    @if($product->package_type === 'bundle')
+                                        <span class="absolute left-3 {{ $product->hasActiveDiscount() ? 'top-12' : 'top-3' }} rounded-full bg-purple-500 px-2.5 py-1 text-[11px] font-semibold text-white">Bundle</span>
+                                    @endif
+                                    @if($soldCount >= 5)
+                                        <span class="absolute right-3 {{ $product->has_variants ? 'top-12' : 'top-3' }} rounded-full bg-amber-500 px-2.5 py-1 text-[11px] font-semibold text-white">Best Seller</span>
                                     @endif
                                 </div>
+
+                                <div class="flex flex-1 flex-col p-4">
+                                    <h3 class="line-clamp-2 text-base font-semibold tracking-tight text-black">{{ $product->name }}</h3>
+                                    <p class="mt-1 text-xs text-zinc-500">{{ $product->category_label }}</p>
+
+                                    <div class="mt-auto pt-4">
+                                        @if($product->hasActiveDiscount())
+                                            <p class="text-sm font-semibold text-emerald-600 sm:text-base">{{ $product->formatted_discounted_price }}</p>
+                                            <p class="text-xs text-zinc-400 line-through">{{ $product->formatted_price }}</p>
+                                        @else
+                                            <p class="text-sm font-semibold text-emerald-600 sm:text-base">{{ $product->formatted_price }}</p>
+                                        @endif
+                                    </div>
+                                </div>
+                            </a>
+                            <div class="px-4 pb-4">
+                                <button onclick="addToCart({{ $product->id }}, event)" class="w-full flex items-center justify-center gap-2 rounded-full border-2 border-blue-600 bg-transparent px-4 py-2 text-sm font-medium text-blue-600 transition duration-300 hover:bg-blue-600 hover:text-white">
+                                    <i class="fas fa-shopping-cart text-sm"></i>
+                                    <span>Add to Cart</span>
+                                </button>
                             </div>
-                        </a>
+                        </div>
                     @empty
                         <div class="col-span-full rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 p-12 text-center">
                             <i class="fas fa-box-open text-3xl text-zinc-400"></i>
                             <p class="mt-3 font-medium text-zinc-500">Produk shoes belum tersedia.</p>
                         </div>
                     @endforelse
+                </div>
+
+                <div id="noResults" class="hidden text-center py-12">
+                    <i class="fas fa-search text-4xl text-zinc-300 mb-3"></i>
+                    <p class="text-zinc-500">Tidak ada produk yang ditemukan</p>
                 </div>
 
                 @if($products->hasPages())
@@ -203,6 +263,36 @@
 
 @push('scripts')
     <script>
+        // Add to Cart Function
+        function addToCart(productId, event) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            fetch(`/customer/cart/add/${productId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({
+                    quantity: 1
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Produk berhasil ditambahkan ke keranjang!');
+                    location.reload();
+                } else {
+                    alert(data.message || 'Gagal menambahkan produk ke keranjang');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan. Silakan coba lagi.');
+            });
+        }
+
         (function () {
             const revealEls = document.querySelectorAll('.np-fade-section');
             const heroImages = document.querySelectorAll('.np-parallax-image');
@@ -235,6 +325,79 @@
                     mobileMenu.classList.toggle('hidden');
                     mobileMenuToggle.setAttribute('aria-expanded', String(!mobileMenu.classList.contains('hidden')));
                 });
+            }
+
+            // Filter Functionality
+            const searchInput = document.getElementById('searchProduct');
+            const filterDiscount = document.getElementById('filterDiscount');
+            const filterBundle = document.getElementById('filterBundle');
+            const filterPopular = document.getElementById('filterPopular');
+            const filterPriceBtn = document.getElementById('filterPrice');
+            const priceRangeFilter = document.getElementById('priceRangeFilter');
+            const minPriceInput = document.getElementById('minPrice');
+            const maxPriceInput = document.getElementById('maxPrice');
+            const applyPriceBtn = document.getElementById('applyPriceFilter');
+            const resetPriceBtn = document.getElementById('resetPriceFilter');
+            const productGrid = document.getElementById('productGrid');
+            const noResults = document.getElementById('noResults');
+
+            let minPrice = 0;
+            let maxPrice = Infinity;
+
+            filterPriceBtn?.addEventListener('click', () => {
+                priceRangeFilter.classList.toggle('hidden');
+            });
+
+            applyPriceBtn?.addEventListener('click', () => {
+                minPrice = parseFloat(minPriceInput.value) || 0;
+                maxPrice = parseFloat(maxPriceInput.value) || Infinity;
+                filterProducts();
+            });
+
+            resetPriceBtn?.addEventListener('click', () => {
+                minPriceInput.value = '';
+                maxPriceInput.value = '';
+                minPrice = 0;
+                maxPrice = Infinity;
+                filterProducts();
+            });
+
+            searchInput?.addEventListener('input', filterProducts);
+            filterDiscount?.addEventListener('change', filterProducts);
+            filterBundle?.addEventListener('change', filterProducts);
+            filterPopular?.addEventListener('change', filterProducts);
+
+            function filterProducts() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const discountFilter = filterDiscount.value;
+                const bundleFilter = filterBundle.value;
+                const popularFilter = filterPopular.value;
+                const products = document.querySelectorAll('.product-item');
+                let visibleCount = 0;
+
+                products.forEach(product => {
+                    const name = product.dataset.name;
+                    const price = parseFloat(product.dataset.price);
+                    const discount = product.dataset.discount;
+                    const bundle = product.dataset.bundle;
+                    const sold = parseInt(product.dataset.sold);
+
+                    let show = true;
+
+                    if (searchTerm && !name.includes(searchTerm)) show = false;
+                    if (discountFilter === 'yes' && discount !== 'yes') show = false;
+                    if (discountFilter === 'no' && discount !== 'no') show = false;
+                    if (bundleFilter === 'yes' && bundle !== 'yes') show = false;
+                    if (bundleFilter === 'no' && bundle !== 'no') show = false;
+                    if (popularFilter === 'yes' && sold < 5) show = false;
+                    if (price < minPrice || price > maxPrice) show = false;
+
+                    product.style.display = show ? 'flex' : 'none';
+                    if (show) visibleCount++;
+                });
+
+                noResults.classList.toggle('hidden', visibleCount > 0);
+                productGrid.classList.toggle('hidden', visibleCount === 0);
             }
         })();
     </script>

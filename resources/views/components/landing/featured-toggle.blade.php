@@ -1,10 +1,4 @@
-@props([
-    'products' => collect(),
-    'title' => 'Featured Products',
-    'subtitle' => 'Curated essentials for serious athletes and premium performance lifestyle.',
-    'sectionClass' => 'bg-[#f5f5f7] py-20 lg:py-24',
-    'sectionId' => '',
-])
+
 
 @php
     $cardFallbackImage = '/images/logo.png';

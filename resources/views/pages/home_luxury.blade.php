@@ -4,38 +4,40 @@
 
 @section('content')
     <div class="bg-white text-black antialiased">
-        <header class="fixed left-0 top-0 z-50 w-full border-b border-black/6 bg-white/80 backdrop-blur-xl md:sticky">
+        <header class="fixed left-0 top-0 z-50 w-full border-b border-transparent bg-transparent backdrop-blur-none transition-all duration-300" id="mainHeader">
             <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-10 lg:px-12">
-                <a href="{{ route('home') }}" class="text-xl font-semibold tracking-tight text-black">NoraPadel</a>
+                <a href="{{ route('home') }}" class="text-xl font-semibold tracking-tight text-white transition-colors duration-300" id="logoText">NoraPadel</a>
 
-                <nav class="hidden items-center gap-8 md:flex">
+                <nav class="hidden items-center gap-8 md:flex" id="navLinks">
                     <a href="{{ route('home') }}"
-                        class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Home</a>
+                        class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">Home</a>
+                    <a href="{{ route('new-arrivals') }}"
+                        class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">New Arrivals</a>
                     <a href="{{ route('racket') }}"
-                        class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Racket</a>
+                        class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">Racket</a>
                     <a href="{{ route('shoes') }}"
-                        class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Shoes</a>
+                        class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">Shoes</a>
                     <a href="{{ route('apparel') }}"
-                        class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Accessories</a>
+                        class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">Accessories</a>
                     <a href="{{ route('contact') }}"
-                        class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Contact</a>
+                        class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">Contact</a>
                 </nav>
 
-                <div class="flex items-center gap-3 text-black/80">
+                <div class="flex items-center gap-3 text-white/90" id="navIcons">
                     @auth
                         @if (auth()->user()->role === 'admin')
                             <a href="{{ route('admin.dashboard') }}"
-                                class="inline-flex items-center gap-1.5 rounded-full border border-black/15 bg-black px-4 py-1.5 text-xs font-medium text-white transition duration-300 hover:bg-black/90"
+                                class="inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-xs font-medium text-white backdrop-blur transition duration-300 hover:bg-white/20"
                                 aria-label="Back to Dashboard">
                                 <i class="fas fa-arrow-left text-[10px]"></i>
                                 <span>Dashboard</span>
                             </a>
                         @elseif(auth()->user()->role === 'customer')
-                            <a href="{{ route('customer.orders.index') }}" class="transition duration-300 hover:text-black"
+                            <a href="{{ route('customer.orders.index') }}" class="transition duration-300 hover:text-white"
                                 aria-label="Riwayat Pesanan" title="Riwayat Pesanan">
                                 <i class="fas fa-history text-sm"></i>
                             </a>
-                            <a href="{{ route('customer.profile.index') }}" class="transition duration-300 hover:text-black"
+                            <a href="{{ route('customer.profile.index') }}" class="transition duration-300 hover:text-white"
                                 aria-label="Profile" title="Profile">
                                 <i class="fas fa-user text-sm"></i>
                             </a>
@@ -43,14 +45,14 @@
                     @endauth
                     @guest
                         <a href="{{ route('login') }}"
-                            class="inline-flex items-center gap-1 rounded-full border border-black/15 px-3 py-1.5 text-xs font-medium text-black/80 transition duration-300 hover:border-black/30 hover:text-black"
+                            class="inline-flex items-center gap-1 rounded-full border border-white/30 bg-white/10 px-3 py-1.5 text-xs font-medium text-white backdrop-blur transition duration-300 hover:bg-white/20"
                             aria-label="Masuk">
                             <i class="fas fa-sign-in-alt text-[11px]"></i>
                             <span>Masuk</span>
                         </a>
                     @endguest
                     @auth
-                        <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-black"
+                        <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-white"
                             aria-label="Cart" title="Keranjang">
                             <i class="fas fa-shopping-bag text-sm"></i>
                             @if (auth()->user()->role === 'customer')
@@ -62,13 +64,20 @@
                             @endif
                         </a>
                     @else
-                        <a href="{{ route('login') }}" class="transition duration-300 hover:text-black" aria-label="Cart"
+                        <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-white" aria-label="Cart"
                             title="Keranjang">
                             <i class="fas fa-shopping-bag text-sm"></i>
+                            @php 
+                                $guestCart = session()->get('guest_cart', []);
+                                $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
+                            @endphp
+                            @if($guestCartCount > 0)
+                                <span class="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $guestCartCount > 9 ? '9+' : $guestCartCount }}</span>
+                            @endif
                         </a>
                     @endauth
                     <button type="button"
-                        class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-black transition duration-300 hover:border-black/35 md:hidden"
+                        class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20 md:hidden"
                         data-mobile-menu-toggle aria-label="Toggle navigation" aria-expanded="false">
                         <i class="fas fa-bars text-sm"></i>
                     </button>
@@ -78,6 +87,7 @@
             <div class="hidden border-t border-black/10 bg-white/95 px-6 py-4 md:hidden" data-mobile-menu>
                 <nav class="flex flex-col gap-3 text-sm font-medium text-black/85">
                     <a href="{{ route('home') }}" class="rounded-lg bg-black/5 px-2 py-1.5 text-black">Home</a>
+                    <a href="{{ route('new-arrivals') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">New Arrivals</a>
                     <a href="{{ route('racket') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Racket</a>
                     <a href="{{ route('shoes') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Shoes</a>
                     <a href="{{ route('apparel') }}"
@@ -87,76 +97,83 @@
         </header>
 
         <main class="pt-16 md:pt-0">
-            <section class="border-b-[14px] border-white bg-[#f5f5f7] md:hidden -mt-16" data-mobile-hero-carousel>
-                <div class="relative h-screen w-full overflow-hidden">
-                    <div class="absolute inset-0 h-full overflow-hidden">
-                        <div class="flex h-full transition-transform duration-500 ease-out" data-mobile-hero-track>
-                            <article class="min-w-full">
-                                <img src="{{ asset('storage/banner.png') }}" alt="NoraPadel Racket"
-                                    class="mx-auto h-full w-full scale-[1.08] object-contain pb-28" loading="lazy">
-                            </article>
-
-                            <article class="min-w-full">
-                                <img src="{{ asset('storage/shoes.png') }}" alt="NoraPadel Shoes"
-                                    class="mx-auto h-full w-full scale-[1.08] object-contain pb-28" loading="lazy">
-                            </article>
-
-                            <article class="min-w-full">
-                                <img src="{{ asset('storage/3.png') }}" alt="NoraPadel Accessories"
-                                    class="mx-auto h-full w-full scale-[1.08] object-contain pb-28" loading="lazy">
-                            </article>
+            <section class="relative h-[600px] overflow-hidden bg-zinc-900 md:h-[700px] lg:h-[800px]">
+                <div class="absolute inset-0">
+                    <img src="https://images.unsplash.com/photo-1554068865-24cecd4e34b8?q=80&w=2070&auto=format&fit=crop" 
+                        alt="Padel Tennis" 
+                        class="h-full w-full object-cover opacity-60" 
+                        loading="eager">
+                    <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent"></div>
+                </div>
+                <div class="relative mx-auto flex h-full max-w-7xl items-center px-6 md:px-10 lg:px-12">
+                    <div class="max-w-2xl text-white">
+                        <h1 class="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">NoraPadel</h1>
+                        <p class="mt-4 text-xl sm:text-2xl lg:text-3xl">Precision. Power. Performance.</p>
+                        <p class="mt-6 text-base text-zinc-200 sm:text-lg">Experience the ultimate in padel equipment. Premium quality rackets, shoes, and accessories for players who demand excellence.</p>
+                        <div class="mt-8 flex flex-wrap gap-4">
+                            <a href="{{ route('new-arrivals') }}" class="inline-flex rounded-full bg-blue-600 px-8 py-3 text-sm font-semibold text-white transition duration-300 hover:bg-blue-700">Shop Now</a>
+                            <a href="{{ route('produk.index') }}" class="inline-flex rounded-full border-2 border-white bg-transparent px-8 py-3 text-sm font-semibold text-white transition duration-300 hover:bg-white hover:text-black">Explore Collection</a>
                         </div>
-                    </div>
-
-                    <div
-                        class="pointer-events-none absolute inset-0 bg-linear-to-b from-[#f5f5f7]/70 via-[#f5f5f7]/35 to-[#f5f5f7]/75">
-                    </div>
-
-                    <div class="pointer-events-none absolute inset-x-0 bottom-20 z-20 px-6 text-center">
-                        <h2 class="text-3xl font-semibold tracking-tight text-black">NoraPadel</h2>
-                        <p class="mt-1 text-base text-zinc-700">Precision. Power. Performance.</p>
-                        <div class="pointer-events-auto mt-5 flex items-center justify-center gap-2">
-                            <a href="{{ route('produk.index') }}"
-                                class="inline-flex rounded-full border border-black/10 bg-white px-4 py-2 text-xs font-semibold text-black">Explore</a>
-                            <a href="{{ route('home') }}#products"
-                                class="inline-flex rounded-full bg-black px-4 py-2 text-xs font-semibold text-white">Buy
-                                Now</a>
-                        </div>
-                    </div>
-
-                    <button type="button"
-                        class="absolute left-3 top-1/2 z-20 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-black/10 bg-white/90 text-zinc-700 shadow"
-                        data-mobile-hero-prev aria-label="Hero sebelumnya">
-                        <i class="fas fa-chevron-left text-xs"></i>
-                    </button>
-                    <button type="button"
-                        class="absolute right-3 top-1/2 z-20 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-black/10 bg-white/90 text-zinc-700 shadow"
-                        data-mobile-hero-next aria-label="Hero berikutnya">
-                        <i class="fas fa-chevron-right text-xs"></i>
-                    </button>
-
-                    <div class="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/25 px-3 py-2 backdrop-blur"
-                        data-mobile-hero-dots>
-                        <button type="button" class="h-2.5 w-2.5 rounded-full bg-white" data-mobile-hero-to="0"
-                            aria-label="Slide 1"></button>
-                        <button type="button" class="h-2.5 w-2.5 rounded-full bg-white/45" data-mobile-hero-to="1"
-                            aria-label="Slide 2"></button>
-                        <button type="button" class="h-2.5 w-2.5 rounded-full bg-white/45" data-mobile-hero-to="2"
-                            aria-label="Slide 3"></button>
                     </div>
                 </div>
             </section>
 
-            <div class="hidden md:block">
-                <x-landing.hero-product id="racket" title="NoraPadel" subtitle="Precision. Power. Performance."
-                    image="{{ Storage::url('banner.png') }}" alt="NoraPadel Racket" primary-text="Explore"
-                    primary-href="{{ route('produk.index') }}" secondary-text="Buy Now"
-                    secondary-href="{{ route('home') }}#products"
-                    section-class="bg-[#f5f5f7] border-b-[14px] border-white" />
-            </div>
+
+            <!-- New Arrivals -->
+            <section class="np-fade-section bg-white py-8 lg:py-10">
+                <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
+                    <div class="mb-6">
+                        <h2 class="text-3xl font-semibold tracking-tight text-black sm:text-4xl lg:text-5xl">New Arrivals</h2>
+                        <p class="mt-2 text-zinc-600">Discover our latest products</p>
+                    </div>
+                    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                        @foreach($newArrivals as $product)
+                            @php
+                                $soldCount = \App\Models\OrderItem::where('product_id', $product->id)
+                                    ->whereHas('order', function($q) {
+                                        $q->whereIn('status', ['completed', 'delivered']);
+                                    })->sum('quantity');
+                            @endphp
+                            <div class="group overflow-hidden rounded-2xl border border-black/6 bg-white shadow-sm transition duration-300 hover:-translate-y-2 hover:shadow-xl">
+                                <a href="{{ route('produk.show', $product) }}" class="block">
+                                    <div class="relative aspect-square overflow-hidden">
+                                        <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" onerror="this.onerror=null;this.src='/images/logo.png';" loading="lazy">
+                                        @if($product->hasActiveDiscount())
+                                            <span class="absolute left-3 top-3 rounded-full bg-rose-500 px-2.5 py-1 text-[11px] font-semibold text-white">-{{ $product->formatted_discount_percent }}</span>
+                                        @endif
+                                        @if($product->package_type === 'bundle')
+                                            <span class="absolute left-3 {{ $product->hasActiveDiscount() ? 'top-12' : 'top-3' }} rounded-full bg-purple-500 px-2.5 py-1 text-[11px] font-semibold text-white">Bundle</span>
+                                        @endif
+                                        @if($soldCount >= 5)
+                                            <span class="absolute right-3 top-3 rounded-full bg-amber-500 px-2.5 py-1 text-[11px] font-semibold text-white">Best Seller</span>
+                                        @endif
+                                    </div>
+                                    <div class="p-4">
+                                        <h3 class="line-clamp-1 text-lg font-semibold text-black">{{ $product->name }}</h3>
+                                        <p class="mt-1 text-sm text-zinc-600">{{ $product->category_label }}</p>
+                                        @if($product->hasActiveDiscount())
+                                            <p class="mt-2 text-xl font-bold text-black">{{ $product->formatted_discounted_price }}</p>
+                                            <p class="text-sm text-zinc-400 line-through">{{ $product->formatted_price }}</p>
+                                        @else
+                                            <p class="mt-2 text-xl font-bold text-black">{{ $product->formatted_price }}</p>
+                                        @endif
+                                    </div>
+                                </a>
+                                <div class="px-4 pb-4">
+                                    <button onclick="addToCart({{ $product->id }}, event)" class="w-full flex items-center justify-center gap-2 rounded-full border-2 border-blue-600 bg-transparent px-4 py-2 text-sm font-medium text-blue-600 transition duration-300 hover:bg-blue-600 hover:text-white">
+                                        <i class="fas fa-shopping-cart text-sm"></i>
+                                        <span>Add to Cart</span>
+                                    </button>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </section>
+
 
             <!-- Why Choose NoraPadel -->
-            <section class="np-fade-section bg-white py-12 lg:py-14">
+            <section class="np-fade-section bg-gradient-to-b from-zinc-100 to-zinc-50 py-12 lg:py-14">
                 <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
                     <div class="mb-8 text-center">
                         <h2 class="text-3xl font-semibold tracking-tight text-black sm:text-4xl lg:text-5xl">Why Choose
@@ -198,152 +215,54 @@
                 </div>
             </section>
 
-            <section class="np-fade-section bg-white pt-6 pb-6 lg:pt-8 lg:pb-8">
+            <!-- Shop -->
+            <section class="np-fade-section bg-zinc-50 py-12 lg:py-14">
                 <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
-                    @php
-                        $section = $sections[0] ?? null;
-                    @endphp
-
-                    @if ($section)
-                        <section class="mb-14 last:mb-0 rounded-3xl border border-black/6 bg-zinc-50/40 p-3 md:p-4"
-                            data-shop-showcase>
-
-
-                            @if ($section['latest'])
-                                @if ($section['latest']->is_featured)
-                                    <a href="{{ route('produk.show', $section['latest']) }}"
-                                        class="group relative block w-full overflow-hidden rounded-2xl border border-black/8 bg-white text-start shadow-[0_12px_34px_rgba(0,0,0,0.08)]">
-                                        <div class="relative">
-                                            <img src="{{ $section['latest']->image_url }}"
-                                                alt="{{ $section['latest']->name }}"
-                                                class="h-[500px] w-full object-cover md:h-[600px] lg:h-[700px]"
-                                                onerror="this.onerror=null;this.src='/images/logo.png';" loading="lazy">
-                                            @if ($section['latest']->has_variants)
-                                                <span
-                                                    class="absolute right-3 top-3 rounded-full bg-black/80 px-2.5 py-1 text-[11px] font-semibold text-white">Varian</span>
-                                            @endif
-                                            <span
-                                                class="absolute left-3 top-3 rounded-full bg-black/70 px-2.5 py-1 text-[11px] font-semibold text-white">Highlight</span>
-                                        </div>
-                                        <div
-                                            class="absolute inset-0 bg-linear-to-t from-black/65 via-black/20 to-transparent">
-                                        </div>
-                                        <div class="absolute bottom-0 left-0 right-0 p-4 text-white md:p-6">
-                                            <p class="mt-2 text-sm text-white/85 md:text-base">
-                                                {{ \Illuminate\Support\Str::limit($section['latest']->description, 120) }}
-                                            </p>
-                                        </div>
-                                    </a>
-                                @else
-                                    <a href="{{ route('produk.show', $section['latest']) }}"
-                                        class="group relative block w-full overflow-hidden rounded-2xl border border-black/8 bg-white text-start shadow-[0_12px_34px_rgba(0,0,0,0.08)]">
-                                        <div class="relative">
-                                            <img src="{{ $section['latest']->image_url }}"
-                                                alt="{{ $section['latest']->name }}"
-                                                class="h-[500px] w-full object-cover transition duration-500 group-hover:scale-105 md:h-[600px] lg:h-[700px]"
-                                                onerror="this.onerror=null;this.src='/images/logo.png';" loading="lazy">
-                                            @if ($section['latest']->has_variants)
-                                                <span
-                                                    class="absolute right-3 top-3 rounded-full bg-black/80 px-2.5 py-1 text-[11px] font-semibold text-white">Varian</span>
-                                            @endif
-                                            @if ($section['latest']->hasActiveDiscount())
-                                                <span
-                                                    class="absolute left-3 top-3 rounded-full bg-rose-500 px-2.5 py-1 text-[11px] font-semibold text-white">-{{ $section['latest']->formatted_discount_percent }}</span>
-                                            @endif
-                                        </div>
-                                        <div
-                                            class="absolute inset-0 bg-linear-to-t from-black/65 via-black/20 to-transparent">
-                                        </div>
-                                        <div class="absolute bottom-0 left-0 right-0 p-4 text-white md:p-6">
-                                            <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/80">
-                                                Produk
-                                                Terbaru</p>
-                                            <h3 class="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">
-                                                {{ $section['latest']->name }}</h3>
-                                            <p class="mt-2 text-sm text-white/85 md:text-base">
-                                                {{ \Illuminate\Support\Str::limit($section['latest']->description, 120) }}
-                                            </p>
-                                        </div>
-                                    </a>
-                                @endif
-                            @endif
-
-                                <div class="relative mt-5">
-                                <div
-                                    class="pointer-events-none absolute inset-y-0 left-0 z-10 w-10 bg-linear-to-r from-zinc-50 to-transparent">
-                                </div>
-                                <div
-                                    class="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 bg-linear-to-l from-zinc-50 to-transparent">
-                                </div>
-
-                                <button type="button"
-                                    class="shop-slide-btn absolute left-2 top-1/2 z-20 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-black/10 bg-white/90 text-zinc-700 shadow transition hover:bg-white"
-                                    data-slide-prev aria-label="Geser kiri">
-                                    <i class="fas fa-chevron-left text-xs"></i>
-                                </button>
-
-                                <div class="overflow-x-scroll scroll-smooth px-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-                                    data-slide-container>
-                                    <div class="flex gap-4 py-1" data-slide-track>
-                                        @forelse($section['others'] as $product)
-                                            @php
-                                                $soldCount = \App\Models\OrderItem::where('product_id', $product->id)
-                                                    ->whereHas('order', function($q) {
-                                                        $q->whereIn('status', ['completed', 'delivered']);
-                                                    })->sum('quantity');
-                                            @endphp
-                                            <a href="{{ route('produk.show', $product) }}"
-                                                class="group block w-56 shrink-0 overflow-hidden rounded-xl border border-black/6 bg-white text-start shadow-[0_6px_22px_rgba(0,0,0,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(0,0,0,0.1)]">
-                                                <div class="relative">
-                                                    <img src="{{ $product->image_url }}" alt="{{ $product->name }}"
-                                                        class="aspect-4/5 w-full object-cover transition duration-500 group-hover:scale-105"
-                                                        onerror="this.onerror=null;this.src='/images/logo.png';"
-                                                        loading="lazy">
-                                                    @if ($product->has_variants)
-                                                        <span
-                                                            class="absolute right-3 top-3 rounded-full bg-black/80 px-2.5 py-1 text-[11px] font-semibold text-white">Varian</span>
-                                                    @endif
-                                                    @if ($product->hasActiveDiscount())
-                                                        <span
-                                                            class="absolute left-3 top-3 rounded-full bg-rose-500 px-2.5 py-1 text-[11px] font-semibold text-white">-{{ $product->formatted_discount_percent }}</span>
-                                                    @endif
-                                                    @if($product->package_type === 'bundle')
-                                                        <span class="absolute left-3 {{ $product->hasActiveDiscount() ? 'top-12' : 'top-3' }} rounded-full bg-purple-500 px-2.5 py-1 text-[11px] font-semibold text-white">Bundle</span>
-                                                    @endif
-                                                    @if($soldCount >= 5)
-                                                        <span class="absolute right-3 {{ $product->has_variants ? 'top-12' : 'top-3' }} rounded-full bg-amber-500 px-2.5 py-1 text-[11px] font-semibold text-white">Best Seller</span>
-                                                    @endif
-                                                </div>
-                                                <div class="p-3">
-                                                    <p
-                                                        class="line-clamp-1 text-sm font-semibold tracking-tight text-zinc-800">
-                                                        {{ $product->name }}</p>
-                                                    <p class="mt-1 text-xs text-zinc-500">{{ $product->category_label }}
-                                                    </p>
-                                                </div>
-                                            </a>
-                                        @empty
-                                            <div
-                                                class="w-full rounded-xl border border-dashed border-zinc-300 bg-white p-6 text-center text-zinc-500">
-                                                Belum ada produk tambahan untuk kategori ini.</div>
-                                        @endforelse
+                    <div class="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+                        @foreach($shopProducts as $product)
+                            @php
+                                $soldCount = \App\Models\OrderItem::where('product_id', $product->id)
+                                    ->whereHas('order', function($q) {
+                                        $q->whereIn('status', ['completed', 'delivered']);
+                                    })->sum('quantity');
+                            @endphp
+                            <div class="group block overflow-hidden rounded-xl border border-black/6 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg">
+                                <a href="{{ route('produk.show', $product) }}" class="block">
+                                    <div class="relative aspect-square overflow-hidden">
+                                        <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" onerror="this.onerror=null;this.src='/images/logo.png';" loading="lazy">
+                                        @if($product->hasActiveDiscount())
+                                            <span class="absolute left-2 top-2 rounded-full bg-rose-500 px-2 py-0.5 text-[10px] font-semibold text-white">-{{ $product->formatted_discount_percent }}</span>
+                                        @endif
+                                        @if($product->package_type === 'bundle')
+                                            <span class="absolute left-2 {{ $product->hasActiveDiscount() ? 'top-9' : 'top-2' }} rounded-full bg-purple-500 px-2 py-0.5 text-[10px] font-semibold text-white">Bundle</span>
+                                        @endif
+                                        @if($soldCount >= 5)
+                                            <span class="absolute right-2 top-2 rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white">Popular</span>
+                                        @endif
                                     </div>
+                                    <div class="p-3">
+                                        <h3 class="line-clamp-1 text-sm font-semibold text-black">{{ $product->name }}</h3>
+                                        <p class="mt-1 text-xs text-zinc-600">{{ $product->category_label }}</p>
+                                        @if($product->hasActiveDiscount())
+                                            <p class="mt-1 text-base font-bold text-black">{{ $product->formatted_discounted_price }}</p>
+                                            <p class="text-xs text-zinc-400 line-through">{{ $product->formatted_price }}</p>
+                                        @else
+                                            <p class="mt-1 text-base font-bold text-black">{{ $product->formatted_price }}</p>
+                                        @endif
+                                    </div>
+                                </a>
+                                <div class="px-3 pb-3">
+                                    <button onclick="addToCart({{ $product->id }}, event)" class="w-full flex items-center justify-center gap-1.5 rounded-full border-2 border-blue-600 bg-transparent px-3 py-1.5 text-xs font-medium text-blue-600 transition duration-300 hover:bg-blue-600 hover:text-white">
+                                        <i class="fas fa-shopping-cart text-xs"></i>
+                                        <span>Add to Cart</span>
+                                    </button>
                                 </div>
-
-                                <button type="button"
-                                    class="shop-slide-btn absolute right-2 top-1/2 z-20 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-black/10 bg-white/90 text-zinc-700 shadow transition hover:bg-white"
-                                    data-slide-next aria-label="Geser kanan">
-                                    <i class="fas fa-chevron-right text-xs"></i>
-                                </button>
                             </div>
-                        </section>
-                    @endif
+                        @endforeach
+                    </div>
+                   
                 </div>
             </section>
-
-
-            <x-landing.featured-toggle :products="$products" section-class="bg-[#f5f5f7] pt-3 pb-20 lg:pt-5 lg:pb-24"
-                section-id="products" />
 
             <section id="testimonials" class="np-fade-section bg-white py-18 lg:py-22" data-testimonial-showcase>
                 <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
@@ -482,7 +401,107 @@
 
 @push('scripts')
     <script>
+        // Add to Cart Function
+        function addToCart(productId, event) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            console.log('Adding to cart, product ID:', productId);
+            console.log('CSRF Token:', document.querySelector('meta[name="csrf-token"]')?.content);
+            
+            fetch(`/customer/cart/add/${productId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    quantity: 1
+                })
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        console.error('Error response:', text);
+                        throw new Error('HTTP error ' + response.status);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Success data:', data);
+                if (data.success) {
+                    alert('Produk berhasil ditambahkan ke keranjang!');
+                    location.reload();
+                } else {
+                    alert(data.message || 'Gagal menambahkan produk ke keranjang');
+                }
+            })
+            .catch(error => {
+                console.error('Catch error:', error);
+                alert('Terjadi kesalahan: ' + error.message);
+            });
+        }
+
         (function() {
+            // Navbar scroll effect
+            const header = document.getElementById('mainHeader');
+            const logoText = document.getElementById('logoText');
+            const navLinks = document.getElementById('navLinks');
+            const navIcons = document.getElementById('navIcons');
+
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    header.classList.add('bg-white/80', 'backdrop-blur-xl', 'border-black/6');
+                    header.classList.remove('bg-transparent', 'backdrop-blur-none', 'border-transparent');
+                    
+                    logoText.classList.remove('text-white');
+                    logoText.classList.add('text-black');
+                    
+                    navLinks.querySelectorAll('a').forEach(link => {
+                        link.classList.remove('text-white/90', 'hover:border-white/30', 'hover:text-white');
+                        link.classList.add('text-black/80', 'hover:border-black/30', 'hover:text-black');
+                    });
+                    
+                    navIcons.classList.remove('text-white/90');
+                    navIcons.classList.add('text-black/80');
+                    
+                    navIcons.querySelectorAll('a, button').forEach(el => {
+                        if (el.classList.contains('border-white/30')) {
+                            el.classList.remove('border-white/30', 'bg-white/10', 'hover:bg-white/20', 'text-white');
+                            el.classList.add('border-black/15', 'bg-transparent', 'hover:border-black/30', 'text-black');
+                        }
+                        el.classList.remove('hover:text-white');
+                        el.classList.add('hover:text-black');
+                    });
+                } else {
+                    header.classList.remove('bg-white/80', 'backdrop-blur-xl', 'border-black/6');
+                    header.classList.add('bg-transparent', 'backdrop-blur-none', 'border-transparent');
+                    
+                    logoText.classList.add('text-white');
+                    logoText.classList.remove('text-black');
+                    
+                    navLinks.querySelectorAll('a').forEach(link => {
+                        link.classList.add('text-white/90', 'hover:border-white/30', 'hover:text-white');
+                        link.classList.remove('text-black/80', 'hover:border-black/30', 'hover:text-black');
+                    });
+                    
+                    navIcons.classList.add('text-white/90');
+                    navIcons.classList.remove('text-black/80');
+                    
+                    navIcons.querySelectorAll('a, button').forEach(el => {
+                        if (el.classList.contains('border-black/15')) {
+                            el.classList.add('border-white/30', 'bg-white/10', 'hover:bg-white/20', 'text-white');
+                            el.classList.remove('border-black/15', 'bg-transparent', 'hover:border-black/30', 'text-black');
+                        }
+                        el.classList.add('hover:text-white');
+                        el.classList.remove('hover:text-black');
+                    });
+                }
+            }, { passive: true });
+
             const revealEls = document.querySelectorAll('.np-fade-section');
             const heroImages = document.querySelectorAll('.np-parallax-image');
             const layoutSections = document.querySelectorAll('[data-featured-toggle]');
@@ -616,63 +635,7 @@
 
             const mobileHero = document.querySelector('[data-mobile-hero-carousel]');
             if (mobileHero) {
-                const track = mobileHero.querySelector('[data-mobile-hero-track]');
-                const prevBtn = mobileHero.querySelector('[data-mobile-hero-prev]');
-                const nextBtn = mobileHero.querySelector('[data-mobile-hero-next]');
-                const dots = Array.from(mobileHero.querySelectorAll('[data-mobile-hero-to]'));
-                let index = 0;
-                let timer;
-
-                const render = (nextIndex) => {
-                    const total = dots.length;
-                    index = (nextIndex + total) % total;
-                    track.style.transform = `translateX(-${index * 100}%)`;
-
-                    dots.forEach((dot, dotIndex) => {
-                        dot.classList.toggle('bg-white', dotIndex === index);
-                        dot.classList.toggle('bg-white/45', dotIndex !== index);
-                    });
-                };
-
-                const startAuto = () => {
-                    if (window.innerWidth >= 768) return;
-                    timer = window.setInterval(() => render(index + 1), 4000);
-                };
-
-                const stopAuto = () => {
-                    if (timer) window.clearInterval(timer);
-                };
-
-                prevBtn?.addEventListener('click', () => {
-                    render(index - 1);
-                    stopAuto();
-                    startAuto();
-                });
-
-                nextBtn?.addEventListener('click', () => {
-                    render(index + 1);
-                    stopAuto();
-                    startAuto();
-                });
-
-                dots.forEach((dot) => {
-                    dot.addEventListener('click', () => {
-                        render(Number(dot.dataset.mobileHeroTo || 0));
-                        stopAuto();
-                        startAuto();
-                    });
-                });
-
-                render(0);
-                startAuto();
-
-                window.addEventListener('resize', () => {
-                    if (window.innerWidth >= 768) {
-                        stopAuto();
-                    } else {
-                        startAuto();
-                    }
-                });
+                // Mobile hero carousel removed - using static banner now
             }
 
             const layoutClasses = {

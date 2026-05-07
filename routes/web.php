@@ -56,6 +56,8 @@ Route::get('/media/products/{path}', function (string $path) {
 
 // Public Pages (Guest)
 Route::get('/', [PageController::class, 'home'])->name('home');
+Route::get('/new-arrivals', [PageController::class, 'newArrivals'])->name('new-arrivals');
+Route::get('/shop-category', [PageController::class, 'shopCategory'])->name('shop.category');
 Route::get('/tentang', [PageController::class, 'tentang'])->name('tentang');
 Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/racket', [PageController::class, 'racket'])->name('racket');
@@ -256,6 +258,14 @@ Route::prefix('courier')->name('courier.')->middleware(['auth', 'courier'])->gro
     Route::post('/notifications/mark-read', [CourierNotification::class, 'markAllAsRead'])->name('notifications.markRead');
 });
 
+// Customer Routes - Cart (accessible without login)
+Route::post('/customer/cart/add/{product}', [CartController::class, 'add'])->name('customer.cart.add');
+Route::get('/customer/cart', [CartController::class, 'index'])->name('customer.cart.index');
+Route::patch('/customer/cart/{cart}', [CartController::class, 'update'])->name('customer.cart.update');
+Route::delete('/customer/cart/{cart}', [CartController::class, 'remove'])->name('customer.cart.remove');
+Route::delete('/customer/cart', [CartController::class, 'clear'])->name('customer.cart.clear');
+Route::get('/customer/cart/count', [CartController::class, 'count'])->name('customer.cart.count');
+
 // Customer Routes
 Route::prefix('customer')->name('customer.')->middleware(['auth', 'customer'])->group(function () {
     // Products (alias to public produk route)
@@ -266,14 +276,6 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'customer'])->
     Route::get('/products/{product}', function($product) {
         return redirect()->route('produk.show', $product);
     })->name('products.show');
-    
-    // Cart
-    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-    Route::post('/cart/add/{product}', [CartController::class, 'add'])->name('cart.add');
-    Route::patch('/cart/{cart}', [CartController::class, 'update'])->name('cart.update');
-    Route::delete('/cart/{cart}', [CartController::class, 'remove'])->name('cart.remove');
-    Route::delete('/cart', [CartController::class, 'clear'])->name('cart.clear');
-    Route::get('/cart/count', [CartController::class, 'count'])->name('cart.count');
     
     // Shipping Rates (Biteship)
     Route::post('/shipping/rates', [\App\Http\Controllers\Customer\ShippingController::class, 'getRates'])->name('shipping.rates');
