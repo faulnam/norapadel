@@ -1,0 +1,121 @@
+<!-- Add this section in your checkout form, before payment method selection -->
+
+@auth
+    @if(auth()->user()->points > 0)
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title mb-3">
+                <i class="fas fa-coins text-warning me-2"></i>
+                Gunakan Points
+            </h5>
+            
+            <div class="alert alert-info mb-3">
+                <i class="fas fa-info-circle me-2"></i>
+                Anda memiliki <strong>{{ auth()->user()->points }} points</strong> 
+                (senilai <strong>Rp {{ number_format(auth()->user()->points * 100, 0, ',', '.') }}</strong>)
+            </div>
+            
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="usePoints" name="use_points" value="1">
+                <label class="form-check-label" for="usePoints">
+                    Gunakan points untuk mengurangi total pembayaran
+                </label>
+            </div>
+            
+            <div id="pointsInputSection" style="display: none;">
+                <div class="mb-3">
+                    <label for="pointsUsed" class="form-label">Jumlah Points yang Digunakan</label>
+                    <input type="number" 
+                           class="form-control" 
+                           id="pointsUsed" 
+                           name="points_used" 
+                           min="0" 
+                           max="{{ auth()->user()->points }}" 
+                           value="0"
+                           placeholder="Masukkan jumlah points">
+                    <small class="text-muted">
+                        Maksimal {{ auth()->user()->points }} points (1 point = Rp 100)
+                    </small>
+                </div>
+                
+                <div class="alert alert-success" id="pointsDiscountInfo" style="display: none;">
+                    <i class="fas fa-check-circle me-2"></i>
+                    Diskon points: <strong id="pointsDiscountAmount">Rp 0</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+@endauth
+
+<!-- Add this JavaScript at the bottom of your checkout page -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const usePointsCheckbox = document.getElementById('usePoints');
+    const pointsInputSection = document.getElementById('pointsInputSection');
+    const pointsUsedInput = document.getElementById('pointsUsed');
+    const pointsDiscountInfo = document.getElementById('pointsDiscountInfo');
+    const pointsDiscountAmount = document.getElementById('pointsDiscountAmount');
+    
+    if (usePointsCheckbox) {
+        usePointsCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                pointsInputSection.style.display = 'block';
+            } else {
+                pointsInputSection.style.display = 'none';
+                pointsUsedInput.value = 0;
+                updatePointsDiscount();
+            }
+        });
+    }
+    
+    if (pointsUsedInput) {
+        pointsUsedInput.addEventListener('input', function() {
+            updatePointsDiscount();
+        });
+    }
+    
+    function updatePointsDiscount() {
+        const points = parseInt(pointsUsedInput.value) || 0;
+        const discount = points * 100; // 1 point = Rp 100
+        
+        if (points > 0) {
+            pointsDiscountAmount.textContent = 'Rp ' + discount.toLocaleString('id-ID');
+            pointsDiscountInfo.style.display = 'block';
+            
+            // Update total pembayaran
+            updateTotalPayment();
+        } else {
+            pointsDiscountInfo.style.display = 'none';
+        }
+    }
+    
+    function updateTotalPayment() {
+        // Get current total
+        const subtotal = parseFloat(document.getElementById('subtotal').dataset.value) || 0;
+        const shippingCost = parseFloat(document.getElementById('shippingCost').dataset.value) || 0;
+        const points = parseInt(pointsUsedInput.value) || 0;
+        const pointsDiscount = points * 100;
+        
+        // Calculate new total
+        const newTotal = Math.max(0, subtotal + shippingCost - pointsDiscount);
+        
+        // Update display
+        document.getElementById('totalPayment').textContent = 'Rp ' + newTotal.toLocaleString('id-ID');
+    }
+});
+</script>
+
+<!-- Example of how to display free grip info -->
+@auth
+    @if(!auth()->user()->first_purchase_completed)
+    <div class="alert alert-success mb-4">
+        <i class="fas fa-gift me-2"></i>
+        <strong>Bonus Pembelian Pertama!</strong>
+        <p class="mb-0 mt-2">
+            Anda akan mendapatkan <strong>FREE GRIP</strong> untuk pembelian pertama Anda! 
+            Grip akan otomatis ditambahkan ke pesanan Anda.
+        </p>
+    </div>
+    @endif
+@endauth

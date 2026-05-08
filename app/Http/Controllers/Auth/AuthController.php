@@ -221,6 +221,9 @@ class AuthController extends Controller
             'role' => 'customer',
             'is_active' => true,
             'email_verified_at' => now(),
+            'points' => 100,
+            'welcome_bonus_claimed' => false,
+            'first_purchase_completed' => false,
         ]);
 
         Cache::forget($cacheKey);

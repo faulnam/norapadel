@@ -39,7 +39,24 @@ class ShippingController extends Controller
                 ], 400);
             }
 
-            $cartItems = auth()->user()->cart()->with('product')->get();
+            // Get cart items (support guest checkout)
+            if (auth()->check()) {
+                $cartItems = auth()->user()->cart()->with('product')->get();
+            } else {
+                // Guest cart from session
+                $guestCart = session()->get('guest_cart', []);
+                $cartItems = collect();
+                
+                foreach ($guestCart as $item) {
+                    $product = \App\Models\Product::find($item['product_id']);
+                    if ($product) {
+                        $cartItems->push((object)[
+                            'product' => $product,
+                            'quantity' => $item['quantity'],
+                        ]);
+                    }
+                }
+            }
 
             if ($cartItems->isEmpty()) {
                 return response()->json([

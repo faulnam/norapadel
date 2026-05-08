@@ -65,7 +65,16 @@ class OrderController extends Controller
         // Get active shipping discount
         $shippingDiscountInfo = ShippingDiscount::active()->first();
 
-        return view('customer.orders.checkout', compact('cartItems', 'subtotal', 'productDiscount', 'shippingDiscountInfo'));
+        // Get free grip for first purchase
+        $freeGrip = null;
+        if (auth()->check() && !auth()->user()->first_purchase_completed) {
+            $freeGrip = \App\Models\Product::whereRaw('LOWER(name) LIKE ?', ['%grip%'])
+                ->where('is_active', true)
+                ->where('stock', '>', 0)
+                ->first();
+        }
+
+        return view('customer.orders.checkout', compact('cartItems', 'subtotal', 'productDiscount', 'shippingDiscountInfo', 'freeGrip'));
     }
 
     /**
@@ -93,6 +102,8 @@ class OrderController extends Controller
             'courier_service_name' => 'nullable|string',
             'estimated_delivery_date' => 'nullable|string',
             'notes' => 'nullable|string|max:500',
+            'use_points' => 'nullable|boolean',
+            'points_used' => 'nullable|integer|min:0',
         ], [
             'guest_name.required_without' => 'Nama wajib diisi.',
             'guest_email.required_without' => 'Email wajib diisi.',
@@ -169,10 +180,10 @@ class OrderController extends Controller
                         'email' => $validated['guest_email'],
                         'phone' => $validated['guest_phone'],
                         'address' => $validated['shipping_address'],
-                        'password' => bcrypt(str_random(16)), // Random password
+                        'password' => bcrypt(\Illuminate\Support\Str::random(16)),
                         'role' => 'customer',
                         'is_active' => true,
-                        'is_guest' => true, // Mark as guest
+                        'is_guest' => true,
                     ]);
                 }
                 
@@ -198,7 +209,22 @@ class OrderController extends Controller
 
             $shippingDiscount = max(0, min($shippingCost, (int) round((float) $shippingDiscount)));
             $shippingPaid = max(0, $shippingCost - $shippingDiscount);
-            $total = max(0, (int) round($netSubtotal + $shippingPaid));
+            
+            // Apply points discount if user wants to use points
+            $pointsDiscount = 0;
+            $pointsUsed = 0;
+            if (auth()->check() && $request->input('use_points') && $request->input('points_used') > 0) {
+                $user = auth()->user();
+                $requestedPoints = (int) $request->input('points_used');
+                
+                // Validate user has enough points
+                if ($requestedPoints <= $user->points) {
+                    $pointsUsed = $requestedPoints;
+                    $pointsDiscount = $pointsUsed * 100; // 1 point = Rp 100
+                }
+            }
+            
+            $total = max(0, (int) round($netSubtotal + $shippingPaid - $pointsDiscount));
 
             $deliveryNotes = null;
             if (!empty($validated['courier_service_code'])) {
@@ -212,6 +238,8 @@ class OrderController extends Controller
                 'product_discount' => $productDiscount,
                 'shipping_discount' => $shippingDiscount,
                 'shipping_cost' => $shippingCost,
+                'points_used' => $pointsUsed,
+                'points_discount' => $pointsDiscount,
                 'total' => $total,
                 'ongkir_asli' => $shippingCost,
                 'diskon_ongkir' => $shippingDiscount,
@@ -239,6 +267,39 @@ class OrderController extends Controller
 
             // Create order
             $order = Order::create($orderPayload);
+            
+            // Deduct points from user if used
+            if ($pointsUsed > 0 && auth()->check()) {
+                $user = auth()->user();
+                $user->decrement('points', $pointsUsed);
+            }
+            
+            // Check if this is first purchase and add free grip
+            $addedFreeGrip = false;
+            if (auth()->check() && !auth()->user()->first_purchase_completed) {
+                // Find grip product (case-insensitive search)
+                $gripProduct = \App\Models\Product::whereRaw('LOWER(name) LIKE ?', ['%grip%'])
+                    ->where('is_active', true)
+                    ->first();
+                    
+                if ($gripProduct && $gripProduct->stock > 0) {
+                    OrderItem::create([
+                        'order_id' => $order->id,
+                        'product_id' => $gripProduct->id,
+                        'product_name' => $gripProduct->name . ' (GRATIS - Bonus Pembelian Pertama)',
+                        'product_price' => 0,
+                        'quantity' => 1,
+                        'subtotal' => 0,
+                    ]);
+                    
+                    // Reduce grip stock
+                    $gripProduct->decrement('stock', 1);
+                    $addedFreeGrip = true;
+                }
+                
+                // Mark first purchase as completed
+                auth()->user()->update(['first_purchase_completed' => true]);
+            }
 
             // Create order items and reduce stock
             foreach ($cartItems as $item) {
@@ -1198,5 +1259,73 @@ class OrderController extends Controller
         $bearing = ($bearing + 360) % 360;
         
         return round($bearing);
+    }
+
+    /**
+     * Guest order tracking page
+     */
+    public function guestTrackOrder(Order $order)
+    {
+        $guestOrders = session()->get('guest_orders', []);
+        
+        if (!in_array($order->id, $guestOrders)) {
+            abort(403, 'Anda tidak memiliki akses ke pesanan ini.');
+        }
+
+        $biteshipRawDetail = null;
+        if (!empty($order->biteship_order_id)) {
+            try {
+                $biteshipRawDetail = $this->syncOrderStatusFromBiteship($order);
+                $order->refresh();
+            } catch (\Throwable $e) {
+                \Log::warning('Sinkronisasi Biteship dilewati', [
+                    'order_number' => $order->order_number,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+
+        $order->load('items.product');
+
+        $biteshipDetail = null;
+        if (!empty($order->biteship_order_id)) {
+            $biteshipDetail = $this->buildBiteshipDetailPayload($order, $biteshipRawDetail ?? []);
+        }
+
+        return view('customer.orders.guest-track', compact('order', 'biteshipDetail'));
+    }
+
+    /**
+     * Get tracking data for guest order (AJAX)
+     */
+    public function guestGetTracking(Order $order)
+    {
+        $guestOrders = session()->get('guest_orders', []);
+        
+        if (!in_array($order->id, $guestOrders)) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        if (!$order->waybill_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Nomor resi belum tersedia',
+            ]);
+        }
+
+        $biteship = app(\App\Services\BiteshipService::class);
+        $result = $biteship->trackOrder($order->waybill_id);
+
+        if (!$result['success']) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil data tracking',
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $result['data'],
+        ]);
     }
 }

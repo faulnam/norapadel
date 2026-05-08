@@ -25,7 +25,11 @@ class User extends Authenticatable
         'address',
         'role',
         'is_active',
+        'is_guest',
         'avatar',
+        'points',
+        'first_purchase_completed',
+        'welcome_bonus_claimed',
     ];
 
     /**
@@ -49,6 +53,9 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
+            'is_guest' => 'boolean',
+            'first_purchase_completed' => 'boolean',
+            'welcome_bonus_claimed' => 'boolean',
         ];
     }
 

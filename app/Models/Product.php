@@ -42,6 +42,7 @@ class Product extends Model
     const CATEGORY_ORIGINAL = 'original';
     const CATEGORY_PEDAS = 'pedas';
     const CATEGORY_SHOES = 'shoes';
+    const CATEGORY_ARRIVALS = 'arrivals';
 
     public static function categories(): array
     {
@@ -49,6 +50,7 @@ class Product extends Model
             self::CATEGORY_ORIGINAL => 'Raket Padel',
             self::CATEGORY_PEDAS => 'Aksesori Padel',
             self::CATEGORY_SHOES => 'Shoes Padel',
+            self::CATEGORY_SHOES => 'New Arrivals',
         ];
     }
 

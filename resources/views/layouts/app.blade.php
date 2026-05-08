@@ -821,6 +821,7 @@
         }
     </style>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     @stack('styles')
 </head>
@@ -1002,6 +1003,9 @@
     <main>
         @yield('content')
     </main>
+
+    <!-- Welcome Bonus Popup -->
+    <x-welcome-bonus-popup />
 
     <div class="modal fade np-product-modal" id="npProductModal" tabindex="-1" aria-labelledby="npProductModalTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">

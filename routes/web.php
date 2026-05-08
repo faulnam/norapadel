@@ -266,10 +266,30 @@ Route::delete('/customer/cart/{cart}', [CartController::class, 'remove'])->name(
 Route::delete('/customer/cart', [CartController::class, 'clear'])->name('customer.cart.clear');
 Route::get('/customer/cart/count', [CartController::class, 'count'])->name('customer.cart.count');
 
-// Guest Checkout
+// Guest Checkout & Payment (accessible without login)
 Route::get('/customer/checkout', [CustomerOrder::class, 'checkout'])->name('customer.checkout');
 Route::post('/customer/checkout', [CustomerOrder::class, 'processCheckout'])->name('customer.checkout.process');
 Route::post('/customer/shipping/rates', [\App\Http\Controllers\Customer\ShippingController::class, 'getRates'])->name('customer.shipping.rates');
+
+// Guest Payment Routes (accessible without login)
+Route::get('/customer/payment/{order}/select-gateway', [PaymentController::class, 'selectGateway'])->name('customer.payment.select-gateway');
+Route::get('/customer/payment/{order}', [PaymentController::class, 'show'])->name('customer.payment.show');
+Route::post('/customer/payment/{order}/process', [PaymentController::class, 'process'])->name('customer.payment.process');
+Route::get('/customer/payment/{order}/waiting', [PaymentController::class, 'waiting'])->name('customer.payment.waiting');
+Route::get('/customer/payment/{order}/check-status', [PaymentController::class, 'checkStatus'])->name('customer.payment.check-status');
+Route::get('/customer/payment/{order}/redirect', [PaymentController::class, 'redirect'])->name('customer.payment.redirect');
+Route::get('/customer/payment/{order}/callback', [PakasirWebhookController::class, 'handleCallback'])->name('customer.payment.callback');
+
+// Guest Paylabs Payment Routes
+Route::get('/customer/payment-paylabs/{order}', [\App\Http\Controllers\Customer\PaylabsPaymentController::class, 'show'])->name('customer.payment.paylabs.show');
+Route::post('/customer/payment-paylabs/{order}/process', [\App\Http\Controllers\Customer\PaylabsPaymentController::class, 'process'])->name('customer.payment.paylabs.process');
+Route::get('/customer/payment-paylabs/{order}/waiting', [\App\Http\Controllers\Customer\PaylabsPaymentController::class, 'waiting'])->name('customer.payment.paylabs.waiting');
+Route::get('/customer/payment-paylabs/{order}/check-status', [\App\Http\Controllers\Customer\PaylabsPaymentController::class, 'checkStatus'])->name('customer.payment.paylabs.check-status');
+Route::get('/customer/payment-paylabs/{order}/callback', [\App\Http\Controllers\PaylabsWebhookController::class, 'handleCallback'])->name('customer.payment.paylabs.callback');
+
+// Guest Order Tracking
+Route::get('/customer/orders/{order}/track', [CustomerOrder::class, 'guestTrackOrder'])->name('customer.orders.guest-track');
+Route::get('/customer/orders/{order}/guest-tracking', [CustomerOrder::class, 'guestGetTracking'])->name('customer.orders.guest-tracking');
 
 // Customer Routes
 Route::prefix('customer')->name('customer.')->middleware(['auth', 'customer'])->group(function () {
@@ -332,6 +352,9 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'customer'])->
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::post('/profile/avatar', [ProfileController::class, 'updateAvatar'])->name('profile.avatar');
     Route::patch('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.update-password');
+
+    // Welcome Bonus
+    Route::post('/claim-welcome-bonus', [\App\Http\Controllers\Customer\WelcomeBonusController::class, 'claimBonus'])->name('claim-welcome-bonus');
 
     // Notifications
     Route::get('/notifications', function () {

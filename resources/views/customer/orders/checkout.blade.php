@@ -467,6 +467,7 @@
         <nav class="hidden items-center gap-8 md:flex">
             <a href="{{ route('home') }}"
                 class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Home</a>
+                 <a href="{{ route('new-arrivals') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">New Arrivals</a>
             <a href="{{ route('racket') }}"
                 class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Racket</a>
             <a href="{{ route('shoes') }}"
@@ -689,6 +690,72 @@
                 </div>
                 
                 <div class="col-lg-5">
+                    @auth
+                    @if(auth()->user()->role === 'customer')
+                        <!-- Welcome Bonus Info -->
+                        @if(!auth()->user()->first_purchase_completed && $freeGrip)
+                        <div class="alert alert-success mb-3" style="border-radius: 12px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none; color: white;">
+                            <div class="d-flex align-items-start">
+                                <div class="me-3" style="font-size: 2rem;">🎁</div>
+                                <div class="flex-1">
+                                    <h6 class="fw-bold mb-2" style="color: white;">Pembelian Pertama Anda!</h6>
+                                    <div class="small mb-2">
+                                        <div class="mb-1">
+                                            <i class="fas fa-check-circle me-1"></i> 
+                                            <strong>{{ $freeGrip->name }}</strong> (senilai Rp {{ number_format($freeGrip->price, 0, ',', '.') }}) 
+                                            <span class="badge bg-white text-success ms-1" style="font-size: 9px;">FREE</span>
+                                        </div>
+                                        <div><i class="fas fa-coins me-1"></i> Anda punya <strong>{{ auth()->user()->points }} points</strong> (Rp {{ number_format(auth()->user()->points * 100, 0, ',', '.') }})</div>
+                                    </div>
+                                    <small style="opacity: 0.9;">✨ Nikmati benefit member Anda!</small>
+                                </div>
+                            </div>
+                        </div>
+                        @elseif(!auth()->user()->first_purchase_completed && !$freeGrip)
+                        <div class="alert alert-warning mb-3" style="border-radius: 12px;">
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <div>
+                                    <strong>Pembelian Pertama Anda!</strong><br>
+                                    <small>Grip sedang tidak tersedia, tapi Anda tetap bisa gunakan {{ auth()->user()->points }} points untuk diskon!</small>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+
+                        <!-- Points Usage -->
+                        @if(auth()->user()->points > 0)
+                        <div class="checkout-card mb-3">
+                            <div class="checkout-card-header">
+                                <i class="fas fa-coins"></i>
+                                Gunakan Points
+                            </div>
+                            <div class="checkout-card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="text-muted small">Points Tersedia</span>
+                                    <span class="fw-bold">{{ auth()->user()->points }} points</span>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="usePoints" name="use_points" value="1">
+                                    <label class="form-check-label" for="usePoints">
+                                        Gunakan points untuk diskon
+                                    </label>
+                                </div>
+                                <div id="pointsSlider" style="display: none;">
+                                    <label class="form-label small">Jumlah Points</label>
+                                    <input type="range" class="form-range" id="pointsRange" name="points_used" 
+                                           min="0" max="{{ auth()->user()->points }}" value="0" step="10">
+                                    <div class="d-flex justify-content-between align-items-center mt-2">
+                                        <span class="small text-muted"><span id="pointsUsed">0</span> points</span>
+                                        <span class="small fw-bold text-success">-<span id="pointsDiscount">Rp 0</span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+                    @endif
+                    @endauth
+
                     <!-- Shipping Discount Promo Banner -->
                     @if($shippingDiscountInfo)
                         <div class="alert alert-success mb-3" style="border-radius: 12px; font-size: 13px;">
@@ -728,6 +795,34 @@
                                     <span>Rp {{ number_format($item->subtotal, 0, ',', '.') }}</span>
                                 </div>
                             @endforeach
+
+                            @auth
+                            @if(auth()->user()->role === 'customer' && !auth()->user()->first_purchase_completed && $freeGrip)
+                                <!-- Free Grip Item -->
+                                <div class="summary-item" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); padding: 0.75rem; border-radius: 8px; margin-top: 0.5rem;">
+                                    <span class="d-flex align-items-center gap-2">
+                                        @if($freeGrip->image)
+                                        <img src="{{ $freeGrip->image }}" 
+                                             alt="{{ $freeGrip->name }}"
+                                             onerror="this.onerror=null; this.src='{{ asset('images/racket.png') }}'"
+                                             style="width: 32px; height: 32px; object-fit: cover; border-radius: 6px;">
+                                        @else
+                                        <div style="width: 32px; height: 32px; background: #10b981; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px;">
+                                            <i class="fas fa-gift"></i>
+                                        </div>
+                                        @endif
+                                        <div>
+                                            <div class="fw-semibold" style="font-size: 0.875rem; color: #166534;">
+                                                {{ $freeGrip->name }}
+                                                <span class="badge bg-success ms-1" style="font-size: 9px; vertical-align: middle;">FREE</span>
+                                            </div>
+                                            <div class="text-muted" style="font-size: 0.75rem; color: #166534 !important; opacity: 0.8;">Bonus Pembelian Pertama</div>
+                                        </div>
+                                    </span>
+                                    <span class="fw-bold" style="color: #166534; text-decoration: line-through; opacity: 0.6;">Rp {{ number_format($freeGrip->price, 0, ',', '.') }}</span>
+                                </div>
+                            @endif
+                            @endauth
                             
                             <div class="summary-divider"></div>
                             
@@ -759,6 +854,15 @@
                                 <span>Diskon Ongkir</span>
                                 <span id="displayShippingDiscount">-Rp 0</span>
                             </div>
+
+                            @auth
+                            @if(auth()->user()->role === 'customer' && auth()->user()->points > 0)
+                            <div class="summary-item text-success" id="pointsDiscountRow" style="display: none;">
+                                <span>Diskon Points</span>
+                                <span id="displayPointsDiscount">-Rp 0</span>
+                            </div>
+                            @endif
+                            @endauth
                             
                             <div class="summary-divider"></div>
                             
@@ -810,6 +914,16 @@
     const SHIPPING_RATE_PER_KM = 1500; // Rp 1.500 per KM
     const MAX_DELIVERY_DISTANCE = 40; // Maksimal 40 KM
     
+    @auth
+    @if(auth()->user()->role === 'customer')
+    const USER_POINTS = {{ auth()->user()->points }};
+    @else
+    const USER_POINTS = 0;
+    @endif
+    @else
+    const USER_POINTS = 0;
+    @endauth
+    
     // Shipping Discount Info
     @if($shippingDiscountInfo)
     const SHIPPING_DISCOUNT = {
@@ -834,7 +948,52 @@
     document.addEventListener('DOMContentLoaded', function() {
         initMap();
         recalculateOrderTotal();
+        initPointsSlider();
     });
+
+    function initPointsSlider() {
+        const usePointsCheckbox = document.getElementById('usePoints');
+        const pointsSlider = document.getElementById('pointsSlider');
+        const pointsRange = document.getElementById('pointsRange');
+        const pointsUsedSpan = document.getElementById('pointsUsed');
+        const pointsDiscountSpan = document.getElementById('pointsDiscount');
+
+        if (!usePointsCheckbox) return;
+
+        usePointsCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                pointsSlider.style.display = 'block';
+                pointsRange.value = USER_POINTS; // Set to max by default
+                updatePointsDisplay();
+            } else {
+                pointsSlider.style.display = 'none';
+                pointsRange.value = 0;
+                updatePointsDisplay();
+            }
+        });
+
+        if (pointsRange) {
+            pointsRange.addEventListener('input', updatePointsDisplay);
+        }
+
+        function updatePointsDisplay() {
+            const points = parseInt(pointsRange.value) || 0;
+            const discount = points * 100; // 1 point = Rp 100
+
+            pointsUsedSpan.textContent = points;
+            pointsDiscountSpan.textContent = formatRupiah(discount);
+
+            // Update summary
+            if (points > 0) {
+                document.getElementById('pointsDiscountRow').style.display = 'flex';
+                document.getElementById('displayPointsDiscount').textContent = '-' + formatRupiah(discount);
+            } else {
+                document.getElementById('pointsDiscountRow').style.display = 'none';
+            }
+
+            recalculateOrderTotal();
+        }
+    }
 
     function getShippingDiscount(shippingPrice) {
         let shippingDiscount = 0;
@@ -856,7 +1015,16 @@
         const shippingPrice = normalizeRupiahAmount(document.getElementById('shipping_cost_input').value);
         const shippingDiscount = getShippingDiscount(shippingPrice);
 
-        const finalTotal = normalizeRupiahAmount(SUBTOTAL + shippingPrice - shippingDiscount);
+        // Get points discount
+        let pointsDiscount = 0;
+        const pointsRange = document.getElementById('pointsRange');
+        const usePointsCheckbox = document.getElementById('usePoints');
+        if (pointsRange && usePointsCheckbox && usePointsCheckbox.checked) {
+            const pointsUsed = parseInt(pointsRange.value) || 0;
+            pointsDiscount = pointsUsed * 100; // 1 point = Rp 100
+        }
+
+        const finalTotal = normalizeRupiahAmount(SUBTOTAL + shippingPrice - shippingDiscount - pointsDiscount);
         document.getElementById('displayTotal').textContent = formatRupiah(finalTotal);
     }
     

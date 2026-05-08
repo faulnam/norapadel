@@ -187,16 +187,7 @@
                         </div>
                     </div>
 
-                    <div class="mb-3">
-                        <div class="form-check">
-                            <input type="checkbox" class="form-check-input" id="is_featured" name="is_featured" value="1" 
-                                   {{ old('is_featured', $product->is_featured) ? 'checked' : '' }}>
-                            <label class="form-check-label" for="is_featured">
-                                <i class="fas fa-star text-warning me-1"></i>Jadikan Highlight (Card Besar)
-                            </label>
-                        </div>
-                        <small class="text-muted">Produk highlight akan tampil sebagai card besar di halaman utama. Hanya 1 produk per kategori yang bisa menjadi highlight.</small>
-                    </div>
+                    
                 </div>
             </div>
             
