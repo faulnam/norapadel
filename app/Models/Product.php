@@ -73,12 +73,14 @@ class Product extends Model
     // Package Types
     const PACKAGE_SINGLE = 'single';
     const PACKAGE_BUNDLE = 'bundle';
+    const PACKAGE_BESTSELLER = 'bestseller';
 
     public static function packageTypes(): array
     {
         return [
-            self::PACKAGE_SINGLE => 'Paket Bersama',
+            self::PACKAGE_SINGLE => 'Paket Satuan',
             self::PACKAGE_BUNDLE => 'Paket Hemat',
+            self::PACKAGE_BESTSELLER => 'Best Seller',
         ];
     }
 

@@ -144,10 +144,13 @@
                                         @if($product->hasActiveDiscount())
                                             <span class="absolute left-3 top-3 rounded-full bg-rose-500 px-2.5 py-1 text-[11px] font-semibold text-white">-{{ $product->formatted_discount_percent }}</span>
                                         @endif
-                                        @if($product->package_type === 'bundle')
-                                            <span class="absolute left-3 {{ $product->hasActiveDiscount() ? 'top-12' : 'top-3' }} rounded-full bg-purple-500 px-2.5 py-1 text-[11px] font-semibold text-white">Bundle</span>
+                                        @if($product->category === 'arrivals')
+                                            <span class="absolute left-3 {{ $product->hasActiveDiscount() ? 'top-12' : 'top-3' }} rounded-full bg-blue-500 px-2.5 py-1 text-[11px] font-semibold text-white">Latest</span>
                                         @endif
-                                        @if($soldCount >= 5)
+                                        @if($product->package_type === 'bundle')
+                                            <span class="absolute left-3 {{ $product->hasActiveDiscount() && $product->category === 'arrivals' ? 'top-[5.25rem]' : ($product->hasActiveDiscount() || $product->category === 'arrivals' ? 'top-12' : 'top-3') }} rounded-full bg-purple-500 px-2.5 py-1 text-[11px] font-semibold text-white">Bundle</span>
+                                        @endif
+                                        @if($soldCount >= 5 || $product->package_type === 'bestseller')
                                             <span class="absolute right-3 top-3 rounded-full bg-amber-500 px-2.5 py-1 text-[11px] font-semibold text-white">Best Seller</span>
                                         @endif
                                     </div>
@@ -275,10 +278,13 @@
                                         @if($product->hasActiveDiscount())
                                             <span class="absolute left-2 top-2 rounded-full bg-rose-500 px-2 py-0.5 text-[10px] font-semibold text-white">-{{ $product->formatted_discount_percent }}</span>
                                         @endif
-                                        @if($product->package_type === 'bundle')
-                                            <span class="absolute left-2 {{ $product->hasActiveDiscount() ? 'top-9' : 'top-2' }} rounded-full bg-purple-500 px-2 py-0.5 text-[10px] font-semibold text-white">Bundle</span>
+                                        @if($product->category === 'arrivals')
+                                            <span class="absolute left-2 {{ $product->hasActiveDiscount() ? 'top-9' : 'top-2' }} rounded-full bg-blue-500 px-2 py-0.5 text-[10px] font-semibold text-white">Latest</span>
                                         @endif
-                                        @if($soldCount >= 5)
+                                        @if($product->package_type === 'bundle')
+                                            <span class="absolute left-2 {{ $product->hasActiveDiscount() && $product->category === 'arrivals' ? 'top-16' : ($product->hasActiveDiscount() || $product->category === 'arrivals' ? 'top-9' : 'top-2') }} rounded-full bg-purple-500 px-2 py-0.5 text-[10px] font-semibold text-white">Bundle</span>
+                                        @endif
+                                        @if($soldCount >= 5 || $product->package_type === 'bestseller')
                                             <span class="absolute right-2 top-2 rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white">Popular</span>
                                         @endif
                                     </div>

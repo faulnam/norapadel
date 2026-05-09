@@ -113,6 +113,12 @@
                             <div class="overflow-x-auto scroll-smooth px-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" data-slide-container>
                                 <div class="flex gap-4 py-1" data-slide-track>
                                     @forelse($section['others'] as $product)
+                                        @php
+                                            $soldCount = \App\Models\OrderItem::where('product_id', $product->id)
+                                                ->whereHas('order', function($q) {
+                                                    $q->whereIn('status', ['completed', 'delivered']);
+                                                })->sum('quantity');
+                                        @endphp
                                         <button
                                             type="button"
                                             class="group block w-56 shrink-0 overflow-hidden rounded-xl border border-black/6 bg-white text-start shadow-[0_6px_22px_rgba(0,0,0,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(0,0,0,0.1)]"
@@ -136,6 +142,15 @@
                                                 >
                                                 @if($product->hasActiveDiscount())
                                                     <span class="absolute left-3 top-3 rounded-full bg-rose-500 px-2.5 py-1 text-[11px] font-semibold text-white">-{{ $product->formatted_discount_percent }}</span>
+                                                @endif
+                                                @if($product->category === 'arrivals')
+                                                    <span class="absolute left-3 {{ $product->hasActiveDiscount() ? 'top-12' : 'top-3' }} rounded-full bg-blue-500 px-2.5 py-1 text-[11px] font-semibold text-white">Latest</span>
+                                                @endif
+                                                @if($product->package_type === 'bundle')
+                                                    <span class="absolute left-3 {{ $product->hasActiveDiscount() && $product->category === 'arrivals' ? 'top-[5.25rem]' : ($product->hasActiveDiscount() || $product->category === 'arrivals' ? 'top-12' : 'top-3') }} rounded-full bg-purple-500 px-2.5 py-1 text-[11px] font-semibold text-white">Bundle</span>
+                                                @endif
+                                                @if($soldCount >= 5 || $product->package_type === 'bestseller')
+                                                    <span class="absolute right-3 top-3 rounded-full bg-amber-500 px-2.5 py-1 text-[11px] font-semibold text-white">Best Seller</span>
                                                 @endif
                                             </div>
                                             <div class="p-3">
