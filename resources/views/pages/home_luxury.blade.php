@@ -222,52 +222,34 @@
             <section class="np-fade-section bg-zinc-50 py-12 lg:py-14">
                 <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
                     <!-- Search & Filter -->
-                    <div class="mb-6 space-y-4">
-                        <div class="flex flex-col md:flex-row gap-3">
-                            <div class="flex-1">
-                                <input type="text" id="searchProduct" placeholder="Cari produk..." class="w-full px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition">
-                            </div>
-                            <div class="flex gap-2 flex-wrap">
-                                <select id="filterDiscount" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition">
-                                    <option value="">Semua Diskon</option>
-                                    <option value="yes">Ada Diskon</option>
-                                    <option value="no">Tanpa Diskon</option>
-                                </select>
-                                <select id="filterBundle" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition">
-                                    <option value="">Semua Produk</option>
-                                    <option value="yes">Bundling Hemat</option>
-                                    <option value="no">Produk Satuan</option>
-                                </select>
-                                <select id="filterPopular" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition">
-                                    <option value="">Semua</option>
-                                    <option value="yes">Sering Dibeli</option>
-                                </select>
-                                <button id="filterPrice" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm hover:bg-zinc-50 transition">
-                                    <i class="fas fa-sliders-h mr-2"></i>Harga
-                                </button>
-                            </div>
+                    <div class="mb-6 flex flex-col md:flex-row gap-3">
+                        <div class="flex-1">
+                            <input type="text" id="searchProduct" placeholder="Cari produk..." class="w-full px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition">
                         </div>
-
-                        <!-- Price Range Filter -->
-                        <div id="priceRangeFilter" class="hidden bg-zinc-50 border border-zinc-200 rounded-xl p-4">
-                            <div class="grid grid-cols-2 gap-3 mb-3">
-                                <div>
-                                    <label class="text-xs text-zinc-600 mb-1 block">Harga Min</label>
-                                    <input type="number" id="minPrice" placeholder="0" class="w-full px-3 py-2 border border-zinc-300 rounded-lg text-sm focus:outline-none focus:border-blue-500">
-                                </div>
-                                <div>
-                                    <label class="text-xs text-zinc-600 mb-1 block">Harga Max</label>
-                                    <input type="number" id="maxPrice" placeholder="999999999" class="w-full px-3 py-2 border border-zinc-300 rounded-lg text-sm focus:outline-none focus:border-blue-500">
-                                </div>
-                            </div>
-                            <div class="flex gap-2">
-                                <button id="applyPriceFilter" class="flex-1 bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition">
-                                    Terapkan
-                                </button>
-                                <button id="resetPriceFilter" class="px-4 py-2 border border-zinc-300 rounded-lg text-sm hover:bg-white transition">
-                                    Reset
-                                </button>
-                            </div>
+                        <div class="flex gap-2 flex-wrap">
+                            <select id="filterBrand" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition">
+                                <option value="">Semua Brand</option>
+                                @php
+                                    $brands = \App\Models\Product::whereNotNull('brand')->distinct()->pluck('brand')->sort();
+                                @endphp
+                                @foreach($brands as $brand)
+                                    <option value="{{ $brand }}">{{ $brand }}</option>
+                                @endforeach
+                            </select>
+                            <select id="filterLevel" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition">
+                                <option value="">Semua Level</option>
+                                <option value="beginner">Beginner</option>
+                                <option value="intermediate">Intermediate</option>
+                                <option value="pro">Pro</option>
+                            </select>
+                            <select id="filterPriceRange" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition">
+                                <option value="">Semua Harga</option>
+                                <option value="0-500000">< Rp 500.000</option>
+                                <option value="500000-1000000">Rp 500.000 - Rp 1.000.000</option>
+                                <option value="1000000-2000000">Rp 1.000.000 - Rp 2.000.000</option>
+                                <option value="2000000-5000000">Rp 2.000.000 - Rp 5.000.000</option>
+                                <option value="5000000-999999999"> > Rp 5.000.000</option>
+                            </select>
                         </div>
                     </div>
 
@@ -282,6 +264,8 @@
                             <div class="product-item group block overflow-hidden rounded-xl border border-black/6 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg"
                                  data-name="{{ strtolower($product->name) }}"
                                  data-price="{{ $product->hasActiveDiscount() ? $product->discounted_price : $product->price }}"
+                                 data-brand="{{ strtolower($product->brand ?? '') }}"
+                                 data-level="{{ $product->level ?? '' }}"
                                  data-discount="{{ $product->hasActiveDiscount() ? 'yes' : 'no' }}"
                                  data-bundle="{{ $product->package_type === 'bundle' ? 'yes' : 'no' }}"
                                  data-sold="{{ $soldCount }}">
@@ -807,65 +791,41 @@
 
             // Related Products Filter & Search
             const searchInput = document.getElementById('searchProduct');
-            const filterDiscount = document.getElementById('filterDiscount');
-            const filterPriceBtn = document.getElementById('filterPrice');
-            const priceRangeFilter = document.getElementById('priceRangeFilter');
-            const applyPriceBtn = document.getElementById('applyPriceFilter');
-            const resetPriceBtn = document.getElementById('resetPriceFilter');
-            const minPriceInput = document.getElementById('minPrice');
-            const maxPriceInput = document.getElementById('maxPrice');
+            const filterBrand = document.getElementById('filterBrand');
+            const filterLevel = document.getElementById('filterLevel');
+            const filterPriceRange = document.getElementById('filterPriceRange');
             const productGrid = document.getElementById('productGrid');
             const noResults = document.getElementById('noResults');
 
-            let minPrice = 0;
-            let maxPrice = Infinity;
-
-            if (filterPriceBtn && priceRangeFilter) {
-                filterPriceBtn.addEventListener('click', () => {
-                    priceRangeFilter.classList.toggle('hidden');
-                });
-            }
-
-            if (applyPriceBtn) {
-                applyPriceBtn.addEventListener('click', () => {
-                    minPrice = parseInt(minPriceInput.value) || 0;
-                    maxPrice = parseInt(maxPriceInput.value) || Infinity;
-                    filterProducts();
-                });
-            }
-
-            if (resetPriceBtn) {
-                resetPriceBtn.addEventListener('click', () => {
-                    minPriceInput.value = '';
-                    maxPriceInput.value = '';
-                    minPrice = 0;
-                    maxPrice = Infinity;
-                    filterProducts();
-                });
-            }
-
             function filterProducts() {
                 const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
-                const discountFilter = filterDiscount ? filterDiscount.value : '';
-                const bundleFilter = document.getElementById('filterBundle') ? document.getElementById('filterBundle').value : '';
-                const popularFilter = document.getElementById('filterPopular') ? document.getElementById('filterPopular').value : '';
+                const brandFilter = filterBrand ? filterBrand.value.toLowerCase() : '';
+                const levelFilter = filterLevel ? filterLevel.value : '';
+                const priceRange = filterPriceRange ? filterPriceRange.value : '';
                 const products = document.querySelectorAll('.product-item');
                 let visibleCount = 0;
+
+                let minPrice = 0;
+                let maxPrice = Infinity;
+
+                if (priceRange) {
+                    const [min, max] = priceRange.split('-').map(Number);
+                    minPrice = min;
+                    maxPrice = max;
+                }
 
                 products.forEach(product => {
                     const name = product.dataset.name || '';
                     const price = parseInt(product.dataset.price || '0');
-                    const discount = product.dataset.discount;
-                    const bundle = product.dataset.bundle;
-                    const sold = parseInt(product.dataset.sold || 0);
+                    const brand = product.dataset.brand || '';
+                    const level = product.dataset.level || '';
 
                     const matchSearch = name.includes(searchTerm);
-                    const matchDiscount = !discountFilter || discount === discountFilter;
+                    const matchBrand = !brandFilter || brand === brandFilter;
+                    const matchLevel = !levelFilter || level === levelFilter;
                     const matchPrice = price >= minPrice && price <= maxPrice;
-                    const matchBundle = !bundleFilter || bundle === bundleFilter;
-                    const matchPopular = !popularFilter || (popularFilter === 'yes' && sold > 10);
 
-                    if (matchSearch && matchDiscount && matchPrice && matchBundle && matchPopular) {
+                    if (matchSearch && matchBrand && matchLevel && matchPrice) {
                         product.style.display = 'block';
                         visibleCount++;
                     } else {
@@ -888,18 +848,16 @@
                 searchInput.addEventListener('input', filterProducts);
             }
 
-            if (filterDiscount) {
-                filterDiscount.addEventListener('change', filterProducts);
+            if (filterBrand) {
+                filterBrand.addEventListener('change', filterProducts);
             }
 
-            const filterBundleEl = document.getElementById('filterBundle');
-            if (filterBundleEl) {
-                filterBundleEl.addEventListener('change', filterProducts);
+            if (filterLevel) {
+                filterLevel.addEventListener('change', filterProducts);
             }
 
-            const filterPopularEl = document.getElementById('filterPopular');
-            if (filterPopularEl) {
-                filterPopularEl.addEventListener('change', filterProducts);
+            if (filterPriceRange) {
+                filterPriceRange.addEventListener('change', filterProducts);
             }
         })();
     </script>

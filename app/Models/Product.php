@@ -23,6 +23,8 @@ class Product extends Model
         'weight',
         'image',
         'category',
+        'brand',
+        'level',
         'package_type',
         'is_active',
         'is_featured',
@@ -43,6 +45,20 @@ class Product extends Model
     const CATEGORY_PEDAS = 'pedas';
     const CATEGORY_SHOES = 'shoes';
     const CATEGORY_ARRIVALS = 'arrivals';
+
+    // Levels
+    const LEVEL_BEGINNER = 'beginner';
+    const LEVEL_INTERMEDIATE = 'intermediate';
+    const LEVEL_PRO = 'pro';
+
+    public static function levels(): array
+    {
+        return [
+            self::LEVEL_BEGINNER => 'Beginner',
+            self::LEVEL_INTERMEDIATE => 'Intermediate',
+            self::LEVEL_PRO => 'Pro',
+        ];
+    }
 
     public static function categories(): array
     {
@@ -92,6 +108,14 @@ class Product extends Model
         });
 
         // Removed auto-slug update on updating - handled in controller
+    }
+
+    /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName()
+    {
+        return 'slug';
     }
 
     /**
