@@ -6,7 +6,10 @@
     <div class="bg-white text-black antialiased">
         <header class="fixed left-0 top-0 z-50 w-full border-b border-transparent bg-transparent backdrop-blur-none transition-all duration-300" id="mainHeader">
             <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-10 lg:px-12">
-                <a href="{{ route('home') }}" class="text-xl font-semibold tracking-tight text-white transition-colors duration-300" id="logoText">NoraPadel</a>
+                <a href="{{ route('home') }}" class="flex items-center gap-2">
+                    <img src="{{ asset('storage/logo.png') }}" alt="NoraPadel" class="h-7 w-7 object-contain" loading="lazy">
+                    <span class="text-xl font-semibold tracking-tight text-white transition-colors duration-300" id="logoText">NoraPadel</span>
+                </a>
 
                 <nav class="hidden items-center gap-8 md:flex" id="navLinks">
                     <a href="{{ route('home') }}"
@@ -99,9 +102,9 @@
         <main class="pt-16 md:pt-0">
             <section class="relative h-[600px] overflow-hidden bg-zinc-900 md:h-[700px] lg:h-[800px]">
                 <div class="absolute inset-0">
-                    <img src="https://images.unsplash.com/photo-1554068865-24cecd4e34b8?q=80&w=2070&auto=format&fit=crop" 
+                    <img src="{{ asset('storage/utama.png') }}" 
                         alt="Padel Tennis" 
-                        class="h-full w-full object-cover opacity-60" 
+                        class="h-full w-full object-cover opacity-90" 
                         loading="eager">
                     <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent"></div>
                 </div>
@@ -173,12 +176,12 @@
 
 
             <!-- Why Choose NoraPadel -->
-            <section class="np-fade-section bg-gradient-to-b from-zinc-100 to-zinc-50 py-12 lg:py-14">
+            <section class="np-fade-section bg-gradient-to-br from-zinc-800 to-zinc-900 py-12 lg:py-14">
                 <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
                     <div class="mb-8 text-center">
-                        <h2 class="text-3xl font-semibold tracking-tight text-black sm:text-4xl lg:text-5xl">Why Choose
+                        <h2 class="text-3xl font-semibold tracking-tight text-white sm:text-4xl lg:text-5xl">Why Choose
                             NoraPadel</h2>
-                        <p class="mx-auto mt-3 max-w-2xl text-zinc-600">Experience the difference with premium quality and
+                        <p class="mx-auto mt-3 max-w-2xl text-white">Experience the difference with premium quality and
                             exceptional service</p>
                     </div>
                     <div class="grid gap-6 md:grid-cols-3">

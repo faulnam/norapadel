@@ -9,23 +9,26 @@
             display: none !important;
         }
     </style>
-    <header class="fixed left-0 top-0 z-50 w-full border-b border-black/6 bg-white/80 backdrop-blur-xl md:sticky">
+    <header class="fixed left-0 top-0 z-50 w-full border-b border-transparent bg-transparent backdrop-blur-none transition-all duration-300" id="mainHeader">
         <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-10 lg:px-12">
-            <a href="{{ route('home') }}" class="text-xl font-semibold tracking-tight text-black">NoraPadel</a>
+            <a href="{{ route('home') }}" class="flex items-center gap-2">
+                <img src="{{ asset('storage/logo.png') }}" alt="NoraPadel" class="h-7 w-7 object-contain" loading="lazy">
+                <span class="text-xl font-semibold tracking-tight text-white transition-colors duration-300" id="logoText">NoraPadel</span>
+            </a>
 
-            <nav class="hidden items-center gap-8 md:flex">
-                <a href="{{ route('home') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Home</a>
-                <a href="{{ route('new-arrivals') }}" class="border-b border-black text-sm text-black transition duration-300">New Arrivals</a>
-                <a href="{{ route('racket') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Racket</a>
-                <a href="{{ route('shoes') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Shoes</a>
-                <a href="{{ route('apparel') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Accessories</a>
-                <a href="{{ route('contact') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Contact</a>
+            <nav class="hidden items-center gap-8 md:flex" id="navLinks">
+                <a href="{{ route('home') }}" class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">Home</a>
+                <a href="{{ route('new-arrivals') }}" class="border-b border-white text-sm text-white transition duration-300" data-active="true">New Arrivals</a>
+                <a href="{{ route('racket') }}" class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">Racket</a>
+                <a href="{{ route('shoes') }}" class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">Shoes</a>
+                <a href="{{ route('apparel') }}" class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">Accessories</a>
+                <a href="{{ route('contact') }}" class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">Contact</a>
             </nav>
 
-            <div class="flex items-center gap-3 text-black/80">
+            <div class="flex items-center gap-3 text-white/90" id="navIcons">
                 @auth
                     @if(auth()->user()->role === 'admin')
-                        <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center gap-1.5 rounded-full border border-black/15 bg-black px-4 py-1.5 text-xs font-medium text-white transition duration-300 hover:bg-black/90" aria-label="Back to Dashboard">
+                        <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-xs font-medium text-white backdrop-blur transition duration-300 hover:bg-white/20" aria-label="Back to Dashboard">
                             <i class="fas fa-arrow-left text-[10px]"></i>
                             <span>Dashboard</span>
                         </a>
@@ -39,7 +42,7 @@
                     @endif
                 @endauth
                 @guest
-                    <a href="{{ route('login') }}" class="inline-flex items-center gap-1 rounded-full border border-black/15 px-3 py-1.5 text-xs font-medium text-black/80 transition duration-300 hover:border-black/30 hover:text-black" aria-label="Masuk">
+                    <a href="{{ route('login') }}" class="inline-flex items-center gap-1 rounded-full border border-white/30 bg-white/10 px-3 py-1.5 text-xs font-medium text-white backdrop-blur transition duration-300 hover:bg-white/20" aria-label="Masuk">
                         <i class="fas fa-sign-in-alt text-[11px]"></i>
                         <span>Masuk</span>
                     </a>
@@ -66,7 +69,7 @@
                         @endif
                     </a>
                 @endauth
-                <button type="button" class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-black transition duration-300 hover:border-black/35 md:hidden" data-mobile-menu-toggle aria-label="Toggle navigation" aria-expanded="false">
+                <button type="button" class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20 md:hidden" data-mobile-menu-toggle aria-label="Toggle navigation" aria-expanded="false">
                     <i class="fas fa-bars text-sm"></i>
                 </button>
             </div>
@@ -84,13 +87,16 @@
     </header>
 
     <main class="pt-12 sm:pt-16 md:pt-0">
-        <section class="relative -mt-16 min-h-screen overflow-hidden bg-[#f5f5f7] hidden md:block md:mt-0 md:min-h-[auto]">
-            <div class="mx-auto w-full max-w-7xl px-6 pb-8 pt-16 text-center md:px-10 md:py-12 lg:px-12 lg:py-16">
-                <h2 class="text-4xl font-semibold tracking-tight text-black sm:text-5xl lg:text-6xl">New Arrivals</h2>
-                <p class="mx-auto mt-3 max-w-2xl text-lg font-normal text-zinc-700 sm:text-2xl">Discover our latest products</p>
+        <section class="relative h-[520px] overflow-hidden bg-zinc-900 md:h-[620px] lg:h-[700px]">
+            <div class="absolute inset-0">
+                <img src="https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?q=80&w=2070&auto=format&fit=crop" alt="New Arrivals" class="h-full w-full object-cover" loading="eager">
+                <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/45 to-transparent"></div>
             </div>
-            <div class="relative w-full">
-                <img src="https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?q=80&w=2070&auto=format&fit=crop" alt="New Arrivals" class="h-[25vh] w-full max-h-[250px] object-cover object-center sm:h-[28vh] md:h-[30vh]" loading="lazy">
+            <div class="relative mx-auto flex h-full max-w-7xl items-center px-6 md:px-10 lg:px-12">
+                <div class="max-w-2xl text-white">
+                    <h2 class="text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">New Arrivals</h2>
+                    <p class="mt-3 text-lg text-zinc-200 sm:text-2xl">Discover our latest products</p>
+                </div>
             </div>
         </section>
 
@@ -274,9 +280,80 @@
         }
 
         (function () {
+            const header = document.getElementById('mainHeader');
+            const logoText = document.getElementById('logoText');
+            const navLinks = document.getElementById('navLinks');
+            const navIcons = document.getElementById('navIcons');
             const revealEls = document.querySelectorAll('.np-fade-section');
             const mobileMenuToggle = document.querySelector('[data-mobile-menu-toggle]');
             const mobileMenu = document.querySelector('[data-mobile-menu]');
+
+            window.addEventListener('scroll', () => {
+                if (!header || !logoText || !navLinks || !navIcons) return;
+                if (window.scrollY > 50) {
+                    header.classList.add('bg-white/80', 'backdrop-blur-xl', 'border-black/6');
+                    header.classList.remove('bg-transparent', 'backdrop-blur-none', 'border-transparent');
+
+                    logoText.classList.remove('text-white');
+                    logoText.classList.add('text-black');
+
+                    navLinks.querySelectorAll('a').forEach(link => {
+                        const isActive = link.dataset.active === 'true';
+                        link.classList.remove('text-white/90', 'text-white', 'hover:border-white/30', 'hover:text-white');
+                        link.classList.add('text-black/80', 'hover:border-black/30', 'hover:text-black');
+                        if (isActive) {
+                            link.classList.remove('border-transparent', 'border-white', 'text-black/80', 'text-white/90', 'text-white');
+                            link.classList.add('border-black', 'text-black');
+                        } else {
+                            link.classList.remove('border-black');
+                            link.classList.add('border-transparent');
+                        }
+                    });
+
+                    navIcons.classList.remove('text-white/90');
+                    navIcons.classList.add('text-black/80');
+
+                    navIcons.querySelectorAll('a, button').forEach(el => {
+                        if (el.classList.contains('border-white/30')) {
+                            el.classList.remove('border-white/30', 'bg-white/10', 'hover:bg-white/20', 'text-white');
+                            el.classList.add('border-black/15', 'bg-transparent', 'hover:border-black/30', 'text-black');
+                        }
+                        el.classList.remove('hover:text-white');
+                        el.classList.add('hover:text-black');
+                    });
+                } else {
+                    header.classList.remove('bg-white/80', 'backdrop-blur-xl', 'border-black/6');
+                    header.classList.add('bg-transparent', 'backdrop-blur-none', 'border-transparent');
+
+                    logoText.classList.add('text-white');
+                    logoText.classList.remove('text-black');
+
+                    navLinks.querySelectorAll('a').forEach(link => {
+                        const isActive = link.dataset.active === 'true';
+                        link.classList.add('text-white/90', 'hover:border-white/30', 'hover:text-white');
+                        link.classList.remove('text-black', 'text-black/80', 'hover:border-black/30', 'hover:text-black');
+                        if (isActive) {
+                            link.classList.remove('border-transparent', 'border-black', 'text-black', 'text-black/80');
+                            link.classList.add('border-white', 'text-white');
+                        } else {
+                            link.classList.remove('border-black');
+                            link.classList.add('border-transparent');
+                        }
+                    });
+
+                    navIcons.classList.add('text-white/90');
+                    navIcons.classList.remove('text-black/80');
+
+                    navIcons.querySelectorAll('a, button').forEach(el => {
+                        if (el.classList.contains('border-black/15')) {
+                            el.classList.add('border-white/30', 'bg-white/10', 'hover:bg-white/20', 'text-white');
+                            el.classList.remove('border-black/15', 'bg-transparent', 'hover:border-black/30', 'text-black');
+                        }
+                        el.classList.add('hover:text-white');
+                        el.classList.remove('hover:text-black');
+                    });
+                }
+            }, { passive: true });
 
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach((entry) => {

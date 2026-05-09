@@ -60,7 +60,10 @@
 <!-- Navbar -->
 <header class="fixed left-0 top-0 z-[9999] w-full border-b border-black/6 bg-white/80 backdrop-blur-xl md:sticky">
     <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-10 lg:px-12">
-        <a href="{{ route('home') }}" class="text-xl font-semibold tracking-tight text-black">NoraPadel</a>
+        <a href="{{ route('home') }}" class="flex items-center gap-2">
+            <img src="{{ asset('storage/logo.png') }}" alt="NoraPadel" class="h-7 w-7 object-contain" loading="lazy">
+            <span class="text-xl font-semibold tracking-tight text-black">NoraPadel</span>
+        </a>
         <nav class="hidden items-center gap-8 md:flex">
             <a href="{{ route('home') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Home</a>
             <a href="{{ route('racket') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Racket</a>
