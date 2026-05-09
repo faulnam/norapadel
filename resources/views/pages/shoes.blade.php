@@ -201,7 +201,7 @@
                                 </div>
                             </a>
                             <div class="px-4 pb-4">
-                                <button onclick="addToCart({{ $product->id }}, event)" class="w-full flex items-center justify-center gap-2 rounded-full border-2 border-blue-600 bg-transparent px-4 py-2 text-sm font-medium text-blue-600 transition duration-300 hover:bg-blue-600 hover:text-white">
+                                <button onclick="addToCart('{{ $product->slug }}', event)" class="w-full flex items-center justify-center gap-2 rounded-full border-2 border-blue-600 bg-transparent px-4 py-2 text-sm font-medium text-blue-600 transition duration-300 hover:bg-blue-600 hover:text-white">
                                     <i class="fas fa-shopping-cart text-sm"></i>
                                     <span>Add to Cart</span>
                                 </button>

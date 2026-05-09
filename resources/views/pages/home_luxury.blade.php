@@ -54,6 +54,22 @@
                             <span>Masuk</span>
                         </a>
                     @endguest
+                    
+                    <a href="{{ route('customer.wishlist.index') }}" class="relative transition duration-300 hover:text-white" aria-label="Wishlist" title="Wishlist">
+                        <i class="fas fa-heart text-sm"></i>
+                        @php
+                            if (auth()->check() && auth()->user()->role === 'customer') {
+                                $wishlistCount = auth()->user()->wishlistItems()->count();
+                            } else {
+                                $guestWishlist = session()->get('guest_wishlist', []);
+                                $wishlistCount = count($guestWishlist);
+                            }
+                        @endphp
+                        @if($wishlistCount > 0)
+                            <span class="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
+                        @endif
+                    </a>
+                    
                     @auth
                         <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-white"
                             aria-label="Cart" title="Keranjang">
@@ -79,6 +95,11 @@
                             @endif
                         </a>
                     @endauth
+                    
+                    <button onclick="openSearchModal()" class="transition duration-300 hover:text-white" aria-label="Search" title="Cari Produk">
+                        <i class="fas fa-search text-sm"></i>
+                    </button>
+                    
                     <button type="button"
                         class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20 md:hidden"
                         data-mobile-menu-toggle aria-label="Toggle navigation" aria-expanded="false">
@@ -114,8 +135,7 @@
                         <p class="mt-4 text-xl sm:text-2xl lg:text-3xl">Precision. Power. Performance.</p>
                         <p class="mt-6 text-base text-zinc-200 sm:text-lg">Experience the ultimate in padel equipment. Premium quality rackets, shoes, and accessories for players who demand excellence.</p>
                         <div class="mt-8 flex flex-wrap gap-4">
-                            <a href="{{ route('new-arrivals') }}" class="inline-flex rounded-full bg-blue-600 px-8 py-3 text-sm font-semibold text-white transition duration-300 hover:bg-blue-700">Shop Now</a>
-                            <a href="{{ route('produk.index') }}" class="inline-flex rounded-full border-2 border-white bg-transparent px-8 py-3 text-sm font-semibold text-white transition duration-300 hover:bg-white hover:text-black">Explore Collection</a>
+                            <a href="{{ route('shop') }}" class="inline-flex rounded-full border-2 border-white bg-transparent px-8 py-3 text-sm font-semibold text-white transition duration-300 hover:bg-white hover:text-black">Shop Now</a>
                         </div>
                     </div>
                 </div>
@@ -150,7 +170,7 @@
                                         @if($product->package_type === 'bundle')
                                             <span class="absolute left-3 {{ $product->hasActiveDiscount() && $product->category === 'arrivals' ? 'top-[5.25rem]' : ($product->hasActiveDiscount() || $product->category === 'arrivals' ? 'top-12' : 'top-3') }} rounded-full bg-purple-500 px-2.5 py-1 text-[11px] font-semibold text-white">Bundle</span>
                                         @endif
-                                        @if($soldCount >= 5 || $product->package_type === 'bestseller')
+                                        @if($product->isBestSeller())
                                             <span class="absolute right-3 top-3 rounded-full bg-amber-500 px-2.5 py-1 text-[11px] font-semibold text-white">Best Seller</span>
                                         @endif
                                     </div>
@@ -166,10 +186,14 @@
                                     </div>
                                 </a>
                                 <div class="px-4 pb-4">
-                                    <button onclick="addToCart({{ $product->id }}, event)" class="w-full flex items-center justify-center gap-2 rounded-full border-2 border-blue-600 bg-transparent px-4 py-2 text-sm font-medium text-blue-600 transition duration-300 hover:bg-blue-600 hover:text-white">
-                                        <i class="fas fa-shopping-cart text-sm"></i>
-                                        <span>Add to Cart</span>
-                                    </button>
+                                    <div class="flex items-center gap-3">
+                                        <button onclick="addToCart('{{ $product->slug }}', event)" class="text-zinc-400 transition duration-300 hover:text-blue-600">
+                                            <i class="fas fa-shopping-bag text-base"></i>
+                                        </button>
+                                        <button onclick="addToWishlist('{{ $product->slug }}', event)" class="text-zinc-400 transition duration-300 hover:text-rose-500">
+                                            <i class="fas fa-heart text-base"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         @endforeach
@@ -224,11 +248,8 @@
             <!-- Shop -->
             <section class="np-fade-section bg-zinc-50 py-12 lg:py-14">
                 <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
-                    <!-- Search & Filter -->
+                    <!-- Filter -->
                     <div class="mb-6 flex flex-col md:flex-row gap-3">
-                        <div class="flex-1">
-                            <input type="text" id="searchProduct" placeholder="Cari produk..." class="w-full px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition">
-                        </div>
                         <div class="flex gap-2 flex-wrap">
                             <select id="filterBrand" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition">
                                 <option value="">Semua Brand</option>
@@ -284,7 +305,7 @@
                                         @if($product->package_type === 'bundle')
                                             <span class="absolute left-2 {{ $product->hasActiveDiscount() && $product->category === 'arrivals' ? 'top-16' : ($product->hasActiveDiscount() || $product->category === 'arrivals' ? 'top-9' : 'top-2') }} rounded-full bg-purple-500 px-2 py-0.5 text-[10px] font-semibold text-white">Bundle</span>
                                         @endif
-                                        @if($soldCount >= 5 || $product->package_type === 'bestseller')
+                                        @if($product->isBestSeller())
                                             <span class="absolute right-2 top-2 rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white">Popular</span>
                                         @endif
                                     </div>
@@ -300,10 +321,14 @@
                                     </div>
                                 </a>
                                 <div class="px-3 pb-3">
-                                    <button onclick="addToCart({{ $product->id }}, event)" class="w-full flex items-center justify-center gap-1.5 rounded-full border-2 border-blue-600 bg-transparent px-3 py-1.5 text-xs font-medium text-blue-600 transition duration-300 hover:bg-blue-600 hover:text-white">
-                                        <i class="fas fa-shopping-cart text-xs"></i>
-                                        <span>Add to Cart</span>
-                                    </button>
+                                    <div class="flex items-center gap-3">
+                                        <button onclick="addToCart('{{ $product->slug }}', event)" class="text-zinc-400 transition duration-300 hover:text-blue-600">
+                                            <i class="fas fa-shopping-bag text-sm"></i>
+                                        </button>
+                                        <button onclick="addToWishlist('{{ $product->slug }}', event)" class="text-zinc-400 transition duration-300 hover:text-rose-500">
+                                            <i class="fas fa-heart text-sm"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         @endforeach
@@ -380,7 +405,69 @@
             </section>
 
         </main>
+
+        <!-- Welcome Bonus Pop-up -->
+        @auth
+            @if(auth()->user()->role === 'customer' && !auth()->user()->welcome_bonus_claimed && !auth()->user()->orders()->exists())
+                <div id="welcomeBonusModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm" style="display: none;">
+                    <div class="relative mx-4 w-full max-w-md overflow-hidden rounded-3xl bg-white shadow-2xl">
+                        <button onclick="closeWelcomeBonus()" class="absolute right-4 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black/10 text-black transition hover:bg-black/20">
+                            <i class="fas fa-times text-sm"></i>
+                        </button>
+                        
+                        <div class="bg-gradient-to-br from-blue-500 to-purple-600 px-8 py-12 text-center text-white">
+                            <div class="mb-4">
+                                <i class="fas fa-gift text-6xl"></i>
+                            </div>
+                            <h2 class="mb-2 text-3xl font-bold">Selamat Datang!</h2>
+                            <p class="text-lg opacity-90">Bonus Spesial Untuk Anda</p>
+                        </div>
+                        
+                        <div class="px-8 py-8 text-center">
+                            <div class="mb-4">
+                                <div class="mb-3">
+                                    <div class="text-4xl font-bold text-blue-600">🎁 Bonus Pembelian Pertama</div>
+                                </div>
+                                <div class="space-y-2 text-left">
+                                    <div class="flex items-center gap-3 rounded-lg bg-blue-50 p-3">
+                                        <i class="fas fa-coins text-2xl text-blue-600"></i>
+                                        <div>
+                                            <div class="font-bold text-black">100 Poin Gratis</div>
+                                            <div class="text-xs text-zinc-600">Senilai Rp 10.000 untuk diskon</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-3 rounded-lg bg-purple-50 p-3">
+                                        <i class="fas fa-hand-holding-heart text-2xl text-purple-600"></i>
+                                        <div>
+                                            <div class="font-bold text-black">Free Grip</div>
+                                            <div class="text-xs text-zinc-600">Gratis grip pada pembelian pertama</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <p class="mb-6 text-xs text-zinc-500">
+                                *Bonus hanya berlaku untuk pembelian pertama Anda
+                            </p>
+                            
+                            <form action="{{ route('customer.claim-welcome-bonus') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="w-full rounded-full bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-3 text-sm font-semibold text-white transition duration-300 hover:shadow-lg">
+                                    <i class="fas fa-check-circle mr-2"></i>Klaim Bonus Sekarang
+                                </button>
+                            </form>
+                            
+                            <button onclick="closeWelcomeBonus()" class="mt-3 text-sm text-zinc-500 hover:text-zinc-700">
+                                Nanti Saja
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            @endif
+        @endauth
     </div>
+
+    <x-search-modal />
 @endsection
 
 @push('styles')
@@ -459,9 +546,6 @@
             event.preventDefault();
             event.stopPropagation();
             
-            console.log('Adding to cart, product ID:', productId);
-            console.log('CSRF Token:', document.querySelector('meta[name="csrf-token"]')?.content);
-            
             fetch(`/customer/cart/add/${productId}`, {
                 method: 'POST',
                 headers: {
@@ -473,18 +557,8 @@
                     quantity: 1
                 })
             })
-            .then(response => {
-                console.log('Response status:', response.status);
-                if (!response.ok) {
-                    return response.text().then(text => {
-                        console.error('Error response:', text);
-                        throw new Error('HTTP error ' + response.status);
-                    });
-                }
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
-                console.log('Success data:', data);
                 if (data.success) {
                     alert('Produk berhasil ditambahkan ke keranjang!');
                     location.reload();
@@ -493,12 +567,60 @@
                 }
             })
             .catch(error => {
-                console.error('Catch error:', error);
-                alert('Terjadi kesalahan: ' + error.message);
+                console.error('Error:', error);
+                alert('Terjadi kesalahan. Silakan coba lagi.');
+            });
+        }
+
+        // Add to Wishlist Function
+        function addToWishlist(productId, event) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            fetch(`/customer/wishlist/add/${productId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Produk berhasil ditambahkan ke wishlist!');
+                    location.reload();
+                } else {
+                    alert(data.message || 'Produk sudah ada di wishlist');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan. Silakan coba lagi.');
             });
         }
 
         (function() {
+            // Welcome Bonus Modal
+            const welcomeModal = document.getElementById('welcomeBonusModal');
+            if (welcomeModal) {
+                const hasSeenWelcome = localStorage.getItem('hasSeenWelcomeBonus');
+                if (!hasSeenWelcome) {
+                    setTimeout(() => {
+                        welcomeModal.style.display = 'flex';
+                    }, 1000); // Show after 1 second
+                }
+            }
+
+            window.closeWelcomeBonus = function() {
+                const welcomeModal = document.getElementById('welcomeBonusModal');
+                if (welcomeModal) {
+                    welcomeModal.style.display = 'none';
+                    localStorage.setItem('hasSeenWelcomeBonus', 'true');
+                }
+            };
+
             // Navbar scroll effect
             const header = document.getElementById('mainHeader');
             const logoText = document.getElementById('logoText');
@@ -795,8 +917,7 @@
                 });
             }
 
-            // Related Products Filter & Search
-            const searchInput = document.getElementById('searchProduct');
+            // Related Products Filter (no search)
             const filterBrand = document.getElementById('filterBrand');
             const filterLevel = document.getElementById('filterLevel');
             const filterPriceRange = document.getElementById('filterPriceRange');
@@ -804,7 +925,6 @@
             const noResults = document.getElementById('noResults');
 
             function filterProducts() {
-                const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
                 const brandFilter = filterBrand ? filterBrand.value.toLowerCase() : '';
                 const levelFilter = filterLevel ? filterLevel.value : '';
                 const priceRange = filterPriceRange ? filterPriceRange.value : '';
@@ -821,17 +941,15 @@
                 }
 
                 products.forEach(product => {
-                    const name = product.dataset.name || '';
                     const price = parseInt(product.dataset.price || '0');
                     const brand = product.dataset.brand || '';
                     const level = product.dataset.level || '';
 
-                    const matchSearch = name.includes(searchTerm);
                     const matchBrand = !brandFilter || brand === brandFilter;
                     const matchLevel = !levelFilter || level === levelFilter;
                     const matchPrice = price >= minPrice && price <= maxPrice;
 
-                    if (matchSearch && matchBrand && matchLevel && matchPrice) {
+                    if (matchBrand && matchLevel && matchPrice) {
                         product.style.display = 'block';
                         visibleCount++;
                     } else {
@@ -848,10 +966,6 @@
                         noResults.classList.add('hidden');
                     }
                 }
-            }
-
-            if (searchInput) {
-                searchInput.addEventListener('input', filterProducts);
             }
 
             if (filterBrand) {

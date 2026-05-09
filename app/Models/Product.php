@@ -73,15 +73,18 @@ class Product extends Model
     // Package Types
     const PACKAGE_SINGLE = 'single';
     const PACKAGE_BUNDLE = 'bundle';
-    const PACKAGE_BESTSELLER = 'bestseller';
 
-    public static function packageTypes(): array
+    /**
+     * Check if product is best seller (sold more than 3 times)
+     */
+    public function isBestSeller(): bool
     {
-        return [
-            self::PACKAGE_SINGLE => 'Paket Satuan',
-            self::PACKAGE_BUNDLE => 'Paket Hemat',
-            self::PACKAGE_BESTSELLER => 'Best Seller',
-        ];
+        $soldCount = \App\Models\OrderItem::where('product_id', $this->id)
+            ->whereHas('order', function($q) {
+                $q->whereIn('status', ['completed', 'delivered']);
+            })->sum('quantity');
+        
+        return $soldCount > 3;
     }
 
     // Weight options in grams
@@ -152,7 +155,11 @@ class Product extends Model
      */
     public function getPackageTypeLabelAttribute(): string
     {
-        return self::packageTypes()[$this->package_type] ?? 'Produk Satuan';
+        $labels = [
+            'single' => 'Produk Satuan',
+            'bundle' => 'Paket Hemat',
+        ];
+        return $labels[$this->package_type] ?? 'Produk Satuan';
     }
 
     /**

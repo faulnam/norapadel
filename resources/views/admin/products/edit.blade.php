@@ -136,13 +136,13 @@
                             <div class="mb-3">
                                 <label for="package_type" class="form-label">Tipe Paket</label>
                                 <select class="form-select @error('package_type') is-invalid @enderror" id="package_type" name="package_type">
-                                    @foreach(\App\Models\Product::packageTypes() as $value => $label)
-                                        <option value="{{ $value }}" {{ old('package_type', $product->package_type ?? 'single') == $value ? 'selected' : '' }}>{{ $label }}</option>
-                                    @endforeach
+                                    <option value="single" {{ old('package_type', $product->package_type ?? 'single') == 'single' ? 'selected' : '' }}>Single</option>
+                                    <option value="bundle" {{ old('package_type', $product->package_type) == 'bundle' ? 'selected' : '' }}>Bundle</option>
                                 </select>
                                 @error('package_type')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
+                                <small class="text-muted">Badge "Best Seller" akan muncul otomatis jika produk terjual lebih dari 3 kali.</small>
                             </div>
                         </div>
                     </div>

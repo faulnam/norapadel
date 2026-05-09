@@ -142,6 +142,22 @@ class User extends Authenticatable
     }
 
     /**
+     * Get wishlist items for the user
+     */
+    public function wishlistItems()
+    {
+        return $this->hasMany(Wishlist::class);
+    }
+
+    /**
+     * Get wishlist with products
+     */
+    public function wishlist()
+    {
+        return $this->hasMany(Wishlist::class)->with('product');
+    }
+
+    /**
      * Get avatar URL
      */
     public function getAvatarUrlAttribute(): string

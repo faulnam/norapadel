@@ -43,6 +43,9 @@ class AuthController extends Controller
 
             // Merge guest cart to user cart
             app(\App\Http\Controllers\Customer\CartController::class)->mergeGuestCart();
+            
+            // Merge guest wishlist to user wishlist
+            app(\App\Http\Controllers\Customer\WishlistController::class)->mergeGuestWishlist();
 
             if (auth()->user()->isAdmin()) {
                 return redirect()->intended(route('admin.dashboard'));
@@ -232,6 +235,9 @@ class AuthController extends Controller
 
         // Merge guest cart to user cart
         app(\App\Http\Controllers\Customer\CartController::class)->mergeGuestCart();
+        
+        // Merge guest wishlist to user wishlist
+        app(\App\Http\Controllers\Customer\WishlistController::class)->mergeGuestWishlist();
 
         return response()->json([
             'message' => 'Registrasi berhasil! Akun Anda sudah aktif.',
@@ -256,5 +262,181 @@ class AuthController extends Controller
 
         return redirect()->route('home')
             ->with('success', 'Anda telah logout.');
+    }
+
+    /**
+     * Show forgot password form
+     */
+    public function showForgotPassword()
+    {
+        return view('auth.forgot-password');
+    }
+
+    /**
+     * Request OTP for password reset
+     */
+    public function requestPasswordResetOtp(Request $request)
+    {
+        $validated = $request->validate([
+            'email' => 'required|email|exists:users,email',
+        ], [
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'email.exists' => 'Email tidak terdaftar.',
+        ]);
+
+        $user = User::where('email', $validated['email'])->first();
+
+        if (!$user->is_active) {
+            return response()->json([
+                'message' => 'Akun Anda telah dinonaktifkan. Silakan hubungi admin.',
+            ], 422);
+        }
+
+        $defaultMailer = config('mail.default');
+        if (in_array($defaultMailer, ['log', 'array'], true)) {
+            return response()->json([
+                'message' => 'Layanan email belum aktif. Silakan konfigurasi Gmail SMTP terlebih dahulu.',
+            ], 422);
+        }
+
+        $otpCode = (string) random_int(100000, 999999);
+        $cacheKey = $this->passwordResetOtpCacheKey($validated['email']);
+        $ttlMinutes = 10;
+
+        Cache::put($cacheKey, [
+            'otp_hash' => Hash::make($otpCode),
+            'email' => $validated['email'],
+            'attempts' => 0,
+        ], now()->addMinutes($ttlMinutes));
+
+        try {
+            Mail::raw(
+                "Kode OTP reset password NoraPadel Anda adalah: {$otpCode}\n\nKode berlaku {$ttlMinutes} menit. Jangan bagikan kode ini ke siapa pun.\n\nJika Anda tidak meminta reset password, abaikan email ini.",
+                function ($message) use ($validated) {
+                    $message->to($validated['email'])
+                        ->subject('Kode OTP Reset Password NoraPadel');
+                }
+            );
+        } catch (\Throwable $exception) {
+            Cache::forget($cacheKey);
+
+            Log::error('Gagal mengirim OTP reset password via SMTP.', [
+                'email' => $validated['email'],
+                'error' => $exception->getMessage(),
+            ]);
+
+            return response()->json([
+                'message' => 'Gagal mengirim OTP ke email. Silakan coba lagi.',
+            ], 500);
+        }
+
+        return response()->json([
+            'message' => 'Kode OTP sudah dikirim ke email Anda.',
+            'email' => $validated['email'],
+            'ttl_minutes' => $ttlMinutes,
+        ]);
+    }
+
+    /**
+     * Verify OTP for password reset
+     */
+    public function verifyPasswordResetOtp(Request $request)
+    {
+        $validated = $request->validate([
+            'email' => 'required|email',
+            'otp' => 'required|digits:6',
+        ], [
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'otp.required' => 'Kode OTP wajib diisi.',
+            'otp.digits' => 'Kode OTP harus 6 digit.',
+        ]);
+
+        $cacheKey = $this->passwordResetOtpCacheKey($validated['email']);
+        $otpData = Cache::get($cacheKey);
+
+        if (!$otpData) {
+            return response()->json([
+                'message' => 'Kode OTP tidak ditemukan atau sudah kadaluarsa. Silakan request ulang.',
+            ], 422);
+        }
+
+        if (($otpData['attempts'] ?? 0) >= 5) {
+            Cache::forget($cacheKey);
+
+            return response()->json([
+                'message' => 'Terlalu banyak percobaan OTP. Silakan request ulang.',
+            ], 429);
+        }
+
+        if (!Hash::check($validated['otp'], $otpData['otp_hash'])) {
+            $otpData['attempts'] = ($otpData['attempts'] ?? 0) + 1;
+            Cache::put($cacheKey, $otpData, now()->addMinutes(10));
+
+            return response()->json([
+                'message' => 'Kode OTP tidak valid.',
+            ], 422);
+        }
+
+        // OTP valid, mark as verified
+        $otpData['verified'] = true;
+        Cache::put($cacheKey, $otpData, now()->addMinutes(10));
+
+        return response()->json([
+            'message' => 'Kode OTP valid. Silakan masukkan password baru.',
+            'verified' => true,
+        ]);
+    }
+
+    /**
+     * Reset password after OTP verification
+     */
+    public function resetPassword(Request $request)
+    {
+        $validated = $request->validate([
+            'email' => 'required|email',
+            'password' => ['required', 'confirmed', Password::min(8)],
+        ], [
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'password.required' => 'Password wajib diisi.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
+            'password.min' => 'Password minimal 8 karakter.',
+        ]);
+
+        $cacheKey = $this->passwordResetOtpCacheKey($validated['email']);
+        $otpData = Cache::get($cacheKey);
+
+        if (!$otpData || !($otpData['verified'] ?? false)) {
+            return response()->json([
+                'message' => 'Sesi reset password tidak valid. Silakan verifikasi OTP terlebih dahulu.',
+            ], 422);
+        }
+
+        $user = User::where('email', $validated['email'])->first();
+
+        if (!$user) {
+            Cache::forget($cacheKey);
+            return response()->json([
+                'message' => 'User tidak ditemukan.',
+            ], 422);
+        }
+
+        $user->update([
+            'password' => Hash::make($validated['password']),
+        ]);
+
+        Cache::forget($cacheKey);
+
+        return response()->json([
+            'message' => 'Password berhasil direset. Silakan login dengan password baru.',
+            'redirect' => route('login'),
+        ]);
+    }
+
+    private function passwordResetOtpCacheKey(string $email): string
+    {
+        return 'password_reset_otp:' . sha1(strtolower($email));
     }
 }

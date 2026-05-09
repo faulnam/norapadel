@@ -188,9 +188,59 @@ class PageController extends Controller
     /**
      * Show shop page with grouped manual sliders
      */
-    public function shop()
+    public function shop(Request $request)
     {
-        return redirect()->route('home');
+        $query = Product::active()->inStock()->where('is_featured', false);
+
+        if ($request->filled('q')) {
+            $keyword = trim((string) $request->q);
+            $query->where(function ($q) use ($keyword) {
+                $q->where('name', 'like', "%{$keyword}%")
+                    ->orWhere('description', 'like', "%{$keyword}%");
+            });
+        }
+
+        if ($request->filled('category')) {
+            $categoryMap = [
+                'racket' => Product::CATEGORY_ORIGINAL,
+                'shoes' => Product::CATEGORY_SHOES,
+                'accessories' => Product::CATEGORY_PEDAS,
+            ];
+            $category = $categoryMap[$request->category] ?? null;
+            if ($category) {
+                $query->where('category', $category);
+            }
+        }
+
+        if ($request->filled('brand')) {
+            $query->where('brand', $request->brand);
+        }
+
+        if ($request->filled('level')) {
+            $query->where('level', $request->level);
+        }
+
+        if ($request->filled('sort')) {
+            switch ($request->sort) {
+                case 'price_low':
+                    $query->orderBy('price', 'asc');
+                    break;
+                case 'price_high':
+                    $query->orderBy('price', 'desc');
+                    break;
+                case 'newest':
+                default:
+                    $query->latest();
+                    break;
+            }
+        } else {
+            $query->latest();
+        }
+
+        $products = $query->paginate(24)->withQueryString();
+        $brands = Product::active()->whereNotNull('brand')->distinct()->pluck('brand')->sort();
+
+        return view('pages.shop', compact('products', 'brands'));
     }
 
     /**

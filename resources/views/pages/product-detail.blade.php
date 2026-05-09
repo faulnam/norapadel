@@ -14,6 +14,7 @@
 
             <nav class="hidden items-center gap-8 md:flex">
                 <a href="{{ route('home') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Home</a>
+                <a href="{{ route('new-arrivals') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">New Arrivals</a>
                 <a href="{{ route('racket') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Racket</a>
                 <a href="{{ route('shoes') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Shoes</a>
                 <a href="{{ route('apparel') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Accessories</a>
@@ -42,21 +43,41 @@
                         <span>Masuk</span>
                     </a>
                 @endguest
-                @auth
-                    <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-black" aria-label="Cart" title="Keranjang">
-                        <i class="fas fa-shopping-bag text-sm"></i>
-                        @if(auth()->user()->role === 'customer')
-                            @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
-                            @if($cartCount > 0)
-                                <span class="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
-                            @endif
-                        @endif
-                    </a>
-                @else
-                    <a href="{{ route('login') }}" class="transition duration-300 hover:text-black" aria-label="Cart" title="Keranjang">
-                        <i class="fas fa-shopping-bag text-sm"></i>
-                    </a>
-                @endauth
+                
+                <a href="{{ route('customer.wishlist.index') }}" class="relative transition duration-300 hover:text-black" aria-label="Wishlist" title="Wishlist">
+                    <i class="fas fa-heart text-sm"></i>
+                    @php
+                        if (auth()->check() && auth()->user()->role === 'customer') {
+                            $wishlistCount = auth()->user()->wishlistItems()->count();
+                        } else {
+                            $guestWishlist = session()->get('guest_wishlist', []);
+                            $wishlistCount = count($guestWishlist);
+                        }
+                    @endphp
+                    @if($wishlistCount > 0)
+                        <span class="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
+                    @endif
+                </a>
+                
+                <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-black" aria-label="Cart" title="Keranjang">
+                    <i class="fas fa-shopping-bag text-sm"></i>
+                    @php
+                        if (auth()->check() && auth()->user()->role === 'customer') {
+                            $cartCount = auth()->user()->cartItems()->sum('quantity');
+                        } else {
+                            $guestCart = session()->get('guest_cart', []);
+                            $cartCount = array_sum(array_column($guestCart, 'quantity'));
+                        }
+                    @endphp
+                    @if($cartCount > 0)
+                        <span class="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
+                    @endif
+                </a>
+                
+                <button onclick="openSearchModal()" class="transition duration-300 hover:text-black" aria-label="Search" title="Cari Produk">
+                    <i class="fas fa-search text-sm"></i>
+                </button>
+                
                 <button type="button" class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-black transition duration-300 hover:border-black/35 md:hidden" data-mobile-menu-toggle aria-label="Toggle navigation" aria-expanded="false">
                     <i class="fas fa-bars text-sm"></i>
                 </button>
@@ -98,13 +119,7 @@
                             @if($product->package_type === 'bundle')
                                 <span class="absolute left-4 {{ $product->hasActiveDiscount() ? 'top-16' : 'top-4' }} rounded-full bg-purple-500 px-3 py-1.5 text-xs font-semibold text-white shadow-lg">Bundle</span>
                             @endif
-                            @php
-                                $mainSoldCount = \App\Models\OrderItem::where('product_id', $product->id)
-                                    ->whereHas('order', function($q) {
-                                        $q->whereIn('status', ['completed', 'delivered']);
-                                    })->sum('quantity');
-                            @endphp
-                            @if($mainSoldCount >= 5)
+                            @if($product->isBestSeller())
                                 <span class="absolute right-4 top-4 rounded-full bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white shadow-lg">Best Seller</span>
                             @endif
                         </div>
@@ -203,42 +218,18 @@
                         <!-- Action Buttons -->
                         <div class="border-t border-zinc-200 pt-4 space-y-2">
                             @if($product->stock > 0)
-                                @auth
-                                    @if(auth()->user()->isCustomer())
-                                        <form action="{{ route('customer.cart.add', $product) }}" method="POST">
-                                            @csrf
-                                            <input type="hidden" name="quantity" value="1">
-                                            <button type="submit" class="w-full border-2 border-blue-600 text-blue-600 py-3 rounded-xl font-semibold text-sm hover:bg-blue-50 transition duration-200 flex items-center justify-center gap-2">
-                                                <i class="fas fa-shopping-cart text-sm"></i>
-                                                Add to Cart
-                                            </button>
-                                        </form>
-                                    @else
-                                        <a href="{{ route('login') }}" class="block w-full border-2 border-blue-600 text-blue-600 py-3 rounded-xl font-semibold text-sm hover:bg-blue-50 transition duration-200 text-center">
-                                            <i class="fas fa-shopping-cart mr-2 text-sm"></i>Add to Cart
-                                        </a>
-                                    @endif
-                                @else
-                                    <a href="{{ route('login') }}" class="block w-full border-2 border-blue-600 text-blue-600 py-3 rounded-xl font-semibold text-sm hover:bg-blue-50 transition duration-200 text-center">
-                                        <i class="fas fa-shopping-cart mr-2 text-sm"></i>Add to Cart
-                                    </a>
-                                @endauth
+                                <form action="{{ route('customer.cart.add', $product) }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit" class="w-full border-2 border-blue-600 text-blue-600 py-3 rounded-xl font-semibold text-sm hover:bg-blue-50 transition duration-200 flex items-center justify-center gap-2">
+                                        <i class="fas fa-shopping-cart text-sm"></i>
+                                        Add to Cart
+                                    </button>
+                                </form>
                                 
-                                @auth
-                                    @if(auth()->user()->isCustomer())
-                                        <a href="{{ route('customer.checkout') }}" class="block w-full bg-blue-600 text-white py-3 rounded-xl font-semibold text-sm hover:bg-blue-700 transition duration-200 text-center">
-                                            <i class="fas fa-bolt mr-2 text-sm"></i>Buy Now
-                                        </a>
-                                    @else
-                                        <a href="{{ route('login') }}" class="block w-full bg-blue-600 text-white py-3 rounded-xl font-semibold text-sm hover:bg-blue-700 transition duration-200 text-center">
-                                            <i class="fas fa-bolt mr-2 text-sm"></i>Buy Now
-                                        </a>
-                                    @endif
-                                @else
-                                    <a href="{{ route('login') }}" class="block w-full bg-blue-600 text-white py-3 rounded-xl font-semibold text-sm hover:bg-blue-700 transition duration-200 text-center">
-                                        <i class="fas fa-bolt mr-2 text-sm"></i>Buy Now
-                                    </a>
-                                @endauth
+                                <a href="{{ route('customer.checkout') }}?buy_now=1&product_id={{ $product->id }}&quantity=1" class="block w-full bg-blue-600 text-white py-3 rounded-xl font-semibold text-sm hover:bg-blue-700 transition duration-200 text-center">
+                                    <i class="fas fa-bolt mr-2 text-sm"></i>Buy Now
+                                </a>
                             @else
                                 <button disabled class="w-full bg-zinc-200 text-zinc-500 py-3 rounded-xl font-semibold text-sm cursor-not-allowed">
                                     Stok Habis
@@ -250,59 +241,13 @@
 
                 <!-- Related Products -->
                 @if($relatedProducts->count() > 0)
-                <div class="mt-16 pt-12">
-                   
-                    <!-- Search & Filter -->
-                    <div class="mb-6 space-y-4">
-                        <div class="flex flex-col md:flex-row gap-3">
-                            <div class="flex-1">
-                                <input type="text" id="searchProduct" placeholder="Cari produk..." class="w-full px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition">
-                            </div>
-                            <div class="flex gap-2 flex-wrap">
-                                <select id="filterDiscount" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition">
-                                    <option value="">Semua Diskon</option>
-                                    <option value="yes">Ada Diskon</option>
-                                    <option value="no">Tanpa Diskon</option>
-                                </select>
-                                <select id="filterBundle" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition">
-                                    <option value="">Semua Produk</option>
-                                    <option value="yes">Bundling Hemat</option>
-                                    <option value="no">Produk Satuan</option>
-                                </select>
-                                <select id="filterPopular" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition">
-                                    <option value="">Semua</option>
-                                    <option value="yes">Sering Dibeli</option>
-                                </select>
-                                <button id="filterPrice" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm hover:bg-zinc-50 transition">
-                                    <i class="fas fa-sliders-h mr-2"></i>Harga
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Price Range Filter -->
-                        <div id="priceRangeFilter" class="hidden bg-zinc-50 border border-zinc-200 rounded-xl p-4">
-                            <div class="grid grid-cols-2 gap-3 mb-3">
-                                <div>
-                                    <label class="text-xs text-zinc-600 mb-1 block">Harga Min</label>
-                                    <input type="number" id="minPrice" placeholder="0" class="w-full px-3 py-2 border border-zinc-300 rounded-lg text-sm focus:outline-none focus:border-blue-500">
-                                </div>
-                                <div>
-                                    <label class="text-xs text-zinc-600 mb-1 block">Harga Max</label>
-                                    <input type="number" id="maxPrice" placeholder="999999999" class="w-full px-3 py-2 border border-zinc-300 rounded-lg text-sm focus:outline-none focus:border-blue-500">
-                                </div>
-                            </div>
-                            <div class="flex gap-2">
-                                <button id="applyPriceFilter" class="flex-1 bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition">
-                                    Terapkan
-                                </button>
-                                <button id="resetPriceFilter" class="px-4 py-2 border border-zinc-300 rounded-lg text-sm hover:bg-white transition">
-                                    Reset
-                                </button>
-                            </div>
-                        </div>
+                <div class="mt-16 pt-12 border-t border-zinc-200">
+                    <div class="mb-6">
+                        <h2 class="text-2xl font-semibold tracking-tight text-black">Produk Terkait</h2>
+                        <p class="mt-2 text-zinc-600">Produk lain yang mungkin Anda suka</p>
                     </div>
 
-                    <div id="productGrid" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div id="productGrid" class="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
                         @foreach($relatedProducts as $related)
                         @php
                             $soldCount = \App\Models\OrderItem::where('product_id', $related->id)
@@ -310,44 +255,51 @@
                                     $q->whereIn('status', ['completed', 'delivered']);
                                 })->sum('quantity');
                         @endphp
-                        <a href="{{ route('produk.show', $related) }}" 
-                           class="product-item group block bg-white border border-zinc-200 rounded-xl overflow-hidden hover:shadow-lg transition duration-300" 
-                           data-name="{{ strtolower($related->name) }}" 
-                           data-price="{{ $related->hasActiveDiscount() ? $related->discounted_price : $related->price }}" 
-                           data-discount="{{ $related->hasActiveDiscount() ? 'yes' : 'no' }}"
-                           data-bundle="{{ $related->package_type === 'bundle' ? 'yes' : 'no' }}"
-                           data-sold="{{ $soldCount }}">
-                            <div class="aspect-square bg-zinc-100 overflow-hidden relative">
-                                <img src="{{ $related->image_url }}" alt="{{ $related->name }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                                @if($related->package_type === 'bundle')
-                                    <span class="absolute left-2 top-2 rounded-full bg-purple-500 px-2 py-0.5 text-[10px] font-semibold text-white">
-                                        <i class="fas fa-box-open mr-1"></i>Bundle
-                                    </span>
-                                @endif
-                                @if($soldCount > 10)
-                                    <span class="absolute right-2 top-2 rounded-full bg-green-500 px-2 py-0.5 text-[10px] font-semibold text-white">
-                                        <i class="fas fa-fire mr-1"></i>Popular
-                                    </span>
-                                @endif
-                            </div>
-                            <div class="p-3">
-                                <h3 class="font-semibold text-sm text-black line-clamp-2 mb-2">{{ $related->name }}</h3>
-                                @if($related->hasActiveDiscount())
-                                    <div class="space-y-1">
-                                        <p class="text-base font-bold text-black">{{ $related->formatted_discounted_price }}</p>
+                        <div class="product-item group block overflow-hidden rounded-xl border border-black/6 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg"
+                             data-name="{{ strtolower($related->name) }}"
+                             data-price="{{ $related->hasActiveDiscount() ? $related->discounted_price : $related->price }}"
+                             data-discount="{{ $related->hasActiveDiscount() ? 'yes' : 'no' }}"
+                             data-bundle="{{ $related->package_type === 'bundle' ? 'yes' : 'no' }}"
+                             data-sold="{{ $soldCount }}">
+                            <a href="{{ route('produk.show', $related) }}" class="block">
+                                <div class="relative aspect-square overflow-hidden">
+                                    <img src="{{ $related->image_url }}" alt="{{ $related->name }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" onerror="this.onerror=null;this.src='/images/logo.png';" loading="lazy">
+                                    @if($related->hasActiveDiscount())
+                                        <span class="absolute left-2 top-2 rounded-full bg-rose-500 px-2 py-0.5 text-[10px] font-semibold text-white">-{{ $related->formatted_discount_percent }}</span>
+                                    @endif
+                                    @if($related->category === 'arrivals')
+                                        <span class="absolute left-2 {{ $related->hasActiveDiscount() ? 'top-9' : 'top-2' }} rounded-full bg-blue-500 px-2 py-0.5 text-[10px] font-semibold text-white">Latest</span>
+                                    @endif
+                                    @if($related->package_type === 'bundle')
+                                        <span class="absolute left-2 {{ $related->hasActiveDiscount() && $related->category === 'arrivals' ? 'top-16' : ($related->hasActiveDiscount() || $related->category === 'arrivals' ? 'top-9' : 'top-2') }} rounded-full bg-purple-500 px-2 py-0.5 text-[10px] font-semibold text-white">Bundle</span>
+                                    @endif
+                                    @if($related->isBestSeller())
+                                        <span class="absolute right-2 top-2 rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white">Popular</span>
+                                    @endif
+                                </div>
+                                <div class="p-3">
+                                    <h3 class="line-clamp-1 text-sm font-semibold text-black">{{ $related->name }}</h3>
+                                    <p class="mt-1 text-xs text-zinc-600">{{ $related->category_label }}</p>
+                                    @if($related->hasActiveDiscount())
+                                        <p class="mt-1 text-base font-bold text-black">{{ $related->formatted_discounted_price }}</p>
                                         <p class="text-xs text-zinc-400 line-through">{{ $related->formatted_price }}</p>
-                                    </div>
-                                @else
-                                    <p class="text-base font-bold text-black">{{ $related->formatted_price }}</p>
-                                @endif
+                                    @else
+                                        <p class="mt-1 text-base font-bold text-black">{{ $related->formatted_price }}</p>
+                                    @endif
+                                </div>
+                            </a>
+                            <div class="px-3 pb-3">
+                                <div class="flex items-center gap-3">
+                                    <button onclick="addToCart('{{ $related->slug }}', event)" class="text-zinc-400 transition duration-300 hover:text-blue-600">
+                                        <i class="fas fa-shopping-bag text-sm"></i>
+                                    </button>
+                                    <button onclick="addToWishlist('{{ $related->slug }}', event)" class="text-zinc-400 transition duration-300 hover:text-rose-500">
+                                        <i class="fas fa-heart text-sm"></i>
+                                    </button>
+                                </div>
                             </div>
-                        </a>
+                        </div>
                         @endforeach
-                    </div>
-
-                    <div id="noResults" class="hidden text-center py-12">
-                        <i class="fas fa-search text-4xl text-zinc-300 mb-3"></i>
-                        <p class="text-zinc-500">Tidak ada produk yang ditemukan</p>
                     </div>
                 </div>
                 @endif
@@ -387,6 +339,8 @@
         </div>
     </main>
 </div>
+
+<x-search-modal />
 @endsection
 
 @push('styles')
@@ -421,6 +375,64 @@
 
 @push('scripts')
 <script>
+    // Add to Cart Function
+    function addToCart(productId, event) {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        fetch(`/customer/cart/add/${productId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ quantity: 1 })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Produk berhasil ditambahkan ke keranjang!');
+                location.reload();
+            } else {
+                alert(data.message || 'Gagal menambahkan produk ke keranjang');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan. Silakan coba lagi.');
+        });
+    }
+
+    // Add to Wishlist Function
+    function addToWishlist(productId, event) {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        fetch(`/customer/wishlist/add/${productId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Produk berhasil ditambahkan ke wishlist!');
+                location.reload();
+            } else {
+                alert(data.message || 'Produk sudah ada di wishlist');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan. Silakan coba lagi.');
+        });
+    }
+
 (function() {
     const mobileMenuToggle = document.querySelector('[data-mobile-menu-toggle]');
     const mobileMenu = document.querySelector('[data-mobile-menu]');

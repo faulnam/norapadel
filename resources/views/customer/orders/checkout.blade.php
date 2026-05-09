@@ -716,8 +716,8 @@
                 <div class="col-lg-5">
                     @auth
                     @if(auth()->user()->role === 'customer')
-                        <!-- Welcome Bonus Info -->
-                        @if(!auth()->user()->first_purchase_completed && $freeGrip)
+                        <!-- Welcome Bonus Info - Hanya untuk yang belum pernah order -->
+                        @if(!auth()->user()->orders()->exists() && $freeGrip)
                         <div class="alert alert-success mb-3" style="border-radius: 12px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none; color: white;">
                             <div class="d-flex align-items-start">
                                 <div class="me-3" style="font-size: 2rem;">🎁</div>
@@ -735,7 +735,7 @@
                                 </div>
                             </div>
                         </div>
-                        @elseif(!auth()->user()->first_purchase_completed && !$freeGrip)
+                        @elseif(!auth()->user()->orders()->exists() && !$freeGrip)
                         <div class="alert alert-warning mb-3" style="border-radius: 12px;">
                             <div class="d-flex align-items-start">
                                 <i class="fas fa-info-circle me-2"></i>

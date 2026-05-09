@@ -26,6 +26,39 @@ use App\Http\Controllers\BiteshipWebhookController;
 use App\Http\Controllers\PakasirWebhookController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Product;
+
+// API Search Products
+Route::get('/api/search-products', function (Illuminate\Http\Request $request) {
+    $query = $request->input('q', '');
+    
+    if (strlen($query) < 2) {
+        return response()->json(['products' => []]);
+    }
+    
+    $products = Product::active()
+        ->inStock()
+        ->where('is_featured', false)
+        ->where(function($q) use ($query) {
+            $q->where('name', 'like', "%{$query}%")
+              ->orWhere('description', 'like', "%{$query}%")
+              ->orWhere('brand', 'like', "%{$query}%");
+        })
+        ->take(10)
+        ->get()
+        ->map(function($product) {
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+                'slug' => $product->slug,
+                'image_url' => $product->image_url,
+                'category_label' => $product->category_label,
+                'formatted_price' => $product->hasActiveDiscount() ? $product->formatted_discounted_price : $product->formatted_price,
+            ];
+        });
+    
+    return response()->json(['products' => $products]);
+})->name('api.search-products');
 
 Route::get('/media/products/{path}', function (string $path) {
     $normalizedPath = ltrim(str_replace('\\', '/', $path), '/');
@@ -81,6 +114,12 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/register/request-otp', [AuthController::class, 'requestRegisterOtp'])->name('register.request-otp')->middleware('throttle:3,1');
     Route::post('/register/verify-otp', [AuthController::class, 'verifyRegisterOtp'])->name('register.verify-otp')->middleware('throttle:5,1');
+    
+    // Forgot Password Routes
+    Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('password.request');
+    Route::post('/forgot-password/request-otp', [AuthController::class, 'requestPasswordResetOtp'])->name('password.request-otp')->middleware('throttle:3,1');
+    Route::post('/forgot-password/verify-otp', [AuthController::class, 'verifyPasswordResetOtp'])->name('password.verify-otp')->middleware('throttle:5,1');
+    Route::post('/forgot-password/reset', [AuthController::class, 'resetPassword'])->name('password.reset');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
@@ -125,9 +164,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard');
     
     // Products
-    Route::resource('products', AdminProduct::class);
-    Route::patch('/products/{product}/toggle-status', [AdminProduct::class, 'toggleStatus'])->name('products.toggle-status');
-    Route::patch('/products/{product}/toggle-featured', [AdminProduct::class, 'toggleFeatured'])->name('products.toggle-featured');
+    Route::resource('products', AdminProduct::class)->parameters(['products' => 'product:id']);
+    Route::patch('/products/{product:id}/toggle-status', [AdminProduct::class, 'toggleStatus'])->name('products.toggle-status');
+    Route::patch('/products/{product:id}/toggle-featured', [AdminProduct::class, 'toggleFeatured'])->name('products.toggle-featured');
     
     // Orders
     Route::get('/orders', [AdminOrder::class, 'index'])->name('orders.index');
@@ -265,6 +304,14 @@ Route::patch('/customer/cart/{cart}', [CartController::class, 'update'])->name('
 Route::delete('/customer/cart/{cart}', [CartController::class, 'remove'])->name('customer.cart.remove');
 Route::delete('/customer/cart', [CartController::class, 'clear'])->name('customer.cart.clear');
 Route::get('/customer/cart/count', [CartController::class, 'count'])->name('customer.cart.count');
+
+// Wishlist Routes (accessible without login)
+Route::post('/customer/wishlist/add/{product}', [\App\Http\Controllers\Customer\WishlistController::class, 'add'])->name('customer.wishlist.add');
+Route::get('/customer/wishlist', [\App\Http\Controllers\Customer\WishlistController::class, 'index'])->name('customer.wishlist.index');
+Route::delete('/customer/wishlist/{product}', [\App\Http\Controllers\Customer\WishlistController::class, 'remove'])->name('customer.wishlist.remove');
+Route::delete('/customer/wishlist', [\App\Http\Controllers\Customer\WishlistController::class, 'clear'])->name('customer.wishlist.clear');
+Route::get('/customer/wishlist/count', [\App\Http\Controllers\Customer\WishlistController::class, 'count'])->name('customer.wishlist.count');
+Route::get('/customer/wishlist/check/{product}', [\App\Http\Controllers\Customer\WishlistController::class, 'check'])->name('customer.wishlist.check');
 
 // Guest Checkout & Payment (accessible without login)
 Route::get('/customer/checkout', [CustomerOrder::class, 'checkout'])->name('customer.checkout');

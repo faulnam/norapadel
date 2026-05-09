@@ -115,10 +115,15 @@
                             </div>
                         </div>
 
-                        <label class="inline-flex cursor-pointer items-center gap-2 text-sm text-zinc-600">
-                            <input type="checkbox" id="remember" name="remember" class="h-4 w-4 rounded border-zinc-300 text-black focus:ring-zinc-300">
-                            <span>Ingat saya</span>
-                        </label>
+                        <div class="flex items-center justify-between">
+                            <label class="inline-flex cursor-pointer items-center gap-2 text-sm text-zinc-600">
+                                <input type="checkbox" id="remember" name="remember" class="h-4 w-4 rounded border-zinc-300 text-black focus:ring-zinc-300">
+                                <span>Ingat saya</span>
+                            </label>
+                            <a href="{{ route('password.request') }}" class="text-sm font-medium text-black underline decoration-black/30 underline-offset-4 transition hover:decoration-black">
+                                Lupa Password?
+                            </a>
+                        </div>
 
                         <button type="submit" class="inline-flex w-full items-center justify-center rounded-full bg-black px-5 py-3 text-sm font-medium text-white transition duration-300 hover:bg-zinc-800">
                             <i class="fas fa-sign-in-alt mr-2 text-xs"></i>Masuk
