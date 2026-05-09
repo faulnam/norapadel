@@ -302,9 +302,6 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'customer'])->
         return redirect()->route('produk.show', $product);
     })->name('products.show');
     
-    // Shipping Rates (Biteship)
-    Route::post('/shipping/rates', [\App\Http\Controllers\Customer\ShippingController::class, 'getRates'])->name('shipping.rates');
-    
     // Checkout & Orders (removed - moved to guest accessible routes)
     Route::get('/orders', [CustomerOrder::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [CustomerOrder::class, 'show'])->name('orders.show');
@@ -315,14 +312,6 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'customer'])->
     Route::post('/orders/{order}/request-refund', [CustomerOrder::class, 'requestRefund'])->name('orders.request-refund');
     Route::patch('/orders/{order}/confirm', [CustomerOrder::class, 'confirmReceived'])->name('orders.confirm');
     
-    // Payment Gateway Selection
-    Route::get('/payment/{order}/select-gateway', function(\App\Models\Order $order) {
-        if ($order->user_id !== auth()->id()) {
-            abort(403);
-        }
-        return view('customer.payment.select-gateway', compact('order'));
-    })->name('payment.select-gateway');
-    
     // Payment Gateway (Pakasir)
     Route::get('/payment/{order}', [PaymentController::class, 'show'])->name('payment.show');
     Route::post('/payment/{order}/process', [PaymentController::class, 'process'])->name('payment.process');
@@ -331,13 +320,6 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'customer'])->
     Route::post('/payment/{order}/simulate', [PaymentController::class, 'simulatePayment'])->name('payment.simulate');
     Route::get('/payment/{order}/redirect', [PaymentController::class, 'redirect'])->name('payment.redirect');
     Route::get('/payment/{order}/callback', [PakasirWebhookController::class, 'handleCallback'])->name('payment.callback');
-    
-    // Payment Gateway (Paylabs)
-    Route::get('/payment-paylabs/{order}', [\App\Http\Controllers\Customer\PaylabsPaymentController::class, 'show'])->name('payment.paylabs.show');
-    Route::post('/payment-paylabs/{order}/process', [\App\Http\Controllers\Customer\PaylabsPaymentController::class, 'process'])->name('payment.paylabs.process');
-    Route::get('/payment-paylabs/{order}/waiting', [\App\Http\Controllers\Customer\PaylabsPaymentController::class, 'waiting'])->name('payment.paylabs.waiting');
-    Route::get('/payment-paylabs/{order}/check-status', [\App\Http\Controllers\Customer\PaylabsPaymentController::class, 'checkStatus'])->name('payment.paylabs.check-status');
-    Route::get('/payment-paylabs/{order}/callback', [\App\Http\Controllers\PaylabsWebhookController::class, 'handleCallback'])->name('payment.paylabs.callback');
     
     // Testimonials
     Route::post('/orders/{order}/testimonial', [CustomerTestimonial::class, 'store'])->name('testimonials.store');

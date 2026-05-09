@@ -22,14 +22,39 @@
             <a href="{{ route('apparel') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Accessories</a>
         </nav>
         <div class="flex items-center gap-3 text-black/80">
-            <a href="{{ route('customer.orders.index') }}" class="transition duration-300 hover:text-black" title="Riwayat Pesanan">
-                <i class="fas fa-history text-sm"></i>
-            </a>
-            <a href="{{ route('customer.profile.index') }}" class="transition duration-300 hover:text-black" title="Profile">
-                <i class="fas fa-user text-sm"></i>
-            </a>
+            @guest
+                <a href="{{ route('login') }}"
+                    class="inline-flex items-center gap-1 rounded-full border border-black/15 bg-black/5 px-3 py-1.5 text-xs font-medium text-black transition duration-300 hover:bg-black/10"
+                    aria-label="Masuk">
+                    <i class="fas fa-sign-in-alt text-[11px]"></i>
+                    <span>Masuk</span>
+                </a>
+            @endguest
+            @auth
+                <a href="{{ route('customer.orders.index') }}" class="transition duration-300 hover:text-black" title="Riwayat Pesanan">
+                    <i class="fas fa-history text-sm"></i>
+                </a>
+                <a href="{{ route('customer.profile.index') }}" class="transition duration-300 hover:text-black" title="Profile">
+                    <i class="fas fa-user text-sm"></i>
+                </a>
+            @endauth
             <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-black" title="Keranjang">
                 <i class="fas fa-shopping-bag text-sm"></i>
+                @auth
+                    @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
+                    @if($cartCount > 0)
+                        <span class="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
+                    @endif
+                @endauth
+                @guest
+                    @php
+                        $guestCart = session()->get('guest_cart', []);
+                        $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
+                    @endphp
+                    @if($guestCartCount > 0)
+                        <span class="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $guestCartCount > 9 ? '9+' : $guestCartCount }}</span>
+                    @endif
+                @endguest
             </a>
         </div>
     </div>

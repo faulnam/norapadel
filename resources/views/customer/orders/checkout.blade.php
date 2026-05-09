@@ -479,6 +479,14 @@
         </nav>
 
         <div class="flex items-center gap-3 text-black/80">
+            @guest
+                <a href="{{ route('login') }}"
+                    class="inline-flex items-center gap-1 rounded-full border border-black/15 bg-black/5 px-3 py-1.5 text-xs font-medium text-black transition duration-300 hover:bg-black/10"
+                    aria-label="Masuk">
+                    <i class="fas fa-sign-in-alt text-[11px]"></i>
+                    <span>Masuk</span>
+                </a>
+            @endguest
             @auth
                 @if(auth()->user()->role === 'customer')
                     <a href="{{ route('customer.orders.index') }}" class="transition duration-300 hover:text-black" aria-label="History">
@@ -501,6 +509,19 @@
                     @endif
                 </a>
             @endauth
+            @guest
+                <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-black"
+                    aria-label="Cart" title="Keranjang">
+                    <i class="fas fa-shopping-bag text-sm"></i>
+                    @php
+                        $guestCart = session()->get('guest_cart', []);
+                        $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
+                    @endphp
+                    @if($guestCartCount > 0)
+                        <span class="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $guestCartCount > 9 ? '9+' : $guestCartCount }}</span>
+                    @endif
+                </a>
+            @endguest
             <button type="button"
                 class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-black transition duration-300 hover:border-black/35 md:hidden"
                 data-mobile-menu-toggle aria-label="Toggle navigation" aria-expanded="false">
@@ -1201,6 +1222,7 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Accept': 'application/json',
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 },
                 body: JSON.stringify({
@@ -1209,7 +1231,16 @@
                 })
             });
 
-            const data = await response.json();
+            const contentType = response.headers.get('content-type') || '';
+            let data = null;
+            if (contentType.includes('application/json')) {
+                data = await response.json();
+            } else {
+                const text = await response.text();
+                throw new Error(text.includes('<!DOCTYPE') || text.includes('<html')
+                    ? 'Gagal mengambil data ongkir. Silakan refresh halaman lalu coba lagi.'
+                    : 'Gagal mengambil data ongkir.');
+            }
             document.getElementById('shippingLoading').style.display = 'none';
             
             console.log('API Response:', data);

@@ -11,9 +11,33 @@ class PaymentController extends Controller
 {
     protected PakasirService $pakasirService;
 
+    protected function canAccessOrder(Order $order): bool
+    {
+        if (auth()->check()) {
+            return $order->user_id === auth()->id();
+        }
+
+        $guestOrders = session()->get('guest_orders', []);
+        $guestUserId = session()->get('guest_user_id');
+
+        return in_array($order->id, $guestOrders, true) || ($guestUserId && (int) $guestUserId === (int) $order->user_id);
+    }
+
     public function __construct(PakasirService $pakasirService)
     {
         $this->pakasirService = $pakasirService;
+    }
+
+    /**
+     * Show payment gateway selection (guest + customer)
+     */
+    public function selectGateway(Order $order)
+    {
+        if (!$this->canAccessOrder($order)) {
+            abort(403);
+        }
+
+        return view('customer.payment.select-gateway', compact('order'));
     }
 
     /**
@@ -22,7 +46,7 @@ class PaymentController extends Controller
     public function show(Order $order)
     {
         // Ensure user owns this order
-        if ($order->user_id !== auth()->id()) {
+        if (!$this->canAccessOrder($order)) {
             abort(403);
         }
 
@@ -49,7 +73,7 @@ class PaymentController extends Controller
     public function process(Request $request, Order $order)
     {
         // Ensure user owns this order
-        if ($order->user_id !== auth()->id()) {
+        if (!$this->canAccessOrder($order)) {
             abort(403);
         }
 
@@ -110,7 +134,7 @@ class PaymentController extends Controller
     public function waiting(Order $order)
     {
         // Ensure user owns this order
-        if ($order->user_id !== auth()->id()) {
+        if (!$this->canAccessOrder($order)) {
             abort(403);
         }
 
@@ -145,7 +169,7 @@ class PaymentController extends Controller
     public function checkStatus(Order $order)
     {
         // Ensure user owns this order
-        if ($order->user_id !== auth()->id()) {
+        if (!$this->canAccessOrder($order)) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -197,7 +221,7 @@ class PaymentController extends Controller
     public function redirect(Order $order)
     {
         // Ensure user owns this order
-        if ($order->user_id !== auth()->id()) {
+        if (!$this->canAccessOrder($order)) {
             abort(403);
         }
 
@@ -225,7 +249,7 @@ class PaymentController extends Controller
     public function simulatePayment(Order $order)
     {
         // Ensure user owns this order
-        if ($order->user_id !== auth()->id()) {
+        if (!$this->canAccessOrder($order)) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 

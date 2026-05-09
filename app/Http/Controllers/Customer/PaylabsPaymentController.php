@@ -11,6 +11,18 @@ class PaylabsPaymentController extends Controller
 {
     protected $paylabs;
 
+    protected function canAccessOrder(Order $order): bool
+    {
+        if (auth()->check()) {
+            return $order->user_id === auth()->id();
+        }
+
+        $guestOrders = session()->get('guest_orders', []);
+        $guestUserId = session()->get('guest_user_id');
+
+        return in_array($order->id, $guestOrders, true) || ($guestUserId && (int) $guestUserId === (int) $order->user_id);
+    }
+
     public function __construct(PaylabsService $paylabs)
     {
         $this->paylabs = $paylabs;
@@ -21,7 +33,7 @@ class PaylabsPaymentController extends Controller
      */
     public function show(Order $order)
     {
-        if ($order->user_id !== auth()->id()) {
+        if (!$this->canAccessOrder($order)) {
             abort(403);
         }
 
@@ -40,7 +52,7 @@ class PaylabsPaymentController extends Controller
      */
     public function process(Request $request, Order $order)
     {
-        if ($order->user_id !== auth()->id()) {
+        if (!$this->canAccessOrder($order)) {
             abort(403);
         }
 
@@ -138,7 +150,7 @@ class PaylabsPaymentController extends Controller
      */
     public function waiting(Order $order)
     {
-        if ($order->user_id !== auth()->id()) {
+        if (!$this->canAccessOrder($order)) {
             abort(403);
         }
 
