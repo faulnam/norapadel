@@ -218,7 +218,57 @@
             <!-- Shop -->
             <section class="np-fade-section bg-zinc-50 py-12 lg:py-14">
                 <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
-                    <div class="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+                    <!-- Search & Filter -->
+                    <div class="mb-6 space-y-4">
+                        <div class="flex flex-col md:flex-row gap-3">
+                            <div class="flex-1">
+                                <input type="text" id="searchProduct" placeholder="Cari produk..." class="w-full px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition">
+                            </div>
+                            <div class="flex gap-2 flex-wrap">
+                                <select id="filterDiscount" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition">
+                                    <option value="">Semua Diskon</option>
+                                    <option value="yes">Ada Diskon</option>
+                                    <option value="no">Tanpa Diskon</option>
+                                </select>
+                                <select id="filterBundle" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition">
+                                    <option value="">Semua Produk</option>
+                                    <option value="yes">Bundling Hemat</option>
+                                    <option value="no">Produk Satuan</option>
+                                </select>
+                                <select id="filterPopular" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition">
+                                    <option value="">Semua</option>
+                                    <option value="yes">Sering Dibeli</option>
+                                </select>
+                                <button id="filterPrice" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm hover:bg-zinc-50 transition">
+                                    <i class="fas fa-sliders-h mr-2"></i>Harga
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Price Range Filter -->
+                        <div id="priceRangeFilter" class="hidden bg-zinc-50 border border-zinc-200 rounded-xl p-4">
+                            <div class="grid grid-cols-2 gap-3 mb-3">
+                                <div>
+                                    <label class="text-xs text-zinc-600 mb-1 block">Harga Min</label>
+                                    <input type="number" id="minPrice" placeholder="0" class="w-full px-3 py-2 border border-zinc-300 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+                                </div>
+                                <div>
+                                    <label class="text-xs text-zinc-600 mb-1 block">Harga Max</label>
+                                    <input type="number" id="maxPrice" placeholder="999999999" class="w-full px-3 py-2 border border-zinc-300 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+                                </div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button id="applyPriceFilter" class="flex-1 bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition">
+                                    Terapkan
+                                </button>
+                                <button id="resetPriceFilter" class="px-4 py-2 border border-zinc-300 rounded-lg text-sm hover:bg-white transition">
+                                    Reset
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="productGrid" class="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
                         @foreach($shopProducts as $product)
                             @php
                                 $soldCount = \App\Models\OrderItem::where('product_id', $product->id)
@@ -226,7 +276,12 @@
                                         $q->whereIn('status', ['completed', 'delivered']);
                                     })->sum('quantity');
                             @endphp
-                            <div class="group block overflow-hidden rounded-xl border border-black/6 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg">
+                            <div class="product-item group block overflow-hidden rounded-xl border border-black/6 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg"
+                                 data-name="{{ strtolower($product->name) }}"
+                                 data-price="{{ $product->hasActiveDiscount() ? $product->discounted_price : $product->price }}"
+                                 data-discount="{{ $product->hasActiveDiscount() ? 'yes' : 'no' }}"
+                                 data-bundle="{{ $product->package_type === 'bundle' ? 'yes' : 'no' }}"
+                                 data-sold="{{ $soldCount }}">
                                 <a href="{{ route('produk.show', $product) }}" class="block">
                                     <div class="relative aspect-square overflow-hidden">
                                         <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" onerror="this.onerror=null;this.src='/images/logo.png';" loading="lazy">
@@ -259,6 +314,11 @@
                                 </div>
                             </div>
                         @endforeach
+                    </div>
+
+                    <div id="noResults" class="hidden text-center py-12">
+                        <i class="fas fa-search text-4xl text-zinc-300 mb-3"></i>
+                        <p class="text-zinc-500">Tidak ada produk yang ditemukan</p>
                     </div>
                    
                 </div>
@@ -740,6 +800,103 @@
                     mobileMenuToggle.setAttribute('aria-expanded', String(!mobileMenu.classList.contains(
                         'hidden')));
                 });
+            }
+
+            // Related Products Filter & Search
+            const searchInput = document.getElementById('searchProduct');
+            const filterDiscount = document.getElementById('filterDiscount');
+            const filterPriceBtn = document.getElementById('filterPrice');
+            const priceRangeFilter = document.getElementById('priceRangeFilter');
+            const applyPriceBtn = document.getElementById('applyPriceFilter');
+            const resetPriceBtn = document.getElementById('resetPriceFilter');
+            const minPriceInput = document.getElementById('minPrice');
+            const maxPriceInput = document.getElementById('maxPrice');
+            const productGrid = document.getElementById('productGrid');
+            const noResults = document.getElementById('noResults');
+
+            let minPrice = 0;
+            let maxPrice = Infinity;
+
+            if (filterPriceBtn && priceRangeFilter) {
+                filterPriceBtn.addEventListener('click', () => {
+                    priceRangeFilter.classList.toggle('hidden');
+                });
+            }
+
+            if (applyPriceBtn) {
+                applyPriceBtn.addEventListener('click', () => {
+                    minPrice = parseInt(minPriceInput.value) || 0;
+                    maxPrice = parseInt(maxPriceInput.value) || Infinity;
+                    filterProducts();
+                });
+            }
+
+            if (resetPriceBtn) {
+                resetPriceBtn.addEventListener('click', () => {
+                    minPriceInput.value = '';
+                    maxPriceInput.value = '';
+                    minPrice = 0;
+                    maxPrice = Infinity;
+                    filterProducts();
+                });
+            }
+
+            function filterProducts() {
+                const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+                const discountFilter = filterDiscount ? filterDiscount.value : '';
+                const bundleFilter = document.getElementById('filterBundle') ? document.getElementById('filterBundle').value : '';
+                const popularFilter = document.getElementById('filterPopular') ? document.getElementById('filterPopular').value : '';
+                const products = document.querySelectorAll('.product-item');
+                let visibleCount = 0;
+
+                products.forEach(product => {
+                    const name = product.dataset.name || '';
+                    const price = parseInt(product.dataset.price || '0');
+                    const discount = product.dataset.discount;
+                    const bundle = product.dataset.bundle;
+                    const sold = parseInt(product.dataset.sold || 0);
+
+                    const matchSearch = name.includes(searchTerm);
+                    const matchDiscount = !discountFilter || discount === discountFilter;
+                    const matchPrice = price >= minPrice && price <= maxPrice;
+                    const matchBundle = !bundleFilter || bundle === bundleFilter;
+                    const matchPopular = !popularFilter || (popularFilter === 'yes' && sold > 10);
+
+                    if (matchSearch && matchDiscount && matchPrice && matchBundle && matchPopular) {
+                        product.style.display = 'block';
+                        visibleCount++;
+                    } else {
+                        product.style.display = 'none';
+                    }
+                });
+
+                if (productGrid && noResults) {
+                    if (visibleCount === 0) {
+                        productGrid.style.display = 'none';
+                        noResults.classList.remove('hidden');
+                    } else {
+                        productGrid.style.display = 'grid';
+                        noResults.classList.add('hidden');
+                    }
+                }
+            }
+
+            if (searchInput) {
+                searchInput.addEventListener('input', filterProducts);
+            }
+
+            if (filterDiscount) {
+                filterDiscount.addEventListener('change', filterProducts);
+            }
+
+            const filterBundleEl = document.getElementById('filterBundle');
+            if (filterBundleEl) {
+                filterBundleEl.addEventListener('change', filterProducts);
+            }
+
+            const filterPopularEl = document.getElementById('filterPopular');
+            if (filterPopularEl) {
+                filterPopularEl.addEventListener('change', filterProducts);
             }
         })();
     </script>
