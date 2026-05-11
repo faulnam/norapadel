@@ -108,20 +108,47 @@
                     </ol>
                 </nav>
 
-                <div class="grid md:grid-cols-2 gap-8 lg:gap-12">
-                    <!-- Product Image -->
-                    <div class="space-y-4">
-                        <div class="aspect-square rounded-2xl overflow-hidden bg-zinc-100 border border-zinc-200 relative">
-                            <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
-                            @if($product->hasActiveDiscount())
-                                <span class="absolute left-4 top-4 rounded-full bg-rose-500 px-3 py-1.5 text-xs font-semibold text-white shadow-lg">-{{ $product->formatted_discount_percent }}</span>
-                            @endif
-                            @if($product->package_type === 'bundle')
-                                <span class="absolute left-4 {{ $product->hasActiveDiscount() ? 'top-16' : 'top-4' }} rounded-full bg-purple-500 px-3 py-1.5 text-xs font-semibold text-white shadow-lg">Bundle</span>
-                            @endif
-                            @if($product->isBestSeller())
-                                <span class="absolute right-4 top-4 rounded-full bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white shadow-lg">Best Seller</span>
-                            @endif
+                <div class="grid md:grid-cols-[auto_1fr] gap-5 lg:gap-6">
+                    <!-- Product Gallery -->
+                    <div class="flex gap-3 max-w-[600px]" x-data="{ activeImage: '{{ $product->image_url }}' }">
+                        <!-- Thumbnails -->
+                        <div class="flex flex-col gap-3">
+                            <button @click="activeImage = '{{ $product->image_url }}'" 
+                                    class="w-16 h-16 md:w-20 md:h-20 bg-zinc-50 transition-all duration-200 flex items-center justify-center p-1.5 overflow-hidden"
+                                    :class="activeImage === '{{ $product->image_url }}' ? 'ring-2 ring-black ring-offset-2' : 'hover:bg-zinc-100'">
+                                <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
+                            </button>
+                            <button @click="activeImage = '{{ $product->image_url }}?angle=side'" 
+                                    class="w-16 h-16 md:w-20 md:h-20 bg-zinc-50 transition-all duration-200 flex items-center justify-center p-1.5 overflow-hidden"
+                                    :class="activeImage === '{{ $product->image_url }}?angle=side' ? 'ring-2 ring-black ring-offset-2' : 'hover:bg-zinc-100'">
+                                <img src="{{ $product->image_url }}" alt="{{ $product->name }} - Side" class="w-full h-full object-cover">
+                            </button>
+                            <button @click="activeImage = '{{ $product->image_url }}?angle=back'" 
+                                    class="w-16 h-16 md:w-20 md:h-20 bg-zinc-50 transition-all duration-200 flex items-center justify-center p-1.5 overflow-hidden"
+                                    :class="activeImage === '{{ $product->image_url }}?angle=back' ? 'ring-2 ring-black ring-offset-2' : 'hover:bg-zinc-100'">
+                                <img src="{{ $product->image_url }}" alt="{{ $product->name }} - Back" class="w-full h-full object-cover">
+                            </button>
+                        </div>
+
+                        <!-- Main Image -->
+                        <div class="flex-1 relative group">
+                            <div class="w-full bg-zinc-50 overflow-hidden flex items-center justify-center relative aspect-square max-w-[500px]">
+                                <img :src="activeImage" 
+                                     alt="{{ $product->name }}" 
+                                     class="w-full h-full object-cover transition-all duration-500 ease-out"
+                                     x-transition:enter="transition ease-out duration-300"
+                                     x-transition:enter-start="opacity-0"
+                                     x-transition:enter-end="opacity-100">
+                                @if($product->hasActiveDiscount())
+                                    <span class="absolute left-3 top-3 bg-rose-500 px-3 py-1.5 text-xs font-semibold text-white z-10 rounded">-{{ $product->formatted_discount_percent }}</span>
+                                @endif
+                                @if($product->package_type === 'bundle')
+                                    <span class="absolute left-3 {{ $product->hasActiveDiscount() ? 'top-12' : 'top-3' }} bg-purple-500 px-3 py-1.5 text-xs font-semibold text-white z-10 rounded">Bundle</span>
+                                @endif
+                                @if($product->isBestSeller())
+                                    <span class="absolute right-3 top-3 bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white z-10 rounded">Best Seller</span>
+                                @endif
+                            </div>
                         </div>
                     </div>
 
@@ -155,7 +182,7 @@
 
                         <!-- Product Name -->
                         <div>
-                            <h1 class="text-2xl md:text-3xl font-bold text-black tracking-tight leading-tight">{{ $product->name }}</h1>
+                            <h1 class="text-xl md:text-2xl font-semibold text-black tracking-tight leading-tight">{{ $product->name }}</h1>
                         </div>
 
                         <!-- Rating & Terjual -->
@@ -168,7 +195,7 @@
                                         })->sum('quantity');
                                 @endphp
                                 @for($i = 1; $i <= 5; $i++)
-                                    <i class="fas fa-star text-yellow-400 text-sm"></i>
+                                    <i class="fas fa-star text-zinc-500 text-sm"></i>
                                 @endfor
                                 <span class="text-zinc-600 ml-1">5.0</span>
                             </div>
@@ -197,7 +224,60 @@
                         <!-- Description -->
                         <div class="border-t border-zinc-200 pt-4">
                             <h3 class="text-xs font-semibold text-black uppercase tracking-wider mb-2">Deskripsi Produk</h3>
-                            <p class="text-sm text-zinc-600 leading-relaxed">{{ $product->description }}</p>
+                            @php
+                                $rawDescription = trim((string) $product->description);
+
+                                // Split by new lines first, fallback to sentence split.
+                                $parts = preg_split("/\r\n|\r|\n/", $rawDescription) ?: [];
+                                $parts = array_values(array_filter(array_map('trim', $parts)));
+
+                                if (count($parts) === 0 && $rawDescription !== '') {
+                                    $sentences = preg_split('/(?<=[.!?])\s+/', $rawDescription) ?: [];
+                                    $sentences = array_values(array_filter(array_map('trim', $sentences)));
+
+                                    // Build up to 3 short paragraphs from sentences.
+                                    $parts = [];
+                                    $buffer = '';
+                                    foreach ($sentences as $sentence) {
+                                        $candidate = trim($buffer === '' ? $sentence : ($buffer . ' ' . $sentence));
+                                        if (mb_strlen($candidate) > 180 && $buffer !== '') {
+                                            $parts[] = $buffer;
+                                            $buffer = $sentence;
+                                            if (count($parts) >= 3) break;
+                                        } else {
+                                            $buffer = $candidate;
+                                        }
+                                    }
+                                    if (count($parts) < 3 && trim($buffer) !== '') {
+                                        $parts[] = trim($buffer);
+                                    }
+                                }
+
+                                $maxParagraphs = 2;
+                                $displayParts = array_slice($parts, 0, $maxParagraphs);
+
+                                // Clamp each paragraph length to keep it tidy.
+                                $displayParts = array_map(function ($p) {
+                                    $p = trim((string) $p);
+                                    if (mb_strlen($p) > 220) {
+                                        return rtrim(mb_substr($p, 0, 217)) . '...';
+                                    }
+                                    return $p;
+                                }, $displayParts);
+
+                                $hasMore = count($parts) > $maxParagraphs;
+                            @endphp
+
+                            <div class="space-y-2 text-sm text-zinc-600 leading-relaxed">
+                                @forelse($displayParts as $paragraph)
+                                    <p>{{ $paragraph }}</p>
+                                @empty
+                                    <p class="text-zinc-500">Belum ada deskripsi.</p>
+                                @endforelse
+                                @if($hasMore)
+                                    <p class="text-zinc-500">...</p>
+                                @endif
+                            </div>
                         </div>
 
                         <!-- Product Details -->
@@ -221,23 +301,184 @@
                                 <form action="{{ route('customer.cart.add', $product) }}" method="POST">
                                     @csrf
                                     <input type="hidden" name="quantity" value="1">
-                                    <button type="submit" class="w-full border-2 border-blue-600 text-blue-600 py-3 rounded-xl font-semibold text-sm hover:bg-blue-50 transition duration-200 flex items-center justify-center gap-2">
+                                    <button type="submit" class="w-full border border-black bg-black px-3 py-3 text-sm font-semibold text-white transition duration-200 hover:bg-black/90 hover:border-black/90 flex items-center justify-center gap-2">
                                         <i class="fas fa-shopping-cart text-sm"></i>
                                         Add to Cart
                                     </button>
                                 </form>
-                                
-                                <a href="{{ route('customer.checkout') }}?buy_now=1&product_id={{ $product->id }}&quantity=1" class="block w-full bg-blue-600 text-white py-3 rounded-xl font-semibold text-sm hover:bg-blue-700 transition duration-200 text-center">
-                                    <i class="fas fa-bolt mr-2 text-sm"></i>Buy Now
-                                </a>
                             @else
-                                <button disabled class="w-full bg-zinc-200 text-zinc-500 py-3 rounded-xl font-semibold text-sm cursor-not-allowed">
+                                <button disabled class="w-full bg-zinc-200 text-zinc-500 py-3 font-semibold text-sm cursor-not-allowed">
                                     Stok Habis
                                 </button>
                             @endif
                         </div>
                     </div>
                 </div>
+
+                <!-- Customer Reviews Section -->
+                <section class="mt-16 pt-12 border-t border-zinc-200">
+                    <div class="grid lg:grid-cols-[35%_65%] gap-12">
+                        <!-- Left Column - Review Summary -->
+                        <div class="space-y-8">
+                            <div>
+                                <p class="text-[10px] font-semibold tracking-[0.15em] text-zinc-400 uppercase mb-4">Customer Reviews</p>
+                                <div class="flex items-end gap-3 mb-3">
+                                    <span class="text-5xl font-light text-black">{{ $avgRating > 0 ? number_format($avgRating, 1) : '0.0' }}</span>
+                                    <span class="text-xl text-zinc-400 mb-2">/5</span>
+                                </div>
+                                <div class="flex items-center gap-1 mb-2">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <i class="fas fa-star {{ $i <= floor($avgRating) ? 'text-black' : 'text-zinc-200' }} text-sm"></i>
+                                    @endfor
+                                </div>
+                                <p class="text-[11px] font-medium tracking-[0.1em] text-zinc-500 uppercase">{{ $totalReviews }} {{ $totalReviews === 1 ? 'Review' : 'Reviews' }}</p>
+                            </div>
+
+                            <!-- Rating Breakdown -->
+                            <div class="space-y-3">
+                                @foreach($ratingBreakdown as $star => $percent)
+                                <div class="flex items-center gap-3">
+                                    <span class="text-xs text-zinc-600 w-8">{{ $star }}★</span>
+                                    <div class="flex-1 h-1 bg-zinc-100 overflow-hidden">
+                                        <div class="h-full bg-black transition-all duration-300" style="width: {{ $percent }}%"></div>
+                                    </div>
+                                    <span class="text-xs text-zinc-500 w-10 text-right">{{ $percent }}%</span>
+                                </div>
+                                @endforeach
+                            </div>
+
+                            @if($totalReviews > 0)
+                            <!-- Quality Indicator -->
+                            <div class="pt-4 border-t border-zinc-100">
+                                <p class="text-[10px] font-semibold tracking-[0.15em] text-zinc-400 uppercase mb-3">Quality</p>
+                                <div class="relative">
+                                    <div class="h-1 bg-zinc-100">
+                                        <div class="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-black rounded-full" style="left: {{ $avgQuality }}%"></div>
+                                    </div>
+                                    <div class="flex justify-between mt-2">
+                                        <span class="text-[9px] text-zinc-400 uppercase tracking-wider">Very Low</span>
+                                        <span class="text-[9px] text-zinc-400 uppercase tracking-wider">Very High</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sizing Indicator -->
+                            <div class="pt-4 border-t border-zinc-100">
+                                <p class="text-[10px] font-semibold tracking-[0.15em] text-zinc-400 uppercase mb-3">How was the sizing?</p>
+                                <div class="relative">
+                                    <div class="h-1 bg-zinc-100">
+                                        <div class="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-black rounded-full" style="left: {{ $avgSizing }}%"></div>
+                                    </div>
+                                    <div class="flex justify-between mt-2">
+                                        <span class="text-[9px] text-zinc-400 uppercase tracking-wider">Runs Small</span>
+                                        <span class="text-[9px] text-zinc-400 uppercase tracking-wider">True to Size</span>
+                                        <span class="text-[9px] text-zinc-400 uppercase tracking-wider">Runs Large</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Usual Size -->
+                            @if($usualSizes->count() > 0)
+                            <div class="pt-4 border-t border-zinc-100">
+                                <p class="text-[10px] font-semibold tracking-[0.15em] text-zinc-400 uppercase mb-3">Usual Size?</p>
+                                <div class="flex gap-2 flex-wrap">
+                                    @foreach($usualSizes as $size => $count)
+                                        <span class="text-xs text-zinc-600">{{ $size }} ({{ $count }})</span>
+                                        @if(!$loop->last)
+                                            <span class="text-zinc-300">·</span>
+                                        @endif
+                                    @endforeach
+                                </div>
+                            </div>
+                            @endif
+                            @endif
+                        </div>
+
+                        <!-- Right Column - Reviews List -->
+                        <div class="space-y-6">
+                            <!-- Header -->
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-[11px] font-semibold tracking-[0.15em] text-black uppercase">Reviews {{ $totalReviews }}</h3>
+                                <button class="bg-black text-white px-6 py-2.5 text-[10px] font-semibold tracking-[0.1em] uppercase transition duration-200 hover:bg-white hover:text-black border border-black">
+                                    Write a Review
+                                </button>
+                            </div>
+
+                            <!-- Search & Filter -->
+                            <div class="flex gap-3 mb-8">
+                                <input type="text" placeholder="Search reviews" class="flex-1 px-4 py-2.5 border border-zinc-200 text-sm focus:outline-none focus:border-zinc-400 transition">
+                                <select class="px-4 py-2.5 border border-zinc-200 text-sm focus:outline-none focus:border-zinc-400 transition bg-white">
+                                    <option>All ratings</option>
+                                    <option>5 stars</option>
+                                    <option>4 stars</option>
+                                    <option>3 stars</option>
+                                    <option>2 stars</option>
+                                    <option>1 star</option>
+                                </select>
+                            </div>
+
+                            <!-- Reviews List -->
+                            @if($reviews->count() > 0)
+                            <div class="space-y-0">
+                                @foreach($reviews as $review)
+                                <div class="py-8 border-b border-zinc-100 last:border-0">
+                                    <div class="flex items-start justify-between mb-3">
+                                        <div>
+                                            <div class="flex items-center gap-2 mb-1">
+                                                <h4 class="text-xs font-semibold tracking-[0.05em] text-black uppercase">{{ $review->user->name }}</h4>
+                                                @if($review->is_verified)
+                                                <span class="text-[9px] text-zinc-400 uppercase tracking-wider">· Verified Buyer</span>
+                                                @endif
+                                            </div>
+                                            <div class="flex items-center gap-1">
+                                                @for($i = 1; $i <= 5; $i++)
+                                                    <i class="fas fa-star {{ $i <= $review->rating ? 'text-black' : 'text-zinc-200' }} text-xs"></i>
+                                                @endfor
+                                            </div>
+                                        </div>
+                                        <span class="text-[10px] text-zinc-400">{{ $review->created_at->diffForHumans() }}</span>
+                                    </div>
+
+                                    @if($review->comment)
+                                    <p class="text-sm text-zinc-600 leading-relaxed mb-4">{{ $review->comment }}</p>
+                                    @endif
+
+                                    <div class="grid grid-cols-3 gap-4 pt-4 border-t border-zinc-50">
+                                        @if($review->usual_size)
+                                        <div>
+                                            <p class="text-[9px] font-semibold tracking-[0.1em] text-zinc-400 uppercase mb-2">Usual Size</p>
+                                            <p class="text-xs text-zinc-600">{{ $review->usual_size }}</p>
+                                        </div>
+                                        @endif
+                                        @if($review->quality_rating)
+                                        <div>
+                                            <p class="text-[9px] font-semibold tracking-[0.1em] text-zinc-400 uppercase mb-2">Quality</p>
+                                            <div class="relative h-1 bg-zinc-100 mt-2">
+                                                <div class="absolute top-0 left-0 h-full bg-black" style="width: {{ $review->quality_rating }}%"></div>
+                                            </div>
+                                        </div>
+                                        @endif
+                                        @if($review->sizing_rating)
+                                        <div>
+                                            <p class="text-[9px] font-semibold tracking-[0.1em] text-zinc-400 uppercase mb-2">Sizing</p>
+                                            <div class="relative h-1 bg-zinc-100 mt-2">
+                                                <div class="absolute top-1/2 -translate-y-1/2 w-2 h-2 bg-black rounded-full" style="left: {{ $review->sizing_rating }}%"></div>
+                                            </div>
+                                        </div>
+                                        @endif
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                            @else
+                            <div class="py-12 text-center">
+                                <i class="fas fa-star text-4xl text-zinc-200 mb-3"></i>
+                                <p class="text-sm text-zinc-500">No reviews yet. Be the first to review this product!</p>
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+                </section>
 
                 <!-- Related Products -->
                 @if($relatedProducts->count() > 0)
@@ -247,7 +488,7 @@
                         <p class="mt-2 text-zinc-600">Produk lain yang mungkin Anda suka</p>
                     </div>
 
-                    <div id="productGrid" class="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+                    <div class="flex gap-4 overflow-x-auto pb-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x snap-mandatory">
                         @foreach($relatedProducts as $related)
                         @php
                             $soldCount = \App\Models\OrderItem::where('product_id', $related->id)
@@ -255,7 +496,7 @@
                                     $q->whereIn('status', ['completed', 'delivered']);
                                 })->sum('quantity');
                         @endphp
-                        <div class="product-item group block overflow-hidden rounded-xl border border-black/6 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg"
+                        <div class="product-item group snap-start shrink-0 basis-[85%] sm:basis-[48%] md:basis-[31%] lg:basis-[23.5%] block overflow-hidden bg-white transition duration-300 hover:-translate-y-1"
                              data-name="{{ strtolower($related->name) }}"
                              data-price="{{ $related->hasActiveDiscount() ? $related->discounted_price : $related->price }}"
                              data-discount="{{ $related->hasActiveDiscount() ? 'yes' : 'no' }}"
@@ -264,19 +505,19 @@
                             <a href="{{ route('produk.show', $related) }}" class="block">
                                 <div class="relative aspect-square overflow-hidden">
                                     <img src="{{ $related->image_url }}" alt="{{ $related->name }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" onerror="this.onerror=null;this.src='/images/logo.png';" loading="lazy">
-                                    @if($related->hasActiveDiscount())
-                                        <span class="absolute left-2 top-2 rounded-full bg-rose-500 px-2 py-0.5 text-[10px] font-semibold text-white">-{{ $related->formatted_discount_percent }}</span>
-                                    @endif
-                                    @if($related->category === 'arrivals')
-                                        <span class="absolute left-2 {{ $related->hasActiveDiscount() ? 'top-9' : 'top-2' }} rounded-full bg-blue-500 px-2 py-0.5 text-[10px] font-semibold text-white">Latest</span>
-                                    @endif
-                                    @if($related->package_type === 'bundle')
-                                        <span class="absolute left-2 {{ $related->hasActiveDiscount() && $related->category === 'arrivals' ? 'top-16' : ($related->hasActiveDiscount() || $related->category === 'arrivals' ? 'top-9' : 'top-2') }} rounded-full bg-purple-500 px-2 py-0.5 text-[10px] font-semibold text-white">Bundle</span>
-                                    @endif
-                                    @if($related->isBestSeller())
-                                        <span class="absolute right-2 top-2 rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white">Popular</span>
-                                    @endif
                                 </div>
+                                @if($related->hasActiveDiscount())
+                                    <span class="absolute left-0 top-0 bg-rose-500 px-2 py-0.5 text-[10px] font-semibold text-white z-10">-{{ $related->formatted_discount_percent }}</span>
+                                @endif
+                                @if($related->category === 'arrivals')
+                                    <span class="absolute left-0 {{ $related->hasActiveDiscount() ? 'top-7' : 'top-0' }} bg-blue-500 px-2 py-0.5 text-[10px] font-semibold text-white z-10">Latest</span>
+                                @endif
+                                @if($related->package_type === 'bundle')
+                                    <span class="absolute left-0 {{ $related->hasActiveDiscount() && $related->category === 'arrivals' ? 'top-14' : ($related->hasActiveDiscount() || $related->category === 'arrivals' ? 'top-7' : 'top-0') }} bg-purple-500 px-2 py-0.5 text-[10px] font-semibold text-white z-10">Bundle</span>
+                                @endif
+                                @if($related->isBestSeller())
+                                    <span class="absolute right-0 top-0 bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white z-10">Popular</span>
+                                @endif
                                 <div class="p-3">
                                     <h3 class="line-clamp-1 text-sm font-semibold text-black">{{ $related->name }}</h3>
                                     <p class="mt-1 text-xs text-zinc-600">{{ $related->category_label }}</p>
@@ -290,8 +531,8 @@
                             </a>
                             <div class="px-3 pb-3">
                                 <div class="flex items-center gap-3">
-                                    <button onclick="addToCart('{{ $related->slug }}', event)" class="text-zinc-400 transition duration-300 hover:text-blue-600">
-                                        <i class="fas fa-shopping-bag text-sm"></i>
+                                    <button onclick="addToCart('{{ $related->slug }}', event)" class="border border-zinc-300 bg-transparent px-3 py-1.5 text-[11px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950">
+                                        Add to cart
                                     </button>
                                     <button onclick="addToWishlist('{{ $related->slug }}', event)" class="text-zinc-400 transition duration-300 hover:text-rose-500">
                                         <i class="fas fa-heart text-sm"></i>
@@ -303,38 +544,6 @@
                     </div>
                 </div>
                 @endif
-
-                <!-- Testimonials Section -->
-                <section class="mt-16 border-t border-zinc-200 pt-12">
-                    @php
-                        $testimonialItems = $testimonials->take(3);
-                    @endphp
-
-                    @if ($testimonialItems->count() > 0)
-                        <div class="relative overflow-hidden rounded-3xl border border-black/6 bg-zinc-50/40 px-2 py-2 shadow-[0_12px_38px_rgba(0,0,0,0.08)] md:px-4 md:py-4" data-testimonial-hero>
-                            <div class="np-testimonial-hero-track" data-testimonial-track>
-                                @foreach ($testimonialItems as $index => $testimonial)
-                                    <article class="np-testimonial-hero-slide">
-                                        <div class="relative aspect-video overflow-hidden rounded-2xl">
-                                            <img src="{{ $testimonial->image_url ?? '/images/logo.png' }}" alt="Testimoni" class="h-full w-full object-cover" loading="lazy">
-                                            <div class="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent"></div>
-                                        </div>
-                                    </article>
-                                @endforeach
-                            </div>
-
-                            <div class="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/35 px-3 py-2 backdrop-blur" data-testimonial-dots>
-                                @foreach ($testimonialItems as $index => $testimonial)
-                                    <button type="button" class="np-testimonial-dot h-2.5 w-2.5 rounded-full bg-white/45 transition duration-300" data-slide-to="{{ $index }}" aria-label="Slide {{ $index + 1 }}"></button>
-                                @endforeach
-                            </div>
-                        </div>
-                    @else
-                        <div class="rounded-2xl border border-dashed border-zinc-300 bg-white p-10 text-center text-zinc-500">
-                            Belum ada testimoni.
-                        </div>
-                    @endif
-                </section>
             </div>
         </div>
     </main>
@@ -345,6 +554,7 @@
 
 @push('styles')
 <script src="https://cdn.tailwindcss.com"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <style>
     #mainNavbar,
     .mobile-bottom-nav {

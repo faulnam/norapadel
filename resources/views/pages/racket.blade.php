@@ -3,250 +3,321 @@
 @section('title', 'NoraPadel Racket — Precision. Power. Performance.')
 
 @section('content')
-    <div class="bg-white text-black antialiased">
-    <header class="fixed left-0 top-0 z-50 w-full border-b border-transparent bg-transparent backdrop-blur-none transition-all duration-300" id="mainHeader">
-            <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-10 lg:px-12">
-                <a href="{{ route('home') }}" class="flex items-center gap-2">
-                    <img src="{{ asset('storage/logo.png') }}" alt="NoraPadel" class="h-7 w-7 object-contain" loading="lazy">
-                    <span class="text-xl font-semibold tracking-tight text-white transition-colors duration-300" id="logoText">NoraPadel</span>
-                </a>
+<div class="bg-white text-black antialiased">
+    <style>
+        #mainNavbar, .mobile-bottom-nav {
+            display: none !important;
+        }
+    </style>
+    <header class="sticky top-0 z-50 w-full border-b border-zinc-200 bg-white" id="mainHeader">
+        <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-10 lg:px-12">
+            <a href="{{ route('home') }}" class="flex items-center gap-2">
+                <img src="{{ asset('storage/logo.png') }}" alt="NoraPadel" class="h-7 w-7 object-contain" loading="lazy">
+                <span class="text-xl font-semibold tracking-tight text-black" id="logoText">NoraPadel</span>
+            </a>
 
-                <nav class="hidden items-center gap-8 md:flex" id="navLinks">
-                    <a href="{{ route('home') }}" class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">Home</a>
-                    <a href="{{ route('new-arrivals') }}" class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">New Arrivals</a>
-                    <a href="{{ route('racket') }}" class="border-b border-white text-sm text-white transition duration-300" data-active="true">Racket</a>
-                    <a href="{{ route('shoes') }}" class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">Shoes</a>
-                    <a href="{{ route('apparel') }}" class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">Accessories</a>
-                    <a href="{{ route('contact') }}"
-                        class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">Contact</a>
-                </nav>
+            <nav class="hidden items-center gap-8 md:flex" id="navLinks">
+                <a href="{{ route('home') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Home</a>
+                <a href="{{ route('new-arrivals') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">New Arrivals</a>
+                <a href="{{ route('racket') }}" class="border-b border-black text-sm text-black transition duration-300" data-active="true">Racket</a>
+                <a href="{{ route('shoes') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Shoes</a>
+                <a href="{{ route('apparel') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Accessories</a>
+                <a href="{{ route('contact') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Contact</a>
+            </nav>
 
-                <div class="flex items-center gap-3 text-white/90" id="navIcons">
-                    @auth
-                        @if(auth()->user()->role === 'admin')
-                            <a href="{{ route('admin.dashboard') }}"
-                                class="inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-xs font-medium text-white backdrop-blur transition duration-300 hover:bg-white/20"
-                                aria-label="Back to Dashboard">
-                                <i class="fas fa-arrow-left text-[10px]"></i>
-                                <span>Dashboard</span>
-                            </a>
-                        @elseif(auth()->user()->role === 'customer')
-                            <a href="{{ route('customer.orders.index') }}" class="transition duration-300 hover:text-black" aria-label="Riwayat Pesanan">
-                                <i class="fas fa-history text-sm"></i>
-                            </a>
-                            <a href="{{ route('customer.profile.index') }}" class="transition duration-300 hover:text-black" aria-label="Profile">
-                                <i class="fas fa-user text-sm"></i>
-                            </a>
-                        @endif
-                    @endauth
-                    @guest
-                        <a href="{{ route('login') }}" class="inline-flex items-center gap-1 rounded-full border border-white/30 bg-white/10 px-3 py-1.5 text-xs font-medium text-white backdrop-blur transition duration-300 hover:bg-white/20" aria-label="Masuk">
-                            <i class="fas fa-sign-in-alt text-[11px]"></i>
-                            <span>Masuk</span>
+            <div class="flex items-center gap-3 text-black/80" id="navIcons">
+                @auth
+                    @if(auth()->user()->role === 'admin')
+                        <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center gap-1.5 rounded-full border border-black/15 bg-transparent px-4 py-1.5 text-xs font-medium text-black transition duration-300 hover:border-black/30" aria-label="Back to Dashboard">
+                            <i class="fas fa-arrow-left text-[10px]"></i>
+                            <span>Dashboard</span>
                         </a>
-                    @endguest
-                    @auth
-                        <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-black" aria-label="Cart">
-                            <i class="fas fa-shopping-bag text-sm"></i>
-                            @if(auth()->user()->role === 'customer')
-                                @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
-                                @if($cartCount > 0)
-                                    <span class="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
-                                @endif
+                    @elseif(auth()->user()->role === 'customer')
+                        <a href="{{ route('customer.orders.index') }}" class="transition duration-300 hover:text-black" aria-label="Riwayat Pesanan">
+                            <i class="fas fa-history text-sm"></i>
+                        </a>
+                        <a href="{{ route('customer.profile.index') }}" class="transition duration-300 hover:text-black" aria-label="Profile">
+                            <i class="fas fa-user text-sm"></i>
+                        </a>
+                    @endif
+                @endauth
+                @guest
+                    <a href="{{ route('login') }}" class="inline-flex items-center gap-1 rounded-full border border-black/15 bg-transparent px-3 py-1.5 text-xs font-medium text-black transition duration-300 hover:border-black/30" aria-label="Masuk">
+                        <i class="fas fa-sign-in-alt text-[11px]"></i>
+                        <span>Masuk</span>
+                    </a>
+                @endguest
+                @auth
+                    <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-black" aria-label="Cart">
+                        <i class="fas fa-shopping-bag text-sm"></i>
+                        @if(auth()->user()->role === 'customer')
+                            @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
+                            @if($cartCount > 0)
+                                <span class="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
                             @endif
-                        </a>
-                    @else
-                        <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-black" aria-label="Cart">
-                            <i class="fas fa-shopping-bag text-sm"></i>
-                            @php 
-                                $guestCart = session()->get('guest_cart', []);
-                                $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
-                            @endphp
+                        @endif
+                    </a>
+                @else
+                    <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-black" aria-label="Cart">
+                        <i class="fas fa-shopping-bag text-sm"></i>
+                        @php 
+                            $guestCart = session()->get('guest_cart', []);
+                            $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
+                        @endphp
                             @if($guestCartCount > 0)
                                 <span class="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $guestCartCount > 9 ? '9+' : $guestCartCount }}</span>
                             @endif
-                        </a>
-                    @endauth
-                    <button
-                        type="button"
-                        class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20 md:hidden"
-                        data-mobile-menu-toggle
-                        aria-label="Toggle navigation"
-                        aria-expanded="false"
-                    >
-                        <i class="fas fa-bars text-sm"></i>
+                    </a>
+                @endauth
+                <button type="button" class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/15 bg-transparent text-black transition duration-300 hover:border-black/30 md:hidden" data-mobile-menu-toggle aria-label="Toggle navigation" aria-expanded="false">
+                    <i class="fas fa-bars text-sm"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="hidden border-t border-black/10 bg-white px-6 py-4 md:hidden" data-mobile-menu>
+            <nav class="flex flex-col gap-3 text-sm font-medium text-black/85">
+                <a href="{{ route('home') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Home</a>
+                <a href="{{ route('new-arrivals') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">New Arrivals</a>
+                <a href="{{ route('racket') }}" class="rounded-lg bg-black/5 px-2 py-1.5 text-black">Racket</a>
+                <a href="{{ route('shoes') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Shoes</a>
+                <a href="{{ route('apparel') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Accessories</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="bg-white">
+        <br>
+        <!-- Main Layout: Sidebar + Grid -->
+        <div class="mx-auto max-w-7xl px-6 pb-16 md:px-10 lg:px-12">
+            <div class="flex flex-col gap-8 md:flex-row">
+                
+                <!-- Sidebar Filters -->
+                <aside class="w-full flex-shrink-0 md:w-[240px]">
+                    <!-- Mobile Filter Toggle -->
+                    <button type="button" class="md:hidden w-full flex items-center justify-between rounded-lg border border-zinc-200 px-4 py-3 text-sm font-medium text-black" data-mobile-filter-toggle>
+                        <span>Filters</span>
+                        <i class="fas fa-chevron-down text-xs transition-transform" data-filter-chevron></i>
                     </button>
-                </div>
-            </div>
+                    
+                    <div class="hidden md:block mt-4 md:mt-0 space-y-6" data-filter-panel>
+                        <!-- Search -->
+                        <div>
+                            <h3 class="mb-3 text-sm font-semibold text-black">Search</h3>
+                            <input type="text" id="searchProduct" placeholder="Cari produk..." class="w-full rounded-lg border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-black transition">
+                        </div>
 
-            <div class="hidden border-t border-black/10 bg-white/95 px-6 py-4 md:hidden" data-mobile-menu>
-                <nav class="flex flex-col gap-3 text-sm font-medium text-black/85">
-                    <a href="{{ route('home') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Home</a>
-                    <a href="{{ route('new-arrivals') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">New Arrivals</a>
-                    <a href="{{ route('racket') }}" class="rounded-lg bg-black/5 px-2 py-1.5 text-black">Racket</a>
-                    <a href="{{ route('shoes') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Shoes</a>
-                    <a href="{{ route('apparel') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Accessories</a>
-                </nav>
-            </div>
-        </header>
-
-    <main class="pt-12 sm:pt-16 md:pt-0">
-    <section class="relative h-[520px] overflow-hidden bg-zinc-900 md:h-[620px] lg:h-[700px]">
-            <div class="absolute inset-0">
-                <img
-                    src="{{ asset('storage/raket.png') }}"
-                    alt="NoraPadel Racket"
-                    class="h-full w-full object-cover"
-                    loading="eager"
-                >
-                <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/45 to-transparent"></div>
-            </div>
-            
-        </section>
-
-    <section class="np-fade-section bg-white pt-2 pb-12 sm:pt-4 sm:pb-14 md:py-16 lg:py-20 transition-all duration-300">
-            <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 md:px-10 lg:px-12"><br>
-                <div class="mb-4 flex flex-col gap-4 sm:mb-6 md:mb-8 lg:flex-row lg:items-end lg:justify-between transition-all duration-300">
-                    <div>
-                        <h2 class="text-2xl font-semibold leading-tight tracking-tight text-black sm:text-3xl md:text-4xl">Racket Collection</h2>
-                        <p class="mt-2 text-sm text-zinc-500 sm:text-base">Pilih raket terbaik sesuai gaya bermainmu, dari control hingga power series.</p>
-                    </div>
-
-                   
-                </div>
-
-                <!-- Filter Section -->
-                <div class="mb-6 flex flex-col md:flex-row gap-3">
-                    <div class="flex-1">
-                        <input type="text" id="searchProduct" placeholder="Cari produk..." class="w-full px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition">
-                    </div>
-                    <div class="flex gap-2 flex-wrap">
-                        <select id="filterBrand" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition">
-                            <option value="">Semua Brand</option>
-                            @php
-                                $brands = \App\Models\Product::whereNotNull('brand')->distinct()->pluck('brand')->sort();
-                            @endphp
-                            @foreach($brands as $brand)
-                                <option value="{{ $brand }}">{{ $brand }}</option>
-                            @endforeach
-                        </select>
-                        <select id="filterLevel" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition">
-                            <option value="">Semua Level</option>
-                            <option value="beginner">Beginner</option>
-                            <option value="intermediate">Intermediate</option>
-                            <option value="pro">Pro</option>
-                        </select>
-                        <select id="filterPrice" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition">
-                            <option value="">Semua Harga</option>
-                            <option value="0-500000">< Rp 500.000</option>
-                            <option value="500000-1000000">Rp 500.000 - Rp 1.000.000</option>
-                            <option value="1000000-2000000">Rp 1.000.000 - Rp 2.000.000</option>
-                            <option value="2000000-5000000">Rp 2.000.000 - Rp 5.000.000</option>
-                            <option value="5000000-999999999"> > Rp 5.000.000</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div id="productGrid" class="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                    @forelse($products as $product)
-                        @php
-                            $soldCount = \App\Models\OrderItem::where('product_id', $product->id)
-                                ->whereHas('order', function($q) {
-                                    $q->whereIn('status', ['completed', 'delivered']);
-                                })->sum('quantity');
-                        @endphp
-                        <div class="product-item group flex h-full w-full flex-col overflow-hidden rounded-2xl border border-black/6 bg-white text-start shadow-[0_8px_26px_rgba(0,0,0,0.05)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(0,0,0,0.09)]" 
-                             data-name="{{ strtolower($product->name) }}" 
-                             data-price="{{ $product->hasActiveDiscount() ? $product->discounted_price : $product->price }}"
-                             data-brand="{{ strtolower($product->brand ?? '') }}"
-                             data-level="{{ $product->level ?? '' }}"
-                             data-discount="{{ $product->hasActiveDiscount() ? 'yes' : 'no' }}"
-                             data-bundle="{{ $product->package_type === 'bundle' ? 'yes' : 'no' }}"
-                             data-sold="{{ $soldCount }}">
-                            <a href="{{ route('produk.show', $product) }}" class="block">
-                                <div class="relative aspect-4/5 overflow-hidden bg-zinc-50">
-                                    <img
-                                        src="{{ $product->image_url ?: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}"
-                                        alt="{{ $product->name }}"
-                                        class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                                        loading="lazy"
-                                    >
-                                    @if($product->has_variants)
-                                        <span class="absolute right-3 top-3 rounded-full bg-black/80 px-2.5 py-1 text-[11px] font-semibold text-white">Varian</span>
-                                    @endif
-                                    @if($product->hasActiveDiscount())
-                                        <span class="absolute left-3 top-3 rounded-full bg-rose-500 px-2.5 py-1 text-[11px] font-semibold text-white">-{{ $product->formatted_discount_percent }}</span>
-                                    @endif
-                                    @if($product->category === 'arrivals')
-                                        <span class="absolute left-3 {{ $product->hasActiveDiscount() ? 'top-12' : 'top-3' }} rounded-full bg-blue-500 px-2.5 py-1 text-[11px] font-semibold text-white">Latest</span>
-                                    @endif
-                                    @if($product->package_type === 'bundle')
-                                        <span class="absolute left-3 {{ $product->hasActiveDiscount() && $product->category === 'arrivals' ? 'top-[5.25rem]' : ($product->hasActiveDiscount() || $product->category === 'arrivals' ? 'top-12' : 'top-3') }} rounded-full bg-purple-500 px-2.5 py-1 text-[11px] font-semibold text-white">Bundle</span>
-                                    @endif
-                                    @if($soldCount >= 5 || $product->package_type === 'bestseller')
-                                        <span class="absolute right-3 {{ $product->has_variants ? 'top-12' : 'top-3' }} rounded-full bg-amber-500 px-2.5 py-1 text-[11px] font-semibold text-white">Best Seller</span>
-                                    @endif
-                                </div>
-
-                                <div class="flex flex-1 flex-col p-4">
-                                    <h3 class="line-clamp-2 text-base font-semibold tracking-tight text-black">{{ $product->name }}</h3>
-                                    <p class="mt-1 text-xs text-zinc-500">{{ $product->category_label }}</p>
-
-                                    <div class="mt-auto pt-4">
-                                        @if($product->hasActiveDiscount())
-                                            <p class="text-sm font-semibold text-emerald-600 sm:text-base">{{ $product->formatted_discounted_price }}</p>
-                                            <p class="text-xs text-zinc-400 line-through">{{ $product->formatted_price }}</p>
-                                        @else
-                                            <p class="text-sm font-semibold text-emerald-600 sm:text-base">{{ $product->formatted_price }}</p>
-                                        @endif
-                                    </div>
-                                </div>
-                            </a>
-                            <div class="px-4 pb-4">
-                                <button onclick="addToCart('{{ $product->slug }}', event)" class="w-full flex items-center justify-center gap-2 rounded-full border-2 border-blue-600 bg-transparent px-4 py-2 text-sm font-medium text-blue-600 transition duration-300 hover:bg-blue-600 hover:text-white">
-                                    <i class="fas fa-shopping-cart text-sm"></i>
-                                    <span>Add to Cart</span>
-                                </button>
+                        <!-- Availability -->
+                        <div class="border-t border-zinc-100 pt-6">
+                            <button type="button" class="filter-toggle flex w-full items-center justify-between text-left">
+                                <h3 class="text-sm font-semibold text-black">Availability</h3>
+                                <i class="fas fa-chevron-down text-xs text-zinc-400 transition-transform duration-200"></i>
+                            </button>
+                            <div class="filter-content mt-3 space-y-2">
+                                <label class="flex cursor-pointer items-center gap-2">
+                                    <input type="checkbox" id="filterInStock" class="rounded border-zinc-300 text-black focus:ring-black" value="in_stock">
+                                    <span class="text-sm text-zinc-600">In Stock</span>
+                                </label>
                             </div>
                         </div>
-                    @empty
-                        <div class="col-span-full rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 p-12 text-center">
-                            <i class="fas fa-box-open text-3xl text-zinc-400"></i>
-                            <p class="mt-3 font-medium text-zinc-500">Produk racket belum tersedia.</p>
+
+                        <!-- Category -->
+                        <div class="border-t border-zinc-100 pt-6">
+                            <button type="button" class="filter-toggle flex w-full items-center justify-between text-left">
+                                <h3 class="text-sm font-semibold text-black">Category</h3>
+                                <i class="fas fa-chevron-down text-xs text-zinc-400 transition-transform duration-200"></i>
+                            </button>
+                            <div class="filter-content mt-3 flex flex-wrap gap-2">
+                                <button type="button" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black" data-filter="category" data-value="racket">Racket</button>
+                                <button type="button" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black" data-filter="category" data-value="shoes">Shoes</button>
+                                <button type="button" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black" data-filter="category" data-value="apparel">Apparel</button>
+                                <button type="button" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black" data-filter="category" data-value="accessories">Accessories</button>
+                            </div>
                         </div>
-                    @endforelse
-                </div>
 
-                <div id="noResults" class="hidden text-center py-12">
-                    <i class="fas fa-search text-4xl text-zinc-300 mb-3"></i>
-                    <p class="text-zinc-500">Tidak ada produk yang ditemukan</p>
-                </div>
+                        <!-- Brand -->
+                        <div class="border-t border-zinc-100 pt-6">
+                            <button type="button" class="filter-toggle flex w-full items-center justify-between text-left">
+                                <h3 class="text-sm font-semibold text-black">Brand</h3>
+                                <i class="fas fa-chevron-down text-xs text-zinc-400 transition-transform duration-200"></i>
+                            </button>
+                            <div class="filter-content mt-3 flex flex-wrap gap-2">
+                                @php
+                                    $brands = \App\Models\Product::whereNotNull('brand')->distinct()->pluck('brand')->sort();
+                                @endphp
+                                @foreach($brands as $brand)
+                                    <button type="button" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black" data-filter="brand" data-value="{{ strtolower($brand) }}">{{ $brand }}</button>
+                                @endforeach
+                            </div>
+                        </div>
 
-                @if($products->hasPages())
-                    <div class="mt-10">
-                        {{ $products->links() }}
+                        <!-- Level -->
+                        <div class="border-t border-zinc-100 pt-6">
+                            <button type="button" class="filter-toggle flex w-full items-center justify-between text-left">
+                                <h3 class="text-sm font-semibold text-black">Level</h3>
+                                <i class="fas fa-chevron-down text-xs text-zinc-400 transition-transform duration-200"></i>
+                            </button>
+                            <div class="filter-content mt-3 flex flex-wrap gap-2">
+                                <button type="button" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black" data-filter="level" data-value="beginner">Beginner</button>
+                                <button type="button" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black" data-filter="level" data-value="intermediate">Intermediate</button>
+                                <button type="button" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black" data-filter="level" data-value="pro">Pro</button>
+                            </div>
+                        </div>
+
+                        <!-- Price -->
+                        <div class="border-t border-zinc-100 pt-6">
+                            <button type="button" class="filter-toggle flex w-full items-center justify-between text-left">
+                                <h3 class="text-sm font-semibold text-black">Price</h3>
+                                <i class="fas fa-chevron-down text-xs text-zinc-400 transition-transform duration-200"></i>
+                            </button>
+                            <div class="filter-content mt-3 flex flex-col gap-2">
+                                <label class="flex cursor-pointer items-center gap-2">
+                                    <input type="radio" name="filterPrice" class="border-zinc-300 text-black focus:ring-black" value="">
+                                    <span class="text-sm text-zinc-600">All Prices</span>
+                                </label>
+                                <label class="flex cursor-pointer items-center gap-2">
+                                    <input type="radio" name="filterPrice" class="border-zinc-300 text-black focus:ring-black" value="0-500000">
+                                    <span class="text-sm text-zinc-600">&lt; Rp 500.000</span>
+                                </label>
+                                <label class="flex cursor-pointer items-center gap-2">
+                                    <input type="radio" name="filterPrice" class="border-zinc-300 text-black focus:ring-black" value="500000-1000000">
+                                    <span class="text-sm text-zinc-600">Rp 500.000 - Rp 1.000.000</span>
+                                </label>
+                                <label class="flex cursor-pointer items-center gap-2">
+                                    <input type="radio" name="filterPrice" class="border-zinc-300 text-black focus:ring-black" value="1000000-2000000">
+                                    <span class="text-sm text-zinc-600">Rp 1.000.000 - Rp 2.000.000</span>
+                                </label>
+                                <label class="flex cursor-pointer items-center gap-2">
+                                    <input type="radio" name="filterPrice" class="border-zinc-300 text-black focus:ring-black" value="2000000-5000000">
+                                    <span class="text-sm text-zinc-600">Rp 2.000.000 - Rp 5.000.000</span>
+                                </label>
+                                <label class="flex cursor-pointer items-center gap-2">
+                                    <input type="radio" name="filterPrice" class="border-zinc-300 text-black focus:ring-black" value="5000000-999999999">
+                                    <span class="text-sm text-zinc-600">&gt; Rp 5.000.000</span>
+                                </label>
+                            </div>
+                        </div>
                     </div>
-                @endif
-            </div>
-        </section>
+                </aside>
 
-        </main>
-    </div>
+                <!-- Product Grid Area -->
+                <div class="flex-1">
+                    <!-- Toolbar -->
+                    <div class="mb-6 flex items-center justify-between border-b border-zinc-100 pb-4">
+                       
+                    </div>
+
+                    <!-- Grid -->
+                    <div id="productGrid" class="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        @forelse($products as $product)
+                            @php
+                                $soldCount = \App\Models\OrderItem::where('product_id', $product->id)
+                                    ->whereHas('order', function($q) {
+                                        $q->whereIn('status', ['completed', 'delivered']);
+                                    })->sum('quantity');
+                            @endphp
+                            <div class="product-item group block overflow-hidden bg-white transition duration-300 hover:-translate-y-1"
+                               data-name="{{ strtolower($product->name) }}"
+                               data-price="{{ $product->hasActiveDiscount() ? $product->discounted_price : $product->price }}"
+                               data-brand="{{ strtolower($product->brand ?? '') }}"
+                               data-level="{{ $product->level ?? '' }}"
+                               data-category="{{ strtolower($product->category ?? '') }}"
+                               data-stock="{{ $product->stock ?? 0 }}">
+                                <a href="{{ route('produk.show', $product) }}" class="block">
+                                    <div class="relative aspect-square overflow-hidden">
+                                        <div class="h-full w-full overflow-hidden">
+                                            <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" onerror="this.onerror=null;this.src='/images/logo.png';" loading="lazy">
+                                        </div>
+                                        @if($product->hasActiveDiscount())
+                                            <span class="absolute left-0 top-0 bg-rose-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">-{{ $product->formatted_discount_percent }}</span>
+                                        @endif
+                                        @if($product->category === 'arrivals')
+                                            <span class="absolute left-0 {{ $product->hasActiveDiscount() ? 'top-7' : 'top-0' }} bg-blue-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Latest</span>
+                                        @endif
+                                        @if($product->package_type === 'bundle')
+                                            <span class="absolute left-0 {{ $product->hasActiveDiscount() && $product->category === 'arrivals' ? 'top-14' : ($product->hasActiveDiscount() || $product->category === 'arrivals' ? 'top-7' : 'top-0') }} bg-purple-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Bundle</span>
+                                        @endif
+                                        @if($soldCount >= 5 || $product->package_type === 'bestseller')
+                                            <span class="absolute right-0 top-0 bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Popular</span>
+                                        @endif
+                                    </div>
+                                    <div class="p-3">
+                                        <h3 class="line-clamp-1 text-sm font-medium text-black">{{ $product->name }}</h3>
+                                        <p class="mt-1 text-xs text-zinc-600">{{ $product->category_label }}</p>
+                                        @if($product->hasActiveDiscount())
+                                            <p class="mt-1 text-base font-semibold text-black">{{ $product->formatted_discounted_price }}</p>
+                                            <p class="text-xs text-zinc-400 line-through">{{ $product->formatted_price }}</p>
+                                        @else
+                                            <p class="mt-1 text-base font-semibold text-black">{{ $product->formatted_price }}</p>
+                                        @endif
+                                    </div>
+                                </a>
+                                <div class="px-3 pb-3">
+                                    <div class="flex items-center gap-3">
+                                        <button onclick="addToCart('{{ $product->slug }}', event)" class="border border-zinc-300 bg-transparent px-3 py-1.5 text-[11px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950">
+                                            Add to cart
+                                        </button>
+                                        <button onclick="addToWishlist('{{ $product->slug }}', event)" class="text-zinc-400 transition duration-300 hover:text-rose-500">
+                                            <i class="fas fa-heart text-sm"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="col-span-full rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 p-12 text-center">
+                                <i class="fas fa-box-open text-3xl text-zinc-400"></i>
+                                <p class="mt-3 font-medium text-zinc-500">Produk racket belum tersedia.</p>
+                            </div>
+                        @endforelse
+                    </div>
+
+                    @if($products->hasPages())
+                        <div class="mt-10">
+                            {{ $products->links() }}
+                        </div>
+                    @endif
+
+                    <div id="noResults" class="hidden text-center py-12">
+                        <i class="fas fa-search text-4xl text-zinc-300 mb-3"></i>
+                        <p class="text-zinc-500">Tidak ada produk yang ditemukan</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
 @endsection
 
 @push('styles')
     <script src="https://cdn.tailwindcss.com"></script>
-
     <style>
-        .np-fade-section {
-            opacity: 0;
-            transform: translateY(24px);
-            transition: opacity 0.8s ease, transform 0.8s ease;
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
         }
-
-        .np-fade-section.is-visible {
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .animate-marquee {
+            animation: marquee 20s linear infinite;
+        }
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        .np-fade-in {
+            opacity: 0;
+            transform: translateY(16px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .np-fade-in.is-visible {
             opacity: 1;
             transform: translateY(0);
+        }
+        .filter-chip.active {
+            background-color: #000;
+            color: #fff;
+            border-color: #000;
         }
     </style>
 @endpush
@@ -283,103 +354,40 @@
             });
         }
 
+        function addToWishlist(productId, event) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            fetch(`/customer/wishlist/add/${productId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Produk berhasil ditambahkan ke wishlist!');
+                    location.reload();
+                } else {
+                    alert(data.message || 'Produk sudah ada di wishlist');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan. Silakan coba lagi.');
+            });
+        }
+
         (function () {
-            const header = document.getElementById('mainHeader');
-            const logoText = document.getElementById('logoText');
-            const navLinks = document.getElementById('navLinks');
-            const navIcons = document.getElementById('navIcons');
-            const revealEls = document.querySelectorAll('.np-fade-section');
-            const heroImages = document.querySelectorAll('.np-parallax-image');
             const mobileMenuToggle = document.querySelector('[data-mobile-menu-toggle]');
             const mobileMenu = document.querySelector('[data-mobile-menu]');
-
-            window.addEventListener('scroll', () => {
-                if (!header || !logoText || !navLinks || !navIcons) return;
-                if (window.scrollY > 50) {
-                    header.classList.add('bg-white/80', 'backdrop-blur-xl', 'border-black/6');
-                    header.classList.remove('bg-transparent', 'backdrop-blur-none', 'border-transparent');
-
-                    logoText.classList.remove('text-white');
-                    logoText.classList.add('text-black');
-
-                    navLinks.querySelectorAll('a').forEach(link => {
-                        const isActive = link.dataset.active === 'true';
-                        link.classList.remove('text-white/90', 'text-white', 'hover:border-white/30', 'hover:text-white');
-                        link.classList.add('text-black/80', 'hover:border-black/30', 'hover:text-black');
-                        if (isActive) {
-                            link.classList.remove('border-transparent', 'border-white', 'text-black/80', 'text-white/90', 'text-white');
-                            link.classList.add('border-black', 'text-black');
-                        } else {
-                            link.classList.remove('border-black');
-                            link.classList.add('border-transparent');
-                        }
-                    });
-
-                    navIcons.classList.remove('text-white/90');
-                    navIcons.classList.add('text-black/80');
-
-                    navIcons.querySelectorAll('a, button').forEach(el => {
-                        if (el.classList.contains('border-white/30')) {
-                            el.classList.remove('border-white/30', 'bg-white/10', 'hover:bg-white/20', 'text-white');
-                            el.classList.add('border-black/15', 'bg-transparent', 'hover:border-black/30', 'text-black');
-                        }
-                        el.classList.remove('hover:text-white');
-                        el.classList.add('hover:text-black');
-                    });
-                } else {
-                    header.classList.remove('bg-white/80', 'backdrop-blur-xl', 'border-black/6');
-                    header.classList.add('bg-transparent', 'backdrop-blur-none', 'border-transparent');
-
-                    logoText.classList.add('text-white');
-                    logoText.classList.remove('text-black');
-
-                    navLinks.querySelectorAll('a').forEach(link => {
-                        const isActive = link.dataset.active === 'true';
-                        link.classList.add('text-white/90', 'hover:border-white/30', 'hover:text-white');
-                        link.classList.remove('text-black', 'text-black/80', 'hover:border-black/30', 'hover:text-black');
-                        if (isActive) {
-                            link.classList.remove('border-transparent', 'border-black', 'text-black', 'text-black/80');
-                            link.classList.add('border-white', 'text-white');
-                        } else {
-                            link.classList.remove('border-black');
-                            link.classList.add('border-transparent');
-                        }
-                    });
-
-                    navIcons.classList.add('text-white/90');
-                    navIcons.classList.remove('text-black/80');
-
-                    navIcons.querySelectorAll('a, button').forEach(el => {
-                        if (el.classList.contains('border-black/15')) {
-                            el.classList.add('border-white/30', 'bg-white/10', 'hover:bg-white/20', 'text-white');
-                            el.classList.remove('border-black/15', 'bg-transparent', 'hover:border-black/30', 'text-black');
-                        }
-                        el.classList.add('hover:text-white');
-                        el.classList.remove('hover:text-black');
-                    });
-                }
-            }, { passive: true });
-
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('is-visible');
-                    }
-                });
-            }, { threshold: 0.12 });
-
-            revealEls.forEach((el) => observer.observe(el));
-
-            const applyParallax = () => {
-                const scrollTop = window.scrollY || window.pageYOffset;
-                heroImages.forEach((img, index) => {
-                    const intensity = 0.04 + (index * 0.005);
-                    img.style.transform = `translate3d(0, ${scrollTop * intensity}px, 0)`;
-                });
-            };
-
-            window.addEventListener('scroll', applyParallax, { passive: true });
-            applyParallax();
+            const mobileFilterToggle = document.querySelector('[data-mobile-filter-toggle]');
+            const filterPanel = document.querySelector('[data-filter-panel]');
+            const filterChevron = document.querySelector('[data-filter-chevron]');
 
             if (mobileMenuToggle && mobileMenu) {
                 mobileMenuToggle.addEventListener('click', () => {
@@ -388,56 +396,100 @@
                 });
             }
 
-            // Filter Functionality
+            if (mobileFilterToggle && filterPanel) {
+                mobileFilterToggle.addEventListener('click', () => {
+                    filterPanel.classList.toggle('hidden');
+                    if (filterChevron) filterChevron.classList.toggle('rotate-180');
+                });
+            }
+
+            // Collapsible filter sections
+            document.querySelectorAll('.filter-toggle').forEach(toggle => {
+                toggle.addEventListener('click', () => {
+                    const content = toggle.nextElementSibling;
+                    const icon = toggle.querySelector('i');
+                    if (content) {
+                        content.classList.toggle('hidden');
+                        if (icon) icon.classList.toggle('rotate-180');
+                    }
+                });
+            });
+
+            // Filter chips
+            document.querySelectorAll('.filter-chip').forEach(chip => {
+                chip.addEventListener('click', () => {
+                    chip.classList.toggle('active');
+                    filterProducts();
+                });
+            });
+
             const searchInput = document.getElementById('searchProduct');
-            const filterBrand = document.getElementById('filterBrand');
-            const filterLevel = document.getElementById('filterLevel');
-            const filterPrice = document.getElementById('filterPrice');
+            const filterInStock = document.getElementById('filterInStock');
+            const priceRadios = document.querySelectorAll('input[name="filterPrice"]');
             const productGrid = document.getElementById('productGrid');
             const noResults = document.getElementById('noResults');
+            const products = Array.from(document.querySelectorAll('.product-item'));
+
+            function getActiveFilters(type) {
+                return Array.from(document.querySelectorAll(`.filter-chip.active[data-filter="${type}"]`)).map(btn => btn.dataset.value);
+            }
 
             function filterProducts() {
-                const searchTerm = searchInput.value.toLowerCase();
-                const brandFilter = filterBrand.value.toLowerCase();
-                const levelFilter = filterLevel.value;
-                const priceRange = filterPrice.value;
-                const products = document.querySelectorAll('.product-item');
-                let visibleCount = 0;
-
+                const searchTerm = searchInput?.value.toLowerCase() || '';
+                const activeCategories = getActiveFilters('category');
+                const activeBrands = getActiveFilters('brand');
+                const activeLevels = getActiveFilters('level');
+                const inStockOnly = filterInStock?.checked || false;
+                
                 let minPrice = 0;
                 let maxPrice = Infinity;
-
+                const checkedPrice = document.querySelector('input[name="filterPrice"]:checked');
+                const priceRange = checkedPrice ? checkedPrice.value : '';
                 if (priceRange) {
                     const [min, max] = priceRange.split('-').map(Number);
                     minPrice = min;
                     maxPrice = max;
                 }
 
+                let visibleCount = 0;
+
                 products.forEach(product => {
-                    const name = product.dataset.name;
-                    const price = parseFloat(product.dataset.price);
-                    const brand = product.dataset.brand;
-                    const level = product.dataset.level;
+                    const name = product.dataset.name || '';
+                    const price = parseFloat(product.dataset.price) || 0;
+                    const brand = product.dataset.brand || '';
+                    const level = product.dataset.level || '';
+                    const category = product.dataset.category || '';
+                    const stock = parseInt(product.dataset.stock) || 0;
 
                     let show = true;
 
                     if (searchTerm && !name.includes(searchTerm)) show = false;
-                    if (brandFilter && brand !== brandFilter) show = false;
-                    if (levelFilter && level !== levelFilter) show = false;
+                    if (activeCategories.length > 0 && !activeCategories.includes(category)) show = false;
+                    if (activeBrands.length > 0 && !activeBrands.includes(brand)) show = false;
+                    if (activeLevels.length > 0 && !activeLevels.includes(level)) show = false;
+                    if (inStockOnly && stock <= 0) show = false;
                     if (price < minPrice || price > maxPrice) show = false;
 
-                    product.style.display = show ? 'flex' : 'none';
-                    if (show) visibleCount++;
+                    if (show) {
+                        product.style.display = '';
+                        visibleCount++;
+                    } else {
+                        product.style.display = 'none';
+                    }
                 });
 
-                noResults.classList.toggle('hidden', visibleCount > 0);
-                productGrid.classList.toggle('hidden', visibleCount === 0);
+                if (visibleCount === 0) {
+                    productGrid.classList.add('hidden');
+                    noResults.classList.remove('hidden');
+                } else {
+                    productGrid.classList.remove('hidden');
+                    noResults.classList.add('hidden');
+                }
             }
 
             searchInput?.addEventListener('input', filterProducts);
-            filterBrand?.addEventListener('change', filterProducts);
-            filterLevel?.addEventListener('change', filterProducts);
-            filterPrice?.addEventListener('change', filterProducts);
+            filterInStock?.addEventListener('change', filterProducts);
+            priceRadios.forEach(r => r.addEventListener('change', filterProducts));
         })();
     </script>
 @endpush

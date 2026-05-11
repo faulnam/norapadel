@@ -215,6 +215,14 @@ class Product extends Model
     }
 
     /**
+     * Get reviews for this product
+     */
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    /**
      * Scope for active products
      */
     public function scopeActive($query)

@@ -41,7 +41,7 @@ class PageController extends Controller
 
         $sections = $this->getShopSections();
 
-        $newArrivals = Product::active()->inStock()->where('is_featured', false)->latest()->take(4)->get();
+        $newArrivals = Product::active()->inStock()->where('is_featured', false)->latest()->take(12)->get();
         $shopProducts = Product::active()->inStock()->where('is_featured', false)->latest()->take(15)->get();
 
         return view('pages.home_luxury', compact('products', 'testimonials', 'galleries', 'stats', 'sections', 'newArrivals', 'shopProducts'));
@@ -445,12 +445,44 @@ class PageController extends Controller
             abort(404);
         }
 
+        // Get reviews with user data
+        $reviews = $product->reviews()
+            ->with('user')
+            ->approved()
+            ->latest()
+            ->get();
+
+        // Calculate review statistics
+        $totalReviews = $reviews->count();
+        $avgRating = $totalReviews > 0 ? round($reviews->avg('rating'), 1) : 0;
+        
+        // Rating breakdown
+        $ratingBreakdown = [];
+        for ($i = 5; $i >= 1; $i--) {
+            $count = $reviews->where('rating', $i)->count();
+            $ratingBreakdown[$i] = $totalReviews > 0 ? round(($count / $totalReviews) * 100) : 0;
+        }
+
+        // Quality average (0-100 scale)
+        $avgQuality = $totalReviews > 0 ? round($reviews->avg('quality_rating')) : 0;
+        
+        // Sizing average (0-100 scale, 50 = true to size)
+        $avgSizing = $totalReviews > 0 ? round($reviews->avg('sizing_rating')) : 50;
+        
+        // Usual sizes distribution
+        $usualSizes = $reviews->whereNotNull('usual_size')
+            ->groupBy('usual_size')
+            ->map(function($group) {
+                return $group->count();
+            })
+            ->sortDesc();
+
         $relatedProducts = Product::active()
             ->inStock()
             ->where('is_featured', false)
             ->where('id', '!=', $product->id)
             ->where('category', $product->category)
-            ->take(4)
+            ->take(10)
             ->get();
 
         $testimonials = Testimonial::approved()
@@ -459,7 +491,18 @@ class PageController extends Controller
             ->take(6)
             ->get();
 
-        return view('pages.product-detail', compact('product', 'relatedProducts', 'testimonials'));
+        return view('pages.product-detail', compact(
+            'product', 
+            'relatedProducts', 
+            'testimonials',
+            'reviews',
+            'totalReviews',
+            'avgRating',
+            'ratingBreakdown',
+            'avgQuality',
+            'avgSizing',
+            'usualSizes'
+        ));
     }
 
     /**
