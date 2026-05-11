@@ -137,7 +137,7 @@
         <main class="pt-24 md:pt-8">
             <section class="relative h-[600px] overflow-hidden bg-zinc-900 md:h-[700px] lg:h-[800px]">
                 <div class="absolute inset-0">
-                    <img src="{{ asset('storage/utama.png') }}" 
+                    <img src="{{ asset('storage/fiks.jpeg') }}" 
                         alt="Padel Tennis" 
                         class="h-full w-full object-cover" 
                         loading="eager">
