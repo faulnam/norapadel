@@ -22,6 +22,9 @@ class Product extends Model
         'stock',
         'weight',
         'image',
+        'image_2',
+        'image_3',
+        'image_4',
         'category',
         'brand',
         'level',
@@ -251,7 +254,52 @@ class Product extends Model
      */
     public function getImageUrlAttribute(): string
     {
-        $rawPath = trim((string) $this->image);
+        return $this->getImagePathUrl($this->image);
+    }
+
+    /**
+     * Get image 2 URL
+     */
+    public function getImage2UrlAttribute(): string
+    {
+        return $this->getImagePathUrl($this->image_2);
+    }
+
+    /**
+     * Get image 3 URL
+     */
+    public function getImage3UrlAttribute(): string
+    {
+        return $this->getImagePathUrl($this->image_3);
+    }
+
+    /**
+     * Get image 4 URL
+     */
+    public function getImage4UrlAttribute(): string
+    {
+        return $this->getImagePathUrl($this->image_4);
+    }
+
+    /**
+     * Get all images as array
+     */
+    public function getAllImagesAttribute(): array
+    {
+        $images = [];
+        if ($this->image) $images[] = $this->image_url;
+        if ($this->image_2) $images[] = $this->image_2_url;
+        if ($this->image_3) $images[] = $this->image_3_url;
+        if ($this->image_4) $images[] = $this->image_4_url;
+        return $images;
+    }
+
+    /**
+     * Helper method to get image URL from path
+     */
+    private function getImagePathUrl($imagePath): string
+    {
+        $rawPath = trim((string) $imagePath);
         $normalizedPath = ltrim(str_replace('\\', '/', $rawPath), '/');
 
         if ($normalizedPath !== '' && preg_match('/^https?:\/\//i', $normalizedPath)) {

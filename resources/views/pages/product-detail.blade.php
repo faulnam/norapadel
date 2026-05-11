@@ -113,21 +113,16 @@
                     <div class="flex gap-3 max-w-[600px]" x-data="{ activeImage: '{{ $product->image_url }}' }">
                         <!-- Thumbnails -->
                         <div class="flex flex-col gap-3">
-                            <button @click="activeImage = '{{ $product->image_url }}'" 
-                                    class="w-16 h-16 md:w-20 md:h-20 bg-zinc-50 transition-all duration-200 flex items-center justify-center p-1.5 overflow-hidden"
-                                    :class="activeImage === '{{ $product->image_url }}' ? 'ring-2 ring-black ring-offset-2' : 'hover:bg-zinc-100'">
-                                <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
-                            </button>
-                            <button @click="activeImage = '{{ $product->image_url }}?angle=side'" 
-                                    class="w-16 h-16 md:w-20 md:h-20 bg-zinc-50 transition-all duration-200 flex items-center justify-center p-1.5 overflow-hidden"
-                                    :class="activeImage === '{{ $product->image_url }}?angle=side' ? 'ring-2 ring-black ring-offset-2' : 'hover:bg-zinc-100'">
-                                <img src="{{ $product->image_url }}" alt="{{ $product->name }} - Side" class="w-full h-full object-cover">
-                            </button>
-                            <button @click="activeImage = '{{ $product->image_url }}?angle=back'" 
-                                    class="w-16 h-16 md:w-20 md:h-20 bg-zinc-50 transition-all duration-200 flex items-center justify-center p-1.5 overflow-hidden"
-                                    :class="activeImage === '{{ $product->image_url }}?angle=back' ? 'ring-2 ring-black ring-offset-2' : 'hover:bg-zinc-100'">
-                                <img src="{{ $product->image_url }}" alt="{{ $product->name }} - Back" class="w-full h-full object-cover">
-                            </button>
+                            @php
+                                $allImages = $product->all_images;
+                            @endphp
+                            @foreach($allImages as $index => $imageUrl)
+                                <button @click="activeImage = '{{ $imageUrl }}'" 
+                                        class="w-16 h-16 md:w-20 md:h-20 bg-zinc-50 transition-all duration-200 flex items-center justify-center p-1.5 overflow-hidden"
+                                        :class="activeImage === '{{ $imageUrl }}' ? 'ring-2 ring-black ring-offset-2' : 'hover:bg-zinc-100'">
+                                    <img src="{{ $imageUrl }}" alt="{{ $product->name }} - Gambar {{ $index + 1 }}" class="w-full h-full object-cover">
+                                </button>
+                            @endforeach
                         </div>
 
                         <!-- Main Image -->
@@ -508,22 +503,30 @@
                              data-discount="{{ $related->hasActiveDiscount() ? 'yes' : 'no' }}"
                              data-bundle="{{ $related->package_type === 'bundle' ? 'yes' : 'no' }}"
                              data-sold="{{ $soldCount }}">
-                            <a href="{{ route('produk.show', $related) }}" class="block">
+                            <a href="{{ route('produk.show', $related) }}" class="block relative">
                                 <div class="relative aspect-square overflow-hidden">
                                     <img src="{{ $related->image_url }}" alt="{{ $related->name }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" onerror="this.onerror=null;this.src='/images/logo.png';" loading="lazy">
+                                    
+                                    <!-- Discount Badge - Always Visible -->
+                                    @if($related->hasActiveDiscount())
+                                        <span class="absolute left-0 top-0 z-20 bg-rose-500 px-2 py-1 text-[10px] font-bold text-white shadow-md">-{{ $related->formatted_discount_percent }}</span>
+                                    @endif
+                                    
+                                    <!-- Latest Badge -->
+                                    @if($related->category === 'arrivals')
+                                        <span class="absolute left-0 {{ $related->hasActiveDiscount() ? 'top-8' : 'top-0' }} z-20 bg-blue-500 px-2 py-1 text-[10px] font-bold text-white shadow-md">Latest</span>
+                                    @endif
+                                    
+                                    <!-- Bundle Badge -->
+                                    @if($related->package_type === 'bundle')
+                                        <span class="absolute left-0 {{ $related->hasActiveDiscount() && $related->category === 'arrivals' ? 'top-16' : ($related->hasActiveDiscount() || $related->category === 'arrivals' ? 'top-8' : 'top-0') }} z-20 bg-purple-500 px-2 py-1 text-[10px] font-bold text-white shadow-md">Bundle</span>
+                                    @endif
+                                    
+                                    <!-- Popular Badge -->
+                                    @if($related->isBestSeller())
+                                        <span class="absolute right-0 top-0 z-20 bg-amber-500 px-2 py-1 text-[10px] font-bold text-white shadow-md">Popular</span>
+                                    @endif
                                 </div>
-                                @if($related->hasActiveDiscount())
-                                    <span class="absolute left-0 top-0 bg-rose-500 px-2 py-0.5 text-[10px] font-semibold text-white z-10">-{{ $related->formatted_discount_percent }}</span>
-                                @endif
-                                @if($related->category === 'arrivals')
-                                    <span class="absolute left-0 {{ $related->hasActiveDiscount() ? 'top-7' : 'top-0' }} bg-blue-500 px-2 py-0.5 text-[10px] font-semibold text-white z-10">Latest</span>
-                                @endif
-                                @if($related->package_type === 'bundle')
-                                    <span class="absolute left-0 {{ $related->hasActiveDiscount() && $related->category === 'arrivals' ? 'top-14' : ($related->hasActiveDiscount() || $related->category === 'arrivals' ? 'top-7' : 'top-0') }} bg-purple-500 px-2 py-0.5 text-[10px] font-semibold text-white z-10">Bundle</span>
-                                @endif
-                                @if($related->isBestSeller())
-                                    <span class="absolute right-0 top-0 bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white z-10">Popular</span>
-                                @endif
                                 <div class="p-3">
                                     <h3 class="line-clamp-1 text-sm font-semibold text-black">{{ $related->name }}</h3>
                                     <p class="mt-1 text-xs text-zinc-600">{{ $related->category_label }}</p>

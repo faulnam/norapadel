@@ -148,16 +148,55 @@
                 </div>
                 
                 <div class="col-md-4">
-                    <div class="mb-3">
-                        <label for="image" class="form-label">Gambar Produk</label>
-                        <input type="file" class="form-control @error('image') is-invalid @enderror" 
-                               id="image" name="image" accept="image/*" onchange="previewImage(this)">
-                        @error('image')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                        <small class="text-muted">Format: JPG, PNG, GIF. Max: 2MB</small>
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Gambar Produk <span class="text-danger">*</span></label>
+                        <small class="text-muted d-block mb-2">Upload minimal 1 gambar, maksimal 4 gambar. Gambar #1 akan menjadi gambar utama.</small>
                         
-                        <div id="imagePreview" class="mt-3"></div>
+                        <!-- Image 1 (Main) -->
+                        <div class="mb-3">
+                            <label for="image" class="form-label text-primary fw-bold">Gambar #1 (Utama) <span class="text-danger">*</span></label>
+                            <input type="file" class="form-control @error('image') is-invalid @enderror" 
+                                   id="image" name="image" accept="image/*" onchange="previewImage(this, 1)" required>
+                            @error('image')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <div id="imagePreview1" class="mt-2"></div>
+                        </div>
+                        
+                        <!-- Image 2 -->
+                        <div class="mb-3">
+                            <label for="image_2" class="form-label">Gambar #2 (Opsional)</label>
+                            <input type="file" class="form-control @error('image_2') is-invalid @enderror" 
+                                   id="image_2" name="image_2" accept="image/*" onchange="previewImage(this, 2)">
+                            @error('image_2')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <div id="imagePreview2" class="mt-2"></div>
+                        </div>
+                        
+                        <!-- Image 3 -->
+                        <div class="mb-3">
+                            <label for="image_3" class="form-label">Gambar #3 (Opsional)</label>
+                            <input type="file" class="form-control @error('image_3') is-invalid @enderror" 
+                                   id="image_3" name="image_3" accept="image/*" onchange="previewImage(this, 3)">
+                            @error('image_3')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <div id="imagePreview3" class="mt-2"></div>
+                        </div>
+                        
+                        <!-- Image 4 -->
+                        <div class="mb-3">
+                            <label for="image_4" class="form-label">Gambar #4 (Opsional)</label>
+                            <input type="file" class="form-control @error('image_4') is-invalid @enderror" 
+                                   id="image_4" name="image_4" accept="image/*" onchange="previewImage(this, 4)">
+                            @error('image_4')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <div id="imagePreview4" class="mt-2"></div>
+                        </div>
+                        
+                        <small class="text-muted">Format: JPG, PNG, GIF. Max: 2MB per gambar</small>
                     </div>
                     
                     <div class="mb-3">
@@ -166,8 +205,6 @@
                             <label class="form-check-label" for="is_active">Aktifkan Produk</label>
                         </div>
                     </div>
-
-                    
                 </div>
             </div>
             
@@ -187,12 +224,12 @@
 
 @push('scripts')
 <script>
-function previewImage(input) {
-    const preview = document.getElementById('imagePreview');
+function previewImage(input, imageNumber) {
+    const preview = document.getElementById('imagePreview' + imageNumber);
     preview.innerHTML = '';
     if (input.files && input.files[0]) {
         const reader = new FileReader();
-        reader.onload = e => preview.innerHTML = `<img src="${e.target.result}" class="img-fluid rounded" style="max-height:200px;">`;
+        reader.onload = e => preview.innerHTML = `<img src="${e.target.result}" class="img-fluid rounded border" style="max-height:150px;">`;
         reader.readAsDataURL(input.files[0]);
     }
 }
