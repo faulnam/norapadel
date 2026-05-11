@@ -47,6 +47,22 @@
                         <span>Masuk</span>
                     </a>
                 @endguest
+                
+                <a href="{{ route('customer.wishlist.index') }}" class="relative transition duration-300 hover:text-black" aria-label="Wishlist" title="Wishlist">
+                    <i class="fas fa-heart text-sm"></i>
+                    @php
+                        if (auth()->check() && auth()->user()->role === 'customer') {
+                            $wishlistCount = auth()->user()->wishlistItems()->count();
+                        } else {
+                            $guestWishlist = session()->get('guest_wishlist', []);
+                            $wishlistCount = count($guestWishlist);
+                        }
+                    @endphp
+                    @if($wishlistCount > 0)
+                        <span class="pointer-events-none absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
+                    @endif
+                </a>
+                
                 @auth
                     <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-black" aria-label="Cart">
                         <i class="fas fa-shopping-bag text-sm"></i>
@@ -69,6 +85,11 @@
                         @endif
                     </a>
                 @endauth
+                
+                <button onclick="openSearchModal()" class="transition duration-300 hover:text-black" aria-label="Search" title="Cari Produk">
+                    <i class="fas fa-search text-sm"></i>
+                </button>
+                
                 <button type="button" class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/15 bg-transparent text-black transition duration-300 hover:border-black/30 md:hidden" data-mobile-menu-toggle aria-label="Toggle navigation" aria-expanded="false">
                     <i class="fas fa-bars text-sm"></i>
                 </button>

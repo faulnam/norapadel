@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\ProfileController as AdminProfile;
 use App\Http\Controllers\Admin\UserManagementController as AdminStaff;
 use App\Http\Controllers\Admin\ShippingDiscountController;
 use App\Http\Controllers\Admin\ReportController as AdminReport;
+use App\Http\Controllers\Admin\ReviewController as AdminReview;
 use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Customer\OrderController as CustomerOrder;
 use App\Http\Controllers\Customer\PaymentController;
@@ -21,9 +22,10 @@ use App\Http\Controllers\Customer\TestimonialController as CustomerTestimonial;
 use App\Http\Controllers\Courier\DashboardController as CourierDashboard;
 use App\Http\Controllers\Courier\DeliveryController as CourierDelivery;
 use App\Http\Controllers\Courier\ProfileController as CourierProfile;
-use App\Http\Controllers\Courier\NotificationController as CourierNotification;
+use App\Http\Controllers\Courier\NotificationController;
 use App\Http\Controllers\BiteshipWebhookController;
 use App\Http\Controllers\PakasirWebhookController;
+use App\Http\Controllers\ReviewController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Product;
@@ -197,6 +199,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::patch('/testimonials/{testimonial}/reject', [AdminTestimonial::class, 'reject'])->name('testimonials.reject');
     Route::delete('/testimonials/{testimonial}', [AdminTestimonial::class, 'destroy'])->name('testimonials.destroy');
     
+    // Reviews
+    Route::get('/reviews', [AdminReview::class, 'index'])->name('reviews.index');
+    Route::get('/reviews/{review}', [AdminReview::class, 'show'])->name('reviews.show');
+    Route::patch('/reviews/{review}/approve', [AdminReview::class, 'approve'])->name('reviews.approve');
+    Route::patch('/reviews/{review}/reject', [AdminReview::class, 'reject'])->name('reviews.reject');
+    Route::delete('/reviews/{review}', [AdminReview::class, 'destroy'])->name('reviews.destroy');
+    
     // Users
     Route::get('/users', [AdminUser::class, 'index'])->name('users.index');
     Route::get('/users/{user}', [AdminUser::class, 'show'])->name('users.show');
@@ -348,6 +357,11 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'customer'])->
     Route::get('/products/{product}', function($product) {
         return redirect()->route('produk.show', $product);
     })->name('products.show');
+
+    // Reviews
+    Route::post('/reviews/{product}', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::patch('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
+    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
     
     // Checkout & Orders (removed - moved to guest accessible routes)
     Route::get('/orders', [CustomerOrder::class, 'index'])->name('orders.index');

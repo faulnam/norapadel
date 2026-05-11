@@ -61,61 +61,124 @@
         </h3>
         
         @if($wishlistItems->count() > 0)
-            <div class="mb-4 flex items-center justify-between">
-                <span class="text-sm text-zinc-600">{{ $wishlistItems->count() }} Produk</span>
-                <form action="{{ route('customer.wishlist.clear') }}" method="POST" 
-                      onsubmit="return confirm('Kosongkan wishlist?')">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="rounded-full border border-rose-600 bg-white px-4 py-1.5 text-xs font-medium text-rose-600 transition hover:bg-rose-50">
-                        <i class="fas fa-trash mr-1"></i>Kosongkan Wishlist
-                    </button>
-                </form>
-            </div>
-
-            <div class="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                @foreach($wishlistItems as $item)
-                    <div class="group overflow-hidden rounded-2xl border border-black/6 bg-white shadow-sm transition duration-300 hover:shadow-lg">
-                        <a href="{{ route('produk.show', $item->product) }}" class="block">
-                            <div class="relative aspect-square overflow-hidden bg-zinc-100">
-                                <img src="{{ $item->product->image_url }}" alt="{{ $item->product->name }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105">
-                                @if($item->product->hasActiveDiscount())
-                                    <span class="absolute left-3 top-3 rounded-full bg-rose-500 px-2.5 py-1 text-[11px] font-semibold text-white">-{{ $item->product->formatted_discount_percent }}</span>
-                                @endif
-                                @if($item->product->package_type === 'bundle')
-                                    <span class="absolute left-3 {{ $item->product->hasActiveDiscount() ? 'top-12' : 'top-3' }} rounded-full bg-purple-500 px-2.5 py-1 text-[11px] font-semibold text-white">Bundle</span>
-                                @endif
-                            </div>
-                            <div class="p-4">
-                                <h3 class="line-clamp-2 text-sm font-semibold text-black">{{ $item->product->name }}</h3>
-                                <p class="mt-1 text-xs text-zinc-600">{{ $item->product->category_label }}</p>
-                                @if($item->product->hasActiveDiscount())
-                                    <p class="mt-2 text-base font-bold text-black">{{ $item->product->formatted_discounted_price }}</p>
-                                    <p class="text-xs text-zinc-400 line-through">{{ $item->product->formatted_price }}</p>
-                                @else
-                                    <p class="mt-2 text-base font-bold text-black">{{ $item->product->formatted_price }}</p>
-                                @endif
-                            </div>
-                        </a>
-                        <div class="flex gap-2 px-4 pb-4">
-                            <form action="{{ route('customer.cart.add', $item->product) }}" method="POST" class="flex-1">
-                                @csrf
-                                <input type="hidden" name="quantity" value="1">
-                                <button type="submit" class="w-full rounded-full bg-blue-600 px-3 py-2 text-xs font-medium text-white transition duration-300 hover:bg-blue-700">
-                                    <i class="fas fa-shopping-cart mr-1"></i>Tambah ke Keranjang
-                                </button>
-                            </form>
-                            <form action="{{ route('customer.wishlist.remove', $item->product->id) }}" method="POST">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="rounded-full bg-rose-600 px-3 py-2 text-xs font-medium text-white transition duration-300 hover:bg-rose-700">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </form>
-                        </div>
+        <div class="grid gap-6 lg:grid-cols-3">
+            <div class="lg:col-span-2">
+                <div class="mb-4 overflow-hidden rounded-2xl border border-black/6 bg-white shadow-sm">
+                    <div class="flex items-center justify-between border-b border-black/6 bg-zinc-50 px-6 py-4">
+                        <span class="text-sm font-medium text-black">{{ $wishlistItems->count() }} Item</span>
+                        <form action="{{ route('customer.wishlist.clear') }}" method="POST" 
+                              onsubmit="return confirm('Kosongkan wishlist?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="rounded-full border border-rose-600 bg-white px-4 py-1.5 text-xs font-medium text-rose-600 transition hover:bg-rose-50">
+                                <i class="fas fa-trash mr-1"></i>Kosongkan
+                            </button>
+                        </form>
                     </div>
-                @endforeach
+                    <div>
+                        @foreach($wishlistItems as $item)
+                            <div class="border-b border-black/6 p-6 last:border-0">
+                                <div class="flex flex-col gap-4 sm:flex-row">
+                                    <div class="relative mx-auto shrink-0 sm:mx-0">
+                                        <img src="{{ $item->product->image_url }}" alt="{{ $item->product->name }}" class="h-20 w-20 rounded-xl object-cover">
+                                        @if($item->product->hasActiveDiscount())
+                                            <span class="absolute left-0 top-0 rounded-br-lg rounded-tl-lg bg-rose-500 px-1.5 py-0.5 text-[10px] font-semibold text-white">-{{ $item->product->formatted_discount_percent }}</span>
+                                        @endif
+                                    </div>
+                                    
+                                    <div class="flex flex-1 flex-col">
+                                        <div class="flex items-start justify-between">
+                                            <div>
+                                                <h6 class="text-base font-semibold text-black">{{ $item->product->name }}</h6>
+                                                <p class="mt-0.5 text-xs text-zinc-500">{{ $item->product->category_label }}</p>
+                                                @if($item->product->hasActiveDiscount())
+                                                    <p class="mt-1 text-sm font-medium text-emerald-600">{{ $item->product->formatted_discounted_price }}</p>
+                                                    <p class="text-xs text-zinc-400 line-through">{{ $item->product->formatted_price }}</p>
+                                                @else
+                                                    <p class="mt-1 text-sm font-medium text-emerald-600">{{ $item->product->formatted_price }}</p>
+                                                @endif
+                                            </div>
+                                            <form action="{{ route('customer.wishlist.remove', $item->product->id) }}" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="text-rose-600 transition hover:text-rose-700">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                        
+                                        <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                            <form action="{{ route('customer.cart.add', $item->product) }}" method="POST" class="inline-flex">
+                                                @csrf
+                                                <input type="hidden" name="quantity" value="1">
+                                                <button type="submit" class="flex items-center gap-2 rounded-full border border-black/10 bg-white px-4 py-2 text-sm font-medium text-black transition hover:bg-black hover:text-white">
+                                                    <i class="fas fa-shopping-cart text-xs"></i>
+                                                    <span>Tambah ke Keranjang</span>
+                                                </button>
+                                            </form>
+                                            
+                                            <a href="{{ route('produk.show', $item->product) }}" class="text-sm font-medium text-black underline decoration-black/30 underline-offset-4 hover:decoration-black transition">
+                                                Lihat Detail
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+                
+                <a href="{{ route('home') }}#products" class="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-6 py-2.5 text-sm font-medium text-black transition hover:bg-black hover:text-white">
+                    <i class="fas fa-arrow-left"></i>Lanjut Belanja
+                </a>
             </div>
+            
+            <div class="lg:col-span-1">
+                <div class="overflow-hidden rounded-2xl border border-black/6 bg-white shadow-sm">
+                    <div class="border-b border-black/6 bg-black px-6 py-4">
+                        <h4 class="text-lg font-semibold text-white"><i class="fas fa-receipt mr-2"></i>Ringkasan</h4>
+                    </div>
+                    <div class="px-6 py-6">
+                        <div class="flex justify-between border-b border-black/6 pb-3 text-sm">
+                            <span class="text-zinc-600">Total Item</span>
+                            <span class="font-medium text-black">{{ $wishlistItems->count() }} pcs</span>
+                        </div>
+                        @php
+                            $totalPrice = 0;
+                            $originalTotal = 0;
+                            foreach($wishlistItems as $item) {
+                                $price = $item->product->hasActiveDiscount() ? $item->product->discounted_price : $item->product->price;
+                                $totalPrice += $price;
+                                $originalTotal += $item->product->price;
+                            }
+                            $totalDiscount = $originalTotal - $totalPrice;
+                        @endphp
+                        @if($totalDiscount > 0)
+                            <div class="flex justify-between border-b border-black/6 py-3 text-sm">
+                                <span class="text-zinc-600">Harga Normal</span>
+                                <span class="text-zinc-400 line-through">Rp {{ number_format($originalTotal, 0, ',', '.') }}</span>
+                            </div>
+                            <div class="flex justify-between border-b border-black/6 py-3 text-sm text-rose-600">
+                                <span>Diskon Produk</span>
+                                <span>-Rp {{ number_format($totalDiscount, 0, ',', '.') }}</span>
+                            </div>
+                        @endif
+                        <div class="flex justify-between py-3 text-sm">
+                            <span class="text-zinc-600">Subtotal</span>
+                            <span class="font-medium text-black">Rp {{ number_format($totalPrice, 0, ',', '.') }}</span>
+                        </div>
+                        <div class="mb-6 flex justify-between border-t border-black/6 pt-4">
+                            <strong class="text-lg text-black">Total</strong>
+                            <strong class="text-lg text-emerald-600">Rp {{ number_format($totalPrice, 0, ',', '.') }}</strong>
+                        </div>
+                        
+                        <a href="{{ route('customer.cart.index') }}" class="block w-full rounded-full bg-black px-6 py-3 text-center text-sm font-medium text-white transition hover:bg-black/90">
+                            <i class="fas fa-shopping-bag mr-2"></i>Lihat Keranjang
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
         @else
             <div class="py-20 text-center">
                 <i class="fas fa-heart mb-6 text-6xl text-zinc-300"></i>

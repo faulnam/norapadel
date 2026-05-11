@@ -55,7 +55,7 @@
                         }
                     @endphp
                     @if($wishlistCount > 0)
-                        <span class="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
+                        <span class="pointer-events-none absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
                     @endif
                 </a>
                 
@@ -399,9 +399,15 @@
                             <!-- Header -->
                             <div class="flex items-center justify-between mb-6">
                                 <h3 class="text-[11px] font-semibold tracking-[0.15em] text-black uppercase">Reviews {{ $totalReviews }}</h3>
-                                <button class="bg-black text-white px-6 py-2.5 text-[10px] font-semibold tracking-[0.1em] uppercase transition duration-200 hover:bg-white hover:text-black border border-black">
-                                    Write a Review
-                                </button>
+                                @auth
+                                    <button onclick="openReviewModal()" class="bg-black text-white px-6 py-2.5 text-[10px] font-semibold tracking-[0.1em] uppercase transition duration-200 hover:bg-white hover:text-black border border-black">
+                                        Write a Review
+                                    </button>
+                                @else
+                                    <a href="{{ route('login') }}" class="bg-black text-white px-6 py-2.5 text-[10px] font-semibold tracking-[0.1em] uppercase transition duration-200 hover:bg-white hover:text-black border border-black">
+                                        Login to Review
+                                    </a>
+                                @endauth
                             </div>
 
                             <!-- Search & Filter -->
@@ -812,5 +818,140 @@
         }
     }
 })();
+
+// Review Modal
+function openReviewModal() {
+    document.getElementById('reviewModal').classList.remove('hidden');
+}
+
+function closeReviewModal() {
+    document.getElementById('reviewModal').classList.add('hidden');
+}
+
+// Handle star rating selection
+function selectRating(rating) {
+    document.querySelectorAll('.star-rating i').forEach((star, index) => {
+        if (index < rating) {
+            star.classList.remove('text-zinc-200');
+            star.classList.add('text-black');
+        } else {
+            star.classList.remove('text-black');
+            star.classList.add('text-zinc-200');
+        }
+    });
+    document.getElementById('ratingInput').value = rating;
+}
+
+// Handle quality rating slider
+document.getElementById('qualityRatingInput')?.addEventListener('input', function() {
+    document.getElementById('qualityRatingValue').textContent = this.value + '%';
+});
+
+// Handle sizing rating slider
+document.getElementById('sizingRatingInput')?.addEventListener('input', function() {
+    document.getElementById('sizingRatingValue').textContent = this.value + '%';
+});
+
+// Submit review form
+document.getElementById('reviewForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    fetch('{{ route('customer.reviews.store', $product) }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            rating: formData.get('rating'),
+            comment: formData.get('comment'),
+            quality_rating: formData.get('quality_rating'),
+            sizing_rating: formData.get('sizing_rating'),
+            usual_size: formData.get('usual_size')
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            closeReviewModal();
+            location.reload();
+        } else {
+            alert(data.message || 'Gagal mengirim review');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Terjadi kesalahan. Silakan coba lagi.');
+    });
+});
 </script>
+
+<!-- Review Modal -->
+<div id="reviewModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div class="relative w-full max-w-lg mx-4 bg-white rounded-2xl shadow-xl">
+        <div class="flex items-center justify-between p-6 border-b border-zinc-200">
+            <h3 class="text-lg font-semibold text-black">Write a Review</h3>
+            <button onclick="closeReviewModal()" class="text-zinc-400 hover:text-black transition">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+        <form id="reviewForm" class="p-6 space-y-4">
+            <!-- Rating -->
+            <div>
+                <label class="block text-sm font-medium text-black mb-2">Rating *</label>
+                <div class="flex gap-2 star-rating cursor-pointer">
+                    <i class="fas fa-star text-2xl text-zinc-200 hover:text-black transition" onclick="selectRating(1)"></i>
+                    <i class="fas fa-star text-2xl text-zinc-200 hover:text-black transition" onclick="selectRating(2)"></i>
+                    <i class="fas fa-star text-2xl text-zinc-200 hover:text-black transition" onclick="selectRating(3)"></i>
+                    <i class="fas fa-star text-2xl text-zinc-200 hover:text-black transition" onclick="selectRating(4)"></i>
+                    <i class="fas fa-star text-2xl text-zinc-200 hover:text-black transition" onclick="selectRating(5)"></i>
+                </div>
+                <input type="hidden" id="ratingInput" name="rating" required>
+            </div>
+
+            <!-- Comment -->
+            <div>
+                <label for="comment" class="block text-sm font-medium text-black mb-2">Comment</label>
+                <textarea id="comment" name="comment" rows="4" class="w-full px-4 py-2.5 border border-zinc-200 rounded-lg text-sm focus:outline-none focus:border-zinc-400 transition" placeholder="Share your experience with this product..."></textarea>
+            </div>
+
+            <!-- Quality Rating -->
+            <div>
+                <label for="qualityRatingInput" class="block text-sm font-medium text-black mb-2">Quality Rating</label>
+                <input type="range" id="qualityRatingInput" name="quality_rating" min="0" max="100" value="50" class="w-full">
+                <div class="flex justify-between text-xs text-zinc-500 mt-1">
+                    <span>Low</span>
+                    <span id="qualityRatingValue">50%</span>
+                    <span>High</span>
+                </div>
+            </div>
+
+            <!-- Sizing Rating -->
+            <div>
+                <label for="sizingRatingInput" class="block text-sm font-medium text-black mb-2">Sizing Rating</label>
+                <input type="range" id="sizingRatingInput" name="sizing_rating" min="0" max="100" value="50" class="w-full">
+                <div class="flex justify-between text-xs text-zinc-500 mt-1">
+                    <span>Runs Small</span>
+                    <span id="sizingRatingValue">50%</span>
+                    <span>Runs Large</span>
+                </div>
+            </div>
+
+            <!-- Usual Size -->
+            <div>
+                <label for="usualSize" class="block text-sm font-medium text-black mb-2">Usual Size (Optional)</label>
+                <input type="text" id="usualSize" name="usual_size" class="w-full px-4 py-2.5 border border-zinc-200 rounded-lg text-sm focus:outline-none focus:border-zinc-400 transition" placeholder="e.g., M, L, 42, etc.">
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="w-full bg-black text-white py-3 rounded-lg font-semibold text-sm hover:bg-black/90 transition">
+                Submit Review
+            </button>
+        </form>
+    </div>
+</div>
 @endpush
