@@ -162,12 +162,12 @@
                     
                     <div class="relative group">
                         <!-- Left Arrow -->
-                        <button class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded w-10 h-10 flex items-center justify-center transition duration-300 opacity-0 group-hover:opacity-100" onclick="scrollNewArrivals('left')">
+                        <button class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded w-10 h-10 flex items-center justify-center transition duration-300" onclick="scrollNewArrivals('left')">
                             <i class="fas fa-chevron-left text-black text-sm"></i>
                         </button>
                         
                         <!-- Right Arrow -->
-                        <button class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded w-10 h-10 flex items-center justify-center transition duration-300 opacity-0 group-hover:opacity-100" onclick="scrollNewArrivals('right')">
+                        <button class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded w-10 h-10 flex items-center justify-center transition duration-300" onclick="scrollNewArrivals('right')">
                             <i class="fas fa-chevron-right text-black text-sm"></i>
                         </button>
                         
