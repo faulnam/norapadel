@@ -69,6 +69,7 @@
                             <i class="fas fa-shopping-bag text-sm"></i>
                         </a>
                     @endauth
+                    
                     <button type="button"
                         class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-black transition duration-300 hover:border-black/35 md:hidden"
                         data-mobile-menu-toggle aria-label="Toggle navigation" aria-expanded="false">
@@ -100,9 +101,9 @@
                     <div class="rounded-2xl border border-black/10 bg-white p-6 shadow-sm">
                         <h2 class="text-lg font-semibold text-black">Informasi Kontak</h2>
                         <ul class="mt-5 space-y-3 text-sm text-zinc-600">
-                            <li><span class="font-medium text-black">WhatsApp:</span> {{ config('branding.phone', '+62 812 7788 9900') }}</li>
+                            <li><span class="font-medium text-black">WhatsApp:</span> {{ config('branding.phone', '08511735858') }}</li>
                             <li><span class="font-medium text-black">Email:</span> support@norapadel.com</li>
-                            <li><span class="font-medium text-black">Alamat:</span> {{ config('branding.address', 'Jl. Padel Arena No. 21, Surabaya') }}</li>
+                            <li><span class="font-medium text-black">Alamat:</span> {{ config('branding.address', 'Citraland, Surabaya, East Java, Indonesia') }}</li>
                         </ul>
                     </div>
 
@@ -151,6 +152,7 @@
                     mobileMenuToggle.setAttribute('aria-expanded', String(!mobileMenu.classList.contains('hidden')));
                 });
             }
+
         })();
     </script>
 @endpush

@@ -132,6 +132,40 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="brand" class="form-label">Brand</label>
+                                <select class="form-select @error('brand') is-invalid @enderror" id="brand" name="brand">
+                                    <option value="">Pilih Brand</option>
+                                    <option value="Bullpadel" {{ old('brand') == 'Bullpadel' ? 'selected' : '' }}>Bullpadel</option>
+                                    <option value="Babolat" {{ old('brand') == 'Babolat' ? 'selected' : '' }}>Babolat</option>
+                                    <option value="Nox" {{ old('brand') == 'Nox' ? 'selected' : '' }}>Nox</option>
+                                    <option value="Alpha" {{ old('brand') == 'Alpha' ? 'selected' : '' }}>Alpha</option>
+                                    <option value="Zephyr" {{ old('brand') == 'Zephyr' ? 'selected' : '' }}>Zephyr</option>
+                                    <option value="Arronax" {{ old('brand') == 'Arronax' ? 'selected' : '' }}>Arronax</option>
+                                </select>
+                                @error('brand')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="level" class="form-label">Level</label>
+                                <select class="form-select @error('level') is-invalid @enderror" id="level" name="level">
+                                    <option value="">Pilih Level</option>
+                                    <option value="beginner" {{ old('level') == 'beginner' ? 'selected' : '' }}>Beginner</option>
+                                    <option value="intermediate" {{ old('level') == 'intermediate' ? 'selected' : '' }}>Intermediate</option>
+                                    <option value="pro" {{ old('level') == 'pro' ? 'selected' : '' }}>Pro</option>
+                                </select>
+                                @error('level')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
                     
                     <div class="mb-3">
                         <label for="weight" class="form-label">Berat <span class="text-danger">*</span></label>

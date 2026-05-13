@@ -74,9 +74,24 @@
                     @endif
                 </a>
                 
-                <button onclick="openSearchModal()" class="transition duration-300 hover:text-black" aria-label="Search" title="Cari Produk">
-                    <i class="fas fa-search text-sm"></i>
-                </button>
+                <div class="relative">
+                    <button onclick="toggleSearchDropdown()" class="transition duration-300 hover:text-black" aria-label="Search" title="Cari Produk">
+                        <i class="fas fa-search text-sm"></i>
+                    </button>
+                    
+                    <!-- Search Dropdown -->
+                    <div id="searchDropdown" class="hidden absolute right-0 top-full mt-2 w-80 bg-white rounded-lg shadow-xl border border-zinc-200 p-3 z-50">
+                        <div class="flex gap-2">
+                            <input type="text" placeholder="Cari produk..." class="flex-1 px-3 py-2 text-sm text-black border border-zinc-300 rounded-lg focus:outline-none focus:border-blue-500" id="searchInput" autocomplete="off">
+                            <button type="button" class="px-4 py-2 bg-black text-white text-sm rounded-lg hover:bg-zinc-800 transition">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                        <div id="searchResults" class="mt-2 max-h-60 overflow-y-auto hidden">
+                            <!-- Search results will appear here -->
+                        </div>
+                    </div>
+                </div>
                 
                 <button type="button" class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-black transition duration-300 hover:border-black/35 md:hidden" data-mobile-menu-toggle aria-label="Toggle navigation" aria-expanded="false">
                     <i class="fas fa-bars text-sm"></i>
@@ -660,6 +675,79 @@
         mobileMenuToggle.addEventListener('click', () => {
             mobileMenu.classList.toggle('hidden');
             mobileMenuToggle.setAttribute('aria-expanded', String(!mobileMenu.classList.contains('hidden')));
+        });
+    }
+
+    // Search Dropdown Toggle
+    window.toggleSearchDropdown = function() {
+        const dropdown = document.getElementById('searchDropdown');
+        if (dropdown) {
+            dropdown.classList.toggle('hidden');
+            if (!dropdown.classList.contains('hidden')) {
+                const navbarSearchInput = document.getElementById('searchInput');
+                if (navbarSearchInput) {
+                    navbarSearchInput.focus();
+                    // Attach autocomplete listener if not already attached
+                    if (!navbarSearchInput.hasAttribute('data-autocomplete-attached')) {
+                        attachAutocompleteListener(navbarSearchInput);
+                        navbarSearchInput.setAttribute('data-autocomplete-attached', 'true');
+                    }
+                }
+            }
+        }
+    };
+
+    // Close search dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('searchDropdown');
+        const searchButton = event.target.closest('button[onclick="toggleSearchDropdown()"]');
+        
+        if (dropdown && !dropdown.contains(event.target) && !searchButton) {
+            dropdown.classList.add('hidden');
+        }
+    });
+
+    // Autocomplete Search Function
+    function attachAutocompleteListener(searchInput) {
+        const searchResults = document.getElementById('searchResults');
+        let searchTimeout;
+
+        searchInput.addEventListener('input', function() {
+            const query = this.value.trim();
+            
+            clearTimeout(searchTimeout);
+            
+            if (query.length < 2) {
+                searchResults.classList.add('hidden');
+                searchResults.innerHTML = '';
+                return;
+            }
+            
+            searchTimeout = setTimeout(() => {
+                fetch(`/api/products/search?q=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.products && data.products.length > 0) {
+                            searchResults.innerHTML = data.products.map(product => `
+                                <a href="${product.url}" class="flex items-center gap-3 p-2 hover:bg-zinc-100 rounded-lg transition">
+                                    <img src="${product.image}" alt="${product.name}" class="w-12 h-12 object-cover rounded">
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium text-black truncate">${product.name}</p>
+                                        <p class="text-xs text-zinc-600">${product.category}</p>
+                                    </div>
+                                    <p class="text-sm font-semibold text-black">${product.price}</p>
+                                </a>
+                            `).join('');
+                            searchResults.classList.remove('hidden');
+                        } else {
+                            searchResults.innerHTML = '<p class="text-sm text-zinc-500 p-2 text-center">Tidak ada produk ditemukan</p>';
+                            searchResults.classList.remove('hidden');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Search error:', error);
+                    });
+            }, 300);
         });
     }
 

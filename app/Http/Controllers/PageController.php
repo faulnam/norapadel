@@ -16,7 +16,7 @@ class PageController extends Controller
     /**
      * Show home page
      */
-    public function home()
+    public function home(Request $request)
     {
         $products = Product::active()
             ->inStock()
@@ -42,9 +42,33 @@ class PageController extends Controller
         $sections = $this->getShopSections();
 
         $newArrivals = Product::active()->inStock()->where('is_featured', false)->latest()->take(12)->get();
-        $shopProducts = Product::active()->inStock()->where('is_featured', false)->latest()->take(15)->get();
 
-        return view('pages.home_luxury', compact('products', 'testimonials', 'galleries', 'stats', 'sections', 'newArrivals', 'shopProducts'));
+        // Shop products with server-side filtering
+        $shopProductsQuery = Product::active()->inStock()->where('is_featured', false);
+
+        if ($request->filled('brand')) {
+            $shopProductsQuery->where('brand', $request->brand);
+        }
+
+        if ($request->filled('level')) {
+            $shopProductsQuery->where('level', $request->level);
+        }
+
+        $shopProducts = $shopProductsQuery->latest()->take(8)->get();
+        $brands = Product::active()->whereNotNull('brand')->distinct()->pluck('brand')->sort();
+
+        return view('pages.home_luxury', [
+            'products' => $products,
+            'testimonials' => $testimonials,
+            'galleries' => $galleries,
+            'stats' => $stats,
+            'sections' => $sections,
+            'newArrivals' => $newArrivals,
+            'shopProducts' => $shopProducts,
+            'brands' => $brands,
+            'selectedBrand' => $request->brand,
+            'selectedLevel' => $request->level,
+        ]);
     }
 
     /**
@@ -63,6 +87,22 @@ class PageController extends Controller
                 $q->where('name', 'like', "%{$keyword}%")
                     ->orWhere('description', 'like', "%{$keyword}%");
             });
+        }
+
+        if ($request->filled('brand')) {
+            $query->where('brand', $request->brand);
+        }
+
+        if ($request->filled('level')) {
+            $query->where('level', $request->level);
+        }
+
+        if ($request->filled('min_price')) {
+            $query->where('price', '>=', $request->min_price);
+        }
+
+        if ($request->filled('max_price')) {
+            $query->where('price', '<=', $request->max_price);
         }
 
         if ($request->filled('sort')) {
@@ -86,10 +126,16 @@ class PageController extends Controller
         }
 
         $products = $query->paginate(12)->withQueryString();
+        $brands = Product::active()->whereNotNull('brand')->distinct()->pluck('brand')->sort();
 
         return view('pages.racket', [
             'products' => $products,
             'search' => $request->q,
+            'brands' => $brands,
+            'selectedBrand' => $request->brand,
+            'selectedLevel' => $request->level,
+            'selectedMinPrice' => $request->min_price,
+            'selectedMaxPrice' => $request->max_price,
         ]);
     }
 
@@ -111,6 +157,22 @@ class PageController extends Controller
             });
         }
 
+        if ($request->filled('brand')) {
+            $query->where('brand', $request->brand);
+        }
+
+        if ($request->filled('level')) {
+            $query->where('level', $request->level);
+        }
+
+        if ($request->filled('min_price')) {
+            $query->where('price', '>=', $request->min_price);
+        }
+
+        if ($request->filled('max_price')) {
+            $query->where('price', '<=', $request->max_price);
+        }
+
         if ($request->filled('sort')) {
             switch ($request->sort) {
                 case 'price_low':
@@ -132,10 +194,16 @@ class PageController extends Controller
         }
 
         $products = $query->paginate(12)->withQueryString();
+        $brands = Product::active()->whereNotNull('brand')->distinct()->pluck('brand')->sort();
 
         return view('pages.shoes', [
             'products' => $products,
             'search' => $request->q,
+            'brands' => $brands,
+            'selectedBrand' => $request->brand,
+            'selectedLevel' => $request->level,
+            'selectedMinPrice' => $request->min_price,
+            'selectedMaxPrice' => $request->max_price,
         ]);
     }
 
@@ -157,6 +225,22 @@ class PageController extends Controller
             });
         }
 
+        if ($request->filled('brand')) {
+            $query->where('brand', $request->brand);
+        }
+
+        if ($request->filled('level')) {
+            $query->where('level', $request->level);
+        }
+
+        if ($request->filled('min_price')) {
+            $query->where('price', '>=', $request->min_price);
+        }
+
+        if ($request->filled('max_price')) {
+            $query->where('price', '<=', $request->max_price);
+        }
+
         if ($request->filled('sort')) {
             switch ($request->sort) {
                 case 'price_low':
@@ -178,10 +262,16 @@ class PageController extends Controller
         }
 
         $products = $query->paginate(12)->withQueryString();
+        $brands = Product::active()->whereNotNull('brand')->distinct()->pluck('brand')->sort();
 
         return view('pages.apparel', [
             'products' => $products,
             'search' => $request->q,
+            'brands' => $brands,
+            'selectedBrand' => $request->brand,
+            'selectedLevel' => $request->level,
+            'selectedMinPrice' => $request->min_price,
+            'selectedMaxPrice' => $request->max_price,
         ]);
     }
 
@@ -220,6 +310,14 @@ class PageController extends Controller
             $query->where('level', $request->level);
         }
 
+        if ($request->filled('min_price')) {
+            $query->where('price', '>=', $request->min_price);
+        }
+
+        if ($request->filled('max_price')) {
+            $query->where('price', '<=', $request->max_price);
+        }
+
         if ($request->filled('sort')) {
             switch ($request->sort) {
                 case 'price_low':
@@ -240,7 +338,15 @@ class PageController extends Controller
         $products = $query->paginate(24)->withQueryString();
         $brands = Product::active()->whereNotNull('brand')->distinct()->pluck('brand')->sort();
 
-        return view('pages.shop', compact('products', 'brands'));
+        return view('pages.shop', [
+            'products' => $products,
+            'brands' => $brands,
+            'selectedBrand' => $request->brand,
+            'selectedLevel' => $request->level,
+            'selectedCategory' => $request->category,
+            'selectedMinPrice' => $request->min_price,
+            'selectedMaxPrice' => $request->max_price,
+        ]);
     }
 
     /**
@@ -550,6 +656,22 @@ class PageController extends Controller
             });
         }
 
+        if ($request->filled('brand')) {
+            $query->where('brand', $request->brand);
+        }
+
+        if ($request->filled('level')) {
+            $query->where('level', $request->level);
+        }
+
+        if ($request->filled('min_price')) {
+            $query->where('price', '>=', $request->min_price);
+        }
+
+        if ($request->filled('max_price')) {
+            $query->where('price', '<=', $request->max_price);
+        }
+
         if ($request->filled('sort')) {
             switch ($request->sort) {
                 case 'price_low':
@@ -571,8 +693,17 @@ class PageController extends Controller
         }
 
         $products = $query->paginate(12)->withQueryString();
+        $brands = Product::active()->whereNotNull('brand')->distinct()->pluck('brand')->sort();
 
-        return view('pages.new-arrivals', compact('products'));
+        return view('pages.new-arrivals', [
+            'products' => $products,
+            'search' => $request->q,
+            'brands' => $brands,
+            'selectedBrand' => $request->brand,
+            'selectedLevel' => $request->level,
+            'selectedMinPrice' => $request->min_price,
+            'selectedMaxPrice' => $request->max_price,
+        ]);
     }
 
     /**
