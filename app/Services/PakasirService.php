@@ -15,8 +15,8 @@ class PakasirService
     public function __construct()
     {
         $this->baseUrl = config('services.pakasir.base_url', 'https://app.pakasir.com');
-        $this->slug = config('services.pakasir.slug');
-        $this->apiKey = config('services.pakasir.api_key');
+        $this->slug = (string) config('services.pakasir.slug', '');
+        $this->apiKey = (string) config('services.pakasir.api_key', '');
         $this->sandbox = config('services.pakasir.sandbox', true);
     }
 

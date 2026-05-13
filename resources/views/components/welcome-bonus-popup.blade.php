@@ -1,10 +1,17 @@
-<div x-data="{ show: @js(!auth()->check()) }" 
+<div x-data="{ 
+    show: @js(!auth()->check()) && !sessionStorage.getItem('welcomeBonusShown'),
+    closePopup() {
+        this.show = false;
+        sessionStorage.setItem('welcomeBonusShown', 'true');
+    }
+}" 
      x-show="show" 
      x-cloak
+     x-init="if (show) sessionStorage.setItem('welcomeBonusShown', 'true')"
      class="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-md px-4"
      style="display: none;">
     
-    <div @click.away="show = false" 
+    <div @click.away="closePopup()" 
          x-show="show"
          x-transition:enter="transition ease-out duration-300"
          x-transition:enter-start="opacity-0 scale-95"
@@ -16,7 +23,7 @@
          style="max-height: 70vh;">
         
         <!-- Close Button -->
-        <button @click="show = false" 
+        <button @click="closePopup()" 
                 class="absolute top-3 right-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black/5 text-black/60 transition-all hover:bg-black/10 hover:text-black hover:rotate-90">
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>

@@ -7,13 +7,202 @@
     <!-- Navbar sama seperti home_luxury -->
     <header class="fixed left-0 top-0 z-50 w-full border-b border-black/6 bg-white/80 backdrop-blur-xl md:sticky">
         <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-10 lg:px-12">
-            <a href="{{ route('home') }}" class="text-xl font-semibold tracking-tight text-black">NoraPadel</a>
+            <a href="{{ route('home') }}" class="flex items-center gap-2">
+                <img src="{{ asset('storage/logo.png') }}" alt="NoraPadel" class="h-7 w-7 object-contain" loading="lazy">
+                <span class="text-xl font-semibold tracking-tight text-black">NoraPadel</span>
+            </a>
 
-            <nav class="hidden items-center gap-8 md:flex">
+            <nav class="hidden items-center gap-8 md:flex" id="navLinks">
                 <a href="{{ route('home') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Home</a>
-                <a href="{{ route('racket') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Racket</a>
-                <a href="{{ route('shoes') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Shoes</a>
-                <a href="{{ route('apparel') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Accessories</a>
+
+                <!-- New Arrivals Mega Dropdown -->
+                <div class="relative group" data-dropdown="new-arrivals">
+                    <a href="{{ route('new-arrivals') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black flex items-center gap-1">
+                        New Arrivals
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-300 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </a>
+                    <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[700px] opacity-0 invisible translate-y-[-10px] transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
+                        <div class="bg-white/95 backdrop-blur-md rounded-xl shadow-2xl border border-zinc-100 p-0 overflow-hidden aspect-video">
+                            <div class="grid grid-cols-[1fr_1fr] h-full">
+                                <!-- Left: Brand & Level (Centered) -->
+                                <div class="flex flex-col justify-center items-center bg-zinc-50/50 p-8 space-y-6">
+                                    <div class="w-full text-center">
+                                        <h4 class="text-sm font-bold text-black mb-4 tracking-wide">BRAND</h4>
+                                        <div class="flex flex-wrap justify-center gap-2">
+                                            <a href="{{ route('new-arrivals', ['brand' => 'Bullpadel']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Bullpadel</a>
+                                            <a href="{{ route('new-arrivals', ['brand' => 'Babolat']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Babolat</a>
+                                            <a href="{{ route('new-arrivals', ['brand' => 'Nox']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Nox</a>
+                                            <a href="{{ route('new-arrivals', ['brand' => 'Alpha']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Alpha</a>
+                                            <a href="{{ route('new-arrivals', ['brand' => 'Zephyr']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Zephyr</a>
+                                            <a href="{{ route('new-arrivals', ['brand' => 'Arronax']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Arronax</a>
+                                        </div>
+                                    </div>
+                                    <div class="w-full text-center">
+                                        <h4 class="text-sm font-bold text-black mb-4 tracking-wide">LEVEL</h4>
+                                        <div class="flex flex-wrap justify-center gap-2">
+                                            <a href="{{ route('new-arrivals', ['level' => 'beginner']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Beginner</a>
+                                            <a href="{{ route('new-arrivals', ['level' => 'intermediate']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Intermediate</a>
+                                            <a href="{{ route('new-arrivals', ['level' => 'pro']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Pro</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Right: Image -->
+                                <div class="relative overflow-hidden">
+                                    <img src="{{ asset('storage/fiks.jpeg') }}" alt="New Arrivals" class="w-full h-full object-cover">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                                    <div class="absolute bottom-6 left-6 right-6">
+                                        <h5 class="text-white font-bold text-2xl mb-1">New Arrivals</h5>
+                                        <p class="text-white/90 text-sm font-medium">Discover the Latest</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Racket Mega Dropdown -->
+                <div class="relative group" data-dropdown="racket">
+                    <a href="{{ route('racket') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black flex items-center gap-1">
+                        Racket
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-300 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </a>
+                    <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[700px] opacity-0 invisible translate-y-[-10px] transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
+                        <div class="bg-white/95 backdrop-blur-md rounded-xl shadow-2xl border border-zinc-100 p-0 overflow-hidden aspect-video">
+                            <div class="grid grid-cols-[1fr_1.2fr] h-full">
+                                <!-- Left: Categories (Centered) -->
+                                <div class="flex flex-col justify-center items-center bg-zinc-50/50 p-8 space-y-6">
+                                    <div class="w-full text-center">
+                                        <h4 class="text-sm font-bold text-black mb-4 tracking-wide">BRAND</h4>
+                                        <div class="flex flex-wrap justify-center gap-2">
+                                            <a href="{{ route('racket', ['brand' => 'Bullpadel']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Bullpadel</a>
+                                            <a href="{{ route('racket', ['brand' => 'Babolat']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Babolat</a>
+                                            <a href="{{ route('racket', ['brand' => 'Nox']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Nox</a>
+                                            <a href="{{ route('racket', ['brand' => 'Alpha']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Alpha</a>
+                                            <a href="{{ route('racket', ['brand' => 'Zephyr']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Zephyr</a>
+                                            <a href="{{ route('racket', ['brand' => 'Arronax']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Arronax</a>
+                                        </div>
+                                    </div>
+                                    <div class="w-full text-center">
+                                        <h4 class="text-sm font-bold text-black mb-4 tracking-wide">LEVEL</h4>
+                                        <div class="flex flex-wrap justify-center gap-2">
+                                            <a href="{{ route('racket', ['level' => 'beginner']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Beginner</a>
+                                            <a href="{{ route('racket', ['level' => 'intermediate']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Intermediate</a>
+                                            <a href="{{ route('racket', ['level' => 'pro']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Pro</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Right: Image -->
+                                <div class="relative overflow-hidden">
+                                    <img src="{{ asset('storage/iconracket.jpg') }}" alt="Racket Collection" class="w-full h-full object-cover">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                                    <div class="absolute bottom-6 left-6 right-6">
+                                        <h5 class="text-white font-bold text-2xl mb-1">Premium Rackets</h5>
+                                        <p class="text-white/90 text-sm font-medium">Precision & Power</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shoes Mega Dropdown -->
+                <div class="relative group" data-dropdown="shoes">
+                    <a href="{{ route('shoes') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black flex items-center gap-1">
+                        Shoes
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-300 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </a>
+                    <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[700px] opacity-0 invisible translate-y-[-10px] transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
+                        <div class="bg-white/95 backdrop-blur-md rounded-xl shadow-2xl border border-zinc-100 p-0 overflow-hidden aspect-video">
+                            <div class="grid grid-cols-[1fr_1.2fr] h-full">
+                                <!-- Left: Categories (Centered) -->
+                                <div class="flex flex-col justify-center items-center bg-zinc-50/50 p-8 space-y-6">
+                                    <div class="w-full text-center">
+                                        <h4 class="text-sm font-bold text-black mb-4 tracking-wide">BRAND</h4>
+                                        <div class="flex flex-wrap justify-center gap-2">
+                                            <a href="{{ route('shoes', ['brand' => 'Bullpadel']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Bullpadel</a>
+                                            <a href="{{ route('shoes', ['brand' => 'Babolat']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Babolat</a>
+                                            <a href="{{ route('shoes', ['brand' => 'Nox']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Nox</a>
+                                            <a href="{{ route('shoes', ['brand' => 'Alpha']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Alpha</a>
+                                            <a href="{{ route('shoes', ['brand' => 'Zephyr']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Zephyr</a>
+                                            <a href="{{ route('shoes', ['brand' => 'Arronax']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Arronax</a>
+                                        </div>
+                                    </div>
+                                    <div class="w-full text-center">
+                                        <h4 class="text-sm font-bold text-black mb-4 tracking-wide">LEVEL</h4>
+                                        <div class="flex flex-wrap justify-center gap-2">
+                                            <a href="{{ route('shoes', ['level' => 'beginner']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Beginner</a>
+                                            <a href="{{ route('shoes', ['level' => 'intermediate']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Intermediate</a>
+                                            <a href="{{ route('shoes', ['level' => 'pro']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Pro</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Right: Image -->
+                                <div class="relative overflow-hidden">
+                                    <img src="{{ asset('storage/iconsepatu.png') }}" alt="Shoes Collection" class="w-full h-full object-cover">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                                    <div class="absolute bottom-6 left-6 right-6">
+                                        <h5 class="text-white font-bold text-2xl mb-1">Premium Shoes</h5>
+                                        <p class="text-white/90 text-sm font-medium">Move Faster, Play Smarter</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Accessories Mega Dropdown -->
+                <div class="relative group" data-dropdown="accessories">
+                    <a href="{{ route('apparel') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black flex items-center gap-1">
+                        Accessories
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-300 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </a>
+                    <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[700px] opacity-0 invisible translate-y-[-10px] transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
+                        <div class="bg-white/95 backdrop-blur-md rounded-xl shadow-2xl border border-zinc-100 p-0 overflow-hidden aspect-video">
+                            <div class="grid grid-cols-[1fr_1.2fr] h-full">
+                                <!-- Left: Categories (Centered) -->
+                                <div class="flex flex-col justify-center items-center bg-zinc-50/50 p-8 space-y-6">
+                                    <div class="w-full text-center">
+                                        <h4 class="text-sm font-bold text-black mb-4 tracking-wide">BRAND</h4>
+                                        <div class="flex flex-wrap justify-center gap-2">
+                                            <a href="{{ route('apparel', ['brand' => 'Bullpadel']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Bullpadel</a>
+                                            <a href="{{ route('apparel', ['brand' => 'Babolat']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Babolat</a>
+                                            <a href="{{ route('apparel', ['brand' => 'Nox']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Nox</a>
+                                            <a href="{{ route('apparel', ['brand' => 'Alpha']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Alpha</a>
+                                            <a href="{{ route('apparel', ['brand' => 'Zephyr']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Zephyr</a>
+                                            <a href="{{ route('apparel', ['brand' => 'Arronax']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Arronax</a>
+                                        </div>
+                                    </div>
+                                    <div class="w-full text-center">
+                                        <h4 class="text-sm font-bold text-black mb-4 tracking-wide">LEVEL</h4>
+                                        <div class="flex flex-wrap justify-center gap-2">
+                                            <a href="{{ route('apparel', ['level' => 'beginner']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Beginner</a>
+                                            <a href="{{ route('apparel', ['level' => 'intermediate']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Intermediate</a>
+                                            <a href="{{ route('apparel', ['level' => 'pro']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Pro</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Right: Image -->
+                                <div class="relative overflow-hidden">
+                                    <img src="{{ asset('storage/icontas.jpg') }}" alt="Accessories Collection" class="w-full h-full object-cover">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                                    <div class="absolute bottom-6 left-6 right-6">
+                                        <h5 class="text-white font-bold text-2xl mb-1">Premium Accessories</h5>
+                                        <p class="text-white/90 text-sm font-medium">Comfort Meets Performance</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <a href="{{ route('contact') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Contact</a>
             </nav>
 
@@ -39,21 +228,56 @@
                         <span>Masuk</span>
                     </a>
                 @endguest
-                @auth
-                    <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-black" aria-label="Cart" title="Keranjang">
-                        <i class="fas fa-shopping-bag text-sm"></i>
-                        @if(auth()->user()->role === 'customer')
-                            @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
-                            @if($cartCount > 0)
-                                <span class="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
-                            @endif
-                        @endif
-                    </a>
-                @else
-                    <a href="{{ route('login') }}" class="transition duration-300 hover:text-black" aria-label="Cart" title="Keranjang">
-                        <i class="fas fa-shopping-bag text-sm"></i>
-                    </a>
-                @endauth
+                
+                <a href="{{ route('customer.wishlist.index') }}" class="relative transition duration-300 hover:text-black" aria-label="Wishlist" title="Wishlist">
+                    <i class="fas fa-heart text-sm"></i>
+                    @php
+                        if (auth()->check() && auth()->user()->role === 'customer') {
+                            $wishlistCount = auth()->user()->wishlistItems()->count();
+                        } else {
+                            $guestWishlist = session()->get('guest_wishlist', []);
+                            $wishlistCount = count($guestWishlist);
+                        }
+                    @endphp
+                    @if($wishlistCount > 0)
+                        <span class="pointer-events-none absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
+                    @endif
+                </a>
+                
+                <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-black" aria-label="Cart" title="Keranjang">
+                    <i class="fas fa-shopping-bag text-sm"></i>
+                    @php
+                        if (auth()->check() && auth()->user()->role === 'customer') {
+                            $cartCount = auth()->user()->cartItems()->sum('quantity');
+                        } else {
+                            $guestCart = session()->get('guest_cart', []);
+                            $cartCount = array_sum(array_column($guestCart, 'quantity'));
+                        }
+                    @endphp
+                    @if($cartCount > 0)
+                        <span class="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
+                    @endif
+                </a>
+                
+                <div class="relative">
+                    <button onclick="toggleSearchDropdown()" class="transition duration-300 hover:text-black" aria-label="Search" title="Cari Produk">
+                        <i class="fas fa-search text-sm"></i>
+                    </button>
+                    
+                    <!-- Search Dropdown -->
+                    <div id="searchDropdown" class="hidden absolute right-0 top-full mt-2 w-80 bg-white rounded-lg shadow-xl border border-zinc-200 p-3 z-50">
+                        <div class="flex gap-2">
+                            <input type="text" placeholder="Cari produk..." class="flex-1 px-3 py-2 text-sm text-black border border-zinc-300 rounded-lg focus:outline-none focus:border-blue-500" id="searchInput" autocomplete="off">
+                            <button type="button" class="px-4 py-2 bg-black text-white text-sm rounded-lg hover:bg-zinc-800 transition">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                        <div id="searchResults" class="mt-2 max-h-60 overflow-y-auto hidden">
+                            <!-- Search results will appear here -->
+                        </div>
+                    </div>
+                </div>
+                
                 <button type="button" class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-black transition duration-300 hover:border-black/35 md:hidden" data-mobile-menu-toggle aria-label="Toggle navigation" aria-expanded="false">
                     <i class="fas fa-bars text-sm"></i>
                 </button>
@@ -84,26 +308,42 @@
                     </ol>
                 </nav>
 
-                <div class="grid md:grid-cols-2 gap-8 lg:gap-12">
-                    <!-- Product Image -->
-                    <div class="space-y-4">
-                        <div class="aspect-square rounded-2xl overflow-hidden bg-zinc-100 border border-zinc-200 relative">
-                            <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
-                            @if($product->hasActiveDiscount())
-                                <span class="absolute left-4 top-4 rounded-full bg-rose-500 px-3 py-1.5 text-xs font-semibold text-white shadow-lg">-{{ $product->formatted_discount_percent }}</span>
-                            @endif
-                            @if($product->package_type === 'bundle')
-                                <span class="absolute left-4 {{ $product->hasActiveDiscount() ? 'top-16' : 'top-4' }} rounded-full bg-purple-500 px-3 py-1.5 text-xs font-semibold text-white shadow-lg">Bundle</span>
-                            @endif
+                <div class="grid md:grid-cols-[auto_1fr] gap-5 lg:gap-6">
+                    <!-- Product Gallery -->
+                    <div class="flex gap-3 max-w-[600px]" x-data="{ activeImage: '{{ $product->image_url }}' }">
+                        <!-- Thumbnails -->
+                        <div class="flex flex-col gap-3">
                             @php
-                                $mainSoldCount = \App\Models\OrderItem::where('product_id', $product->id)
-                                    ->whereHas('order', function($q) {
-                                        $q->whereIn('status', ['completed', 'delivered']);
-                                    })->sum('quantity');
+                                $allImages = $product->all_images;
                             @endphp
-                            @if($mainSoldCount >= 5)
-                                <span class="absolute right-4 top-4 rounded-full bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white shadow-lg">Best Seller</span>
-                            @endif
+                            @foreach($allImages as $index => $imageUrl)
+                                <button @click="activeImage = '{{ $imageUrl }}'" 
+                                        class="w-16 h-16 md:w-20 md:h-20 bg-zinc-50 transition-all duration-200 flex items-center justify-center p-1.5 overflow-hidden"
+                                        :class="activeImage === '{{ $imageUrl }}' ? 'ring-2 ring-black ring-offset-2' : 'hover:bg-zinc-100'">
+                                    <img src="{{ $imageUrl }}" alt="{{ $product->name }} - Gambar {{ $index + 1 }}" class="w-full h-full object-cover">
+                                </button>
+                            @endforeach
+                        </div>
+
+                        <!-- Main Image -->
+                        <div class="flex-1 relative group">
+                            <div class="w-full bg-zinc-50 overflow-hidden flex items-center justify-center relative aspect-square max-w-[500px]">
+                                <img :src="activeImage" 
+                                     alt="{{ $product->name }}" 
+                                     class="w-full h-full object-cover transition-all duration-500 ease-out"
+                                     x-transition:enter="transition ease-out duration-300"
+                                     x-transition:enter-start="opacity-0"
+                                     x-transition:enter-end="opacity-100">
+                                @if($product->hasActiveDiscount())
+                                    <span class="absolute left-3 top-3 bg-rose-500 px-3 py-1.5 text-xs font-semibold text-white z-10 rounded">-{{ $product->formatted_discount_percent }}</span>
+                                @endif
+                                @if($product->package_type === 'bundle')
+                                    <span class="absolute left-3 {{ $product->hasActiveDiscount() ? 'top-12' : 'top-3' }} bg-purple-500 px-3 py-1.5 text-xs font-semibold text-white z-10 rounded">Bundle</span>
+                                @endif
+                                @if($product->isBestSeller())
+                                    <span class="absolute right-3 top-3 bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white z-10 rounded">Best Seller</span>
+                                @endif
+                            </div>
                         </div>
                     </div>
 
@@ -137,7 +377,7 @@
 
                         <!-- Product Name -->
                         <div>
-                            <h1 class="text-2xl md:text-3xl font-bold text-black tracking-tight leading-tight">{{ $product->name }}</h1>
+                            <h1 class="text-xl md:text-2xl font-semibold text-black tracking-tight leading-tight">{{ $product->name }}</h1>
                         </div>
 
                         <!-- Rating & Terjual -->
@@ -148,11 +388,16 @@
                                         ->whereHas('order', function($q) {
                                             $q->whereIn('status', ['completed', 'delivered']);
                                         })->sum('quantity');
+
+                                    $reviews = \App\Models\Review::where('product_id', $product->id)
+                                        ->where('is_approved', true)
+                                        ->get();
+                                    $displayRating = $reviews->isNotEmpty() ? $reviews->avg('rating') : 5.0;
                                 @endphp
                                 @for($i = 1; $i <= 5; $i++)
-                                    <i class="fas fa-star text-yellow-400 text-sm"></i>
+                                    <i class="fas fa-star {{ $i <= floor($displayRating) ? 'text-black' : 'text-zinc-500' }} text-sm"></i>
                                 @endfor
-                                <span class="text-zinc-600 ml-1">5.0</span>
+                                <span class="text-zinc-600 ml-1">{{ number_format($displayRating, 1) }}</span>
                             </div>
                             <span class="text-zinc-400">|</span>
                             <div class="text-zinc-600">
@@ -179,7 +424,60 @@
                         <!-- Description -->
                         <div class="border-t border-zinc-200 pt-4">
                             <h3 class="text-xs font-semibold text-black uppercase tracking-wider mb-2">Deskripsi Produk</h3>
-                            <p class="text-sm text-zinc-600 leading-relaxed">{{ $product->description }}</p>
+                            @php
+                                $rawDescription = trim((string) $product->description);
+
+                                // Split by new lines first, fallback to sentence split.
+                                $parts = preg_split("/\r\n|\r|\n/", $rawDescription) ?: [];
+                                $parts = array_values(array_filter(array_map('trim', $parts)));
+
+                                if (count($parts) === 0 && $rawDescription !== '') {
+                                    $sentences = preg_split('/(?<=[.!?])\s+/', $rawDescription) ?: [];
+                                    $sentences = array_values(array_filter(array_map('trim', $sentences)));
+
+                                    // Build up to 3 short paragraphs from sentences.
+                                    $parts = [];
+                                    $buffer = '';
+                                    foreach ($sentences as $sentence) {
+                                        $candidate = trim($buffer === '' ? $sentence : ($buffer . ' ' . $sentence));
+                                        if (mb_strlen($candidate) > 180 && $buffer !== '') {
+                                            $parts[] = $buffer;
+                                            $buffer = $sentence;
+                                            if (count($parts) >= 3) break;
+                                        } else {
+                                            $buffer = $candidate;
+                                        }
+                                    }
+                                    if (count($parts) < 3 && trim($buffer) !== '') {
+                                        $parts[] = trim($buffer);
+                                    }
+                                }
+
+                                $maxParagraphs = 2;
+                                $displayParts = array_slice($parts, 0, $maxParagraphs);
+
+                                // Clamp each paragraph length to keep it tidy.
+                                $displayParts = array_map(function ($p) {
+                                    $p = trim((string) $p);
+                                    if (mb_strlen($p) > 220) {
+                                        return rtrim(mb_substr($p, 0, 217)) . '...';
+                                    }
+                                    return $p;
+                                }, $displayParts);
+
+                                $hasMore = count($parts) > $maxParagraphs;
+                            @endphp
+
+                            <div class="space-y-2 text-sm text-zinc-600 leading-relaxed">
+                                @forelse($displayParts as $paragraph)
+                                    <p>{{ $paragraph }}</p>
+                                @empty
+                                    <p class="text-zinc-500">Belum ada deskripsi.</p>
+                                @endforelse
+                                @if($hasMore)
+                                    <p class="text-zinc-500">...</p>
+                                @endif
+                            </div>
                         </div>
 
                         <!-- Product Details -->
@@ -200,44 +498,16 @@
                         <!-- Action Buttons -->
                         <div class="border-t border-zinc-200 pt-4 space-y-2">
                             @if($product->stock > 0)
-                                @auth
-                                    @if(auth()->user()->isCustomer())
-                                        <form action="{{ route('customer.cart.add', $product) }}" method="POST">
-                                            @csrf
-                                            <input type="hidden" name="quantity" value="1">
-                                            <button type="submit" class="w-full border-2 border-blue-600 text-blue-600 py-3 rounded-xl font-semibold text-sm hover:bg-blue-50 transition duration-200 flex items-center justify-center gap-2">
-                                                <i class="fas fa-shopping-cart text-sm"></i>
-                                                Add to Cart
-                                            </button>
-                                        </form>
-                                    @else
-                                        <a href="{{ route('login') }}" class="block w-full border-2 border-blue-600 text-blue-600 py-3 rounded-xl font-semibold text-sm hover:bg-blue-50 transition duration-200 text-center">
-                                            <i class="fas fa-shopping-cart mr-2 text-sm"></i>Add to Cart
-                                        </a>
-                                    @endif
-                                @else
-                                    <a href="{{ route('login') }}" class="block w-full border-2 border-blue-600 text-blue-600 py-3 rounded-xl font-semibold text-sm hover:bg-blue-50 transition duration-200 text-center">
-                                        <i class="fas fa-shopping-cart mr-2 text-sm"></i>Add to Cart
-                                    </a>
-                                @endauth
-                                
-                                @auth
-                                    @if(auth()->user()->isCustomer())
-                                        <a href="{{ route('customer.checkout') }}" class="block w-full bg-blue-600 text-white py-3 rounded-xl font-semibold text-sm hover:bg-blue-700 transition duration-200 text-center">
-                                            <i class="fas fa-bolt mr-2 text-sm"></i>Buy Now
-                                        </a>
-                                    @else
-                                        <a href="{{ route('login') }}" class="block w-full bg-blue-600 text-white py-3 rounded-xl font-semibold text-sm hover:bg-blue-700 transition duration-200 text-center">
-                                            <i class="fas fa-bolt mr-2 text-sm"></i>Buy Now
-                                        </a>
-                                    @endif
-                                @else
-                                    <a href="{{ route('login') }}" class="block w-full bg-blue-600 text-white py-3 rounded-xl font-semibold text-sm hover:bg-blue-700 transition duration-200 text-center">
-                                        <i class="fas fa-bolt mr-2 text-sm"></i>Buy Now
-                                    </a>
-                                @endauth
+                                <form action="{{ route('customer.cart.add', $product) }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit" class="w-full border border-black bg-black px-3 py-3 text-sm font-semibold text-white transition duration-200 hover:bg-black/90 hover:border-black/90 flex items-center justify-center gap-2">
+                                        <i class="fas fa-shopping-cart text-sm"></i>
+                                        Add to Cart
+                                    </button>
+                                </form>
                             @else
-                                <button disabled class="w-full bg-zinc-200 text-zinc-500 py-3 rounded-xl font-semibold text-sm cursor-not-allowed">
+                                <button disabled class="w-full bg-zinc-200 text-zinc-500 py-3 font-semibold text-sm cursor-not-allowed">
                                     Stok Habis
                                 </button>
                             @endif
@@ -245,61 +515,186 @@
                     </div>
                 </div>
 
-                <!-- Related Products -->
-                @if($relatedProducts->count() > 0)
-                <div class="mt-16 pt-12">
-                   
-                    <!-- Search & Filter -->
-                    <div class="mb-6 space-y-4">
-                        <div class="flex flex-col md:flex-row gap-3">
-                            <div class="flex-1">
-                                <input type="text" id="searchProduct" placeholder="Cari produk..." class="w-full px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition">
+                <!-- Customer Reviews Section -->
+                <section class="mt-16 pt-12 border-t border-zinc-200">
+                    <div class="grid lg:grid-cols-[35%_65%] gap-12">
+                        <!-- Left Column - Review Summary -->
+                        <div class="space-y-8">
+                            <div>
+                                <p class="text-[10px] font-semibold tracking-[0.15em] text-zinc-400 uppercase mb-4">Customer Reviews</p>
+                                <div class="flex items-end gap-3 mb-3">
+                                    <span class="text-5xl font-light text-black">{{ $avgRating > 0 ? number_format($avgRating, 1) : '0.0' }}</span>
+                                    <span class="text-xl text-zinc-400 mb-2">/5</span>
+                                </div>
+                                <div class="flex items-center gap-1 mb-2">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <i class="fas fa-star {{ $i <= floor($avgRating) ? 'text-black' : 'text-zinc-200' }} text-sm"></i>
+                                    @endfor
+                                </div>
+                                <p class="text-[11px] font-medium tracking-[0.1em] text-zinc-500 uppercase">{{ $totalReviews }} {{ $totalReviews === 1 ? 'Review' : 'Reviews' }}</p>
                             </div>
-                            <div class="flex gap-2 flex-wrap">
-                                <select id="filterDiscount" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition">
-                                    <option value="">Semua Diskon</option>
-                                    <option value="yes">Ada Diskon</option>
-                                    <option value="no">Tanpa Diskon</option>
-                                </select>
-                                <select id="filterBundle" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition">
-                                    <option value="">Semua Produk</option>
-                                    <option value="yes">Bundling Hemat</option>
-                                    <option value="no">Produk Satuan</option>
-                                </select>
-                                <select id="filterPopular" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition">
-                                    <option value="">Semua</option>
-                                    <option value="yes">Sering Dibeli</option>
-                                </select>
-                                <button id="filterPrice" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm hover:bg-zinc-50 transition">
-                                    <i class="fas fa-sliders-h mr-2"></i>Harga
-                                </button>
+
+                            <!-- Rating Breakdown -->
+                            <div class="space-y-3">
+                                @foreach($ratingBreakdown as $star => $percent)
+                                <div class="flex items-center gap-3">
+                                    <span class="text-xs text-zinc-600 w-8">{{ $star }}★</span>
+                                    <div class="flex-1 h-1 bg-zinc-100 overflow-hidden">
+                                        <div class="h-full bg-black transition-all duration-300" style="width: {{ $percent }}%"></div>
+                                    </div>
+                                    <span class="text-xs text-zinc-500 w-10 text-right">{{ $percent }}%</span>
+                                </div>
+                                @endforeach
                             </div>
+
+                            @if($totalReviews > 0)
+                            <!-- Quality Indicator -->
+                            <div class="pt-4 border-t border-zinc-100">
+                                <p class="text-[10px] font-semibold tracking-[0.15em] text-zinc-400 uppercase mb-3">Quality</p>
+                                <div class="relative">
+                                    <div class="h-1 bg-zinc-100">
+                                        <div class="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-black rounded-full" style="left: {{ $avgQuality }}%"></div>
+                                    </div>
+                                    <div class="flex justify-between mt-2">
+                                        <span class="text-[9px] text-zinc-400 uppercase tracking-wider">Very Low</span>
+                                        <span class="text-[9px] text-zinc-400 uppercase tracking-wider">Very High</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sizing Indicator -->
+                            <div class="pt-4 border-t border-zinc-100">
+                                <p class="text-[10px] font-semibold tracking-[0.15em] text-zinc-400 uppercase mb-3">How was the sizing?</p>
+                                <div class="relative">
+                                    <div class="h-1 bg-zinc-100">
+                                        <div class="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-black rounded-full" style="left: {{ $avgSizing }}%"></div>
+                                    </div>
+                                    <div class="flex justify-between mt-2">
+                                        <span class="text-[9px] text-zinc-400 uppercase tracking-wider">Runs Small</span>
+                                        <span class="text-[9px] text-zinc-400 uppercase tracking-wider">True to Size</span>
+                                        <span class="text-[9px] text-zinc-400 uppercase tracking-wider">Runs Large</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Usual Size -->
+                            @if($usualSizes->count() > 0)
+                            <div class="pt-4 border-t border-zinc-100">
+                                <p class="text-[10px] font-semibold tracking-[0.15em] text-zinc-400 uppercase mb-3">Usual Size?</p>
+                                <div class="flex gap-2 flex-wrap">
+                                    @foreach($usualSizes as $size => $count)
+                                        <span class="text-xs text-zinc-600">{{ $size }} ({{ $count }})</span>
+                                        @if(!$loop->last)
+                                            <span class="text-zinc-300">·</span>
+                                        @endif
+                                    @endforeach
+                                </div>
+                            </div>
+                            @endif
+                            @endif
                         </div>
 
-                        <!-- Price Range Filter -->
-                        <div id="priceRangeFilter" class="hidden bg-zinc-50 border border-zinc-200 rounded-xl p-4">
-                            <div class="grid grid-cols-2 gap-3 mb-3">
-                                <div>
-                                    <label class="text-xs text-zinc-600 mb-1 block">Harga Min</label>
-                                    <input type="number" id="minPrice" placeholder="0" class="w-full px-3 py-2 border border-zinc-300 rounded-lg text-sm focus:outline-none focus:border-blue-500">
-                                </div>
-                                <div>
-                                    <label class="text-xs text-zinc-600 mb-1 block">Harga Max</label>
-                                    <input type="number" id="maxPrice" placeholder="999999999" class="w-full px-3 py-2 border border-zinc-300 rounded-lg text-sm focus:outline-none focus:border-blue-500">
-                                </div>
+                        <!-- Right Column - Reviews List -->
+                        <div class="space-y-6">
+                            <!-- Header -->
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-[11px] font-semibold tracking-[0.15em] text-black uppercase">Reviews {{ $totalReviews }}</h3>
+                                @auth
+                                    <button onclick="openReviewModal()" class="bg-black text-white px-6 py-2.5 text-[10px] font-semibold tracking-[0.1em] uppercase transition duration-200 hover:bg-white hover:text-black border border-black">
+                                        Write a Review
+                                    </button>
+                                @else
+                                    <a href="{{ route('login') }}" class="bg-black text-white px-6 py-2.5 text-[10px] font-semibold tracking-[0.1em] uppercase transition duration-200 hover:bg-white hover:text-black border border-black">
+                                        Login to Review
+                                    </a>
+                                @endauth
                             </div>
-                            <div class="flex gap-2">
-                                <button id="applyPriceFilter" class="flex-1 bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition">
-                                    Terapkan
-                                </button>
-                                <button id="resetPriceFilter" class="px-4 py-2 border border-zinc-300 rounded-lg text-sm hover:bg-white transition">
-                                    Reset
-                                </button>
+
+                            <!-- Search & Filter -->
+                            <div class="flex gap-3 mb-8">
+                                <input type="text" placeholder="Search reviews" class="flex-1 px-4 py-2.5 border border-zinc-200 text-sm focus:outline-none focus:border-zinc-400 transition">
+                                <select class="px-4 py-2.5 border border-zinc-200 text-sm focus:outline-none focus:border-zinc-400 transition bg-white">
+                                    <option>All ratings</option>
+                                    <option>5 stars</option>
+                                    <option>4 stars</option>
+                                    <option>3 stars</option>
+                                    <option>2 stars</option>
+                                    <option>1 star</option>
+                                </select>
                             </div>
+
+                            <!-- Reviews List -->
+                            @if($reviews->count() > 0)
+                            <div class="space-y-0">
+                                @foreach($reviews as $review)
+                                <div class="py-8 border-b border-zinc-100 last:border-0">
+                                    <div class="flex items-start justify-between mb-3">
+                                        <div>
+                                            <div class="flex items-center gap-2 mb-1">
+                                                <h4 class="text-xs font-semibold tracking-[0.05em] text-black uppercase">{{ $review->user->name }}</h4>
+                                                @if($review->is_verified)
+                                                <span class="text-[9px] text-zinc-400 uppercase tracking-wider">· Verified Buyer</span>
+                                                @endif
+                                            </div>
+                                            <div class="flex items-center gap-1">
+                                                @for($i = 1; $i <= 5; $i++)
+                                                    <i class="fas fa-star {{ $i <= $review->rating ? 'text-black' : 'text-zinc-200' }} text-xs"></i>
+                                                @endfor
+                                            </div>
+                                        </div>
+                                        <span class="text-[10px] text-zinc-400">{{ $review->created_at->diffForHumans() }}</span>
+                                    </div>
+
+                                    @if($review->comment)
+                                    <p class="text-sm text-zinc-600 leading-relaxed mb-4">{{ $review->comment }}</p>
+                                    @endif
+
+                                    <div class="grid grid-cols-3 gap-4 pt-4 border-t border-zinc-50">
+                                        @if($review->usual_size)
+                                        <div>
+                                            <p class="text-[9px] font-semibold tracking-[0.1em] text-zinc-400 uppercase mb-2">Usual Size</p>
+                                            <p class="text-xs text-zinc-600">{{ $review->usual_size }}</p>
+                                        </div>
+                                        @endif
+                                        @if($review->quality_rating)
+                                        <div>
+                                            <p class="text-[9px] font-semibold tracking-[0.1em] text-zinc-400 uppercase mb-2">Quality</p>
+                                            <div class="relative h-1 bg-zinc-100 mt-2">
+                                                <div class="absolute top-0 left-0 h-full bg-black" style="width: {{ $review->quality_rating }}%"></div>
+                                            </div>
+                                        </div>
+                                        @endif
+                                        @if($review->sizing_rating)
+                                        <div>
+                                            <p class="text-[9px] font-semibold tracking-[0.1em] text-zinc-400 uppercase mb-2">Sizing</p>
+                                            <div class="relative h-1 bg-zinc-100 mt-2">
+                                                <div class="absolute top-1/2 -translate-y-1/2 w-2 h-2 bg-black rounded-full" style="left: {{ $review->sizing_rating }}%"></div>
+                                            </div>
+                                        </div>
+                                        @endif
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                            @else
+                            <div class="py-12 text-center">
+                                <i class="fas fa-star text-4xl text-zinc-200 mb-3"></i>
+                                <p class="text-sm text-zinc-500">No reviews yet. Be the first to review this product!</p>
+                            </div>
+                            @endif
                         </div>
                     </div>
+                </section>
 
-                    <div id="productGrid" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <!-- Related Products -->
+                @if($relatedProducts->count() > 0)
+                <div class="mt-16 pt-12 border-t border-zinc-200">
+                    <div class="mb-6">
+                        <h2 class="text-2xl font-semibold tracking-tight text-black">Produk Terkait</h2>
+                        <p class="mt-2 text-zinc-600">Produk lain yang mungkin Anda suka</p>
+                    </div>
+
+                    <div class="flex gap-4 overflow-x-auto pb-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x snap-mandatory">
                         @foreach($relatedProducts as $related)
                         @php
                             $soldCount = \App\Models\OrderItem::where('product_id', $related->id)
@@ -307,87 +702,73 @@
                                     $q->whereIn('status', ['completed', 'delivered']);
                                 })->sum('quantity');
                         @endphp
-                        <a href="{{ route('produk.show', $related) }}" 
-                           class="product-item group block bg-white border border-zinc-200 rounded-xl overflow-hidden hover:shadow-lg transition duration-300" 
-                           data-name="{{ strtolower($related->name) }}" 
-                           data-price="{{ $related->hasActiveDiscount() ? $related->discounted_price : $related->price }}" 
-                           data-discount="{{ $related->hasActiveDiscount() ? 'yes' : 'no' }}"
-                           data-bundle="{{ $related->package_type === 'bundle' ? 'yes' : 'no' }}"
-                           data-sold="{{ $soldCount }}">
-                            <div class="aspect-square bg-zinc-100 overflow-hidden relative">
-                                <img src="{{ $related->image_url }}" alt="{{ $related->name }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                                @if($related->package_type === 'bundle')
-                                    <span class="absolute left-2 top-2 rounded-full bg-purple-500 px-2 py-0.5 text-[10px] font-semibold text-white">
-                                        <i class="fas fa-box-open mr-1"></i>Bundle
-                                    </span>
-                                @endif
-                                @if($soldCount > 10)
-                                    <span class="absolute right-2 top-2 rounded-full bg-green-500 px-2 py-0.5 text-[10px] font-semibold text-white">
-                                        <i class="fas fa-fire mr-1"></i>Popular
-                                    </span>
-                                @endif
-                            </div>
-                            <div class="p-3">
-                                <h3 class="font-semibold text-sm text-black line-clamp-2 mb-2">{{ $related->name }}</h3>
-                                @if($related->hasActiveDiscount())
-                                    <div class="space-y-1">
-                                        <p class="text-base font-bold text-black">{{ $related->formatted_discounted_price }}</p>
+                        <div class="product-item group snap-start shrink-0 basis-[85%] sm:basis-[48%] md:basis-[31%] lg:basis-[19%] block overflow-hidden bg-white transition duration-300 hover:-translate-y-1"
+                             data-name="{{ strtolower($related->name) }}"
+                             data-price="{{ $related->hasActiveDiscount() ? $related->discounted_price : $related->price }}"
+                             data-discount="{{ $related->hasActiveDiscount() ? 'yes' : 'no' }}"
+                             data-bundle="{{ $related->package_type === 'bundle' ? 'yes' : 'no' }}"
+                             data-sold="{{ $soldCount }}">
+                            <a href="{{ route('produk.show', $related) }}" class="block relative">
+                                <div class="relative aspect-square overflow-hidden">
+                                    <img src="{{ $related->image_url }}" alt="{{ $related->name }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" onerror="this.onerror=null;this.src='/images/logo.png';" loading="lazy">
+                                    
+                                    <!-- Discount Badge - Always Visible -->
+                                    @if($related->hasActiveDiscount())
+                                        <span class="absolute left-0 top-0 z-20 bg-rose-500 px-2 py-1 text-[10px] font-bold text-white shadow-md">-{{ $related->formatted_discount_percent }}</span>
+                                    @endif
+                                    
+                                    <!-- Latest Badge -->
+                                    @if($related->category === 'arrivals')
+                                        <span class="absolute left-0 {{ $related->hasActiveDiscount() ? 'top-8' : 'top-0' }} z-20 bg-blue-500 px-2 py-1 text-[10px] font-bold text-white shadow-md">Latest</span>
+                                    @endif
+                                    
+                                    <!-- Bundle Badge -->
+                                    @if($related->package_type === 'bundle')
+                                        <span class="absolute left-0 {{ $related->hasActiveDiscount() && $related->category === 'arrivals' ? 'top-16' : ($related->hasActiveDiscount() || $related->category === 'arrivals' ? 'top-8' : 'top-0') }} z-20 bg-purple-500 px-2 py-1 text-[10px] font-bold text-white shadow-md">Bundle</span>
+                                    @endif
+                                    
+                                    <!-- Popular Badge -->
+                                    @if($related->isBestSeller())
+                                        <span class="absolute right-0 top-0 z-20 bg-amber-500 px-2 py-1 text-[10px] font-bold text-white shadow-md">Popular</span>
+                                    @endif
+                                </div>
+                                <div class="p-3">
+                                    <h3 class="line-clamp-1 text-sm font-semibold text-black">{{ $related->name }}</h3>
+                                    <p class="mt-1 text-xs text-zinc-600">{{ $related->category_label }}</p>
+                                    @if($related->hasActiveDiscount())
+                                        <p class="mt-1 text-base font-bold text-black">{{ $related->formatted_discounted_price }}</p>
                                         <p class="text-xs text-zinc-400 line-through">{{ $related->formatted_price }}</p>
-                                    </div>
-                                @else
-                                    <p class="text-base font-bold text-black">{{ $related->formatted_price }}</p>
-                                @endif
+                                    @else
+                                        <p class="mt-1 text-base font-bold text-black">{{ $related->formatted_price }}</p>
+                                    @endif
+                                </div>
+                            </a>
+                            <div class="px-3 pb-3">
+                                <div class="flex items-center gap-3">
+                                    <button onclick="addToCart('{{ $related->slug }}', event)" class="border border-zinc-300 bg-transparent px-3 py-1.5 text-[11px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950">
+                                        Add to cart
+                                    </button>
+                                    <button onclick="addToWishlist('{{ $related->slug }}', event)" class="text-zinc-400 transition duration-300 hover:text-rose-500">
+                                        <i class="fas fa-heart text-sm"></i>
+                                    </button>
+                                </div>
                             </div>
-                        </a>
+                        </div>
                         @endforeach
-                    </div>
-
-                    <div id="noResults" class="hidden text-center py-12">
-                        <i class="fas fa-search text-4xl text-zinc-300 mb-3"></i>
-                        <p class="text-zinc-500">Tidak ada produk yang ditemukan</p>
                     </div>
                 </div>
                 @endif
-
-                <!-- Testimonials Section -->
-                <section class="mt-16 border-t border-zinc-200 pt-12">
-                    @php
-                        $testimonialItems = $testimonials->take(3);
-                    @endphp
-
-                    @if ($testimonialItems->count() > 0)
-                        <div class="relative overflow-hidden rounded-3xl border border-black/6 bg-zinc-50/40 px-2 py-2 shadow-[0_12px_38px_rgba(0,0,0,0.08)] md:px-4 md:py-4" data-testimonial-hero>
-                            <div class="np-testimonial-hero-track" data-testimonial-track>
-                                @foreach ($testimonialItems as $index => $testimonial)
-                                    <article class="np-testimonial-hero-slide">
-                                        <div class="relative aspect-video overflow-hidden rounded-2xl">
-                                            <img src="{{ $testimonial->image_url ?? '/images/logo.png' }}" alt="Testimoni" class="h-full w-full object-cover" loading="lazy">
-                                            <div class="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent"></div>
-                                        </div>
-                                    </article>
-                                @endforeach
-                            </div>
-
-                            <div class="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/35 px-3 py-2 backdrop-blur" data-testimonial-dots>
-                                @foreach ($testimonialItems as $index => $testimonial)
-                                    <button type="button" class="np-testimonial-dot h-2.5 w-2.5 rounded-full bg-white/45 transition duration-300" data-slide-to="{{ $index }}" aria-label="Slide {{ $index + 1 }}"></button>
-                                @endforeach
-                            </div>
-                        </div>
-                    @else
-                        <div class="rounded-2xl border border-dashed border-zinc-300 bg-white p-10 text-center text-zinc-500">
-                            Belum ada testimoni.
-                        </div>
-                    @endif
-                </section>
             </div>
         </div>
     </main>
 </div>
+
+<x-search-modal />
 @endsection
 
 @push('styles')
 <script src="https://cdn.tailwindcss.com"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <style>
     #mainNavbar,
     .mobile-bottom-nav {
@@ -418,6 +799,64 @@
 
 @push('scripts')
 <script>
+    // Add to Cart Function
+    function addToCart(productId, event) {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        fetch(`/customer/cart/add/${productId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ quantity: 1 })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Produk berhasil ditambahkan ke keranjang!');
+                location.reload();
+            } else {
+                alert(data.message || 'Gagal menambahkan produk ke keranjang');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan. Silakan coba lagi.');
+        });
+    }
+
+    // Add to Wishlist Function
+    function addToWishlist(productId, event) {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        fetch(`/customer/wishlist/add/${productId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Produk berhasil ditambahkan ke wishlist!');
+                location.reload();
+            } else {
+                alert(data.message || 'Produk sudah ada di wishlist');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan. Silakan coba lagi.');
+        });
+    }
+
 (function() {
     const mobileMenuToggle = document.querySelector('[data-mobile-menu-toggle]');
     const mobileMenu = document.querySelector('[data-mobile-menu]');
@@ -426,6 +865,79 @@
         mobileMenuToggle.addEventListener('click', () => {
             mobileMenu.classList.toggle('hidden');
             mobileMenuToggle.setAttribute('aria-expanded', String(!mobileMenu.classList.contains('hidden')));
+        });
+    }
+
+    // Search Dropdown Toggle
+    window.toggleSearchDropdown = function() {
+        const dropdown = document.getElementById('searchDropdown');
+        if (dropdown) {
+            dropdown.classList.toggle('hidden');
+            if (!dropdown.classList.contains('hidden')) {
+                const navbarSearchInput = document.getElementById('searchInput');
+                if (navbarSearchInput) {
+                    navbarSearchInput.focus();
+                    // Attach autocomplete listener if not already attached
+                    if (!navbarSearchInput.hasAttribute('data-autocomplete-attached')) {
+                        attachAutocompleteListener(navbarSearchInput);
+                        navbarSearchInput.setAttribute('data-autocomplete-attached', 'true');
+                    }
+                }
+            }
+        }
+    };
+
+    // Close search dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('searchDropdown');
+        const searchButton = event.target.closest('button[onclick="toggleSearchDropdown()"]');
+        
+        if (dropdown && !dropdown.contains(event.target) && !searchButton) {
+            dropdown.classList.add('hidden');
+        }
+    });
+
+    // Autocomplete Search Function
+    function attachAutocompleteListener(searchInput) {
+        const searchResults = document.getElementById('searchResults');
+        let searchTimeout;
+
+        searchInput.addEventListener('input', function() {
+            const query = this.value.trim();
+            
+            clearTimeout(searchTimeout);
+            
+            if (query.length < 2) {
+                searchResults.classList.add('hidden');
+                searchResults.innerHTML = '';
+                return;
+            }
+            
+            searchTimeout = setTimeout(() => {
+                fetch(`/api/products/search?q=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.products && data.products.length > 0) {
+                            searchResults.innerHTML = data.products.map(product => `
+                                <a href="${product.url}" class="flex items-center gap-3 p-2 hover:bg-zinc-100 rounded-lg transition">
+                                    <img src="${product.image}" alt="${product.name}" class="w-12 h-12 object-cover rounded">
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium text-black truncate">${product.name}</p>
+                                        <p class="text-xs text-zinc-600">${product.category}</p>
+                                    </div>
+                                    <p class="text-sm font-semibold text-black">${product.price}</p>
+                                </a>
+                            `).join('');
+                            searchResults.classList.remove('hidden');
+                        } else {
+                            searchResults.innerHTML = '<p class="text-sm text-zinc-500 p-2 text-center">Tidak ada produk ditemukan</p>';
+                            searchResults.classList.remove('hidden');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Search error:', error);
+                    });
+            }, 300);
         });
     }
 
@@ -587,5 +1099,140 @@
         }
     }
 })();
+
+// Review Modal
+function openReviewModal() {
+    document.getElementById('reviewModal').classList.remove('hidden');
+}
+
+function closeReviewModal() {
+    document.getElementById('reviewModal').classList.add('hidden');
+}
+
+// Handle star rating selection
+function selectRating(rating) {
+    document.querySelectorAll('.star-rating i').forEach((star, index) => {
+        if (index < rating) {
+            star.classList.remove('text-zinc-200');
+            star.classList.add('text-black');
+        } else {
+            star.classList.remove('text-black');
+            star.classList.add('text-zinc-200');
+        }
+    });
+    document.getElementById('ratingInput').value = rating;
+}
+
+// Handle quality rating slider
+document.getElementById('qualityRatingInput')?.addEventListener('input', function() {
+    document.getElementById('qualityRatingValue').textContent = this.value + '%';
+});
+
+// Handle sizing rating slider
+document.getElementById('sizingRatingInput')?.addEventListener('input', function() {
+    document.getElementById('sizingRatingValue').textContent = this.value + '%';
+});
+
+// Submit review form
+document.getElementById('reviewForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    fetch('{{ route('customer.reviews.store', $product) }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            rating: formData.get('rating'),
+            comment: formData.get('comment'),
+            quality_rating: formData.get('quality_rating'),
+            sizing_rating: formData.get('sizing_rating'),
+            usual_size: formData.get('usual_size')
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            closeReviewModal();
+            location.reload();
+        } else {
+            alert(data.message || 'Gagal mengirim review');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Terjadi kesalahan. Silakan coba lagi.');
+    });
+});
 </script>
+
+<!-- Review Modal -->
+<div id="reviewModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div class="relative w-full max-w-lg mx-4 bg-white rounded-2xl shadow-xl">
+        <div class="flex items-center justify-between p-6 border-b border-zinc-200">
+            <h3 class="text-lg font-semibold text-black">Write a Review</h3>
+            <button onclick="closeReviewModal()" class="text-zinc-400 hover:text-black transition">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+        <form id="reviewForm" class="p-6 space-y-4">
+            <!-- Rating -->
+            <div>
+                <label class="block text-sm font-medium text-black mb-2">Rating *</label>
+                <div class="flex gap-2 star-rating cursor-pointer">
+                    <i class="fas fa-star text-2xl text-zinc-200 hover:text-black transition" onclick="selectRating(1)"></i>
+                    <i class="fas fa-star text-2xl text-zinc-200 hover:text-black transition" onclick="selectRating(2)"></i>
+                    <i class="fas fa-star text-2xl text-zinc-200 hover:text-black transition" onclick="selectRating(3)"></i>
+                    <i class="fas fa-star text-2xl text-zinc-200 hover:text-black transition" onclick="selectRating(4)"></i>
+                    <i class="fas fa-star text-2xl text-zinc-200 hover:text-black transition" onclick="selectRating(5)"></i>
+                </div>
+                <input type="hidden" id="ratingInput" name="rating" required>
+            </div>
+
+            <!-- Comment -->
+            <div>
+                <label for="comment" class="block text-sm font-medium text-black mb-2">Comment</label>
+                <textarea id="comment" name="comment" rows="4" class="w-full px-4 py-2.5 border border-zinc-200 rounded-lg text-sm focus:outline-none focus:border-zinc-400 transition" placeholder="Share your experience with this product..."></textarea>
+            </div>
+
+            <!-- Quality Rating -->
+            <div>
+                <label for="qualityRatingInput" class="block text-sm font-medium text-black mb-2">Quality Rating</label>
+                <input type="range" id="qualityRatingInput" name="quality_rating" min="0" max="100" value="50" class="w-full">
+                <div class="flex justify-between text-xs text-zinc-500 mt-1">
+                    <span>Low</span>
+                    <span id="qualityRatingValue">50%</span>
+                    <span>High</span>
+                </div>
+            </div>
+
+            <!-- Sizing Rating -->
+            <div>
+                <label for="sizingRatingInput" class="block text-sm font-medium text-black mb-2">Sizing Rating</label>
+                <input type="range" id="sizingRatingInput" name="sizing_rating" min="0" max="100" value="50" class="w-full">
+                <div class="flex justify-between text-xs text-zinc-500 mt-1">
+                    <span>Runs Small</span>
+                    <span id="sizingRatingValue">50%</span>
+                    <span>Runs Large</span>
+                </div>
+            </div>
+
+            <!-- Usual Size -->
+            <div>
+                <label for="usualSize" class="block text-sm font-medium text-black mb-2">Usual Size (Optional)</label>
+                <input type="text" id="usualSize" name="usual_size" class="w-full px-4 py-2.5 border border-zinc-200 rounded-lg text-sm focus:outline-none focus:border-zinc-400 transition" placeholder="e.g., M, L, 42, etc.">
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="w-full bg-black text-white py-3 rounded-lg font-semibold text-sm hover:bg-black/90 transition">
+                Submit Review
+            </button>
+        </form>
+    </div>
+</div>
 @endpush

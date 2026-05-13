@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\ProfileController as AdminProfile;
 use App\Http\Controllers\Admin\UserManagementController as AdminStaff;
 use App\Http\Controllers\Admin\ShippingDiscountController;
 use App\Http\Controllers\Admin\ReportController as AdminReport;
+use App\Http\Controllers\Admin\ReviewController as AdminReview;
 use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Customer\OrderController as CustomerOrder;
 use App\Http\Controllers\Customer\PaymentController;
@@ -21,11 +22,47 @@ use App\Http\Controllers\Customer\TestimonialController as CustomerTestimonial;
 use App\Http\Controllers\Courier\DashboardController as CourierDashboard;
 use App\Http\Controllers\Courier\DeliveryController as CourierDelivery;
 use App\Http\Controllers\Courier\ProfileController as CourierProfile;
-use App\Http\Controllers\Courier\NotificationController as CourierNotification;
+use App\Http\Controllers\Courier\NotificationController;
 use App\Http\Controllers\BiteshipWebhookController;
 use App\Http\Controllers\PakasirWebhookController;
+use App\Http\Controllers\ReviewController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Product;
+
+// API Search Products
+Route::get('/api/search-products', function (Illuminate\Http\Request $request) {
+    $query = $request->input('q', '');
+    
+    if (strlen($query) < 2) {
+        return response()->json(['products' => []]);
+    }
+    
+    $products = Product::active()
+        ->inStock()
+        ->where(function($q) use ($query) {
+            $q->where('name', 'like', "%{$query}%")
+              ->orWhere('description', 'like', "%{$query}%")
+              ->orWhere('brand', 'like', "%{$query}%")
+              ->orWhere('category', 'like', "%{$query}%");
+        })
+        ->take(8)
+        ->get()
+        ->map(function($product) {
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+                'slug' => $product->slug,
+                'image_url' => $product->image_url,
+                'brand' => $product->brand,
+                'category_label' => $product->category_label,
+                'formatted_price' => $product->hasActiveDiscount() ? $product->formatted_discounted_price : $product->formatted_price,
+                'detail_url' => route('produk.show', $product->slug),
+            ];
+        });
+    
+    return response()->json(['products' => $products]);
+})->name('api.search-products');
 
 Route::get('/media/products/{path}', function (string $path) {
     $normalizedPath = ltrim(str_replace('\\', '/', $path), '/');
@@ -81,6 +118,12 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/register/request-otp', [AuthController::class, 'requestRegisterOtp'])->name('register.request-otp')->middleware('throttle:3,1');
     Route::post('/register/verify-otp', [AuthController::class, 'verifyRegisterOtp'])->name('register.verify-otp')->middleware('throttle:5,1');
+    
+    // Forgot Password Routes
+    Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('password.request');
+    Route::post('/forgot-password/request-otp', [AuthController::class, 'requestPasswordResetOtp'])->name('password.request-otp')->middleware('throttle:3,1');
+    Route::post('/forgot-password/verify-otp', [AuthController::class, 'verifyPasswordResetOtp'])->name('password.verify-otp')->middleware('throttle:5,1');
+    Route::post('/forgot-password/reset', [AuthController::class, 'resetPassword'])->name('password.reset');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
@@ -125,9 +168,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard');
     
     // Products
-    Route::resource('products', AdminProduct::class);
-    Route::patch('/products/{product}/toggle-status', [AdminProduct::class, 'toggleStatus'])->name('products.toggle-status');
-    Route::patch('/products/{product}/toggle-featured', [AdminProduct::class, 'toggleFeatured'])->name('products.toggle-featured');
+    Route::resource('products', AdminProduct::class)->parameters(['products' => 'product:id']);
+    Route::patch('/products/{product:id}/toggle-status', [AdminProduct::class, 'toggleStatus'])->name('products.toggle-status');
+    Route::patch('/products/{product:id}/toggle-featured', [AdminProduct::class, 'toggleFeatured'])->name('products.toggle-featured');
     
     // Orders
     Route::get('/orders', [AdminOrder::class, 'index'])->name('orders.index');
@@ -157,6 +200,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::patch('/testimonials/{testimonial}/approve', [AdminTestimonial::class, 'approve'])->name('testimonials.approve');
     Route::patch('/testimonials/{testimonial}/reject', [AdminTestimonial::class, 'reject'])->name('testimonials.reject');
     Route::delete('/testimonials/{testimonial}', [AdminTestimonial::class, 'destroy'])->name('testimonials.destroy');
+    
+    // Reviews
+    Route::get('/reviews', [AdminReview::class, 'index'])->name('reviews.index');
+    Route::get('/reviews/{review}', [AdminReview::class, 'show'])->name('reviews.show');
+    Route::patch('/reviews/{review}/approve', [AdminReview::class, 'approve'])->name('reviews.approve');
+    Route::patch('/reviews/{review}/reject', [AdminReview::class, 'reject'])->name('reviews.reject');
+    Route::delete('/reviews/{review}', [AdminReview::class, 'destroy'])->name('reviews.destroy');
     
     // Users
     Route::get('/users', [AdminUser::class, 'index'])->name('users.index');
@@ -266,6 +316,14 @@ Route::delete('/customer/cart/{cart}', [CartController::class, 'remove'])->name(
 Route::delete('/customer/cart', [CartController::class, 'clear'])->name('customer.cart.clear');
 Route::get('/customer/cart/count', [CartController::class, 'count'])->name('customer.cart.count');
 
+// Wishlist Routes (accessible without login)
+Route::post('/customer/wishlist/add/{product}', [\App\Http\Controllers\Customer\WishlistController::class, 'add'])->name('customer.wishlist.add');
+Route::get('/customer/wishlist', [\App\Http\Controllers\Customer\WishlistController::class, 'index'])->name('customer.wishlist.index');
+Route::delete('/customer/wishlist/{product}', [\App\Http\Controllers\Customer\WishlistController::class, 'remove'])->name('customer.wishlist.remove');
+Route::delete('/customer/wishlist', [\App\Http\Controllers\Customer\WishlistController::class, 'clear'])->name('customer.wishlist.clear');
+Route::get('/customer/wishlist/count', [\App\Http\Controllers\Customer\WishlistController::class, 'count'])->name('customer.wishlist.count');
+Route::get('/customer/wishlist/check/{product}', [\App\Http\Controllers\Customer\WishlistController::class, 'check'])->name('customer.wishlist.check');
+
 // Guest Checkout & Payment (accessible without login)
 Route::get('/customer/checkout', [CustomerOrder::class, 'checkout'])->name('customer.checkout');
 Route::post('/customer/checkout', [CustomerOrder::class, 'processCheckout'])->name('customer.checkout.process');
@@ -301,9 +359,11 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'customer'])->
     Route::get('/products/{product}', function($product) {
         return redirect()->route('produk.show', $product);
     })->name('products.show');
-    
-    // Shipping Rates (Biteship)
-    Route::post('/shipping/rates', [\App\Http\Controllers\Customer\ShippingController::class, 'getRates'])->name('shipping.rates');
+
+    // Reviews
+    Route::post('/reviews/{product}', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::patch('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
+    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
     
     // Checkout & Orders (removed - moved to guest accessible routes)
     Route::get('/orders', [CustomerOrder::class, 'index'])->name('orders.index');
@@ -315,14 +375,6 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'customer'])->
     Route::post('/orders/{order}/request-refund', [CustomerOrder::class, 'requestRefund'])->name('orders.request-refund');
     Route::patch('/orders/{order}/confirm', [CustomerOrder::class, 'confirmReceived'])->name('orders.confirm');
     
-    // Payment Gateway Selection
-    Route::get('/payment/{order}/select-gateway', function(\App\Models\Order $order) {
-        if ($order->user_id !== auth()->id()) {
-            abort(403);
-        }
-        return view('customer.payment.select-gateway', compact('order'));
-    })->name('payment.select-gateway');
-    
     // Payment Gateway (Pakasir)
     Route::get('/payment/{order}', [PaymentController::class, 'show'])->name('payment.show');
     Route::post('/payment/{order}/process', [PaymentController::class, 'process'])->name('payment.process');
@@ -331,13 +383,6 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'customer'])->
     Route::post('/payment/{order}/simulate', [PaymentController::class, 'simulatePayment'])->name('payment.simulate');
     Route::get('/payment/{order}/redirect', [PaymentController::class, 'redirect'])->name('payment.redirect');
     Route::get('/payment/{order}/callback', [PakasirWebhookController::class, 'handleCallback'])->name('payment.callback');
-    
-    // Payment Gateway (Paylabs)
-    Route::get('/payment-paylabs/{order}', [\App\Http\Controllers\Customer\PaylabsPaymentController::class, 'show'])->name('payment.paylabs.show');
-    Route::post('/payment-paylabs/{order}/process', [\App\Http\Controllers\Customer\PaylabsPaymentController::class, 'process'])->name('payment.paylabs.process');
-    Route::get('/payment-paylabs/{order}/waiting', [\App\Http\Controllers\Customer\PaylabsPaymentController::class, 'waiting'])->name('payment.paylabs.waiting');
-    Route::get('/payment-paylabs/{order}/check-status', [\App\Http\Controllers\Customer\PaylabsPaymentController::class, 'checkStatus'])->name('payment.paylabs.check-status');
-    Route::get('/payment-paylabs/{order}/callback', [\App\Http\Controllers\PaylabsWebhookController::class, 'handleCallback'])->name('payment.paylabs.callback');
     
     // Testimonials
     Route::post('/orders/{order}/testimonial', [CustomerTestimonial::class, 'store'])->name('testimonials.store');

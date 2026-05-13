@@ -22,7 +22,12 @@ class Product extends Model
         'stock',
         'weight',
         'image',
+        'image_2',
+        'image_3',
+        'image_4',
         'category',
+        'brand',
+        'level',
         'package_type',
         'is_active',
         'is_featured',
@@ -44,6 +49,20 @@ class Product extends Model
     const CATEGORY_SHOES = 'shoes';
     const CATEGORY_ARRIVALS = 'arrivals';
 
+    // Levels
+    const LEVEL_BEGINNER = 'beginner';
+    const LEVEL_INTERMEDIATE = 'intermediate';
+    const LEVEL_PRO = 'pro';
+
+    public static function levels(): array
+    {
+        return [
+            self::LEVEL_BEGINNER => 'Beginner',
+            self::LEVEL_INTERMEDIATE => 'Intermediate',
+            self::LEVEL_PRO => 'Pro',
+        ];
+    }
+
     public static function categories(): array
     {
         return [
@@ -58,12 +77,17 @@ class Product extends Model
     const PACKAGE_SINGLE = 'single';
     const PACKAGE_BUNDLE = 'bundle';
 
-    public static function packageTypes(): array
+    /**
+     * Check if product is best seller (sold more than 3 times)
+     */
+    public function isBestSeller(): bool
     {
-        return [
-            self::PACKAGE_SINGLE => 'Paket Bersama',
-            self::PACKAGE_BUNDLE => 'Paket Hemat',
-        ];
+        $soldCount = \App\Models\OrderItem::where('product_id', $this->id)
+            ->whereHas('order', function($q) {
+                $q->whereIn('status', ['completed', 'delivered']);
+            })->sum('quantity');
+        
+        return $soldCount > 3;
     }
 
     // Weight options in grams
@@ -92,6 +116,14 @@ class Product extends Model
         });
 
         // Removed auto-slug update on updating - handled in controller
+    }
+
+    /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName()
+    {
+        return 'slug';
     }
 
     /**
@@ -126,7 +158,11 @@ class Product extends Model
      */
     public function getPackageTypeLabelAttribute(): string
     {
-        return self::packageTypes()[$this->package_type] ?? 'Produk Satuan';
+        $labels = [
+            'single' => 'Produk Satuan',
+            'bundle' => 'Paket Hemat',
+        ];
+        return $labels[$this->package_type] ?? 'Produk Satuan';
     }
 
     /**
@@ -182,6 +218,14 @@ class Product extends Model
     }
 
     /**
+     * Get reviews for this product
+     */
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    /**
      * Scope for active products
      */
     public function scopeActive($query)
@@ -210,7 +254,52 @@ class Product extends Model
      */
     public function getImageUrlAttribute(): string
     {
-        $rawPath = trim((string) $this->image);
+        return $this->getImagePathUrl($this->image);
+    }
+
+    /**
+     * Get image 2 URL
+     */
+    public function getImage2UrlAttribute(): string
+    {
+        return $this->getImagePathUrl($this->image_2);
+    }
+
+    /**
+     * Get image 3 URL
+     */
+    public function getImage3UrlAttribute(): string
+    {
+        return $this->getImagePathUrl($this->image_3);
+    }
+
+    /**
+     * Get image 4 URL
+     */
+    public function getImage4UrlAttribute(): string
+    {
+        return $this->getImagePathUrl($this->image_4);
+    }
+
+    /**
+     * Get all images as array
+     */
+    public function getAllImagesAttribute(): array
+    {
+        $images = [];
+        if ($this->image) $images[] = $this->image_url;
+        if ($this->image_2) $images[] = $this->image_2_url;
+        if ($this->image_3) $images[] = $this->image_3_url;
+        if ($this->image_4) $images[] = $this->image_4_url;
+        return $images;
+    }
+
+    /**
+     * Helper method to get image URL from path
+     */
+    private function getImagePathUrl($imagePath): string
+    {
+        $rawPath = trim((string) $imagePath);
         $normalizedPath = ltrim(str_replace('\\', '/', $rawPath), '/');
 
         if ($normalizedPath !== '' && preg_match('/^https?:\/\//i', $normalizedPath)) {

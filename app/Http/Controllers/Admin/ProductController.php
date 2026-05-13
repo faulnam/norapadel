@@ -90,14 +90,20 @@ class ProductController extends Controller
             'category' => 'required|in:original,pedas,shoes',
             'package_type' => 'nullable|in:single,bundle',
             'weight' => 'required|integer|min:1|max:50000',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'brand' => 'nullable|in:Bullpadel,Babolat,Nox,Alpha,Zephyr,Arronax',
+            'level' => 'nullable|in:beginner,intermediate,pro',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image_2' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image_3' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image_4' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'is_active' => 'boolean',
         ]);
 
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('products', 'public');
-        }
+        // Upload images
+        $imagePath = $request->file('image')->store('products', 'public');
+        $image2Path = $request->hasFile('image_2') ? $request->file('image_2')->store('products', 'public') : null;
+        $image3Path = $request->hasFile('image_3') ? $request->file('image_3')->store('products', 'public') : null;
+        $image4Path = $request->hasFile('image_4') ? $request->file('image_4')->store('products', 'public') : null;
 
         if ($isFeatured) {
             Product::where('category', $validated['category'])
@@ -117,7 +123,12 @@ class ProductController extends Controller
             'category' => $validated['category'],
             'package_type' => $validated['package_type'] ?? 'single',
             'weight' => $validated['weight'],
+            'brand' => $validated['brand'] ?? null,
+            'level' => $validated['level'] ?? null,
             'image' => $imagePath,
+            'image_2' => $image2Path,
+            'image_3' => $image3Path,
+            'image_4' => $image4Path,
             'is_active' => $request->boolean('is_active', true),
             'is_featured' => $isFeatured,
         ]);
@@ -160,7 +171,12 @@ class ProductController extends Controller
             'category' => 'required|in:original,pedas,shoes',
             'package_type' => 'nullable|in:single,bundle',
             'weight' => 'required|integer|min:1|max:50000',
+            'brand' => 'nullable|in:Bullpadel,Babolat,Nox,Alpha,Zephyr,Arronax',
+            'level' => 'nullable|in:beginner,intermediate,pro',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image_2' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image_3' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image_4' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'is_active' => 'boolean',
         ]);
 
@@ -190,9 +206,25 @@ class ProductController extends Controller
             $product->slug = $this->generateUniqueSlug($validated['name'], $product->id);
         }
 
+        // Handle image updates
         if ($request->hasFile('image')) {
             if ($product->image) Storage::disk('public')->delete($product->image);
             $product->image = $request->file('image')->store('products', 'public');
+        }
+
+        if ($request->hasFile('image_2')) {
+            if ($product->image_2) Storage::disk('public')->delete($product->image_2);
+            $product->image_2 = $request->file('image_2')->store('products', 'public');
+        }
+
+        if ($request->hasFile('image_3')) {
+            if ($product->image_3) Storage::disk('public')->delete($product->image_3);
+            $product->image_3 = $request->file('image_3')->store('products', 'public');
+        }
+
+        if ($request->hasFile('image_4')) {
+            if ($product->image_4) Storage::disk('public')->delete($product->image_4);
+            $product->image_4 = $request->file('image_4')->store('products', 'public');
         }
 
         $product->save();
@@ -206,10 +238,11 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        // Delete image
-        if ($product->image) {
-            Storage::disk('public')->delete($product->image);
-        }
+        // Delete all images
+        if ($product->image) Storage::disk('public')->delete($product->image);
+        if ($product->image_2) Storage::disk('public')->delete($product->image_2);
+        if ($product->image_3) Storage::disk('public')->delete($product->image_3);
+        if ($product->image_4) Storage::disk('public')->delete($product->image_4);
 
         $product->delete();
 

@@ -68,7 +68,7 @@ class CartController extends Controller
             $hasActiveVariants = $product->has_variants && $product->activeVariants()->exists();
             
             if ($hasActiveVariants && !$variantId) {
-                if ($request->expectsJson()) {
+                if ($request->expectsJson() || $request->ajax()) {
                     return response()->json(['success' => false, 'message' => 'Silakan pilih varian produk terlebih dahulu.'], 400);
                 }
                 return back()->with('error', 'Silakan pilih varian produk terlebih dahulu.');
@@ -83,14 +83,14 @@ class CartController extends Controller
                     ->first();
                 
                 if (!$variant) {
-                    if ($request->expectsJson()) {
+                    if ($request->expectsJson() || $request->ajax()) {
                         return response()->json(['success' => false, 'message' => 'Varian tidak valid atau tidak aktif.'], 400);
                     }
                     return back()->with('error', 'Varian tidak valid atau tidak aktif.');
                 }
                 
                 if ($variant->stock < $quantity) {
-                    if ($request->expectsJson()) {
+                    if ($request->expectsJson() || $request->ajax()) {
                         return response()->json(['success' => false, 'message' => 'Stok varian tidak mencukupi.'], 400);
                     }
                     return back()->with('error', 'Stok varian tidak mencukupi.');
@@ -98,7 +98,7 @@ class CartController extends Controller
             } else {
                 // Produk tanpa varian atau varian tidak dipilih
                 if ($product->stock < $quantity) {
-                    if ($request->expectsJson()) {
+                    if ($request->expectsJson() || $request->ajax()) {
                         return response()->json(['success' => false, 'message' => 'Stok tidak mencukupi.'], 400);
                     }
                     return back()->with('error', 'Stok tidak mencukupi.');
@@ -117,7 +117,7 @@ class CartController extends Controller
                     $maxStock = $variant ? $variant->stock : $product->stock;
                     
                     if ($maxStock < $newQuantity) {
-                        if ($request->expectsJson()) {
+                        if ($request->expectsJson() || $request->ajax()) {
                             return response()->json(['success' => false, 'message' => 'Stok tidak mencukupi.'], 400);
                         }
                         return back()->with('error', 'Stok tidak mencukupi.');
@@ -142,7 +142,7 @@ class CartController extends Controller
                     $maxStock = $variant ? $variant->stock : $product->stock;
                     
                     if ($maxStock < $newQuantity) {
-                        if ($request->expectsJson()) {
+                        if ($request->expectsJson() || $request->ajax()) {
                             return response()->json(['success' => false, 'message' => 'Stok tidak mencukupi.'], 400);
                         }
                         return back()->with('error', 'Stok tidak mencukupi.');
@@ -160,13 +160,13 @@ class CartController extends Controller
                 session()->put('guest_cart', $guestCart);
             }
 
-            if ($request->expectsJson()) {
+            if ($request->expectsJson() || $request->ajax()) {
                 return response()->json(['success' => true, 'message' => 'Produk berhasil ditambahkan ke keranjang.']);
             }
             return back()->with('success', 'Produk berhasil ditambahkan ke keranjang.');
         } catch (\Exception $e) {
             \Log::error('Add to cart error: ' . $e->getMessage());
-            if ($request->expectsJson()) {
+            if ($request->expectsJson() || $request->ajax()) {
                 return response()->json(['success' => false, 'message' => 'Terjadi kesalahan: ' . $e->getMessage()], 500);
             }
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());

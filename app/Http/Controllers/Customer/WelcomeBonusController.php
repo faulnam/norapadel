@@ -19,14 +19,17 @@ class WelcomeBonusController extends Controller
             return redirect()->back()->with('error', 'Anda sudah mengklaim bonus welcome.');
         }
 
-        // Give 100 points
-        $user->increment('points', 100);
+        // Check if user has any orders
+        $hasOrders = $user->orders()->exists();
+        if ($hasOrders) {
+            return redirect()->back()->with('error', 'Bonus hanya tersedia untuk customer baru yang belum pernah berbelanja.');
+        }
         
-        // Mark as claimed
+        // Mark as claimed (user already has 100 points from registration)
         $user->update([
             'welcome_bonus_claimed' => true,
         ]);
 
-        return redirect()->back()->with('success', 'Selamat! Anda mendapatkan 100 points (senilai Rp 10.000) dan akan mendapat free grip pada pembelian pertama!');
+        return redirect()->back()->with('success', 'Selamat! Bonus welcome Anda telah diklaim. Gunakan 100 poin untuk diskon dan dapatkan free grip pada pembelian pertama!');
     }
 }

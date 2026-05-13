@@ -6,7 +6,10 @@
     <div class="min-h-screen bg-[#f5f5f7] text-black antialiased">
     <header class="fixed left-0 top-0 z-50 w-full border-b border-black/6 bg-white/80 backdrop-blur-xl md:sticky">
             <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-10 lg:px-12">
-                <a href="{{ route('home') }}" class="text-xl font-semibold tracking-tight text-black">NoraPadel</a>
+                <a href="{{ route('home') }}" class="flex items-center gap-2">
+                    <img src="{{ asset('storage/logo.png') }}" alt="NoraPadel" class="h-7 w-7 object-contain" loading="lazy">
+                    <span class="text-xl font-semibold tracking-tight text-black">NoraPadel</span>
+                </a>
 
                 <nav class="hidden items-center gap-8 md:flex">
                     <a href="{{ route('home') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Home</a>
@@ -112,10 +115,15 @@
                             </div>
                         </div>
 
-                        <label class="inline-flex cursor-pointer items-center gap-2 text-sm text-zinc-600">
-                            <input type="checkbox" id="remember" name="remember" class="h-4 w-4 rounded border-zinc-300 text-black focus:ring-zinc-300">
-                            <span>Ingat saya</span>
-                        </label>
+                        <div class="flex items-center justify-between">
+                            <label class="inline-flex cursor-pointer items-center gap-2 text-sm text-zinc-600">
+                                <input type="checkbox" id="remember" name="remember" class="h-4 w-4 rounded border-zinc-300 text-black focus:ring-zinc-300">
+                                <span>Ingat saya</span>
+                            </label>
+                            <a href="{{ route('password.request') }}" class="text-sm font-medium text-black underline decoration-black/30 underline-offset-4 transition hover:decoration-black">
+                                Lupa Password?
+                            </a>
+                        </div>
 
                         <button type="submit" class="inline-flex w-full items-center justify-center rounded-full bg-black px-5 py-3 text-sm font-medium text-white transition duration-300 hover:bg-zinc-800">
                             <i class="fas fa-sign-in-alt mr-2 text-xs"></i>Masuk

@@ -39,6 +39,33 @@ Route::middleware('web')->group(function () {
             }),
         ]);
     });
+    
+    // Product search (public)
+    Route::get('/products/search', function () {
+        $query = request()->get('q', '');
+        
+        if (strlen($query) < 2) {
+            return response()->json(['products' => []]);
+        }
+        
+        $products = \App\Models\Product::where('name', 'like', "%{$query}%")
+            ->where('is_active', true)
+            ->limit(10)
+            ->get();
+            
+        return response()->json([
+            'products' => $products->map(function ($product) {
+                return [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'category' => $product->category_label,
+                    'price' => $product->formatted_price,
+                    'image' => $product->image_url,
+                    'url' => route('produk.show', $product),
+                ];
+            })
+        ]);
+    });
 });
 
 Route::middleware('auth:sanctum')->group(function () {

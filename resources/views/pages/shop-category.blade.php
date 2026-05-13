@@ -35,17 +35,37 @@
         @if($products->count() > 0)
             <div class="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
                 @foreach($products as $product)
+                    @php
+                        $soldCount = \App\Models\OrderItem::where('product_id', $product->id)
+                            ->whereHas('order', function($q) {
+                                $q->whereIn('status', ['completed', 'delivered']);
+                            })->sum('quantity');
+                    @endphp
                     <a href="{{ route('produk.show', $product) }}" class="group block overflow-hidden rounded-xl border border-black/6 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg">
                         <div class="relative aspect-square overflow-hidden">
                             <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" onerror="this.onerror=null;this.src='/images/logo.png';" loading="lazy">
                             @if($product->hasActiveDiscount())
                                 <span class="absolute left-2 top-2 rounded-full bg-rose-500 px-2 py-0.5 text-[10px] font-semibold text-white">-{{ $product->formatted_discount_percent }}</span>
                             @endif
+                            @if($product->category === 'arrivals')
+                                <span class="absolute left-2 {{ $product->hasActiveDiscount() ? 'top-9' : 'top-2' }} rounded-full bg-blue-500 px-2 py-0.5 text-[10px] font-semibold text-white">Latest</span>
+                            @endif
+                            @if($product->package_type === 'bundle')
+                                <span class="absolute left-2 {{ $product->hasActiveDiscount() && $product->category === 'arrivals' ? 'top-16' : ($product->hasActiveDiscount() || $product->category === 'arrivals' ? 'top-9' : 'top-2') }} rounded-full bg-purple-500 px-2 py-0.5 text-[10px] font-semibold text-white">Bundle</span>
+                            @endif
+                            @if($soldCount >= 5 || $product->package_type === 'bestseller')
+                                <span class="absolute right-2 top-2 rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white">Best Seller</span>
+                            @endif
                         </div>
                         <div class="p-3">
                             <h3 class="line-clamp-1 text-sm font-semibold text-black">{{ $product->name }}</h3>
                             <p class="mt-1 text-xs text-zinc-600">{{ $product->category_label }}</p>
-                            <p class="mt-1 text-base font-bold text-black">{{ $product->formatted_price }}</p>
+                            @if($product->hasActiveDiscount())
+                                <p class="mt-1 text-base font-bold text-black">{{ $product->formatted_discounted_price }}</p>
+                                <p class="text-xs text-zinc-400 line-through">{{ $product->formatted_price }}</p>
+                            @else
+                                <p class="mt-1 text-base font-bold text-black">{{ $product->formatted_price }}</p>
+                            @endif
                         </div>
                     </a>
                 @endforeach

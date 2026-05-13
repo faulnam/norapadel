@@ -24,31 +24,77 @@ class OrderController extends Controller
     /**
      * Show checkout page
      */
-    public function checkout()
+    public function checkout(Request $request)
     {
-        if (auth()->check()) {
-            $cartItems = auth()->user()->cart()->with('product')->get();
-        } else {
-            // Guest cart from session
-            $guestCart = session()->get('guest_cart', []);
-            $cartItems = collect();
+        // Check if this is a "Buy Now" request
+        if ($request->has('buy_now') && $request->has('product_id')) {
+            $product = \App\Models\Product::findOrFail($request->product_id);
+            $quantity = max(1, (int) $request->input('quantity', 1));
             
-            foreach ($guestCart as $item) {
-                $product = \App\Models\Product::find($item['product_id']);
-                if ($product) {
-                    $variant = isset($item['variant_id']) ? \App\Models\ProductVariant::find($item['variant_id']) : null;
-                    $price = $variant ? $variant->price : ($product->hasActiveDiscount() ? $product->discounted_price : $product->price);
-                    $subtotal = $price * $item['quantity'];
-                    
-                    $cartItems->push((object)[
-                        'id' => $item['product_id'] . '_' . ($item['variant_id'] ?? 'null'),
-                        'product' => $product,
-                        'variant' => $variant,
-                        'quantity' => $item['quantity'],
-                        'subtotal' => $subtotal,
-                        'original_subtotal' => $product->price * $item['quantity'],
-                        'discount_amount' => $product->hasActiveDiscount() ? ($product->price - $product->discounted_price) * $item['quantity'] : 0,
-                    ]);
+            // Check stock
+            if ($product->stock < $quantity) {
+                return redirect()->route('produk.show', $product)
+                    ->with('error', 'Stok tidak mencukupi.');
+            }
+            
+            // Create temporary cart items for Buy Now (tidak disimpan ke database/session)
+            $variant = null;
+            if ($request->has('variant_id')) {
+                $variant = \App\Models\ProductVariant::find($request->variant_id);
+            }
+            
+            $price = $variant ? $variant->price : ($product->hasActiveDiscount() ? $product->discounted_price : $product->price);
+            $subtotal = $price * $quantity;
+            
+            $cartItems = collect([
+                (object)[
+                    'id' => 'buy_now_' . $product->id,
+                    'product' => $product,
+                    'product_id' => $product->id,
+                    'variant' => $variant,
+                    'quantity' => $quantity,
+                    'subtotal' => $subtotal,
+                    'original_subtotal' => $product->price * $quantity,
+                    'discount_amount' => $product->hasActiveDiscount() ? ($product->price - $product->discounted_price) * $quantity : 0,
+                ]
+            ]);
+            
+            // Mark this as buy now session
+            session()->put('is_buy_now', true);
+            session()->put('buy_now_product', [
+                'product_id' => $product->id,
+                'variant_id' => $variant ? $variant->id : null,
+                'quantity' => $quantity,
+            ]);
+        } else {
+            // Normal checkout from cart
+            session()->forget('is_buy_now');
+            session()->forget('buy_now_product');
+            
+            if (auth()->check()) {
+                $cartItems = auth()->user()->cart()->with('product')->get();
+            } else {
+                // Guest cart from session
+                $guestCart = session()->get('guest_cart', []);
+                $cartItems = collect();
+                
+                foreach ($guestCart as $item) {
+                    $product = \App\Models\Product::find($item['product_id']);
+                    if ($product) {
+                        $variant = isset($item['variant_id']) ? \App\Models\ProductVariant::find($item['variant_id']) : null;
+                        $price = $variant ? $variant->price : ($product->hasActiveDiscount() ? $product->discounted_price : $product->price);
+                        $subtotal = $price * $item['quantity'];
+                        
+                        $cartItems->push((object)[
+                            'id' => $item['product_id'] . '_' . ($item['variant_id'] ?? 'null'),
+                            'product' => $product,
+                            'variant' => $variant,
+                            'quantity' => $item['quantity'],
+                            'subtotal' => $subtotal,
+                            'original_subtotal' => $product->price * $item['quantity'],
+                            'discount_amount' => $product->hasActiveDiscount() ? ($product->price - $product->discounted_price) * $item['quantity'] : 0,
+                        ]);
+                    }
                 }
             }
         }
@@ -123,7 +169,31 @@ class OrderController extends Controller
         ]);
 
         // Get cart items (from database or session)
-        if (auth()->check()) {
+        $isBuyNow = session()->get('is_buy_now', false);
+        
+        if ($isBuyNow && session()->has('buy_now_product')) {
+            // Buy Now - get product from session
+            $buyNowData = session()->get('buy_now_product');
+            $product = \App\Models\Product::findOrFail($buyNowData['product_id']);
+            $variant = isset($buyNowData['variant_id']) ? \App\Models\ProductVariant::find($buyNowData['variant_id']) : null;
+            $quantity = $buyNowData['quantity'];
+            
+            $price = $variant ? $variant->price : ($product->hasActiveDiscount() ? $product->discounted_price : $product->price);
+            $subtotal = $price * $quantity;
+            
+            $cartItems = collect([
+                (object)[
+                    'id' => 'buy_now_' . $product->id,
+                    'product' => $product,
+                    'product_id' => $product->id,
+                    'variant' => $variant,
+                    'quantity' => $quantity,
+                    'subtotal' => $subtotal,
+                    'original_subtotal' => $product->price * $quantity,
+                    'discount_amount' => $product->hasActiveDiscount() ? ($product->price - $product->discounted_price) * $quantity : 0,
+                ]
+            ]);
+        } elseif (auth()->check()) {
             $cartItems = auth()->user()->cart()->with('product')->get();
         } else {
             // Guest cart from session
@@ -338,11 +408,18 @@ class OrderController extends Controller
                 }
             }
 
-            // Clear cart
-            if (auth()->check()) {
-                Cart::where('user_id', auth()->id())->delete();
+            // Clear cart only if NOT buy now
+            if ($isBuyNow) {
+                // Buy Now - clear buy now session only, keep cart intact
+                session()->forget('is_buy_now');
+                session()->forget('buy_now_product');
             } else {
-                session()->forget('guest_cart');
+                // Normal checkout - clear cart
+                if (auth()->check()) {
+                    Cart::where('user_id', auth()->id())->delete();
+                } else {
+                    session()->forget('guest_cart');
+                }
             }
 
             // Notify admin
