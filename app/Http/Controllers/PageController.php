@@ -292,6 +292,7 @@ class PageController extends Controller
 
         if ($request->filled('category')) {
             $categoryMap = [
+                'new-arrivals' => Product::CATEGORY_ARRIVALS,
                 'racket' => Product::CATEGORY_ORIGINAL,
                 'shoes' => Product::CATEGORY_SHOES,
                 'accessories' => Product::CATEGORY_PEDAS,

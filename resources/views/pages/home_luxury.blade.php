@@ -395,7 +395,7 @@
                         <h1 class="text-2xl font-semibold tracking-tight sm:text-3xl lg:text-4xl">NoraPadel</h1>
                         <p class="mt-4 text-sm text-zinc-200">Experience the ultimate in padel equipment. Premium quality rackets, shoes, and accessories for players who demand excellence.</p>
                         <div class="mt-6 flex flex-wrap justify-center gap-4">
-                            <a href="{{ route('shop') }}" class="inline-flex rounded border-2 border-white bg-white/10 backdrop-blur-md px-6 py-2 text-xs font-semibold text-white transition duration-300 hover:bg-white hover:text-black">Shop Now</a>
+                            <a href="{{ route('shop') }}" class="inline-flex rounded border-2 border-white bg-white/10 backdrop-blur-md px-6 py-2 text-xs font-semibold text-white transition duration-300">Shop Now</a>
                         </div>
                     </div>
                 </div>

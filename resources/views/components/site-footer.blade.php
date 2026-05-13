@@ -21,16 +21,16 @@
             <div>
                 <h3 class="text-xs font-semibold uppercase tracking-[0.14em] text-black">Social Media</h3>
                 <div class="mt-4 flex gap-3">
-                    <a href="https://www.instagram.com/norapadel/" target="_blank" rel="noopener" class="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 text-black transition-all duration-200 hover:bg-pink-500 hover:text-white">
+                    <a href="https://www.instagram.com/norapadel/" target="_blank" rel="noopener" class="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 text-black transition-all duration-200 hover:bg-zinc-500 hover:text-white">
                         <i class="fab fa-instagram"></i>
                     </a>
-                    <a href="https://www.tiktok.com/@norapadel" target="_blank" rel="noopener" class="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 text-black transition-all duration-200 hover:bg-black hover:text-white">
+                    <a href="https://www.tiktok.com/@norapadel" target="_blank" rel="noopener" class="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 text-black transition-all duration-200 hover:bg-zinc-500 hover:text-white">
                         <i class="fab fa-tiktok"></i>
                     </a>
-                    <a href="https://shopee.co.id/norads" target="_blank" rel="noopener" class="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 text-black transition-all duration-200 hover:bg-orange-500 hover:text-white">
+                    <a href="https://shopee.co.id/norads" target="_blank" rel="noopener" class="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 text-black transition-all duration-200 hover:bg-zinc-500 hover:text-white">
                         <i class="fas fa-shopping-bag"></i>
                     </a>
-                    <a href="https://wa.me/6285117358568" target="_blank" rel="noopener" class="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 text-black transition-all duration-200 hover:bg-green-500 hover:text-white">
+                    <a href="https://wa.me/6285117358568" target="_blank" rel="noopener" class="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 text-black transition-all duration-200 hover:bg-zinc-500 hover:text-white">
                         <i class="fab fa-whatsapp"></i>
                     </a>
                 </div>
@@ -67,16 +67,16 @@
                     <i class="fas fa-chevron-down text-[10px] text-zinc-500 transition group-open:rotate-180"></i>
                 </summary>
                 <div class="mt-3 flex gap-3">
-                    <a href="https://www.instagram.com/norapadel/" target="_blank" rel="noopener" class="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 text-black transition-all duration-200 hover:bg-pink-500 hover:text-white">
+                    <a href="https://www.instagram.com/norapadel/" target="_blank" rel="noopener" class="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 text-black transition-all duration-200 hover:bg-zinc-500 hover:text-white">
                         <i class="fab fa-instagram"></i>
                     </a>
-                    <a href="https://www.tiktok.com/@norapadel" target="_blank" rel="noopener" class="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 text-black transition-all duration-200 hover:bg-black hover:text-white">
+                    <a href="https://www.tiktok.com/@norapadel" target="_blank" rel="noopener" class="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 text-black transition-all duration-200 hover:bg-zinc-500 hover:text-white">
                         <i class="fab fa-tiktok"></i>
                     </a>
-                    <a href="https://shopee.co.id/norads" target="_blank" rel="noopener" class="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 text-black transition-all duration-200 hover:bg-orange-500 hover:text-white">
+                    <a href="https://shopee.co.id/norads" target="_blank" rel="noopener" class="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 text-black transition-all duration-200 hover:bg-zinc-500 hover:text-white">
                         <i class="fas fa-shopping-bag"></i>
                     </a>
-                    <a href="https://wa.me/6285117358568" target="_blank" rel="noopener" class="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 text-black transition-all duration-200 hover:bg-green-500 hover:text-white">
+                    <a href="https://wa.me/6285117358568" target="_blank" rel="noopener" class="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 text-black transition-all duration-200 hover:bg-zinc-500 hover:text-white">
                         <i class="fab fa-whatsapp"></i>
                     </a>
                 </div>

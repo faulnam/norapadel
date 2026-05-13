@@ -84,24 +84,7 @@
     <!-- Right: Hero Image + Testimonials -->
     <section class="hidden md:block flex-1 relative p-4 min-h-[100dvh] md:min-h-0 md:sticky md:top-0 md:h-[100dvh]">
         <div class="animate-slide-right animate-delay-300 absolute inset-4 rounded-3xl bg-cover bg-center" style="background-image: url('{{ asset('storage/fiks.jpeg') }}');"></div>
-        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-4 px-8 w-full justify-center pointer-events-none">
-            <div class="animate-testimonial animate-delay-1000 flex items-start gap-3 rounded-3xl bg-white/40 backdrop-blur-xl border border-white/40 p-5 w-64 pointer-events-auto">
-                <img src="https://randomuser.me/api/portraits/women/57.jpg" class="h-10 w-10 object-cover rounded-2xl" alt="avatar">
-                <div class="text-sm leading-snug text-zinc-900">
-                    <p class="font-medium">Sarah Chen</p>
-                    <p class="text-zinc-600">@sarahdigital</p>
-                    <p class="mt-1 text-zinc-800">Amazing platform! The user experience is seamless and the features are exactly what I needed.</p>
-                </div>
-            </div>
-            <div class="hidden xl:flex animate-testimonial animate-delay-1200 items-start gap-3 rounded-3xl bg-white/40 backdrop-blur-xl border border-white/40 p-5 w-64 pointer-events-auto">
-                <img src="https://randomuser.me/api/portraits/men/64.jpg" class="h-10 w-10 object-cover rounded-2xl" alt="avatar">
-                <div class="text-sm leading-snug text-zinc-900">
-                    <p class="font-medium">Marcus Johnson</p>
-                    <p class="text-zinc-600">@marcustech</p>
-                    <p class="mt-1 text-zinc-800">This service has transformed how I work. Clean design, powerful features, and excellent support.</p>
-                </div>
-            </div>
-        </div>
+        
     </section>
 </div>
 
