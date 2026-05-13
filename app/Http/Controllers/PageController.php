@@ -54,7 +54,7 @@ class PageController extends Controller
             $shopProductsQuery->where('level', $request->level);
         }
 
-        $shopProducts = $shopProductsQuery->latest()->take(8)->get();
+        $shopProducts = $shopProductsQuery->latest()->take(10)->get();
         $brands = Product::active()->whereNotNull('brand')->distinct()->pluck('brand')->sort();
 
         return view('pages.home_luxury', [

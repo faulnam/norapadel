@@ -40,13 +40,13 @@ Route::get('/api/search-products', function (Illuminate\Http\Request $request) {
     
     $products = Product::active()
         ->inStock()
-        ->where('is_featured', false)
         ->where(function($q) use ($query) {
             $q->where('name', 'like', "%{$query}%")
               ->orWhere('description', 'like', "%{$query}%")
-              ->orWhere('brand', 'like', "%{$query}%");
+              ->orWhere('brand', 'like', "%{$query}%")
+              ->orWhere('category', 'like', "%{$query}%");
         })
-        ->take(10)
+        ->take(8)
         ->get()
         ->map(function($product) {
             return [
@@ -54,8 +54,10 @@ Route::get('/api/search-products', function (Illuminate\Http\Request $request) {
                 'name' => $product->name,
                 'slug' => $product->slug,
                 'image_url' => $product->image_url,
+                'brand' => $product->brand,
                 'category_label' => $product->category_label,
                 'formatted_price' => $product->hasActiveDiscount() ? $product->formatted_discounted_price : $product->formatted_price,
+                'detail_url' => route('produk.show', $product->slug),
             ];
         });
     

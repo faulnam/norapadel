@@ -65,7 +65,12 @@
 
                 <!-- Racket Mega Dropdown -->
                 <div class="relative group" data-dropdown="racket">
-                    <a href="{{ route('racket') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Racket</a>
+                    <a href="{{ route('racket') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black flex items-center gap-1">
+                        Racket
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-300 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </a>
                     <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[700px] opacity-0 invisible translate-y-[-10px] transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
                         <div class="bg-white/95 backdrop-blur-md rounded-xl shadow-2xl border border-zinc-100 p-0 overflow-hidden aspect-video">
                             <div class="grid grid-cols-[1fr_1.2fr] h-full">
@@ -154,7 +159,12 @@
 
                 <!-- Accessories Mega Dropdown -->
                 <div class="relative group" data-dropdown="accessories">
-                    <a href="{{ route('apparel') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Accessories</a>
+                    <a href="{{ route('apparel') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black flex items-center gap-1">
+                        Accessories
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-300 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </a>
                     <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[700px] opacity-0 invisible translate-y-[-10px] transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
                         <div class="bg-white/95 backdrop-blur-md rounded-xl shadow-2xl border border-zinc-100 p-0 overflow-hidden aspect-video">
                             <div class="grid grid-cols-[1fr_1.2fr] h-full">
@@ -377,7 +387,7 @@
                     </div>
 
                     <!-- Grid -->
-                    <div id="productGrid" class="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    <div id="productGrid" class="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                         @forelse($products as $product)
                             @php
                                 $soldCount = \App\Models\OrderItem::where('product_id', $product->id)
@@ -698,11 +708,11 @@
                     btn.classList.remove('text-zinc-400');
                     btn.classList.add('text-black');
                     
-                    productGrid.classList.remove('grid-cols-2', 'lg:grid-cols-3');
+                    productGrid.classList.remove('grid-cols-2', 'lg:grid-cols-4');
                     if (cols === '2') {
                         productGrid.classList.add('grid-cols-2');
                     } else {
-                        productGrid.classList.add('grid-cols-2', 'lg:grid-cols-3');
+                        productGrid.classList.add('grid-cols-2', 'lg:grid-cols-4');
                     }
                 });
             });

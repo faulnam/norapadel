@@ -388,11 +388,16 @@
                                         ->whereHas('order', function($q) {
                                             $q->whereIn('status', ['completed', 'delivered']);
                                         })->sum('quantity');
+
+                                    $reviews = \App\Models\Review::where('product_id', $product->id)
+                                        ->where('is_approved', true)
+                                        ->get();
+                                    $displayRating = $reviews->isNotEmpty() ? $reviews->avg('rating') : 5.0;
                                 @endphp
                                 @for($i = 1; $i <= 5; $i++)
-                                    <i class="fas fa-star text-zinc-500 text-sm"></i>
+                                    <i class="fas fa-star {{ $i <= floor($displayRating) ? 'text-black' : 'text-zinc-500' }} text-sm"></i>
                                 @endfor
-                                <span class="text-zinc-600 ml-1">5.0</span>
+                                <span class="text-zinc-600 ml-1">{{ number_format($displayRating, 1) }}</span>
                             </div>
                             <span class="text-zinc-400">|</span>
                             <div class="text-zinc-600">
@@ -697,7 +702,7 @@
                                     $q->whereIn('status', ['completed', 'delivered']);
                                 })->sum('quantity');
                         @endphp
-                        <div class="product-item group snap-start shrink-0 basis-[85%] sm:basis-[48%] md:basis-[31%] lg:basis-[23.5%] block overflow-hidden bg-white transition duration-300 hover:-translate-y-1"
+                        <div class="product-item group snap-start shrink-0 basis-[85%] sm:basis-[48%] md:basis-[31%] lg:basis-[19%] block overflow-hidden bg-white transition duration-300 hover:-translate-y-1"
                              data-name="{{ strtolower($related->name) }}"
                              data-price="{{ $related->hasActiveDiscount() ? $related->discounted_price : $related->price }}"
                              data-discount="{{ $related->hasActiveDiscount() ? 'yes' : 'no' }}"

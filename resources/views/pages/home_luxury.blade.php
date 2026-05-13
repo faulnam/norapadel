@@ -297,24 +297,9 @@
                         </a>
                     @endauth
                     
-                    <div class="relative">
-                        <button onclick="toggleSearchDropdown()" class="transition duration-300 hover:text-white" aria-label="Search" title="Cari Produk">
-                            <i class="fas fa-search text-sm"></i>
-                        </button>
-                        
-                        <!-- Search Dropdown -->
-                        <div id="searchDropdown" class="hidden absolute right-0 top-full mt-2 w-80 bg-white rounded-lg shadow-xl border border-zinc-200 p-3 z-50">
-                            <div class="flex gap-2">
-                                <input type="text" placeholder="Cari produk..." class="flex-1 px-3 py-2 text-sm text-black border border-zinc-300 rounded-lg focus:outline-none focus:border-blue-500" id="searchInput" autocomplete="off">
-                                <button type="button" class="px-4 py-2 bg-black text-white text-sm rounded-lg hover:bg-zinc-800 transition">
-                                    <i class="fas fa-search"></i>
-                                </button>
-                            </div>
-                            <div id="searchResults" class="mt-2 max-h-60 overflow-y-auto hidden">
-                                <!-- Search results will appear here -->
-                            </div>
-                        </div>
-                    </div>
+                    <button type="button" id="searchToggleBtn" class="transition duration-300 hover:text-white" aria-label="Search" title="Cari Produk">
+                        <i class="fas fa-search text-sm"></i>
+                    </button>
                     
                     <button type="button"
                         class="inline-flex h-9 w-9 items-center justify-center rounded border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20 md:hidden"
@@ -336,8 +321,68 @@
             </div>
         </header>
 
+        <!-- ============================ -->
+        <!-- Modern Search Overlay -->
+        <!-- ============================ -->
+        <div id="searchOverlay" class="fixed inset-0 z-[100] hidden opacity-0 transition-opacity duration-300" aria-modal="true" role="dialog">
+            <!-- Backdrop -->
+            <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" id="searchBackdrop"></div>
+
+            <!-- Search Panel -->
+            <div class="relative mx-auto mt-20 w-full max-w-3xl px-4 sm:px-6 transform transition-all duration-300 -translate-y-4" id="searchPanel">
+                <div class="overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-black/5">
+                    <!-- Search Input -->
+                    <div class="flex items-center gap-3 border-b border-zinc-100 px-5 py-4">
+                        <i class="fas fa-search text-zinc-400"></i>
+                        <input
+                            type="text"
+                            id="searchInput"
+                            placeholder="Cari produk, brand, atau kategori..."
+                            class="flex-1 bg-transparent text-base text-zinc-900 placeholder-zinc-400 focus:outline-none"
+                            autocomplete="off"
+                            spellcheck="false"
+                        >
+                        <div id="searchLoading" class="hidden">
+                            <svg class="h-5 w-5 animate-spin text-zinc-400" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                            </svg>
+                        </div>
+                        <button type="button" id="searchCloseBtn" class="rounded-md p-1 text-zinc-400 transition hover:bg-zinc-100 hover:text-zinc-700" aria-label="Tutup">
+                            <i class="fas fa-times text-sm"></i>
+                        </button>
+                        <span class="hidden text-[10px] font-medium uppercase tracking-wider text-zinc-400 sm:inline-block">ESC</span>
+                    </div>
+
+                    <!-- Results Area -->
+                    <div id="searchResultsArea" class="max-h-[60vh] overflow-y-auto">
+                        <!-- Initial State -->
+                        <div id="searchInitial" class="px-6 py-12 text-center">
+                            <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-zinc-100">
+                                <i class="fas fa-search text-zinc-400"></i>
+                            </div>
+                            <p class="text-sm text-zinc-500">Mulai mengetik untuk mencari produk</p>
+                            <p class="mt-1 text-xs text-zinc-400">Cari berdasarkan nama, brand, atau kategori</p>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div id="searchEmpty" class="hidden px-6 py-12 text-center">
+                            <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-zinc-100">
+                                <i class="fas fa-box-open text-zinc-400"></i>
+                            </div>
+                            <p class="text-sm font-medium text-zinc-700">No products found</p>
+                            <p class="mt-1 text-xs text-zinc-400">Coba kata kunci lain</p>
+                        </div>
+
+                        <!-- Results List -->
+                        <div id="searchResults" class="hidden divide-y divide-zinc-100"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <main class="pt-24 md:pt-8">
-            <section class="relative h-[400px] overflow-hidden bg-zinc-900 md:h-[500px] lg:h-[600px]">
+            <section class="relative h-[300px] overflow-hidden bg-zinc-900 md:h-[400px] lg:h-[500px]">
                 <div class="absolute inset-0">
                     <img src="{{ asset('storage/fiks.jpeg') }}" 
                         alt="Padel Tennis" 
@@ -345,13 +390,12 @@
                         loading="eager">
                     <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent"></div>
                 </div>
-                <div class="relative mx-auto flex h-full max-w-7xl items-center px-6 md:px-10 lg:px-12">
-                    <div class="max-w-2xl text-white">
-                        <h1 class="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">NoraPadel</h1>
-                        <p class="mt-4 text-xl sm:text-2xl lg:text-3xl">Precision. Power. Performance.</p>
-                        <p class="mt-6 text-base text-zinc-200 sm:text-lg">Experience the ultimate in padel equipment. Premium quality rackets, shoes, and accessories for players who demand excellence.</p>
-                        <div class="mt-8 flex flex-wrap gap-4">
-                            <a href="{{ route('shop') }}" class="inline-flex rounded border-2 border-white bg-transparent px-8 py-3 text-sm font-semibold text-white transition duration-300 hover:bg-white hover:text-black">Shop Now</a>
+                <div class="relative mx-auto flex h-full max-w-7xl items-end justify-center px-6 md:px-10 lg:px-12 pb-12">
+                    <div class="max-w-2xl text-center text-white">
+                        <h1 class="text-2xl font-semibold tracking-tight sm:text-3xl lg:text-4xl">NoraPadel</h1>
+                        <p class="mt-4 text-sm text-zinc-200">Experience the ultimate in padel equipment. Premium quality rackets, shoes, and accessories for players who demand excellence.</p>
+                        <div class="mt-6 flex flex-wrap justify-center gap-4">
+                            <a href="{{ route('shop') }}" class="inline-flex rounded border-2 border-white bg-white/10 backdrop-blur-md px-6 py-2 text-xs font-semibold text-white transition duration-300 hover:bg-white hover:text-black">Shop Now</a>
                         </div>
                     </div>
                 </div>
@@ -381,7 +425,7 @@
                                         $q->whereIn('status', ['completed', 'delivered']);
                                     })->sum('quantity');
                             @endphp
-                            <div class="group snap-start shrink-0 basis-[85%] sm:basis-[48%] md:basis-[32%] lg:basis-[25%] overflow-hidden bg-white transition duration-300 hover:-translate-y-2">
+                            <div class="group snap-start shrink-0 basis-[85%] sm:basis-[48%] md:basis-[32%] lg:basis-[18%] overflow-hidden bg-white transition duration-300 hover:-translate-y-2">
                                 <a href="{{ route('produk.show', $product) }}" class="block">
                                     <div class="relative aspect-square overflow-hidden">
                                         <div class="h-full w-full overflow-hidden">
@@ -529,8 +573,8 @@
                         </div>
                     </div>
 
-                    <div id="productGrid" class="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                        @foreach($shopProducts->take(8) as $product)
+                    <div id="productGrid" class="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                        @foreach($shopProducts->take(10) as $product)
                             @php
                                 $soldCount = \App\Models\OrderItem::where('product_id', $product->id)
                                     ->whereHas('order', function($q) {
@@ -921,78 +965,134 @@
                 }
             };
 
-            // Search Dropdown Toggle
-            window.toggleSearchDropdown = function() {
-                const dropdown = document.getElementById('searchDropdown');
-                if (dropdown) {
-                    dropdown.classList.toggle('hidden');
-                    if (!dropdown.classList.contains('hidden')) {
-                        const searchInput = document.getElementById('searchInput');
-                        if (searchInput) {
-                            searchInput.focus();
-                            // Attach autocomplete listener if not already attached
-                            if (!searchInput.hasAttribute('data-autocomplete-attached')) {
-                                attachAutocompleteListener(searchInput);
-                                searchInput.setAttribute('data-autocomplete-attached', 'true');
-                            }
+            // ==========================================
+            // Modern Realtime Search Overlay
+            // ==========================================
+            (function() {
+                const overlay = document.getElementById('searchOverlay');
+                const panel = document.getElementById('searchPanel');
+                const toggleBtn = document.getElementById('searchToggleBtn');
+                const closeBtn = document.getElementById('searchCloseBtn');
+                const backdrop = document.getElementById('searchBackdrop');
+                const input = document.getElementById('searchInput');
+                const loading = document.getElementById('searchLoading');
+                const initialState = document.getElementById('searchInitial');
+                const emptyState = document.getElementById('searchEmpty');
+                const resultsList = document.getElementById('searchResults');
+
+                if (!overlay || !toggleBtn || !input) return;
+
+                let debounceTimer;
+                let currentController;
+
+                function openOverlay() {
+                    overlay.classList.remove('hidden');
+                    document.body.style.overflow = 'hidden';
+                    requestAnimationFrame(() => {
+                        overlay.classList.remove('opacity-0');
+                        overlay.classList.add('opacity-100');
+                        panel.classList.remove('-translate-y-4');
+                        panel.classList.add('translate-y-0');
+                        setTimeout(() => input.focus(), 50);
+                    });
+                }
+
+                function closeOverlay() {
+                    overlay.classList.add('opacity-0');
+                    overlay.classList.remove('opacity-100');
+                    panel.classList.add('-translate-y-4');
+                    panel.classList.remove('translate-y-0');
+                    setTimeout(() => {
+                        overlay.classList.add('hidden');
+                        document.body.style.overflow = '';
+                        input.value = '';
+                        showState('initial');
+                    }, 300);
+                }
+
+                function showState(state) {
+                    initialState.classList.toggle('hidden', state !== 'initial');
+                    emptyState.classList.toggle('hidden', state !== 'empty');
+                    resultsList.classList.toggle('hidden', state !== 'results');
+                }
+
+                function escapeHtml(s) {
+                    return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+                }
+
+                function renderResults(products) {
+                    resultsList.innerHTML = products.map(p => `
+                        <a href="${escapeHtml(p.detail_url)}" class="flex items-center gap-4 px-5 py-3 transition hover:bg-zinc-50">
+                            <div class="h-14 w-14 flex-shrink-0 overflow-hidden rounded-lg bg-zinc-100">
+                                <img src="${escapeHtml(p.image_url)}" alt="${escapeHtml(p.name)}" class="h-full w-full object-cover" onerror="this.onerror=null;this.src='/images/logo.png';" loading="lazy">
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p class="truncate text-sm font-medium text-zinc-900">${escapeHtml(p.name)}</p>
+                                <div class="mt-0.5 flex items-center gap-2 text-xs text-zinc-500">
+                                    ${p.brand ? `<span class="font-medium">${escapeHtml(p.brand)}</span>` : ''}
+                                    ${p.brand && p.category_label ? '<span class="text-zinc-300">·</span>' : ''}
+                                    ${p.category_label ? `<span>${escapeHtml(p.category_label)}</span>` : ''}
+                                </div>
+                            </div>
+                            <p class="flex-shrink-0 text-sm font-semibold text-zinc-900">${escapeHtml(p.formatted_price)}</p>
+                        </a>
+                    `).join('');
+                }
+
+                async function performSearch(query) {
+                    if (currentController) currentController.abort();
+                    currentController = new AbortController();
+
+                    loading.classList.remove('hidden');
+                    try {
+                        const res = await fetch(`/api/search-products?q=${encodeURIComponent(query)}`, {
+                            signal: currentController.signal,
+                            headers: { 'Accept': 'application/json' }
+                        });
+                        const data = await res.json();
+                        loading.classList.add('hidden');
+
+                        if (data.products && data.products.length > 0) {
+                            renderResults(data.products);
+                            showState('results');
+                        } else {
+                            showState('empty');
+                        }
+                    } catch (err) {
+                        if (err.name !== 'AbortError') {
+                            loading.classList.add('hidden');
+                            console.error('Search error:', err);
                         }
                     }
                 }
-            };
 
-            // Close search dropdown when clicking outside
-            document.addEventListener('click', function(event) {
-                const dropdown = document.getElementById('searchDropdown');
-                const searchButton = event.target.closest('button[onclick="toggleSearchDropdown()"]');
-                
-                if (dropdown && !dropdown.contains(event.target) && !searchButton) {
-                    dropdown.classList.add('hidden');
-                }
-            });
+                // Input with debounce
+                input.addEventListener('input', function() {
+                    const q = this.value.trim();
+                    clearTimeout(debounceTimer);
 
-            // Autocomplete Search Function
-            function attachAutocompleteListener(searchInput) {
-                const searchResults = document.getElementById('searchResults');
-                let searchTimeout;
-
-                searchInput.addEventListener('input', function() {
-                    const query = this.value.trim();
-                    
-                    clearTimeout(searchTimeout);
-                    
-                    if (query.length < 2) {
-                        searchResults.classList.add('hidden');
-                        searchResults.innerHTML = '';
+                    if (q.length < 2) {
+                        loading.classList.add('hidden');
+                        if (currentController) currentController.abort();
+                        showState('initial');
                         return;
                     }
-                    
-                    searchTimeout = setTimeout(() => {
-                        fetch(`/api/products/search?q=${encodeURIComponent(query)}`)
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.products && data.products.length > 0) {
-                                    searchResults.innerHTML = data.products.map(product => `
-                                        <a href="${product.url}" class="flex items-center gap-3 p-2 hover:bg-zinc-100 rounded-lg transition">
-                                            <img src="${product.image}" alt="${product.name}" class="w-12 h-12 object-cover rounded">
-                                            <div class="flex-1 min-w-0">
-                                                <p class="text-sm font-medium text-black truncate">${product.name}</p>
-                                                <p class="text-xs text-zinc-600">${product.category}</p>
-                                            </div>
-                                            <p class="text-sm font-semibold text-black">${product.price}</p>
-                                        </a>
-                                    `).join('');
-                                    searchResults.classList.remove('hidden');
-                                } else {
-                                    searchResults.innerHTML = '<p class="text-sm text-zinc-500 p-2 text-center">Tidak ada produk ditemukan</p>';
-                                    searchResults.classList.remove('hidden');
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Search error:', error);
-                            });
-                    }, 300);
+
+                    debounceTimer = setTimeout(() => performSearch(q), 250);
                 });
-            }
+
+                // Triggers
+                toggleBtn.addEventListener('click', openOverlay);
+                closeBtn.addEventListener('click', closeOverlay);
+                backdrop.addEventListener('click', closeOverlay);
+
+                // ESC to close
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && !overlay.classList.contains('hidden')) {
+                        closeOverlay();
+                    }
+                });
+            })();
 
             // Navbar scroll effect
             const header = document.getElementById('mainHeader');

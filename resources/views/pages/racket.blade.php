@@ -385,7 +385,7 @@
                     </div>
 
                     <!-- Grid -->
-                    <div id="productGrid" class="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    <div id="productGrid" class="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                         @forelse($products as $product)
                             @php
                                 $soldCount = \App\Models\OrderItem::where('product_id', $product->id)

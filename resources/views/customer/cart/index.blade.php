@@ -207,15 +207,31 @@
             </nav>
 
             <div class="flex items-center gap-3 text-black/80">
-                <a href="{{ route('customer.orders.index') }}" class="transition duration-300 hover:text-black" title="Riwayat Pesanan">
-                <i class="fas fa-history text-sm"></i>
-            </a>
-                <a href="{{ route('customer.profile.index') }}" class="transition duration-300 hover:text-black" aria-label="Profile">
-                    <i class="fas fa-user text-sm"></i>
+                @guest
+                    <a href="{{ route('login') }}" class="inline-flex items-center gap-1 rounded-full border border-black/15 bg-black/5 px-3 py-1.5 text-xs font-medium text-black transition duration-300 hover:bg-black/10" aria-label="Masuk">
+                        <i class="fas fa-sign-in-alt text-[11px]"></i>
+                        <span>Masuk</span>
+                    </a>
+                @endauth
+                @auth
+                    <a href="{{ route('customer.orders.index') }}" class="transition duration-300 hover:text-black" title="Riwayat Pesanan">
+                        <i class="fas fa-history text-sm"></i>
+                    </a>
+                    <a href="{{ route('customer.profile.index') }}" class="transition duration-300 hover:text-black" aria-label="Profile">
+                        <i class="fas fa-user text-sm"></i>
+                    </a>
+                @endauth
+
+                <a href="{{ route('customer.wishlist.index') }}" class="relative transition duration-300 hover:text-black" aria-label="Wishlist" title="Wishlist">
+                    <i class="fas fa-heart text-sm"></i>
                 </a>
-                <a href="{{ route('customer.cart.index') }}" class="transition duration-300 hover:text-black" aria-label="Cart">
+
+                <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-black" aria-label="Cart" title="Keranjang">
                     <i class="fas fa-shopping-bag text-sm"></i>
                 </a>
+
+                
+
                 <button type="button" class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-black transition duration-300 hover:border-black/35 md:hidden" data-mobile-menu-toggle aria-label="Toggle navigation" aria-expanded="false">
                     <i class="fas fa-bars text-sm"></i>
                 </button>

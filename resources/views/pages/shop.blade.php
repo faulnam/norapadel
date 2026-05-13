@@ -409,7 +409,7 @@
                     </div>
 
                     <!-- Grid -->
-                    <div id="productGrid" class="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    <div id="productGrid" class="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                         @if($products->count() > 0)
                             @foreach($products as $product)
                                 <div class="product-item group block overflow-hidden bg-white transition duration-300 hover:-translate-y-1"
