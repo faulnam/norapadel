@@ -3,147 +3,107 @@
 @section('title', 'Daftar - Nora Padel')
 
 @section('content')
-    <div class="min-h-screen bg-[#f5f5f7] text-black antialiased">
-    <header class="fixed left-0 top-0 z-50 w-full border-b border-black/6 bg-white/80 backdrop-blur-xl md:sticky">
-            <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-10 lg:px-12">
-                <a href="{{ route('home') }}" class="flex items-center gap-2">
-                    <img src="{{ asset('storage/logo.png') }}" alt="NoraPadel" class="h-7 w-7 object-contain" loading="lazy">
-                    <span class="text-xl font-semibold tracking-tight text-black">NoraPadel</span>
-                </a>
+@include('partials.main-navbar')
+<div class="min-h-[100dvh] w-full flex flex-col md:flex-row bg-white text-zinc-900 antialiased pt-28">
+    <!-- Left: Form -->
+    <section class="flex-1 flex items-center justify-center p-6 md:p-10 overflow-y-auto">
+        <div class="w-full max-w-md">
+            <div class="flex flex-col gap-6">
+                <h1 class="animate-element animate-delay-100 text-4xl md:text-5xl font-light leading-tight tracking-tighter">Create <span class="font-semibold">account</span></h1>
+                <p class="animate-element animate-delay-200 text-zinc-500">Join NoraPadel and enjoy a premium padel shopping experience.</p>
 
-               <nav class="hidden items-center gap-8 md:flex">
-                    <a href="{{ route('home') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Home</a>
-                    <a href="{{ route('new-arrivals') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">New Arrivals</a>
-                    <a href="{{ route('racket') }}" class="border-b border-black text-sm text-black transition duration-300">Racket</a>
-                    <a href="{{ route('shoes') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Shoes</a>
-                    <a href="{{ route('apparel') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Accessories</a>
-                    <a href="{{ route('contact') }}"
-                        class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Contact</a>
-                </nav>
+                @if($errors->any())
+                    <div class="animate-element animate-delay-250 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                        <ul class="list-disc space-y-1 pl-5">
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
-                <div class="flex items-center gap-3 text-black/80">
-                    <a href="{{ route('login') }}" class="hidden rounded-full border border-black/15 px-3 py-1.5 text-xs font-medium text-black/80 transition duration-300 hover:border-black/30 hover:text-black md:inline-flex md:items-center md:gap-1">
-                        <i class="fas fa-sign-in-alt text-[11px]"></i>
-                        <span>Masuk</span>
-                    </a>
-                    <button
-                        type="button"
-                        class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-black transition duration-300 hover:border-black/35 md:hidden"
-                        data-mobile-menu-toggle
-                        aria-label="Toggle navigation"
-                        aria-expanded="false"
-                    >
-                        <i class="fas fa-bars text-sm"></i>
+                <div id="registerAlert" class="hidden rounded-2xl border px-4 py-3 text-sm"></div>
+
+                <form id="registerForm" action="{{ route('register.request-otp') }}" method="POST" class="space-y-5" data-request-otp-url="{{ route('register.request-otp') }}" data-verify-otp-url="{{ route('register.verify-otp') }}">
+                    @csrf
+
+                    <div class="animate-element animate-delay-300">
+                        <label for="name" class="text-sm font-medium text-zinc-500">Full Name</label>
+                        <div class="mt-1 rounded-2xl border border-zinc-200 bg-zinc-50 transition-colors focus-within:border-violet-400 focus-within:bg-violet-50">
+                            <input type="text" id="name" name="name" value="{{ old('name') }}" required placeholder="Your full name" class="w-full bg-transparent text-sm p-4 rounded-2xl focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div class="animate-element animate-delay-350">
+                        <label for="email" class="text-sm font-medium text-zinc-500">Email Address</label>
+                        <div class="mt-1 rounded-2xl border border-zinc-200 bg-zinc-50 transition-colors focus-within:border-violet-400 focus-within:bg-violet-50">
+                            <input type="email" id="email" name="email" value="{{ old('email') }}" required placeholder="email@example.com" class="w-full bg-transparent text-sm p-4 rounded-2xl focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div class="animate-element animate-delay-400">
+                        <label for="phone" class="text-sm font-medium text-zinc-500">Phone Number</label>
+                        <div class="mt-1 rounded-2xl border border-zinc-200 bg-zinc-50 transition-colors focus-within:border-violet-400 focus-within:bg-violet-50">
+                            <input type="text" id="phone" name="phone" value="{{ old('phone') }}" required placeholder="08xxxxxxxxxx" class="w-full bg-transparent text-sm p-4 rounded-2xl focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div class="animate-element animate-delay-450">
+                        <label for="address" class="text-sm font-medium text-zinc-500">Address</label>
+                        <div class="mt-1 rounded-2xl border border-zinc-200 bg-zinc-50 transition-colors focus-within:border-violet-400 focus-within:bg-violet-50">
+                            <textarea id="address" name="address" rows="2" required placeholder="Your full address" class="w-full bg-transparent text-sm p-4 rounded-2xl focus:outline-none resize-none">{{ old('address') }}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="animate-element animate-delay-500">
+                        <label for="password" class="text-sm font-medium text-zinc-500">Password</label>
+                        <div class="mt-1 rounded-2xl border border-zinc-200 bg-zinc-50 transition-colors focus-within:border-violet-400 focus-within:bg-violet-50">
+                            <input type="password" id="password" name="password" required placeholder="Minimum 8 characters" class="w-full bg-transparent text-sm p-4 rounded-2xl focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div class="animate-element animate-delay-550">
+                        <label for="password_confirmation" class="text-sm font-medium text-zinc-500">Confirm Password</label>
+                        <div class="mt-1 rounded-2xl border border-zinc-200 bg-zinc-50 transition-colors focus-within:border-violet-400 focus-within:bg-violet-50">
+                            <input type="password" id="password_confirmation" name="password_confirmation" required placeholder="Repeat your password" class="w-full bg-transparent text-sm p-4 rounded-2xl focus:outline-none">
+                        </div>
+                    </div>
+
+                    <button type="submit" id="registerSubmitBtn" class="animate-element animate-delay-600 w-full rounded-2xl bg-zinc-900 py-4 font-medium text-white hover:bg-zinc-800 transition-colors">
+                        Create Account
                     </button>
-                </div>
+                </form>
+
+                <p class="animate-element animate-delay-700 text-center text-sm text-zinc-500">
+                    Already have an account? <a href="{{ route('login') }}" class="text-violet-500 hover:underline transition-colors">Sign In</a>
+                </p>
             </div>
-
-            <div class="hidden border-t border-black/10 bg-white/95 px-6 py-4 md:hidden" data-mobile-menu>
-                <nav class="flex flex-col gap-3 text-sm font-medium text-black/85">
-                    <a href="{{ route('home') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Home</a>
-                    <a href="{{ route('racket') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Racket</a>
-                    <a href="{{ route('shoes') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Shoes</a>
-                    <a href="{{ route('apparel') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Accessories</a>
-                    <a href="{{ route('login') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Masuk</a>
-                </nav>
-            </div>
-        </header>
-
-    <main class="pt-16 md:pt-0">
-    <section class="px-6 py-10 md:px-10 lg:px-12 lg:py-14">
-            <div class="mx-auto grid w-full max-w-7xl gap-8 lg:grid-cols-2 lg:items-stretch">
-                <div class="hidden h-full min-h-[760px] flex-col rounded-3xl border border-black/8 bg-white p-8 shadow-[0_16px_42px_rgba(0,0,0,0.08)] lg:flex">
-                    <p class="text-xs font-semibold uppercase tracking-[0.18em] text-black/50">Join NoraPadel</p>
-                    <h1 class="mt-3 text-4xl font-semibold tracking-tight text-black">Buat akun dan nikmati pengalaman belanja premium.</h1>
-                    <p class="mt-4 max-w-xl text-zinc-600">Mulai dari pemilihan raket hingga tracking pesanan real-time, semua dirancang untuk kenyamananmu.</p>
-                    <div class="mt-7 overflow-hidden rounded-2xl border border-black/10">
-                        <img src="{{ asset('storage/2.png') }}" alt="NoraPadel" class="h-80 w-full object-cover">
-                    </div>
-                </div>
-
-                <div class="h-full min-h-[760px] rounded-3xl border border-black/8 bg-white p-6 shadow-[0_16px_42px_rgba(0,0,0,0.08)] sm:p-8 lg:p-9">
-                    <div class="mb-6 text-center">
-                        <img src="{{ asset(config('branding.logo', 'storage/logo.png')) }}" alt="{{ config('branding.name', 'Nora Padel') }}" class="mx-auto h-12 w-auto">
-                        <h2 class="mt-4 text-2xl font-semibold tracking-tight text-black">Daftar akun baru</h2>
-                        <p class="mt-2 text-sm text-zinc-600">Lengkapi data berikut untuk membuat akun Anda.</p>
-                    </div>
-
-                    @if($errors->any())
-                        <div class="mb-5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                            <ul class="list-disc space-y-1 pl-5">
-                                @foreach($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
-
-                    <div id="registerAlert" class="mb-4 hidden rounded-2xl border px-4 py-3 text-sm"></div>
-
-                    <form id="registerForm" action="{{ route('register.request-otp') }}" method="POST" class="space-y-4" data-request-otp-url="{{ route('register.request-otp') }}" data-verify-otp-url="{{ route('register.verify-otp') }}">
-                        @csrf
-
-                        <div>
-                            <label for="name" class="mb-2 block text-sm font-medium text-zinc-700">Nama Lengkap</label>
-                            <div class="flex items-center gap-2 rounded-xl border border-black/10 bg-white px-3 focus-within:border-black/30">
-                                <i class="fas fa-user text-xs text-zinc-400"></i>
-                                <input type="text" id="name" name="name" value="{{ old('name') }}" required class="w-full border-0 bg-transparent py-3 text-sm text-black outline-none focus:ring-0" placeholder="Nama lengkap Anda">
-                            </div>
-                        </div>
-
-                        <div>
-                            <label for="email" class="mb-2 block text-sm font-medium text-zinc-700">Email</label>
-                            <div class="flex items-center gap-2 rounded-xl border border-black/10 bg-white px-3 focus-within:border-black/30">
-                                <i class="fas fa-envelope text-xs text-zinc-400"></i>
-                                <input type="email" id="email" name="email" value="{{ old('email') }}" required class="w-full border-0 bg-transparent py-3 text-sm text-black outline-none focus:ring-0" placeholder="email@contoh.com">
-                            </div>
-                        </div>
-
-                        <div>
-                            <label for="phone" class="mb-2 block text-sm font-medium text-zinc-700">Nomor Telepon</label>
-                            <div class="flex items-center gap-2 rounded-xl border border-black/10 bg-white px-3 focus-within:border-black/30">
-                                <i class="fas fa-phone text-xs text-zinc-400"></i>
-                                <input type="text" id="phone" name="phone" value="{{ old('phone') }}" required class="w-full border-0 bg-transparent py-3 text-sm text-black outline-none focus:ring-0" placeholder="08xxxxxxxxxx">
-                            </div>
-                        </div>
-
-                        <div>
-                            <label for="address" class="mb-2 block text-sm font-medium text-zinc-700">Alamat Lengkap</label>
-                            <div class="flex items-start gap-2 rounded-xl border border-black/10 bg-white px-3 focus-within:border-black/30">
-                                <i class="fas fa-map-marker-alt pt-3 text-xs text-zinc-400"></i>
-                                <textarea id="address" name="address" rows="2" required class="w-full border-0 bg-transparent py-3 text-sm text-black outline-none focus:ring-0" placeholder="Alamat lengkap Anda">{{ old('address') }}</textarea>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label for="password" class="mb-2 block text-sm font-medium text-zinc-700">Password</label>
-                            <div class="flex items-center gap-2 rounded-xl border border-black/10 bg-white px-3 focus-within:border-black/30">
-                                <i class="fas fa-lock text-xs text-zinc-400"></i>
-                                <input type="password" id="password" name="password" required class="w-full border-0 bg-transparent py-3 text-sm text-black outline-none focus:ring-0" placeholder="Minimal 8 karakter">
-                            </div>
-                        </div>
-
-                        <div>
-                            <label for="password_confirmation" class="mb-2 block text-sm font-medium text-zinc-700">Konfirmasi Password</label>
-                            <div class="flex items-center gap-2 rounded-xl border border-black/10 bg-white px-3 focus-within:border-black/30">
-                                <i class="fas fa-lock text-xs text-zinc-400"></i>
-                                <input type="password" id="password_confirmation" name="password_confirmation" required class="w-full border-0 bg-transparent py-3 text-sm text-black outline-none focus:ring-0" placeholder="Ulangi password">
-                            </div>
-                        </div>
-
-                        <button type="submit" id="registerSubmitBtn" class="inline-flex w-full items-center justify-center rounded-full bg-black px-5 py-3 text-sm font-medium text-white transition duration-300 hover:bg-zinc-800">
-                            <i class="fas fa-user-plus mr-2 text-xs"></i>Daftar
-                        </button>
-                    </form>
-
-                    <p class="mt-6 text-center text-sm text-zinc-600">
-                        Sudah punya akun?
-                        <a href="{{ route('login') }}" class="font-medium text-black underline decoration-black/30 underline-offset-4 transition hover:decoration-black">Masuk</a>
-                    </p>
-                </div>
-            </div>
+        </div>
     </section>
-    </main>
+
+    <!-- Right: Hero Image + Testimonials -->
+    <section class="hidden md:block flex-1 relative p-4 min-h-[100dvh] md:min-h-0 md:sticky md:top-0 md:h-[100dvh]">
+        <div class="animate-slide-right animate-delay-300 absolute inset-4 rounded-3xl bg-cover bg-center" style="background-image: url('{{ asset('storage/fiks.jpeg') }}');"></div>
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-4 px-8 w-full justify-center pointer-events-none">
+            <div class="animate-testimonial animate-delay-1000 flex items-start gap-3 rounded-3xl bg-white/40 backdrop-blur-xl border border-white/40 p-5 w-64 pointer-events-auto">
+                <img src="https://randomuser.me/api/portraits/women/57.jpg" class="h-10 w-10 object-cover rounded-2xl" alt="avatar">
+                <div class="text-sm leading-snug text-zinc-900">
+                    <p class="font-medium">Sarah Chen</p>
+                    <p class="text-zinc-600">@sarahdigital</p>
+                    <p class="mt-1 text-zinc-800">Amazing platform! The user experience is seamless and the features are exactly what I needed.</p>
+                </div>
+            </div>
+            <div class="hidden xl:flex animate-testimonial animate-delay-1200 items-start gap-3 rounded-3xl bg-white/40 backdrop-blur-xl border border-white/40 p-5 w-64 pointer-events-auto">
+                <img src="https://randomuser.me/api/portraits/men/64.jpg" class="h-10 w-10 object-cover rounded-2xl" alt="avatar">
+                <div class="text-sm leading-snug text-zinc-900">
+                    <p class="font-medium">Marcus Johnson</p>
+                    <p class="text-zinc-600">@marcustech</p>
+                    <p class="mt-1 text-zinc-800">This service has transformed how I work. Clean design, powerful features, and excellent support.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
 
         <div id="otpModal" class="fixed inset-0 z-[70] hidden">
             <div class="absolute inset-0 bg-black/45" data-close-otp-modal></div>
@@ -184,11 +144,36 @@
                 </div>
             </div>
         </div>
-    </div>
 @endsection
 
 @push('styles')
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .marquee-container { display: flex; overflow: hidden; }
+        .marquee-content { display: flex; animation: marquee 30s linear infinite; white-space: nowrap; }
+        .marquee-item { font-size: 11px; letter-spacing: 0.15em; font-weight: 600; padding-right: 1rem; }
+        @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        @keyframes fadeSlideIn { from { opacity: 0; filter: blur(8px); transform: translateY(20px); } to { opacity: 1; filter: blur(0); transform: translateY(0); } }
+        @keyframes slideRightIn { from { opacity: 0; filter: blur(8px); transform: translateX(40px); } to { opacity: 1; filter: blur(0); transform: translateX(0); } }
+        @keyframes testimonialIn { from { opacity: 0; filter: blur(8px); transform: translateY(20px) scale(0.95); } to { opacity: 1; filter: blur(0); transform: translateY(0) scale(1); } }
+        .animate-element { opacity: 0; animation: fadeSlideIn 0.8s ease forwards; }
+        .animate-slide-right { opacity: 0; animation: slideRightIn 0.9s ease forwards; }
+        .animate-testimonial { opacity: 0; animation: testimonialIn 0.8s ease forwards; }
+        .animate-delay-50 { animation-delay: 50ms; }
+        .animate-delay-100 { animation-delay: 100ms; }
+        .animate-delay-200 { animation-delay: 200ms; }
+        .animate-delay-250 { animation-delay: 250ms; }
+        .animate-delay-300 { animation-delay: 300ms; }
+        .animate-delay-350 { animation-delay: 350ms; }
+        .animate-delay-400 { animation-delay: 400ms; }
+        .animate-delay-450 { animation-delay: 450ms; }
+        .animate-delay-500 { animation-delay: 500ms; }
+        .animate-delay-550 { animation-delay: 550ms; }
+        .animate-delay-600 { animation-delay: 600ms; }
+        .animate-delay-700 { animation-delay: 700ms; }
+        .animate-delay-1000 { animation-delay: 1000ms; }
+        .animate-delay-1200 { animation-delay: 1200ms; }
+    </style>
 @endpush
 
 @push('scripts')
@@ -196,15 +181,14 @@
         (function () {
             const toggle = document.querySelector('[data-mobile-menu-toggle]');
             const menu = document.querySelector('[data-mobile-menu]');
-            if (!toggle || !menu) return;
-
-            toggle.addEventListener('click', function () {
-                const isOpen = toggle.getAttribute('aria-expanded') === 'true';
-                toggle.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
-                menu.classList.toggle('hidden', isOpen);
-            });
+            if (toggle && menu) {
+                toggle.addEventListener('click', function () {
+                    const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+                    toggle.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+                    menu.classList.toggle('hidden', isOpen);
+                });
+            }
         })();
-
         (function () {
             const form = document.getElementById('registerForm');
             if (!form) return;
