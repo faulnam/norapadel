@@ -382,7 +382,7 @@
         </div>
 
         <main class="pt-24 md:pt-8">
-            <section class="relative h-[300px] overflow-hidden bg-zinc-900 md:h-[400px] lg:h-[500px]">
+            <section class="relative h-[200px] overflow-hidden bg-zinc-900 md:h-[250px] lg:h-[300px]">
                 <div class="absolute inset-0">
                     <img src="{{ asset('storage/fiks.jpeg') }}" 
                         alt="Padel Tennis" 
