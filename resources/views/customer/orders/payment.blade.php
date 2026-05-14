@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Pembayaran - Nora Padel')
+@section('title', 'Payment - Nora Padel')
 
 @push('styles')
 <style>
@@ -150,21 +150,21 @@
                 <!-- Breadcrumb -->
                 <nav aria-label="breadcrumb" class="mb-3">
                     <ol class="breadcrumb" style="font-size: 13px;">
-                        <li class="breadcrumb-item"><a href="{{ route('customer.orders.index') }}" class="text-decoration-none">Pesanan</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('customer.orders.index') }}" class="text-decoration-none">Orders</a></li>
                         <li class="breadcrumb-item"><a href="{{ route('customer.orders.show', $order) }}" class="text-decoration-none">{{ $order->order_number }}</a></li>
-                        <li class="breadcrumb-item active">Pembayaran</li>
+                        <li class="breadcrumb-item active">Payment</li>
                     </ol>
                 </nav>
 
                 <!-- Order Summary -->
                 <div class="payment-card">
                     <div class="payment-card-header">
-                        <i class="fas fa-receipt me-2"></i>Ringkasan Pesanan
+                        <i class="fas fa-receipt me-2"></i>Order Summary
                     </div>
                     <div class="payment-card-body">
                         <div class="order-summary">
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="order-number">No. Pesanan</span>
+                                <span class="order-number">Order No.</span>
                                 <strong>{{ $order->order_number }}</strong>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mb-2">
@@ -172,12 +172,12 @@
                                 <span>Rp {{ number_format($order->subtotal, 0, ',', '.') }}</span>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span class="order-number">Ongkir</span>
+                                <span class="order-number">Shipping Cost</span>
                                 <span>Rp {{ number_format($order->shipping_cost, 0, ',', '.') }}</span>
                             </div>
                             <hr>
                             <div class="d-flex justify-content-between align-items-center">
-                                <span class="fw-bold">Total Pembayaran</span>
+                                <span class="fw-bold">Total Payment</span>
                                 <span class="order-total">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</span>
                             </div>
                         </div>
@@ -190,7 +190,7 @@
                     
                     <div class="payment-card">
                         <div class="payment-card-header">
-                            <i class="fas fa-credit-card me-2"></i>Pilih Metode Pembayaran
+                            <i class="fas fa-credit-card me-2"></i>Select Payment Method
                         </div>
                         <div class="payment-card-body">
                             <!-- COD Option -->
@@ -202,16 +202,16 @@
                                 <div class="flex-grow-1">
                                     <div class="payment-method-name">
                                         <span class="badge bg-success me-1">Rekomendasi</span>
-                                        COD (Bayar di Tempat)
+                                        COD (Pay on Delivery)
                                     </div>
-                                    <div class="payment-method-desc">Bayar tunai saat barang diterima dari kurir</div>
+                                    <div class="payment-method-desc">Pay cash when receiving goods from courier</div>
                                 </div>
                                 <i class="fas fa-check-circle text-success d-none check-icon"></i>
                             </label>
 
                             <hr class="my-3">
                             <div class="text-muted small mb-3">
-                                <i class="fas fa-credit-card me-1"></i>Atau bayar online:
+                                <i class="fas fa-credit-card me-1"></i>Or pay online:
                             </div>
 
                             <!-- QRIS -->
@@ -248,10 +248,10 @@
                                     <input type="radio" name="payment_method" value="redirect" class="mt-1">
                                     <div>
                                         <div class="fw-bold" style="color: #92400e;">
-                                            <i class="fas fa-external-link-alt me-1"></i>Pilih di halaman Pakasir
+                                            <i class="fas fa-external-link-alt me-1"></i>Select on Payasir page
                                         </div>
                                         <div style="font-size: 13px; color: #78350f;">
-                                            Anda akan diarahkan ke halaman Pakasir untuk memilih metode pembayaran
+                                            You will be redirected to Payasir page to select payment method
                                         </div>
                                     </div>
                                 </label>
@@ -264,13 +264,13 @@
                     </div>
 
                     <button type="submit" class="btn-pay" id="payButton">
-                        <i class="fas fa-lock me-2"></i>Bayar Sekarang
+                        <i class="fas fa-lock me-2"></i>Pay Now
                     </button>
                 </form>
 
                 <div class="text-center mt-3">
                     <a href="{{ route('customer.orders.show', $order) }}" class="text-muted text-decoration-none">
-                        <i class="fas fa-arrow-left me-1"></i>Kembali ke Detail Pesanan
+                        <i class="fas fa-arrow-left me-1"></i>Back to Order Details
                     </a>
                 </div>
             </div>

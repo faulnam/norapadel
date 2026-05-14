@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Daftar - Nora Padel')
+@section('title', 'Register - Nora Padel')
 
 @section('content')
 @include('partials.main-navbar')
@@ -30,46 +30,46 @@
                     <div class="animate-element animate-delay-300">
                         <label for="name" class="text-sm font-medium text-zinc-500">Full Name</label>
                         <div class="mt-1 rounded-2xl border border-zinc-200 bg-zinc-50 transition-colors focus-within:border-violet-400 focus-within:bg-violet-50">
-                            <input type="text" id="name" name="name" value="{{ old('name') }}" required placeholder="Your full name" class="w-full bg-transparent text-sm p-4 rounded-2xl focus:outline-none">
+                            <input type="text" id="name" name="name" value="{{ old('name') }}" required placeholder="Your full name" class="w-full bg-transparent text-sm p-3 rounded-2xl focus:outline-none">
                         </div>
                     </div>
 
                     <div class="animate-element animate-delay-350">
                         <label for="email" class="text-sm font-medium text-zinc-500">Email Address</label>
                         <div class="mt-1 rounded-2xl border border-zinc-200 bg-zinc-50 transition-colors focus-within:border-violet-400 focus-within:bg-violet-50">
-                            <input type="email" id="email" name="email" value="{{ old('email') }}" required placeholder="email@example.com" class="w-full bg-transparent text-sm p-4 rounded-2xl focus:outline-none">
+                            <input type="email" id="email" name="email" value="{{ old('email') }}" required placeholder="email@example.com" class="w-full bg-transparent text-sm p-3 rounded-2xl focus:outline-none">
                         </div>
                     </div>
 
                     <div class="animate-element animate-delay-400">
                         <label for="phone" class="text-sm font-medium text-zinc-500">Phone Number</label>
                         <div class="mt-1 rounded-2xl border border-zinc-200 bg-zinc-50 transition-colors focus-within:border-violet-400 focus-within:bg-violet-50">
-                            <input type="text" id="phone" name="phone" value="{{ old('phone') }}" required placeholder="08xxxxxxxxxx" class="w-full bg-transparent text-sm p-4 rounded-2xl focus:outline-none">
+                            <input type="text" id="phone" name="phone" value="{{ old('phone') }}" required placeholder="08xxxxxxxxxx" class="w-full bg-transparent text-sm p-3 rounded-2xl focus:outline-none">
                         </div>
                     </div>
 
                     <div class="animate-element animate-delay-450">
                         <label for="address" class="text-sm font-medium text-zinc-500">Address</label>
                         <div class="mt-1 rounded-2xl border border-zinc-200 bg-zinc-50 transition-colors focus-within:border-violet-400 focus-within:bg-violet-50">
-                            <textarea id="address" name="address" rows="2" required placeholder="Your full address" class="w-full bg-transparent text-sm p-4 rounded-2xl focus:outline-none resize-none">{{ old('address') }}</textarea>
+                            <textarea id="address" name="address" rows="2" required placeholder="Your full address" class="w-full bg-transparent text-sm p-3 rounded-2xl focus:outline-none resize-none">{{ old('address') }}</textarea>
                         </div>
                     </div>
 
                     <div class="animate-element animate-delay-500">
                         <label for="password" class="text-sm font-medium text-zinc-500">Password</label>
                         <div class="mt-1 rounded-2xl border border-zinc-200 bg-zinc-50 transition-colors focus-within:border-violet-400 focus-within:bg-violet-50">
-                            <input type="password" id="password" name="password" required placeholder="Minimum 8 characters" class="w-full bg-transparent text-sm p-4 rounded-2xl focus:outline-none">
+                            <input type="password" id="password" name="password" required placeholder="Minimum 8 characters" class="w-full bg-transparent text-sm p-3 rounded-2xl focus:outline-none">
                         </div>
                     </div>
 
                     <div class="animate-element animate-delay-550">
                         <label for="password_confirmation" class="text-sm font-medium text-zinc-500">Confirm Password</label>
                         <div class="mt-1 rounded-2xl border border-zinc-200 bg-zinc-50 transition-colors focus-within:border-violet-400 focus-within:bg-violet-50">
-                            <input type="password" id="password_confirmation" name="password_confirmation" required placeholder="Repeat your password" class="w-full bg-transparent text-sm p-4 rounded-2xl focus:outline-none">
+                            <input type="password" id="password_confirmation" name="password_confirmation" required placeholder="Repeat your password" class="w-full bg-transparent text-sm p-3 rounded-2xl focus:outline-none">
                         </div>
                     </div>
 
-                    <button type="submit" id="registerSubmitBtn" class="animate-element animate-delay-600 w-full rounded-2xl bg-zinc-900 py-4 font-medium text-white hover:bg-zinc-800 transition-colors">
+                    <button type="submit" id="registerSubmitBtn" class="animate-element animate-delay-600 w-full rounded-2xl bg-zinc-900 py-3 font-medium text-white hover:bg-zinc-800 transition-colors">
                         Create Account
                     </button>
                 </form>
@@ -94,14 +94,14 @@
                 <div class="w-full max-w-md rounded-3xl border border-black/10 bg-white p-6 shadow-[0_18px_50px_rgba(0,0,0,0.18)] sm:p-7">
                     <div class="mb-5 text-center">
                         <h3 class="text-xl font-semibold tracking-tight text-black">Verifikasi OTP</h3>
-                        <p class="mt-2 text-sm text-zinc-600">Masukkan 6 digit kode OTP yang dikirim ke <span id="otpTargetEmail" class="font-medium text-black"></span>.</p>
+                        <p class="mt-2 text-sm text-zinc-600">Enter the 6-digit OTP code sent to <span id="otpTargetEmail" class="font-medium text-black"></span>.</p>
                     </div>
 
                     <div id="otpAlert" class="mb-4 hidden rounded-2xl border px-4 py-3 text-sm"></div>
 
                     <form id="otpVerifyForm" class="space-y-4">
                         <div>
-                            <label for="otpCode" class="mb-2 block text-sm font-medium text-zinc-700">Kode OTP</label>
+                            <label for="otpCode" class="mb-2 block text-sm font-medium text-zinc-700">OTP Code</label>
                             <input
                                 id="otpCode"
                                 name="otp"
@@ -116,13 +116,13 @@
                         </div>
 
                         <button type="submit" id="verifyOtpBtn" class="inline-flex w-full items-center justify-center rounded-full bg-black px-5 py-3 text-sm font-medium text-white transition duration-300 hover:bg-zinc-800">
-                            Verifikasi & Aktifkan Akun
+                            Verify & Activate Account
                         </button>
                     </form>
 
                     <div class="mt-4 flex items-center justify-between gap-3">
-                        <button type="button" id="resendOtpBtn" class="text-sm font-medium text-black underline decoration-black/30 underline-offset-4 transition hover:decoration-black">Kirim ulang OTP</button>
-                        <button type="button" class="text-sm text-zinc-500 transition hover:text-black" data-close-otp-modal>Tutup</button>
+                        <button type="button" id="resendOtpBtn" class="text-sm font-medium text-black underline decoration-black/30 underline-offset-4 transition hover:decoration-black">Resend OTP</button>
+                        <button type="button" class="text-sm text-zinc-500 transition hover:text-black" data-close-otp-modal>Close</button>
                     </div>
                 </div>
             </div>
@@ -275,9 +275,9 @@
                     otpInput.value = '';
                     hideAlert(otpAlert);
                     openModal();
-                    showAlert(alertBox, data.message || 'OTP sudah dikirim ke email Anda.', 'success');
+                    showAlert(alertBox, data.message || 'OTP has been sent to your email.', 'success');
                 } catch (error) {
-                    showAlert(alertBox, error.message || 'Gagal mengirim OTP.', 'error');
+                    showAlert(alertBox, error.message || 'Failed to send OTP.', 'error');
                 } finally {
                     submitBtn.disabled = false;
                     submitBtn.classList.remove('opacity-70', 'cursor-not-allowed');
@@ -292,7 +292,7 @@
                 otpInput.value = otp;
 
                 if (!pendingEmail) {
-                    showAlert(otpAlert, 'Email verifikasi tidak ditemukan. Silakan daftar ulang.', 'error');
+                    showAlert(otpAlert, 'Verification email not found. Please register again.', 'error');
                     return;
                 }
 
@@ -332,7 +332,7 @@
                 hideAlert(otpAlert);
 
                 if (!latestPayload.email) {
-                    showAlert(otpAlert, 'Data pendaftaran belum tersedia. Silakan isi form ulang.', 'error');
+                    showAlert(otpAlert, 'Registration data not available. Please fill the form again.', 'error');
                     return;
                 }
 
@@ -343,9 +343,9 @@
                     const data = await sendOtpRequest(latestPayload);
                     pendingEmail = data.email || latestPayload.email;
                     targetEmail.textContent = pendingEmail;
-                    showAlert(otpAlert, data.message || 'OTP baru sudah dikirim.', 'success');
+                    showAlert(otpAlert, data.message || 'New OTP has been sent.', 'success');
                 } catch (error) {
-                    showAlert(otpAlert, error.message || 'Gagal kirim ulang OTP.', 'error');
+                    showAlert(otpAlert, error.message || 'Failed to resend OTP.', 'error');
                 } finally {
                     resendBtn.disabled = false;
                     resendBtn.classList.remove('opacity-70', 'cursor-not-allowed');

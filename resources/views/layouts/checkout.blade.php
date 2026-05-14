@@ -61,9 +61,9 @@
                 @guest
                     <a href="{{ route('login') }}"
                         class="inline-flex items-center gap-1 rounded-full border border-black/15 px-3 py-1.5 text-xs font-medium text-black/80 transition duration-300 hover:border-black/30 hover:text-black"
-                        aria-label="Masuk">
+                        aria-label="Login">
                         <i class="fas fa-sign-in-alt text-[11px]"></i>
-                        <span>Masuk</span>
+                        <span>Login</span>
                     </a>
                 @endguest
                 @auth

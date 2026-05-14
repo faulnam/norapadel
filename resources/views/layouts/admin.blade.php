@@ -662,20 +662,20 @@
         </div>
         
         <nav class="sidebar-menu">
-            <div class="sidebar-label">Menu Utama</div>
+            <div class="sidebar-label">Main Menu</div>
             
             <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                 <i class="fas fa-th-large"></i> Dashboard
             </a>
             
             <a href="{{ route('admin.products.index') }}" class="nav-link {{ request()->routeIs('admin.products.*') ? 'active' : '' }}">
-                <i class="fas fa-box"></i> Produk
+                <i class="fas fa-box"></i> Products
             </a>
             
             
             
             <a href="{{ route('admin.testimonials.index') }}" class="nav-link {{ request()->routeIs('admin.testimonials.*') ? 'active' : '' }}">
-                <i class="fas fa-star"></i> Testimoni
+                <i class="fas fa-star"></i> Testimonials
                 @php
                     $pendingTestimonials = \App\Models\Testimonial::where('is_approved', false)->count();
                 @endphp
@@ -685,10 +685,10 @@
             </a>
             
             <div class="sidebar-divider"></div>
-            <div class="sidebar-label">Kelola</div>
+            <div class="sidebar-label">Manage</div>
             
             <a href="{{ route('admin.users.index') }}" class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
-                <i class="fas fa-users"></i> Pelanggan
+                <i class="fas fa-users"></i> Customers
             </a>
             
             <a href="{{ route('admin.staff.index') }}" class="nav-link {{ request()->routeIs('admin.staff.*') ? 'active' : '' }}">
@@ -696,38 +696,38 @@
             </a>
         
             <a href="{{ route('admin.shipping-discounts.index') }}" class="nav-link {{ request()->routeIs('admin.shipping-discounts.*') ? 'active' : '' }}">
-                <i class="fas fa-tags"></i> Diskon Ongkir
+                <i class="fas fa-tags"></i> Shipping Discounts
             </a>
             
             <a href="{{ route('admin.history.index') }}" class="nav-link {{ request()->routeIs('admin.history.*') ? 'active' : '' }}">
-                <i class="fas fa-history"></i> Riwayat
+                <i class="fas fa-history"></i> History
             </a>
             
             <a href="{{ route('admin.reports.index') }}" class="nav-link {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}">
-                <i class="fas fa-file-download"></i> Laporan
+                <i class="fas fa-file-download"></i> Reports
             </a>
             
             <a href="{{ route('admin.notifications.index') }}" class="nav-link {{ request()->routeIs('admin.notifications.*') ? 'active' : '' }}">
-                <i class="fas fa-bell"></i> Notifikasi
+                <i class="fas fa-bell"></i> Notifications
                 @if(auth()->user()->unreadNotifications->count() > 0)
                     <span class="badge bg-danger">{{ auth()->user()->unreadNotifications->count() }}</span>
                 @endif
             </a>
             
             <a href="{{ route('admin.profile.index') }}" class="nav-link {{ request()->routeIs('admin.profile.*') ? 'active' : '' }}">
-                <i class="fas fa-user-cog"></i> Profil Saya
+                <i class="fas fa-user-cog"></i> My Profile
             </a>
             
             <div class="sidebar-divider"></div>
             
             <a href="{{ route('home') }}" class="nav-link" target="_blank">
-                <i class="fas fa-external-link-alt"></i> Lihat Website
+                <i class="fas fa-external-link-alt"></i> View Website
             </a>
             
             <form action="{{ route('logout') }}" method="POST">
                 @csrf
                 <button type="submit" class="nav-link w-100 text-start border-0 bg-transparent" style="color: var(--gray);">
-                    <i class="fas fa-sign-out-alt"></i> Keluar
+                    <i class="fas fa-sign-out-alt"></i> Logout
                 </button>
             </form>
         </nav>
@@ -761,7 +761,7 @@
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li>
                         <a class="dropdown-item" href="{{ route('admin.profile.index') }}">
-                            <i class="fas fa-user-cog"></i> Profil Saya
+                            <i class="fas fa-user-cog"></i> My Profile
                         </a>
                     </li>
                     <li>
@@ -774,7 +774,7 @@
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf
                             <button type="submit" class="dropdown-item text-danger">
-                                <i class="fas fa-sign-out-alt"></i> Keluar
+                                <i class="fas fa-sign-out-alt"></i> Logout
                             </button>
                         </form>
                     </li>

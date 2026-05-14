@@ -290,7 +290,7 @@ class OrderController extends Controller
                 // Validate user has enough points
                 if ($requestedPoints <= $user->points) {
                     $pointsUsed = $requestedPoints;
-                    $pointsDiscount = $pointsUsed * 100; // 1 point = Rp 100
+                    $pointsDiscount = $pointsUsed * 100; // 100 points = Rp10,000, so 1 point = Rp100
                 }
             }
             
@@ -341,7 +341,11 @@ class OrderController extends Controller
             // Deduct points from user if used
             if ($pointsUsed > 0 && auth()->check()) {
                 $user = auth()->user();
-                $user->decrement('points', $pointsUsed);
+                $user->redeemPoints(
+                    $pointsUsed,
+                    "Redeemed for order #{$order->order_number}",
+                    $order->id
+                );
             }
             
             // Check if this is first purchase and add free grip

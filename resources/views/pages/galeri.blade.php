@@ -1,14 +1,14 @@
 @extends('layouts.app')
 
-@section('title', 'Galeri - Nora Padel')
+@section('title', 'Gallery - Nora Padel')
 
 @section('content')
 <!-- Hero -->
 <section class="page-hero">
     <div class="container">
-        <span class="section-badge">Galeri</span>
-        <h1 class="page-title">Momen & Aktivitas <span class="text-primary">Kami</span></h1>
-    <p class="page-subtitle">Dokumentasi produk, event, dan aktivitas Nora Padel</p>
+        <span class="section-badge">Gallery</span>
+        <h1 class="page-title">Our <span class="text-primary">Moments & Activities</span></h1>
+    <p class="page-subtitle">Documentation of Nora Padel products, events, and activities</p>
     </div>
 </section>
 
@@ -63,8 +63,8 @@
         @else
             <div class="text-center py-5">
                 <i class="fas fa-images fa-4x text-gray mb-3"></i>
-                <h5>Galeri Masih Kosong</h5>
-                <p class="text-gray">Dokumentasi akan segera ditambahkan</p>
+                <h5>Gallery Still Empty</h5>
+                <p class="text-gray">Documentation will be added soon</p>
             </div>
         @endif
     </div>

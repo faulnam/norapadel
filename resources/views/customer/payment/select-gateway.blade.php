@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Pilih Metode Pembayaran')
+@section('title', 'Select Payment Method')
 
 @push('styles')
 <script src="https://cdn.tailwindcss.com"></script>

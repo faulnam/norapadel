@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Tulis Testimoni - Nora Padel')
+@section('title', 'Write Testimonial - Nora Padel')
 
 @section('content')
 <div class="container py-4 py-lg-5">
@@ -9,34 +9,34 @@
             <nav aria-label="breadcrumb" class="mb-3 mb-lg-4">
                 <ol class="breadcrumb breadcrumb-mobile">
                     <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('customer.orders.index') }}">Pesanan</a></li>
-                    <li class="breadcrumb-item active">Testimoni</li>
+                    <li class="breadcrumb-item"><a href="{{ route('customer.orders.index') }}">Orders</a></li>
+                    <li class="breadcrumb-item active">Testimonial</li>
                 </ol>
             </nav>
             
             <div class="card shadow-sm">
                 <div class="card-header bg-success text-white card-header-mobile">
                     <h5 class="mb-0 card-title-mobile">
-                        <i class="fas fa-star me-2"></i>Tulis Testimoni
+                        <i class="fas fa-star me-2"></i>Write Testimonial
                     </h5>
                 </div>
                 <div class="card-body p-3 p-lg-4">
                     <div class="alert alert-info py-2 alert-mobile">
                         <i class="fas fa-info-circle me-2"></i>
-                        <span class="d-none d-sm-inline">Terima kasih telah berbelanja di Nora Padel! </span>Bagikan pengalaman Anda.
+                        <span class="d-none d-sm-inline">Thank you for shopping at Nora Padel! </span>Share your experience.
                     </div>
 
                     <!-- Order Info -->
                     <div class="card bg-light mb-4">
                         <div class="card-body p-3">
-                            <h6 class="card-title order-info-title">Detail Pesanan</h6>
+                            <h6 class="card-title order-info-title">Order Details</h6>
                             <table class="table table-sm table-borderless mb-0 order-info-table">
                                 <tr>
-                                    <td class="order-info-label">No. Pesanan</td>
+                                    <td class="order-info-label">Order No.</td>
                                     <td><strong>{{ $order->order_number }}</strong></td>
                                 </tr>
                                 <tr>
-                                    <td class="order-info-label">Tanggal</td>
+                                    <td class="order-info-label">Date</td>
                                     <td>{{ $order->created_at->format('d M Y') }}</td>
                                 </tr>
                                 <tr>
@@ -79,24 +79,24 @@
                             <div class="text-danger small mt-1">{{ $message }}</div>
                             @enderror
                             <small class="text-muted d-block mt-2 rating-hint">
-                                1 = Sangat Buruk, 5 = Sangat Baik
+                                1 = Very Poor, 5 = Very Good
                             </small>
                         </div>
 
                         <div class="mb-4">
-                            <label for="content" class="form-label fw-bold">Testimoni Anda <span class="text-danger">*</span></label>
+                            <label for="content" class="form-label fw-bold">Your Testimonial <span class="text-danger">*</span></label>
                             <textarea name="content" id="content" rows="4" 
                                 class="form-control @error('content') is-invalid @enderror" 
-                                placeholder="Ceritakan pengalaman Anda..."
+                                placeholder="Tell your experience..."
                                 required>{{ old('content') }}</textarea>
                             @error('content')
                             <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
-                            <small class="text-muted">Minimal 20 karakter</small>
+                            <small class="text-muted">Minimum 20 characters</small>
                         </div>
 
                         <div class="mb-4">
-                            <label for="image" class="form-label fw-bold">Foto Testimoni <span class="text-muted fw-normal">(opsional)</span></label>
+                            <label for="image" class="form-label fw-bold">Testimonial Photo <span class="text-muted fw-normal">(optional)</span></label>
                             <input type="file" name="image" id="image" 
                                 class="form-control @error('image') is-invalid @enderror" 
                                 accept="image/jpeg,image/png,image/jpg,image/webp"
@@ -104,26 +104,26 @@
                             @error('image')
                             <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
-                            <small class="text-muted">Format: JPEG, PNG, WEBP. Maksimal 2MB. Gambar akan ditampilkan di galeri NoraPadel.</small>
+                            <small class="text-muted">Format: JPEG, PNG, WEBP. Maximum 2MB. Image will be displayed in NoraPadel gallery.</small>
                             <div id="imagePreview" class="mt-2" style="display: none;">
                                 <img id="previewImg" src="" alt="Preview" class="rounded shadow-sm" style="max-height: 200px; object-fit: cover;">
                                 <button type="button" class="btn btn-sm btn-outline-danger mt-2" onclick="removeImage()">
-                                    <i class="fas fa-times me-1"></i>Hapus Foto
+                                    <i class="fas fa-times me-1"></i>Remove Photo
                                 </button>
                             </div>
                         </div>
 
                         <div class="alert alert-warning py-2 alert-mobile">
                             <i class="fas fa-exclamation-triangle me-2"></i>
-                            Testimoni akan direview admin sebelum ditampilkan.
+                            Testimonial will be reviewed by admin before being displayed.
                         </div>
 
                         <div class="d-flex flex-column flex-sm-row justify-content-between gap-2">
                             <a href="{{ route('customer.orders.show', $order) }}" class="btn btn-outline-secondary btn-action-mobile order-2 order-sm-1">
-                                <i class="fas fa-arrow-left me-2"></i>Kembali
+                                <i class="fas fa-arrow-left me-2"></i>Back
                             </a>
                             <button type="submit" class="btn btn-success btn-action-mobile order-1 order-sm-2">
-                                <i class="fas fa-paper-plane me-2"></i>Kirim Testimoni
+                                <i class="fas fa-paper-plane me-2"></i>Submit Testimonial
                             </button>
                         </div>
                     </form>
