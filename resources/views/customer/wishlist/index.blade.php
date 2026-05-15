@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Wishlist - NoraPadel')
+@section('title', 'My Wishlist - NoraPadel')
 
 @section('content')
 <div class="bg-white text-black antialiased">
@@ -242,7 +242,7 @@
 
     <div class="mx-auto w-full max-w-7xl px-6 py-8 pt-16 md:px-10 md:py-12 md:pt-0 lg:px-12 lg:py-16">
         <h3 class="mb-6 text-3xl font-semibold tracking-tight text-black sm:text-4xl">
-            <i class="fas fa-heart mr-3 text-rose-500"></i>Wishlist Saya
+            <i class="fas fa-heart mr-3 text-rose-500"></i>My Wishlist
         </h3>
         
         @if($wishlistItems->count() > 0)
@@ -252,11 +252,11 @@
                     <div class="flex items-center justify-between border-b border-black/6 bg-zinc-50 px-6 py-4">
                         <span class="text-sm font-medium text-black">{{ $wishlistItems->count() }} Item</span>
                         <form action="{{ route('customer.wishlist.clear') }}" method="POST" 
-                              onsubmit="return confirm('Kosongkan wishlist?')">
+                              onsubmit="return confirm('Clear wishlist?')">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="rounded-full border border-rose-600 bg-white px-4 py-1.5 text-xs font-medium text-rose-600 transition hover:bg-rose-50">
-                                <i class="fas fa-trash mr-1"></i>Kosongkan
+                                <i class="fas fa-trash mr-1"></i>Clear Wishlist
                             </button>
                         </form>
                     </div>
@@ -358,7 +358,7 @@
                         </div>
                         
                         <a href="{{ route('customer.cart.index') }}" class="block w-full rounded-full bg-black px-6 py-3 text-center text-sm font-medium text-white transition hover:bg-black/90">
-                            <i class="fas fa-shopping-bag mr-2"></i>Lihat Keranjang
+                            <i class="fas fa-shopping-bag mr-2"></i>View Cart
                         </a>
                     </div>
                 </div>
@@ -367,10 +367,10 @@
         @else
             <div class="py-20 text-center">
                 <i class="fas fa-heart mb-6 text-6xl text-zinc-300"></i>
-                <h4 class="mb-2 text-2xl font-semibold text-black">Wishlist Kosong</h4>
-                <p class="mb-6 text-zinc-600">Belum ada produk favorit? Ayo mulai tambahkan!</p>
+                <h4 class="mb-2 text-2xl font-semibold text-black">Wishlist is Empty</h4>
+                <p class="mb-6 text-zinc-600">No favorite products yet? Let's start adding!</p>
                 <a href="{{ route('home') }}#products" class="inline-flex items-center gap-2 rounded-full bg-black px-8 py-3 text-sm font-medium text-white transition hover:bg-black/90">
-                    <i class="fas fa-shopping-bag"></i>Mulai Belanja
+                    <i class="fas fa-shopping-bag"></i>Start Shopping
                 </a>
             </div>
         @endif

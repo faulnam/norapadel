@@ -395,7 +395,7 @@
                         <h1 class="text-2xl font-semibold tracking-tight sm:text-3xl lg:text-4xl">NoraPadel</h1>
                         <p class="mt-4 text-sm text-zinc-200">Experience the ultimate in padel equipment. Premium quality rackets, shoes, and accessories for players who demand excellence.</p>
                         <div class="mt-6 flex flex-wrap justify-center gap-4">
-                            <a href="{{ route('shop') }}" class="inline-flex rounded border-2 border-white bg-white/10 backdrop-blur-md px-6 py-2 text-xs font-semibold text-white transition duration-300 hover:bg-white hover:text-black">Shop Now</a>
+                            <a href="{{ route('shop') }}" class="inline-flex items-center gap-1 rounded border border-white/30 bg-white/10 px-6 py-2 text-xs font-semibold text-white backdrop-blur transition duration-300 hover:bg-white/20">Shop Now</a>
                         </div>
                     </div>
                 </div>
@@ -545,7 +545,7 @@
                     <div class="mb-6 flex flex-col md:flex-row gap-3">
                         <div class="flex gap-2 flex-wrap">
                             <select id="filterBrand" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition bg-white">
-                                <option value="">Semua Brand</option>
+                                <option value="">All Brands</option>
                                 <option value="Bullpadel" {{ $selectedBrand === 'Bullpadel' ? 'selected' : '' }}>Bullpadel</option>
                                 <option value="Babolat" {{ $selectedBrand === 'Babolat' ? 'selected' : '' }}>Babolat</option>
                                 <option value="Nox" {{ $selectedBrand === 'Nox' ? 'selected' : '' }}>Nox</option>
@@ -554,7 +554,7 @@
                                 <option value="Arronax" {{ $selectedBrand === 'Arronax' ? 'selected' : '' }}>Arronax</option>
                             </select>
                             <select id="filterLevel" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition bg-white">
-                                <option value="">Semua Level</option>
+                                <option value="">All Levels</option>
                                 <option value="beginner" {{ $selectedLevel === 'beginner' ? 'selected' : '' }}>Beginner</option>
                                 <option value="intermediate" {{ $selectedLevel === 'intermediate' ? 'selected' : '' }}>Intermediate</option>
                                 <option value="pro" {{ $selectedLevel === 'pro' ? 'selected' : '' }}>Pro</option>
@@ -563,7 +563,7 @@
                                 <a href="{{ request()->fullUrlWithQuery(['brand' => null, 'level' => null]) }}" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition bg-white text-rose-600 hover:border-rose-600 hover:text-rose-600">Reset</a>
                             @endif
                             <select id="filterPriceRange" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition bg-white">
-                                <option value="">Semua Harga</option>
+                                <option value="">All Prices</option>
                                 <option value="0-500000">< Rp 500.000</option>
                                 <option value="500000-1000000">Rp 500.000 - Rp 1.000.000</option>
                                 <option value="1000000-2000000">Rp 1.000.000 - Rp 2.000.000</option>
@@ -717,46 +717,46 @@
                             <div class="mb-4">
                                 <i class="fas fa-gift text-6xl"></i>
                             </div>
-                            <h2 class="mb-2 text-3xl font-bold">Selamat Datang!</h2>
-                            <p class="text-lg opacity-90">Bonus Spesial Untuk Anda</p>
+                            <h2 class="mb-2 text-3xl font-bold">Welcome!</h2>
+                            <p class="text-lg opacity-90">Special Bonus For You</p>
                         </div>
                         
                         <div class="px-8 py-8 text-center">
                             <div class="mb-4">
                                 <div class="mb-3">
-                                    <div class="text-3xl font-semibold text-blue-600">🎁 Bonus Pembelian Pertama</div>
+                                    <div class="text-3xl font-semibold text-blue-600">🎁 First Purchase Bonus</div>
                                 </div>
                                 <div class="space-y-2 text-left">
                                     <div class="flex items-center gap-3 rounded-lg bg-blue-50 p-3">
                                         <i class="fas fa-coins text-2xl text-blue-600"></i>
                                         <div>
-                                            <div class="font-semibold text-black">100 Poin Gratis</div>
-                                            <div class="text-xs text-zinc-600">Senilai Rp 10.000 untuk diskon</div>
+                                            <div class="font-semibold text-black">100 Free Points</div>
+                                            <div class="text-xs text-zinc-600">Worth Rp 10,000 for discount</div>
                                         </div>
                                     </div>
                                     <div class="flex items-center gap-3 rounded-lg bg-purple-50 p-3">
                                         <i class="fas fa-hand-holding-heart text-2xl text-purple-600"></i>
                                         <div>
                                             <div class="font-semibold text-black">Free Grip</div>
-                                            <div class="text-xs text-zinc-600">Gratis grip pada pembelian pertama</div>
+                                            <div class="text-xs text-zinc-600">Free grip on first purchase</div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             
                             <p class="mb-6 text-xs text-zinc-500">
-                                *Bonus hanya berlaku untuk pembelian pertama Anda
+                                *Bonus only applies to your first purchase
                             </p>
                             
                             <form action="{{ route('customer.claim-welcome-bonus') }}" method="POST">
                                 @csrf
                                 <button type="submit" class="w-full rounded bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-3 text-sm font-semibold text-white transition duration-300 hover:shadow-lg">
-                                    <i class="fas fa-check-circle mr-2"></i>Klaim Bonus Sekarang
+                                    <i class="fas fa-check-circle mr-2"></i>Claim Bonus Now
                                 </button>
                             </form>
                             
                             <button onclick="closeWelcomeBonus()" class="mt-3 text-sm text-zinc-500 hover:text-zinc-700">
-                                Nanti Saja
+                                Maybe Later
                             </button>
                         </div>
                     </div>

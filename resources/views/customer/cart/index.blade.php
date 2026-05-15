@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Keranjang Belanja - NoraPadel')
+@section('title', 'Shopping Cart - NoraPadel')
 
 @section('content')
 <div class="bg-white text-black antialiased">
@@ -250,7 +250,7 @@
 
 <div class="mx-auto w-full max-w-7xl px-6 py-8 pt-16 md:px-10 md:py-12 md:pt-0 lg:px-12 lg:py-16">
     <h3 class="mb-6 text-3xl font-semibold tracking-tight text-black sm:text-4xl">
-        <i class="fas fa-shopping-cart mr-3 text-black"></i>Keranjang Belanja
+        <i class="fas fa-shopping-cart mr-3 text-black"></i>Shopping Cart
     </h3>
     
     @if($cartItems->count() > 0)
@@ -260,11 +260,11 @@
                     <div class="flex items-center justify-between border-b border-black/6 bg-zinc-50 px-6 py-4">
                         <span class="text-sm font-medium text-black">{{ $cartItems->count() }} Item</span>
                         <form action="{{ route('customer.cart.clear') }}" method="POST" 
-                              onsubmit="return confirm('Kosongkan keranjang?')">
+                              onsubmit="return confirm('Clear cart?')">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="rounded-full border border-rose-600 bg-white px-4 py-1.5 text-xs font-medium text-rose-600 transition hover:bg-rose-50">
-                                <i class="fas fa-trash mr-1"></i>Kosongkan
+                                <i class="fas fa-trash mr-1"></i>Clear Cart
                             </button>
                         </form>
                     </div>
@@ -340,11 +340,11 @@
             <div class="lg:col-span-1">
                 <div class="overflow-hidden rounded-2xl border border-black/6 bg-white shadow-sm">
                     <div class="border-b border-black/6 bg-black px-6 py-4">
-                        <h4 class="text-lg font-semibold text-white"><i class="fas fa-receipt mr-2"></i>Ringkasan</h4>
+                        <h4 class="text-lg font-semibold text-white"><i class="fas fa-receipt mr-2"></i>Summary</h4>
                     </div>
                     <div class="px-6 py-6">
                         <div class="flex justify-between border-b border-black/6 pb-3 text-sm">
-                            <span class="text-zinc-600">Total Item</span>
+                            <span class="text-zinc-600">Total Items</span>
                             <span class="font-medium text-black">{{ $cartItems->sum('quantity') }} pcs</span>
                         </div>
                         @php
@@ -392,10 +392,10 @@
                             </a>
                         @else
                             <a href="{{ route('customer.checkout') }}" class="block w-full rounded-full bg-black px-6 py-3 text-center text-sm font-medium text-white transition hover:bg-black/90">
-                                <i class="fas fa-credit-card mr-2"></i>Checkout sebagai Guest
+                                <i class="fas fa-credit-card mr-2"></i>Checkout as Guest
                             </a>
                             <a href="{{ route('login') }}" class="block w-full mt-2 rounded-full border-2 border-black bg-transparent px-6 py-3 text-center text-sm font-medium text-black transition hover:bg-black hover:text-white">
-                                <i class="fas fa-sign-in-alt mr-2"></i>Login untuk Reward
+                                <i class="fas fa-sign-in-alt mr-2"></i>Login for Rewards
                             </a>
                         @endif
                     </div>
@@ -405,10 +405,10 @@
     @else
         <div class="py-20 text-center">
             <i class="fas fa-shopping-cart mb-6 text-6xl text-zinc-300"></i>
-            <h4 class="mb-2 text-2xl font-semibold text-black">Keranjang Belanja Kosong</h4>
-            <p class="mb-6 text-zinc-600">Ayo mulai berbelanja perlengkapan NoraPadel!</p>
+            <h4 class="mb-2 text-2xl font-semibold text-black">Shopping Cart is Empty</h4>
+            <p class="mb-6 text-zinc-600">Let's start shopping for NoraPadel equipment!</p>
             <a href="{{ route('home') }}#products" class="inline-flex items-center gap-2 rounded-full bg-black px-8 py-3 text-sm font-medium text-white transition hover:bg-black/90">
-                <i class="fas fa-shopping-bag"></i>Mulai Belanja
+                <i class="fas fa-shopping-bag"></i>Start Shopping
             </a>
         </div>
     @endif

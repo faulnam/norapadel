@@ -56,6 +56,7 @@ class User extends Authenticatable
             'is_guest' => 'boolean',
             'first_purchase_completed' => 'boolean',
             'welcome_bonus_claimed' => 'boolean',
+            'points' => 'integer',
         ];
     }
 
@@ -168,5 +169,75 @@ class User extends Authenticatable
         
         // Return default avatar with initials
         return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=16a34a&color=fff&size=200';
+    }
+
+    /**
+     * Get point transactions for the user
+     */
+    public function pointTransactions()
+    {
+        return $this->hasMany(PointTransaction::class);
+    }
+
+    /**
+     * Add points to user balance
+     */
+    public function addPoints(int $points, string $type = 'earned', ?string $description = null, ?int $orderId = null): void
+    {
+        $balanceBefore = $this->points;
+        $this->points += $points;
+        $this->save();
+
+        PointTransaction::create([
+            'user_id' => $this->id,
+            'order_id' => $orderId,
+            'points' => $points,
+            'type' => $type,
+            'description' => $description,
+            'balance_before' => $balanceBefore,
+            'balance_after' => $this->points,
+        ]);
+    }
+
+    /**
+     * Redeem points from user balance
+     */
+    public function redeemPoints(int $points, string $description = null, ?int $orderId = null): bool
+    {
+        if ($this->points < $points) {
+            return false;
+        }
+
+        $balanceBefore = $this->points;
+        $this->points -= $points;
+        $this->save();
+
+        PointTransaction::create([
+            'user_id' => $this->id,
+            'order_id' => $orderId,
+            'points' => -$points,
+            'type' => 'redeemed',
+            'description' => $description,
+            'balance_before' => $balanceBefore,
+            'balance_after' => $this->points,
+        ]);
+
+        return true;
+    }
+
+    /**
+     * Calculate points value in IDR (100 points = Rp10,000)
+     */
+    public function getPointsValueAttribute(): float
+    {
+        return ($this->points / 100) * 10000;
+    }
+
+    /**
+     * Format points value to IDR currency
+     */
+    public function getFormattedPointsValueAttribute(): string
+    {
+        return 'Rp ' . number_format($this->points_value, 0, ',', '.');
     }
 }

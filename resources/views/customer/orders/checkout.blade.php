@@ -722,8 +722,8 @@
             <a href="{{ route('shoes') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Shoes</a>
             <a href="{{ route('apparel') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Accessories</a>
             @auth
-                <a href="{{ route('customer.orders.index') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Riwayat Pesanan</a>
-                <a href="{{ route('customer.profile.index') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Profil</a>
+                <a href="{{ route('customer.orders.index') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Order History</a>
+                <a href="{{ route('customer.profile.index') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Profile</a>
             @endauth
         </nav>
     </div>
@@ -732,7 +732,7 @@
 <div class="checkout-page pt-16 md:pt-0">
     <div class="container">
         <div class="breadcrumb-minimal">
-            <a href="{{ route('customer.cart.index') }}">Keranjang</a>
+            <a href="{{ route('customer.cart.index') }}">Cart</a>
             <span class="mx-2 text-muted">/</span>
             <span class="text-dark">Checkout</span>
         </div>
@@ -764,38 +764,38 @@
                     <div class="checkout-card">
                         <div class="checkout-card-header">
                             <i class="fas fa-map-marker-alt"></i>
-                            Alamat Pengiriman
+                            Delivery Address
                         </div>
                         <div class="checkout-card-body">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label">Nama Penerima <span class="text-danger">*</span></label>
+                                    <label class="form-label">Recipient Name <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control @error('shipping_name') is-invalid @enderror" 
                                            name="shipping_name" value="{{ old('shipping_name', auth()->check() ? auth()->user()->name : '') }}" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label">Nomor Telepon <span class="text-danger">*</span></label>
+                                    <label class="form-label">Phone Number <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control @error('shipping_phone') is-invalid @enderror" 
                                            name="shipping_phone" value="{{ old('shipping_phone', auth()->check() ? auth()->user()->phone : '') }}" required>
                                 </div>
                             </div>
                             
                             <div class="mb-3">
-                                <label class="form-label">Alamat Lengkap <span class="text-danger">*</span></label>
+                                <label class="form-label">Full Address <span class="text-danger">*</span></label>
                                 <textarea class="form-control @error('shipping_address') is-invalid @enderror" 
-                                          name="shipping_address" rows="3" required placeholder="Jalan, No. Rumah, RT/RW, Kelurahan, Kecamatan, Kota">{{ old('shipping_address', auth()->check() ? auth()->user()->address : '') }}</textarea>
+                                          name="shipping_address" rows="3" required placeholder="Street, House No., RT/RW, Village, District, City">{{ old('shipping_address', auth()->check() ? auth()->user()->address : '') }}</textarea>
                             </div>
 
                             @guest
                             <!-- Guest Information -->
                             <div class="alert alert-info mb-3" style="border-radius: 12px;">
                                 <i class="fas fa-info-circle me-2"></i>
-                                <strong>Checkout sebagai Guest</strong><br>
-                                <small>Isi data diri Anda untuk melanjutkan. Atau <a href="{{ route('login') }}" class="alert-link">login</a> untuk mendapatkan reward!</small>
+                                <strong>Checkout as Guest</strong><br>
+                                <small>Fill in your personal data to continue. Or <a href="{{ route('login') }}" class="alert-link">login</a> to get rewards!</small>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label">Nama Lengkap <span class="text-danger">*</span></label>
+                                    <label class="form-label">Full Name <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control @error('guest_name') is-invalid @enderror" 
                                            name="guest_name" value="{{ old('guest_name') }}" required>
                                 </div>
@@ -805,23 +805,23 @@
                                            name="guest_email" value="{{ old('guest_email') }}" required>
                                 </div>
                                 <div class="col-md-12 mb-3">
-                                    <label class="form-label">Nomor HP <span class="text-danger">*</span></label>
+                                    <label class="form-label">Phone Number <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control @error('guest_phone') is-invalid @enderror" 
                                            name="guest_phone" value="{{ old('guest_phone') }}" required>
                                 </div>
                             </div>
                             @endguest
 
-                            <!-- Koordinat -->
+                            <!-- Coordinates -->
                             <div class="coord-box mb-3">
                                 <div class="coord-title">
-                                    <i class="fas fa-map-pin me-1"></i>Koordinat Lokasi
+                                    <i class="fas fa-map-pin me-1"></i>Location Coordinates
                                 </div>
-                                <p class="text-muted small mb-3">Klik pada peta atau gunakan GPS untuk menentukan lokasi pengiriman</p>
+                                <p class="text-muted small mb-3">Click on the map or use GPS to determine delivery location</p>
                                 
                                 <!-- Map Search -->
                                 <div class="map-search-box">
-                                    <input type="text" id="searchAddress" placeholder="Cari alamat atau tempat..." autocomplete="off">
+                                    <input type="text" id="searchAddress" placeholder="Search address or place..." autocomplete="off">
                                 </div>
                                 
                                 <!-- Leaflet Map -->
@@ -830,7 +830,7 @@
                                 </div>
                                 <div class="map-hint">
                                     <i class="fas fa-hand-pointer"></i>
-                                    Klik peta untuk menentukan lokasi atau geser marker
+                                    Click map to set location or drag marker
                                 </div>
                                 
                                 <div class="row mb-3 mt-3">
@@ -848,19 +848,19 @@
 
                                 <div class="d-flex gap-2 flex-wrap">
                                     <button type="button" class="btn-calc" id="getLocation">
-                                        <i class="fas fa-crosshairs me-1"></i>Lokasi Saya
+                                        <i class="fas fa-crosshairs me-1"></i>My Location
                                     </button>
                                 </div>
                             </div>
 
                             <!-- Courier Selection -->
                             <div id="courierSelection" style="display: none;">
-                                <label class="form-label">Pilih Ekspedisi <span class="text-danger">*</span></label>
+                                <label class="form-label">Select Courier <span class="text-danger">*</span></label>
                                 
                                 <!-- Loading State -->
                                 <div class="shipping-result" id="shippingLoading" style="display: none; background: #e0f2fe; border-color: #0ea5e9; color: #0c4a6e;">
                                     <i class="fas fa-spinner fa-spin me-1"></i>
-                                    Mengambil data ongkir dari ekspedisi...
+                                    Getting shipping rates from courier...
                                 </div>
 
                                 <!-- Error State -->
@@ -888,8 +888,8 @@
                             <input type="hidden" name="delivery_time_slot" value="{{ $deliveryInfo['time_slot'] }}">
 
                             <div class="mb-0">
-                                <label class="form-label">Catatan (Opsional)</label>
-                                <textarea class="form-control" name="notes" rows="2" placeholder="Catatan untuk penjual...">{{ old('notes') }}</textarea>
+                                <label class="form-label">Notes (Optional)</label>
+                                <textarea class="form-control" name="notes" rows="2" placeholder="Notes for seller...">{{ old('notes') }}</textarea>
                             </div>
                         </div>
                     </div>
@@ -898,22 +898,22 @@
                 <div class="col-lg-5">
                     @auth
                     @if(auth()->user()->role === 'customer')
-                        <!-- Welcome Bonus Info - Hanya untuk yang belum pernah order -->
+        <!-- Welcome Bonus Info - Only for those who haven't ordered -->
                         @if(!auth()->user()->orders()->exists() && $freeGrip)
                         <div class="alert alert-success mb-3" style="border-radius: 12px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none; color: white;">
                             <div class="d-flex align-items-start">
                                 <div class="me-3" style="font-size: 2rem;">🎁</div>
                                 <div class="flex-1">
-                                    <h6 class="fw-bold mb-2" style="color: white;">Pembelian Pertama Anda!</h6>
+                                    <h6 class="fw-bold mb-2" style="color: white;">Your First Purchase!</h6>
                                     <div class="small mb-2">
                                         <div class="mb-1">
                                             <i class="fas fa-check-circle me-1"></i> 
-                                            <strong>{{ $freeGrip->name }}</strong> (senilai Rp {{ number_format($freeGrip->price, 0, ',', '.') }}) 
+                                            <strong>{{ $freeGrip->name }}</strong> (worth Rp {{ number_format($freeGrip->price, 0, ',', '.') }}) 
                                             <span class="badge bg-white text-success ms-1" style="font-size: 9px;">FREE</span>
                                         </div>
-                                        <div><i class="fas fa-coins me-1"></i> Anda punya <strong>{{ auth()->user()->points }} points</strong> (Rp {{ number_format(auth()->user()->points * 100, 0, ',', '.') }})</div>
+                                        <div><i class="fas fa-coins me-1"></i> You have <strong>{{ auth()->user()->points }} points</strong> (Rp {{ number_format(auth()->user()->points * 100, 0, ',', '.') }})</div>
                                     </div>
-                                    <small style="opacity: 0.9;">✨ Nikmati benefit member Anda!</small>
+                                    <small style="opacity: 0.9;">✨ Enjoy your member benefits!</small>
                                 </div>
                             </div>
                         </div>
@@ -922,8 +922,8 @@
                             <div class="d-flex align-items-start">
                                 <i class="fas fa-info-circle me-2"></i>
                                 <div>
-                                    <strong>Pembelian Pertama Anda!</strong><br>
-                                    <small>Grip sedang tidak tersedia, tapi Anda tetap bisa gunakan {{ auth()->user()->points }} points untuk diskon!</small>
+                                    <strong>Your First Purchase!</strong><br>
+                                    <small>Grip is currently unavailable, but you can still use your {{ auth()->user()->points }} points for discount!</small>
                                 </div>
                             </div>
                         </div>
@@ -934,21 +934,21 @@
                         <div class="checkout-card mb-3">
                             <div class="checkout-card-header">
                                 <i class="fas fa-coins"></i>
-                                Gunakan Points
+                                Use Points
                             </div>
                             <div class="checkout-card-body">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <span class="text-muted small">Points Tersedia</span>
+                                    <span class="text-muted small">Available Points</span>
                                     <span class="fw-bold">{{ auth()->user()->points }} points</span>
                                 </div>
                                 <div class="form-check mb-2">
                                     <input class="form-check-input" type="checkbox" id="usePoints" name="use_points" value="1">
                                     <label class="form-check-label" for="usePoints">
-                                        Gunakan points untuk diskon
+                                        Use points for discount
                                     </label>
                                 </div>
                                 <div id="pointsSlider" style="display: none;">
-                                    <label class="form-label small">Jumlah Points</label>
+                                    <label class="form-label small">Points Amount</label>
                                     <input type="range" class="form-range" id="pointsRange" name="points_used" 
                                            min="0" max="{{ auth()->user()->points }}" value="0" step="10">
                                     <div class="d-flex justify-content-between align-items-center mt-2">
@@ -970,12 +970,12 @@
                                 <div>
                                     <strong>{{ $shippingDiscountInfo->name }}</strong>
                                     <div class="mt-1">
-                                        Diskon {{ $shippingDiscountInfo->formatted_discount }} ongkir
+                                        Discount {{ $shippingDiscountInfo->formatted_discount }} shipping cost
                                         @if($shippingDiscountInfo->max_discount)
-                                            (maks. {{ $shippingDiscountInfo->formatted_max_discount }})
+                                            (max. {{ $shippingDiscountInfo->formatted_max_discount }})
                                         @endif
                                         @if($shippingDiscountInfo->min_subtotal > 0)
-                                            <br><small class="text-success">Min. belanja Rp {{ number_format($shippingDiscountInfo->min_subtotal, 0, ',', '.') }}</small>
+                                            <br><small class="text-success">Min. shopping Rp {{ number_format($shippingDiscountInfo->min_subtotal, 0, ',', '.') }}</small>
                                         @endif
                                     </div>
                                 </div>
@@ -987,7 +987,7 @@
                     <div class="checkout-card summary-sticky">
                         <div class="checkout-card-header">
                             <i class="fas fa-receipt"></i>
-                            Ringkasan Pesanan
+                            Order Summary
                         </div>
                         <div class="checkout-card-body">
                             @foreach($cartItems as $item)
@@ -1022,7 +1022,7 @@
                                                 {{ $freeGrip->name }}
                                                 <span class="badge bg-success ms-1" style="font-size: 9px; vertical-align: middle;">FREE</span>
                                             </div>
-                                            <div class="text-muted" style="font-size: 0.75rem; color: #166534 !important; opacity: 0.8;">Bonus Pembelian Pertama</div>
+                                            <div class="text-muted" style="font-size: 0.75rem; color: #166534 !important; opacity: 0.8;">First Purchase Bonus</div>
                                         </div>
                                     </span>
                                     <span class="fw-bold" style="color: #166534; text-decoration: line-through; opacity: 0.6;">Rp {{ number_format($freeGrip->price, 0, ',', '.') }}</span>
@@ -1039,11 +1039,11 @@
                             @endphp
                             @if($totalDiscount > 0)
                                 <div class="summary-item">
-                                    <span>Harga Normal</span>
+                                    <span>Normal Price</span>
                                     <span class="text-decoration-line-through text-muted">Rp {{ number_format($originalTotal, 0, ',', '.') }}</span>
                                 </div>
                                 <div class="summary-item text-danger">
-                                    <span>Diskon Produk</span>
+                                    <span>Product Discount</span>
                                     <span>-Rp {{ number_format($totalDiscount, 0, ',', '.') }}</span>
                                 </div>
                             @endif
@@ -1052,19 +1052,19 @@
                                 <span>Rp {{ number_format($actualSubtotal, 0, ',', '.') }}</span>
                             </div>
                             <div class="summary-item">
-                                <span>Ongkos Kirim</span>
-                                <span id="displayShippingCost" class="text-muted">Belum dihitung</span>
+                                <span>Shipping Cost</span>
+                                <span id="displayShippingCost" class="text-muted">Not calculated yet</span>
                             </div>
 
                             <div class="summary-item text-success" id="shippingDiscountRow" style="display: none;">
-                                <span>Diskon Ongkir</span>
+                                <span>Shipping Discount</span>
                                 <span id="displayShippingDiscount">-Rp 0</span>
                             </div>
 
                             @auth
                             @if(auth()->user()->role === 'customer' && auth()->user()->points > 0)
                             <div class="summary-item text-success" id="pointsDiscountRow" style="display: none;">
-                                <span>Diskon Points</span>
+                                <span>Points Discount</span>
                                 <span id="displayPointsDiscount">-Rp 0</span>
                             </div>
                             @endif
@@ -1079,14 +1079,14 @@
 
                             <div class="warning-box mb-3" id="warningShipping">
                                 <i class="fas fa-exclamation-triangle me-1"></i>
-                                Hitung ongkir terlebih dahulu
+                                Calculate shipping first
                             </div>
                             
                             <button type="submit" class="btn-checkout" id="submitBtn" disabled>
-                                <i class="fas fa-check me-2"></i>Buat Pesanan
+                                <i class="fas fa-check me-2"></i>Place Order
                             </button>
                             <a href="{{ route('customer.cart.index') }}" class="btn btn-link w-100 mt-2 text-muted text-decoration-none">
-                                <i class="fas fa-arrow-left me-1"></i>Kembali ke Keranjang
+                                <i class="fas fa-arrow-left me-1"></i>Back to Cart
                             </a>
                         </div>
                     </div>
@@ -1272,7 +1272,7 @@
                 icon: deliveryIcon,
                 draggable: true 
             }).addTo(map);
-            marker.bindPopup('<strong>Lokasi Pengiriman</strong><br>Geser untuk memindahkan').openPopup();
+            marker.bindPopup('<strong>Delivery Location</strong><br>Drag to move').openPopup();
             map.setView([parseFloat(oldLat), parseFloat(oldLng)], 15);
             
             // Setup drag event
@@ -1318,7 +1318,7 @@
                 icon: deliveryIcon,
                 draggable: true 
             }).addTo(map);
-            marker.bindPopup('<strong>Lokasi Pengiriman</strong><br>Geser untuk memindahkan');
+            marker.bindPopup('<strong>Delivery Location</strong><br>Drag to move');
             marker.on('dragend', onMarkerDrag);
         }
         
@@ -1372,17 +1372,17 @@
                     setDeliveryLocation(lat, lng);
                     
                     document.getElementById('getLocation').disabled = false;
-                    document.getElementById('getLocation').innerHTML = '<i class="fas fa-crosshairs me-1"></i>Lokasi Saya';
+                    document.getElementById('getLocation').innerHTML = '<i class="fas fa-crosshairs me-1"></i>My Location';
                 },
                 function(error) {
-                    alert('Gagal mengambil lokasi. Pastikan GPS aktif dan izinkan akses lokasi.');
+                    alert('Failed to get location. Make sure GPS is active and allow location access.');
                     document.getElementById('getLocation').disabled = false;
-                    document.getElementById('getLocation').innerHTML = '<i class="fas fa-crosshairs me-1"></i>Lokasi Saya';
+                    document.getElementById('getLocation').innerHTML = '<i class="fas fa-crosshairs me-1"></i>My Location';
                 },
                 { enableHighAccuracy: true }
             );
         } else {
-            alert('Browser tidak mendukung Geolocation.');
+            alert('Browser does not support Geolocation.');
         }
     });
 
@@ -1392,7 +1392,7 @@
         const lng = parseFloat(document.getElementById('shipping_longitude').value);
 
         if (isNaN(lat) || isNaN(lng)) {
-            alert('Pilih lokasi pengiriman di peta terlebih dahulu.');
+            alert('Please select delivery location on the map first.');
             return;
         }
 
@@ -1456,7 +1456,7 @@
             console.log('Processed rates:', rates);
 
             if (!rates || rates.length === 0) {
-                throw new Error('Tidak ada ekspedisi tersedia untuk lokasi ini.');
+                throw new Error('No courier available for this location.');
             }
 
             displayCourierOptions(rates);
@@ -1474,22 +1474,22 @@
         container.innerHTML = '';
 
         if (!rates || rates.length === 0) {
-            container.innerHTML = '<div class="alert alert-info">Tidak ada ekspedisi tersedia untuk lokasi ini.</div>';
+            container.innerHTML = '<div class="alert alert-info">No courier available for this location.</div>';
             return;
         }
 
         const providerRuleNote = document.createElement('div');
         providerRuleNote.className = 'zone-info';
-        providerRuleNote.innerHTML = '<i class="fas fa-info-circle"></i> Ketersediaan layanan (termasuk Instant / Same Day dan batas jarak) mengikuti aturan aktif di Biteship berdasarkan area layanan, jarak, dan jam operasional kurir.';
+        providerRuleNote.innerHTML = '<i class="fas fa-info-circle"></i> Service availability (including Instant / Same Day and distance limits) follows active rules in Biteship based on service area, distance, and courier operating hours.';
         container.appendChild(providerRuleNote);
 
-        // Tampilkan info zona & berat (jika ada)
+        // Display zone & weight info (if any)
         const firstRate = rates[0];
         if (firstRate.zone || firstRate.weight_kg) {
-            const zoneLabel = { same_city: 'Dalam Kota', nearby: 'Kota Tetangga', inter_city: 'Antar Kota', inter_island: 'Antar Pulau' };
+            const zoneLabel = { same_city: 'Within City', nearby: 'Neighboring City', inter_city: 'Inter City', inter_island: 'Inter Island' };
             const zoneInfo = document.createElement('div');
             zoneInfo.className = 'zone-info';
-            zoneInfo.innerHTML = `<i class="fas fa-map-marker-alt"></i> Zona: <strong>${zoneLabel[firstRate.zone] || firstRate.zone || 'N/A'}</strong> &nbsp;·&nbsp; <i class="fas fa-weight-hanging"></i> Berat: <strong>${firstRate.weight_kg || 'N/A'} kg</strong>`;
+            zoneInfo.innerHTML = `<i class="fas fa-map-marker-alt"></i> Zone: <strong>${zoneLabel[firstRate.zone] || firstRate.zone || 'N/A'}</strong> &nbsp;·&nbsp; <i class="fas fa-weight-hanging"></i> Weight: <strong>${firstRate.weight_kg || 'N/A'} kg</strong>`;
             container.appendChild(zoneInfo);
         }
 
@@ -1522,13 +1522,13 @@
                 const serviceType = (s.service_type || '').toString().toLowerCase();
                 const normalizedServiceType = serviceType === 'same_day' ? 'sameday' : serviceType;
                 const badgeClass = { regular: 'badge-regular', express: 'badge-express', sameday: 'badge-sameday', instant: 'badge-instant' }[normalizedServiceType] || 'badge-regular';
-                const badgeLabel = { regular: 'Reguler', express: 'Express', sameday: 'Same Day', instant: 'Instant' }[normalizedServiceType] || (s.service_type || 'Layanan');
+                const badgeLabel = { regular: 'Regular', express: 'Express', sameday: 'Same Day', instant: 'Instant' }[normalizedServiceType] || (s.service_type || 'Service');
                 
-                // Format duration - gunakan estimated_date jika ada, fallback ke duration atau etd
+                // Format duration - use estimated_date if available, fallback to duration or etd
                 let durationText = '';
                 if (s.estimated_date) {
-                    durationText = `Tiba ${s.estimated_date}`;
-                    // Tambahkan label jika ada
+                    durationText = `Arrive ${s.estimated_date}`;
+                    // Add label if available
                     if (s.label) {
                         durationText += ` ${s.label}`;
                     }
@@ -1537,7 +1537,7 @@
                 } else if (s.etd) {
                     durationText = s.etd;
                 } else {
-                    durationText = 'Estimasi tidak tersedia';
+                    durationText = 'Estimate not available';
                 }
                 
                 return `
@@ -1547,7 +1547,7 @@
                         <div class="service-radio"></div>
                         <div>
                             <div class="service-name">
-                                ${s.courier_service_name || s.service_name || 'Layanan'}
+                                ${s.courier_service_name || s.service_name || 'Service'}
                                 <span class="service-badge ${badgeClass}">${badgeLabel}</span>
                             </div>
                             <div class="service-duration"><i class="far fa-clock me-1"></i>${durationText}</div>
@@ -1561,7 +1561,7 @@
                 <div class="courier-header">
                     <div class="courier-icon"><i class="fas ${courierIcons[code] || 'fa-truck'}"></i></div>
                     <div class="courier-title">${courier.name}</div>
-                    <div class="courier-toggle">Pilih Layanan <i class="fas fa-chevron-down ms-1" style="transition:transform 0.2s"></i></div>
+                    <div class="courier-toggle">Select Service <i class="fas fa-chevron-down ms-1" style="transition:transform 0.2s"></i></div>
                 </div>
                 <div class="courier-services">${servicesHtml}</div>
             `;
@@ -1661,7 +1661,7 @@
         
         if (!courierCode || !shippingCost || shippingCost == '0') {
             e.preventDefault();
-            alert('Silakan pilih lokasi pengiriman dan ekspedisi terlebih dahulu.');
+            alert('Please select delivery location and courier first.');
             return false;
         }
         

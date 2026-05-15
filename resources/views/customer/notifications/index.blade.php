@@ -1,18 +1,18 @@
 @extends('layouts.app')
 
-@section('title', 'Notifikasi - Nora Padel')
+@section('title', 'Notifications - Nora Padel')
 
 @section('content')
 <div class="container py-4 py-lg-5">
     <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-4 gap-2">
         <h3 class="mb-0 notif-title">
-            <i class="fas fa-bell me-2 text-success"></i>Notifikasi
+            <i class="fas fa-bell me-2 text-success"></i>Notifications
         </h3>
         @if(auth()->user()->unreadNotifications->count() > 0)
             <form action="{{ route('customer.notifications.mark-read') }}" method="POST">
                 @csrf
                 <button type="submit" class="btn btn-outline-success btn-sm">
-                    <i class="fas fa-check-double me-1"></i><span class="d-none d-sm-inline">Tandai Semua </span>Dibaca
+                    <i class="fas fa-check-double me-1"></i><span class="d-none d-sm-inline">Mark All as </span>Read
                 </button>
             </form>
         @endif
@@ -27,14 +27,14 @@
                             <div class="flex-grow-1">
                                 <h6 class="mb-1 notif-item-title">
                                     @if(!$notification->read_at)
-                                        <span class="badge bg-success me-2">Baru</span>
+                                        <span class="badge bg-success me-2">New</span>
                                     @endif
-                                    {{ $notification->data['title'] ?? 'Notifikasi' }}
+                                    {{ $notification->data['title'] ?? 'Notification' }}
                                 </h6>
                                 <p class="mb-1 text-muted notif-item-message">{{ $notification->data['message'] ?? '' }}</p>
                                 @if(isset($notification->data['order_number']))
                                     <a href="{{ route('customer.orders.show', $notification->data['order_id']) }}" class="text-success small">
-                                        Lihat Pesanan #{{ $notification->data['order_number'] }}
+                                        View Order #{{ $notification->data['order_number'] }}
                                     </a>
                                 @endif
                             </div>
@@ -44,7 +44,7 @@
                 @empty
                     <div class="list-group-item text-center py-4 py-lg-5">
                         <i class="fas fa-bell-slash fa-2x fa-lg-3x text-muted mb-3"></i>
-                        <p class="text-muted mb-0">Tidak ada notifikasi</p>
+                        <p class="text-muted mb-0">No notifications</p>
                     </div>
                 @endforelse
             </div>

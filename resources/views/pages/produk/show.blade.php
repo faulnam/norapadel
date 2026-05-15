@@ -7,8 +7,8 @@
     <div class="container">
         <nav aria-label="breadcrumb" class="mb-4">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-decoration-none">Beranda</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('produk.index') }}" class="text-decoration-none">Produk</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-decoration-none">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('produk.index') }}" class="text-decoration-none">Products</a></li>
                 <li class="breadcrumb-item active">{{ $product->name }}</li>
             </ol>
         </nav>
@@ -45,33 +45,33 @@
                         @if($product->hasActiveDiscount())
                             <span class="price" id="displayPrice">{{ $product->formatted_discounted_price }}</span>
                             <span class="text-decoration-line-through text-muted">{{ $product->formatted_price }}</span>
-                            <span class="badge bg-danger">Hemat {{ $product->formatted_savings_amount }}</span>
+                            <span class="badge bg-danger">Save {{ $product->formatted_savings_amount }}</span>
                         @else
                             <span class="price" id="displayPrice">{{ $product->formatted_price }}</span>
                         @endif
                         <span class="stock" id="stockBadge">
                         @if($product->stock > 0)
-                            <span class="text-success"><i class="fas fa-check-circle me-1"></i>Stok tersedia</span>
+                            <span class="text-success"><i class="fas fa-check-circle me-1"></i>Stock available</span>
                         @else
-                            <span class="text-danger"><i class="fas fa-times-circle me-1"></i>Stok habis</span>
+                            <span class="text-danger"><i class="fas fa-times-circle me-1"></i>Out of stock</span>
                         @endif
                         </span>
                     </div>
                     
                     <div class="product-description mb-4">
-                        <h6>Deskripsi</h6>
+                        <h6>Description</h6>
                         <p class="text-gray">{{ $product->description }}</p>
                     </div>
                     
                     @if($product->has_variants)
                         <div class="mb-4 alert alert-warning" role="alert">
                             <i class="fas fa-info-circle me-1"></i>
-                            Produk ini memiliki varian. Silakan hubungi admin terlebih dahulu untuk pemesanan.
+                            This product has variants. Please contact admin first for ordering.
                         </div>
                     @endif
                     
                     <div class="product-features mb-4">
-                        <h6>Keunggulan Produk</h6>
+                        <h6>Product Advantages</h6>
                         <div class="features-grid">
                             <div class="feature-item">
                                 
@@ -79,15 +79,15 @@
                             </div>
                             <div class="feature-item">
                                 
-                                <span>Durabilitas Tinggi</span>
+                                <span>High Durability</span>
                             </div>
                             <div class="feature-item">
                                 
-                                <span>Nyaman Digunakan</span>
+                                <span>Comfortable to Use</span>
                             </div>
                             <div class="feature-item">
                                 
-                                <span>Cocok Semua Level</span>
+                                <span>Suitable All Levels</span>
                             </div>
                         </div>
                     </div>
@@ -96,10 +96,10 @@
                         @auth
                             @if($product->has_variants)
                                 <div class="alert alert-warning w-100 mb-0">
-                                    <div class="fw-semibold">Produk ini memiliki varian.</div>
-                                    <div class="small">Hubungi admin terlebih dahulu untuk pemesanan.</div>
+                                    <div class="fw-semibold">This product has variants.</div>
+                                    <div class="small">Contact admin first for ordering.</div>
                                     <a href="{{ route('contact') }}" class="btn btn-outline-dark btn-sm mt-2">
-                                        <i class="fas fa-headset me-1"></i>Hubungi Admin
+                                        <i class="fas fa-headset me-1"></i>Contact Admin
                                     </a>
                                 </div>
                             @elseif($product->stock > 0)
@@ -112,20 +112,20 @@
                                         <button type="button" class="qty-btn" onclick="increaseQty()">+</button>
                                     </div>
                                     <button type="submit" class="btn btn-accent btn-lg flex-grow-1">
-                                        <i class="fas fa-shopping-cart me-2"></i>Tambah ke Keranjang
+                                        <i class="fas fa-shopping-cart me-2"></i>Add to Cart
                                     </button>
                                 </form>
                             
                             @else
                                 {{-- Stok Habis --}}
                                 <button class="btn btn-secondary btn-lg w-100" disabled>
-                                    <i class="fas fa-times me-2"></i>Stok Habis
+                                    <i class="fas fa-times me-2"></i>Out of Stock
                                 </button>
                             @endif
                         @else
                             {{-- Not Logged In --}}
                             <a href="{{ route('login') }}" class="btn btn-accent btn-lg w-100">
-                                <i class="fas fa-sign-in-alt me-2"></i>Masuk untuk Membeli
+                                <i class="fas fa-sign-in-alt me-2"></i>Login to Buy
                             </a>
                         @endauth
                     </div>
@@ -139,7 +139,7 @@
 @if($relatedProducts->count() > 0)
 <section class="py-5 bg-gray-light">
     <div class="container">
-        <h4 class="section-title mb-4">Produk Lainnya</h4>
+        <h4 class="section-title mb-4">Other Products</h4>
         <div class="row g-4">
             @foreach($relatedProducts as $related)
                 <div class="col-6 col-md-3">
@@ -149,7 +149,7 @@
                                  alt="{{ $related->name }}">
                             @if($related->has_variants)
                                 <div class="position-absolute top-0 start-0 m-2">
-                                    <span class="badge bg-dark">Varian</span>
+                                    <span class="badge bg-dark">Variant</span>
                                 </div>
                             @endif
                             @if($related->hasActiveDiscount())
@@ -564,9 +564,9 @@
         const stockBadge = document.getElementById('stockBadge');
         if (stockBadge) {
             if (stock > 0) {
-                stockBadge.innerHTML = `<span class="text-success"><i class="fas fa-check-circle me-1"></i>Stok tersedia (${stock})</span>`;
+                stockBadge.innerHTML = `<span class="text-success"><i class="fas fa-check-circle me-1"></i>Stock available (${stock})</span>`;
             } else {
-                stockBadge.innerHTML = `<span class="text-danger"><i class="fas fa-times-circle me-1"></i>Stok habis</span>`;
+                stockBadge.innerHTML = `<span class="text-danger"><i class="fas fa-times-circle me-1"></i>Out of stock</span>`;
             }
         }
 
@@ -601,12 +601,12 @@
             if (stock > 0) {
                 hint.className = 'alert alert-success py-2 px-3 mb-0';
                 hint.style.fontSize = '0.875rem';
-                hint.innerHTML = `<i class="fas fa-check-circle me-1"></i><span>Varian dipilih: <strong>${name}</strong></span>`;
+                hint.innerHTML = `<i class="fas fa-check-circle me-1"></i><span>Variant selected: <strong>${name}</strong></span>`;
                 if (selectedLabel) selectedLabel.style.display = 'inline-block';
             } else {
                 hint.className = 'alert alert-danger py-2 px-3 mb-0';
                 hint.style.fontSize = '0.875rem';
-                hint.innerHTML = `<i class="fas fa-times-circle me-1"></i><span>Varian <strong>${name}</strong> stok habis</span>`;
+                hint.innerHTML = `<i class="fas fa-times-circle me-1"></i><span>Variant <strong>${name}</strong> out of stock</span>`;
                 if (selectedLabel) selectedLabel.style.display = 'none';
             }
         }

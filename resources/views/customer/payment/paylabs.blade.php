@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Pembayaran Paylabs')
+@section('title', 'Paylabs Payment')
 
 @push('styles')
 <script src="https://cdn.tailwindcss.com"></script>
@@ -73,7 +73,7 @@
 <div class="min-h-screen bg-zinc-50 py-12 pt-16 md:pt-0">
     <div class="mx-auto max-w-3xl px-6">
         <div class="mb-8">
-            <h1 class="text-2xl font-semibold text-black">Pilih Metode Pembayaran</h1>
+            <h1 class="text-2xl font-semibold text-black">Select Payment Method</h1>
             <p class="mt-2 text-sm text-zinc-500">Order: {{ $order->order_number }} • Total: {{ $order->formatted_total }}</p>
         </div>
 
@@ -163,11 +163,11 @@
             <div class="flex gap-3">
                 <a href="{{ route('customer.payment.select-gateway', $order) }}" 
                    class="flex-1 rounded-xl border border-zinc-300 bg-white py-3 text-center text-sm font-medium text-black transition hover:bg-zinc-50">
-                    Kembali
+                    Back
                 </a>
                 <button type="submit" 
                         class="flex-1 rounded-xl bg-black py-3 text-center text-sm font-medium text-white transition hover:bg-black/90">
-                    Lanjutkan
+                    Continue
                 </button>
             </div>
         </form>

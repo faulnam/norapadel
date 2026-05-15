@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Profil Saya - NoraPadel')
+@section('title', 'My Profile - NoraPadel')
 
 @section('content')
 <div class="bg-white text-black antialiased">
@@ -49,7 +49,7 @@
 
 <div class="mx-auto w-full max-w-7xl px-6 py-8 pt-16 md:px-10 md:py-12 md:pt-0 lg:px-12 lg:py-16">
     <h3 class="mb-6 text-3xl font-semibold tracking-tight text-black sm:text-4xl">
-        <i class="fas fa-user mr-3 text-black"></i>Profil Saya
+        <i class="fas fa-user mr-3 text-black"></i>My Profile
     </h3>
     
     @if(session('success'))
@@ -90,14 +90,29 @@
                     <h5 class="mb-1 text-xl font-semibold text-black">{{ $user->name }}</h5>
                     <p class="mb-3 text-sm text-zinc-500">{{ $user->email }}</p>
                     <span class="inline-block rounded-full bg-black px-3 py-1 text-xs font-medium text-white">Customer</span>
+                    
+                    <!-- Points Display -->
+                    <div class="mt-4 rounded-xl bg-gradient-to-r from-violet-500 to-purple-600 px-4 py-3 text-white">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-xs text-white/80">Loyalty Points</p>
+                                <p class="text-2xl font-bold">{{ number_format($user->points) }}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-xs text-white/80">Value</p>
+                                <p class="text-sm font-semibold">{{ $user->formatted_points_value }}</p>
+                            </div>
+                        </div>
+                        <p class="mt-2 text-xs text-white/70">100 Points = Rp10,000 (1% cashback)</p>
+                    </div>
                 </div>
                 <div class="border-t border-black/6">
                     <div class="flex items-center justify-between border-b border-black/6 px-6 py-3">
-                        <span class="text-sm text-zinc-600"><i class="fas fa-phone mr-2"></i>Telepon</span>
+                        <span class="text-sm text-zinc-600"><i class="fas fa-phone mr-2"></i>Phone</span>
                         <span class="text-sm font-medium text-black">{{ $user->phone ?? '-' }}</span>
                     </div>
                     <div class="flex items-center justify-between px-6 py-3">
-                        <span class="text-sm text-zinc-600"><i class="fas fa-calendar mr-2"></i>Bergabung</span>
+                        <span class="text-sm text-zinc-600"><i class="fas fa-calendar mr-2"></i>Joined</span>
                         <span class="text-sm font-medium text-black">{{ $user->created_at->format('d M Y') }}</span>
                     </div>
                 </div>
@@ -106,7 +121,7 @@
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
                         <button type="submit" class="w-full rounded-full border border-rose-600 bg-white px-4 py-2 text-sm font-medium text-rose-600 transition hover:bg-rose-50">
-                            <i class="fas fa-sign-out-alt mr-2"></i>Keluar
+                            <i class="fas fa-sign-out-alt mr-2"></i>Logout
                         </button>
                     </form>
                 </div>
@@ -117,7 +132,7 @@
             <!-- Update Profile -->
             <div class="overflow-hidden rounded-2xl border border-black/6 bg-white shadow-sm">
                 <div class="border-b border-black/6 bg-zinc-50 px-6 py-4">
-                    <h4 class="text-lg font-semibold text-black"><i class="fas fa-edit mr-2"></i>Edit Profil</h4>
+                    <h4 class="text-lg font-semibold text-black"><i class="fas fa-edit mr-2"></i>Edit Profile</h4>
                 </div>
                 <div class="px-6 py-6">
                     <form action="{{ route('customer.profile.update') }}" method="POST" class="space-y-4">
@@ -125,7 +140,7 @@
                         @method('PATCH')
                         
                         <div>
-                            <label class="mb-2 block text-sm font-medium text-black">Nama Lengkap</label>
+                            <label class="mb-2 block text-sm font-medium text-black">Full Name</label>
                             <input type="text" class="w-full rounded-xl border border-black/10 px-4 py-2.5 text-sm transition focus:border-black focus:outline-none focus:ring-1 focus:ring-black @error('name') border-rose-500 @enderror" 
                                    name="name" value="{{ old('name', $user->name) }}" required>
                             @error('name')
@@ -136,11 +151,11 @@
                         <div>
                             <label class="mb-2 block text-sm font-medium text-black">Email</label>
                             <input type="email" class="w-full rounded-xl border border-black/10 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-500" value="{{ $user->email }}" disabled>
-                            <p class="mt-1 text-xs text-zinc-500">Email tidak dapat diubah</p>
+                            <p class="mt-1 text-xs text-zinc-500">Email cannot be changed</p>
                         </div>
                         
                         <div>
-                            <label class="mb-2 block text-sm font-medium text-black">Nomor Telepon</label>
+                            <label class="mb-2 block text-sm font-medium text-black">Phone Number</label>
                             <input type="text" class="w-full rounded-xl border border-black/10 px-4 py-2.5 text-sm transition focus:border-black focus:outline-none focus:ring-1 focus:ring-black @error('phone') border-rose-500 @enderror" 
                                    name="phone" value="{{ old('phone', $user->phone) }}" required>
                             @error('phone')
@@ -149,7 +164,7 @@
                         </div>
                         
                         <div>
-                            <label class="mb-2 block text-sm font-medium text-black">Alamat</label>
+                            <label class="mb-2 block text-sm font-medium text-black">Address</label>
                             <textarea class="w-full rounded-xl border border-black/10 px-4 py-2.5 text-sm transition focus:border-black focus:outline-none focus:ring-1 focus:ring-black @error('address') border-rose-500 @enderror" 
                                       name="address" rows="3" required>{{ old('address', $user->address) }}</textarea>
                             @error('address')
@@ -158,7 +173,7 @@
                         </div>
                         
                         <button type="submit" class="rounded-full bg-black px-6 py-2.5 text-sm font-medium text-white transition hover:bg-black/90">
-                            <i class="fas fa-save mr-2"></i>Simpan Perubahan
+                            <i class="fas fa-save mr-2"></i>Save Changes
                         </button>
                     </form>
                 </div>
@@ -167,7 +182,7 @@
             <!-- Change Password -->
             <div class="overflow-hidden rounded-2xl border border-black/6 bg-white shadow-sm">
                 <div class="border-b border-black/6 bg-zinc-50 px-6 py-4">
-                    <h4 class="text-lg font-semibold text-black"><i class="fas fa-lock mr-2"></i>Ubah Password</h4>
+                    <h4 class="text-lg font-semibold text-black"><i class="fas fa-lock mr-2"></i>Change Password</h4>
                 </div>
                 <div class="px-6 py-6">
                     <form action="{{ route('customer.profile.update-password') }}" method="POST" class="space-y-4">
@@ -175,7 +190,7 @@
                         @method('PATCH')
                         
                         <div>
-                            <label class="mb-2 block text-sm font-medium text-black">Password Saat Ini</label>
+                            <label class="mb-2 block text-sm font-medium text-black">Current Password</label>
                             <input type="password" class="w-full rounded-xl border border-black/10 px-4 py-2.5 text-sm transition focus:border-black focus:outline-none focus:ring-1 focus:ring-black @error('current_password') border-rose-500 @enderror" 
                                    name="current_password" required>
                             @error('current_password')
@@ -184,22 +199,22 @@
                         </div>
                         
                         <div>
-                            <label class="mb-2 block text-sm font-medium text-black">Password Baru</label>
+                            <label class="mb-2 block text-sm font-medium text-black">New Password</label>
                             <input type="password" class="w-full rounded-xl border border-black/10 px-4 py-2.5 text-sm transition focus:border-black focus:outline-none focus:ring-1 focus:ring-black @error('password') border-rose-500 @enderror" 
                                    name="password" required>
                             @error('password')
                                 <p class="mt-1 text-xs text-rose-600">{{ $message }}</p>
                             @enderror
-                            <p class="mt-1 text-xs text-zinc-500">Minimal 8 karakter</p>
+                            <p class="mt-1 text-xs text-zinc-500">Minimum 8 characters</p>
                         </div>
                         
                         <div>
-                            <label class="mb-2 block text-sm font-medium text-black">Konfirmasi Password Baru</label>
+                            <label class="mb-2 block text-sm font-medium text-black">Confirm New Password</label>
                             <input type="password" class="w-full rounded-xl border border-black/10 px-4 py-2.5 text-sm transition focus:border-black focus:outline-none focus:ring-1 focus:ring-black" name="password_confirmation" required>
                         </div>
                         
                         <button type="submit" class="rounded-full border border-black bg-white px-6 py-2.5 text-sm font-medium text-black transition hover:bg-black hover:text-white">
-                            <i class="fas fa-key mr-2"></i>Ubah Password
+                            <i class="fas fa-key mr-2"></i>Change Password
                         </button>
                     </form>
                 </div>

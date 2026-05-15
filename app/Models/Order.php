@@ -800,6 +800,20 @@ class Order extends Model
             'completed_at' => now(),
         ]);
 
+        // Award loyalty points (1% of transaction amount)
+        if ($this->user && $this->total_amount > 0) {
+            $pointsEarned = (int) floor($this->total_amount / 10000); // 1 point per Rp10,000 spent
+            
+            if ($pointsEarned > 0) {
+                $this->user->addPoints(
+                    $pointsEarned,
+                    'earned',
+                    "Earned from order #{$this->order_number}",
+                    $this->id
+                );
+            }
+        }
+
         return true;
     }
 

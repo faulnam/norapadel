@@ -1,14 +1,14 @@
 @extends('layouts.app')
 
-@section('title', 'Tentang Kami - Nora Padel')
+@section('title', 'About Us - Nora Padel')
 
 @section('content')
 <!-- Hero -->
 <section class="page-hero">
     <div class="container">
-        <span class="section-badge">Tentang Kami</span>
-    <h1 class="page-title">Kenali Lebih Dekat <span class="text-primary">Nora Padel</span></h1>
-    <p class="page-subtitle">Partner perlengkapan padel berkualitas untuk permainan yang lebih maksimal</p>
+        <span class="section-badge">About Us</span>
+    <h1 class="page-title">Get to Know <span class="text-primary">Nora Padel</span></h1>
+    <p class="page-subtitle">Quality padel equipment partner for more optimal gameplay</p>
     </div>
 </section>
 
@@ -21,29 +21,28 @@
                  alt="Tim Nora Padel" class="img-fluid rounded-4">
             </div>
             <div class="col-lg-6">
-                <h2 class="section-title">Cerita Kami</h2>
+                <h2 class="section-title">Our Story</h2>
                 <p class="text-gray mb-4">
-                    Nora Padel lahir dari semangat menghadirkan perlengkapan padel berkualitas yang mudah diakses 
-                    pemain Indonesia. Berawal dari komunitas kecil di Surabaya pada tahun 2023,
-                    kami fokus mengkurasi produk yang benar-benar menunjang performa di lapangan.
+                    Nora Padel was born from the spirit of presenting quality padel equipment that is easily accessible to Indonesian players. Starting from a small community in Surabaya in 2023,
+                    we focus on curating products that truly support performance on the field.
                 </p>
                 <p class="text-gray mb-4">
-                    Nama "Nora Padel" merepresentasikan energi modern, sportivitas, dan konsistensi kualitas.
-                    Kami percaya setiap pemain—dari pemula hingga profesional—berhak mendapatkan gear terbaik
-                    agar proses belajar, latihan, dan bertanding terasa lebih nyaman dan menyenangkan.
+                    The name "Nora Padel" represents modern energy, sportiveness, and quality consistency.
+                    We believe every player—from beginners to professionals—deserves the best gear
+                    so the learning, training, and competing process feels more comfortable and enjoyable.
                 </p>
                 <div class="story-stats">
                     <div class="story-stat">
                         <span class="stat-number">2023</span>
-                        <span class="stat-label">Tahun Berdiri</span>
+                        <span class="stat-label">Year Established</span>
                     </div>
                     <div class="story-stat">
                         <span class="stat-number">100+</span>
-                        <span class="stat-label">Pelanggan</span>
+                        <span class="stat-label">Customers</span>
                     </div>
                     <div class="story-stat">
                         <span class="stat-number">5+</span>
-                        <span class="stat-label">Varian Produk</span>
+                        <span class="stat-label">Product Variants</span>
                     </div>
                 </div>
             </div>
@@ -58,22 +57,21 @@
             <div class="col-md-6">
                 <div class="vm-card">
                     
-                    <h3>Visi Kami</h3>
+                    <h3>Our Vision</h3>
                     <p class="text-gray mb-0">
-                        Menjadi toko perlengkapan padel terpercaya di Indonesia yang mendukung pertumbuhan
-                        komunitas padel dari level pemula hingga profesional.
+                        To become a trusted padel equipment store in Indonesia that supports the growth of the padel community from beginner to professional levels.
                     </p>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="vm-card">
                     
-                    <h3>Misi Kami</h3>
+                    <h3>Our Mission</h3>
                     <ul class="text-gray mb-0 ps-3">
-                        <li>Menyediakan raket, bola, sepatu, tas, dan aksesori padel berkualitas tinggi</li>
-                        <li>Memberikan konsultasi produk yang sesuai gaya bermain pelanggan</li>
-                        <li>Menghadirkan pengalaman belanja cepat, aman, dan transparan</li>
-                        <li>Mendukung ekosistem padel lewat edukasi dan event komunitas</li>
+                        <li>Provide high-quality padel rackets, balls, shoes, bags, and accessories</li>
+                        <li>Provide product consultation that matches the customer's playing style</li>
+                        <li>Present a fast, safe, and transparent shopping experience</li>
+                        <li>Support the padel ecosystem through education and community events</li>
                     </ul>
                 </div>
             </div>
@@ -87,44 +85,44 @@
 <section class="py-5 bg-gray-light">
     <div class="container">
         <div class="text-center mb-5">
-            <span class="section-badge">Proses</span>
-            <h2 class="section-title">Dari Seleksi Produk ke Tangan Anda</h2>
+            <span class="section-badge">Process</span>
+            <h2 class="section-title">From Product Selection to Your Hands</h2>
         </div>
         
         <div class="process-timeline">
             <div class="process-item">
                 <div class="process-number">1</div>
                 <div class="process-content">
-                    <h5>Kurasi Produk</h5>
-                    <p class="small text-gray mb-0">Kami memilih brand dan spesifikasi gear yang sudah teruji kualitasnya</p>
+                    <h5>Product Curation</h5>
+                    <p class="small text-gray mb-0">We select brands and gear specifications with proven quality</p>
                 </div>
             </div>
             <div class="process-item">
                 <div class="process-number">2</div>
                 <div class="process-content">
                     <h5>Quality Check</h5>
-                    <p class="small text-gray mb-0">Setiap produk dicek kondisi fisik dan kelengkapannya sebelum dipajang</p>
+                    <p class="small text-gray mb-0">Each product is checked for physical condition and completeness before display</p>
                 </div>
             </div>
             <div class="process-item">
                 <div class="process-number">3</div>
                 <div class="process-content">
-                    <h5>Rekomendasi Produk</h5>
-                    <p class="small text-gray mb-0">Tim kami membantu memilih gear sesuai level, posisi, dan kebutuhan bermain</p>
+                    <h5>Product Recommendation</h5>
+                    <p class="small text-gray mb-0">Our team helps choose gear according to level, position, and playing needs</p>
                 </div>
             </div>
             <div class="process-item">
                 <div class="process-number">4</div>
                 <div class="process-content">
-                    <h5>Packaging Aman</h5>
-                    <p class="small text-gray mb-0">Produk dipacking rapi agar tetap aman selama proses pengiriman</p>
+                    <h5>Safe Packaging</h5>
+                    <p class="small text-gray mb-0">Products are packed neatly to remain safe during the shipping process</p>
                 </div>
             </div>
             <div class="process-item">
                 <div class="process-number">5</div>
                 <div class="process-content">
-                    <h5>Delivery Cepat</h5>
-                    <p class="small text-gray mb-0">Pesanan dikirim tepat waktu agar Anda bisa segera turun ke lapangan</p>
+                    <h5>Fast Delivery</h5>
+                    <p class="small text-gray mb-0">Orders are shipped on time so you can immediately get on the field</p>
                 </div>
             </div>
         </div>

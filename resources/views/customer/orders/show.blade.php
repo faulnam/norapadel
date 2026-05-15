@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Detail Pesanan')
+@section('title', 'Order Details')
 
 @push('styles')
 <script src="https://cdn.tailwindcss.com"></script>
@@ -71,13 +71,13 @@
             <a href="{{ route('apparel') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Accessories</a>
         </nav>
         <div class="flex items-center gap-3 text-black/80">
-            <a href="{{ route('customer.orders.index') }}" class="transition duration-300 hover:text-black" title="Riwayat Pesanan">
+            <a href="{{ route('customer.orders.index') }}" class="transition duration-300 hover:text-black" title="Order History">
                 <i class="fas fa-history text-sm"></i>
             </a>
             <a href="{{ route('customer.profile.index') }}" class="transition duration-300 hover:text-black" title="Profile">
                 <i class="fas fa-user text-sm"></i>
             </a>
-            <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-black" title="Keranjang">
+            <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-black" title="Cart">
                 <i class="fas fa-shopping-bag text-sm"></i>
             </a>
         </div>
@@ -88,7 +88,7 @@
     <div class="mx-auto max-w-7xl px-6 md:px-10 lg:px-12">
         <!-- Breadcrumb -->
         <div class="mb-6 text-sm text-zinc-500">
-            <a href="{{ route('customer.orders.index') }}" class="hover:text-black">Pesanan</a>
+            <a href="{{ route('customer.orders.index') }}" class="hover:text-black">Orders</a>
             <span class="mx-2">/</span>
             <span class="text-black">{{ $order->order_number }}</span>
         </div>
@@ -126,8 +126,8 @@
                             <div class="flex items-start gap-3">
                                 <i class="fas fa-clock text-amber-600 mt-0.5"></i>
                                 <div class="flex-1">
-                                    <p class="text-sm font-semibold text-amber-900 mb-1">Segera Lakukan Pembayaran</p>
-                                    <p class="text-xs text-amber-800 mb-2">Pesanan akan otomatis dibatalkan jika tidak dibayar dalam:</p>
+                                    <p class="text-sm font-semibold text-amber-900 mb-1">Make Payment Now</p>
+                                    <p class="text-xs text-amber-800 mb-2">Order will be automatically cancelled if not paid within:</p>
                                     <div class="text-lg font-bold text-amber-900" id="expirationTimer">{{ $order->formatted_expiration_time }}</div>
                                 </div>
                             </div>
@@ -137,8 +137,8 @@
                             <div class="flex items-start gap-3">
                                 <i class="fas fa-exclamation-circle text-red-600 mt-0.5"></i>
                                 <div class="flex-1">
-                                    <p class="text-sm font-semibold text-red-900 mb-1">Pesanan Expired</p>
-                                    <p class="text-xs text-red-800">Pesanan ini akan segera dibatalkan karena tidak dibayar dalam 24 jam.</p>
+                                    <p class="text-sm font-semibold text-red-900 mb-1">Order Expired</p>
+                                    <p class="text-xs text-red-800">This order will be cancelled soon because payment was not made within 24 hours.</p>
                                 </div>
                             </div>
                         </div>
@@ -156,7 +156,7 @@
                                 onclick="toggleOrderDetailPanel()"
                                 class="inline-flex items-center gap-2 rounded-full bg-black px-4 py-2 text-xs font-semibold text-white transition hover:bg-black/85">
                                 <i class="fas fa-file-alt"></i>
-                                <span id="orderDetailToggleLabel">Lihat Detail</span>
+                                <span id="orderDetailToggleLabel">View Details</span>
                             </button>
                         @endif
                     </div>
@@ -170,7 +170,7 @@
                                 ['stage' => 'pengantaran', 'label' => 'Pengantaran', 'icon' => 'fa-truck', 'photo' => $order->delivery_photo],
                                 ['stage' => 'pengembalian', 'label' => 'Pengembalian', 'icon' => 'fa-undo'],
                                 ['stage' => 'ditahan', 'label' => 'Di Tahan', 'icon' => 'fa-pause-circle'],
-                                ['stage' => 'selesai', 'label' => 'Selesai', 'icon' => 'fa-star'],
+                                ['stage' => 'selesai', 'label' => 'Completed', 'icon' => 'fa-star'],
                             ];
                             $currentStage = $order->shipment_stage;
                             $stagePositions = array_flip(array_column($timeline, 'stage'));
@@ -269,10 +269,10 @@
                                 <div class="rounded-xl border border-zinc-200 bg-zinc-50 p-4 space-y-3 text-sm">
                                     <div><p class="text-xs text-zinc-500">Order ID</p><p class="font-mono font-semibold text-black">{{ $biteshipDetail['order_id'] ?? '-' }}</p></div>
                                     <div><p class="text-xs text-zinc-500">Reference ID</p><p class="font-semibold text-black">{{ $biteshipDetail['reference_id'] ?? '-' }}</p></div>
-                                    <div><p class="text-xs text-zinc-500">No. Resi</p><p class="font-semibold text-black">{{ $biteshipDetail['waybill_id'] ?? '-' }}</p></div>
+                                    <div><p class="text-xs text-zinc-500">Receipt No.</p><p class="font-semibold text-black">{{ $biteshipDetail['waybill_id'] ?? '-' }}</p></div>
                                     <div><p class="text-xs text-zinc-500">Status</p><p class="font-semibold text-emerald-700">{{ $biteshipDetail['status_label'] ?? '-' }}</p></div>
                                     <div>
-                                        <p class="text-xs text-zinc-500">Tanggal Order</p>
+                                        <p class="text-xs text-zinc-500">Order Date</p>
                                         <p class="font-semibold text-black">
                                             {{ $order->created_at->timezone('Asia/Jakarta')->translatedFormat('d M Y') }}<br>
                                             {{ $order->created_at->timezone('Asia/Jakarta')->format('H.i') }} WIB
@@ -281,24 +281,24 @@
                                 </div>
 
                                 <div class="rounded-xl border border-zinc-200 bg-zinc-50 p-4 space-y-3 text-sm">
-                                    <div><p class="text-xs text-zinc-500">Kurir</p><p class="font-semibold text-black">{{ $biteshipDetail['courier_name'] ?? '-' }}</p></div>
-                                    <div><p class="text-xs text-zinc-500">Berat</p><p class="font-semibold text-black">{{ number_format((float) ($biteshipDetail['total_weight_kg'] ?? 0), 3, ',', '.') }} kg</p></div>
-                                    <div><p class="text-xs text-zinc-500">Ongkos Kirim</p><p class="font-semibold text-black">{{ $biteshipDetail['shipping_cost'] ?? '-' }}</p></div>
-                                    <div><p class="text-xs text-zinc-500">Nama Driver</p><p class="font-semibold text-black">{{ $biteshipDetail['driver_name'] ?? '-' }}</p></div>
-                                    <div><p class="text-xs text-zinc-500">Nomor HP Driver</p><p class="font-semibold text-black">{{ $biteshipDetail['driver_phone'] ?? '-' }}</p></div>
-                                    <div><p class="text-xs text-zinc-500">Plat Nomor</p><p class="font-semibold text-black">{{ $biteshipDetail['vehicle_number'] ?? '-' }}</p></div>
+                                    <div><p class="text-xs text-zinc-500">Courier</p><p class="font-semibold text-black">{{ $biteshipDetail['courier_name'] ?? '-' }}</p></div>
+                                    <div><p class="text-xs text-zinc-500">Weight</p><p class="font-semibold text-black">{{ number_format((float) ($biteshipDetail['total_weight_kg'] ?? 0), 3, ',', '.') }} kg</p></div>
+                                    <div><p class="text-xs text-zinc-500">Shipping Cost</p><p class="font-semibold text-black">{{ $biteshipDetail['shipping_cost'] ?? '-' }}</p></div>
+                                    <div><p class="text-xs text-zinc-500">Driver Name</p><p class="font-semibold text-black">{{ $biteshipDetail['driver_name'] ?? '-' }}</p></div>
+                                    <div><p class="text-xs text-zinc-500">Driver Phone</p><p class="font-semibold text-black">{{ $biteshipDetail['driver_phone'] ?? '-' }}</p></div>
+                                    <div><p class="text-xs text-zinc-500">License Plate</p><p class="font-semibold text-black">{{ $biteshipDetail['vehicle_number'] ?? '-' }}</p></div>
                                 </div>
                             </div>
 
                             <div class="grid gap-4 md:grid-cols-2">
                                 <div class="rounded-xl border border-zinc-200 p-4">
-                                    <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-zinc-500">Alamat Penjemputan</p>
+                                    <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-zinc-500">Pickup Address</p>
                                     <p class="text-sm font-semibold text-black">{{ data_get($biteshipDetail, 'pickup.name', '-') }}</p>
                                     <p class="text-sm text-zinc-600">{{ data_get($biteshipDetail, 'pickup.phone', '-') }}</p>
                                     <p class="mt-1 text-sm text-zinc-600">{{ data_get($biteshipDetail, 'pickup.address', '-') }}</p>
                                 </div>
                                 <div class="rounded-xl border border-zinc-200 p-4">
-                                    <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-zinc-500">Alamat Penerima</p>
+                                    <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-zinc-500">Receiver Address</p>
                                     <p class="text-sm font-semibold text-black">{{ data_get($biteshipDetail, 'receiver.name', '-') }}</p>
                                     <p class="text-sm text-zinc-600">{{ data_get($biteshipDetail, 'receiver.phone', '-') }}</p>
                                     <p class="mt-1 text-sm text-zinc-600">{{ data_get($biteshipDetail, 'receiver.address', '-') }}</p>
@@ -306,15 +306,15 @@
                             </div>
 
                             <div class="rounded-xl border border-zinc-200 p-4">
-                                <p class="mb-4 text-xs font-semibold uppercase tracking-wide text-zinc-500">Informasi Paket</p>
+                                <p class="mb-4 text-xs font-semibold uppercase tracking-wide text-zinc-500">Package Information</p>
                                 <div class="space-y-4">
                                     @foreach(($biteshipDetail['items'] ?? []) as $idx => $itemDetail)
                                         <div class="rounded-lg bg-zinc-50 p-4 text-sm">
-                                            <p class="font-semibold text-black">Nama Barang {{ $idx + 1 }}: {{ $itemDetail['name'] ?? '-' }}</p>
+                                            <p class="font-semibold text-black">Item Name {{ $idx + 1 }}: {{ $itemDetail['name'] ?? '-' }}</p>
                                             <div class="mt-2 grid gap-2 md:grid-cols-2">
-                                                <p class="text-zinc-600">Berat Barang {{ $idx + 1 }}: <span class="font-medium text-black">{{ number_format((float) ($itemDetail['weight_kg'] ?? 0), 3, ',', '.') }} kg</span></p>
-                                                <p class="text-zinc-600">Kuantiti: <span class="font-medium text-black">{{ $itemDetail['quantity'] ?? 1 }}</span></p>
-                                                <p class="text-zinc-600">Harga Barang: <span class="font-medium text-black">{{ $itemDetail['price'] ?? '-' }}</span></p>
+                                                <p class="text-zinc-600">Item Weight {{ $idx + 1 }}: <span class="font-medium text-black">{{ number_format((float) ($itemDetail['weight_kg'] ?? 0), 3, ',', '.') }} kg</span></p>
+                                                <p class="text-zinc-600">Quantity: <span class="font-medium text-black">{{ $itemDetail['quantity'] ?? 1 }}</span></p>
+                                                <p class="text-zinc-600">Item Price: <span class="font-medium text-black">{{ $itemDetail['price'] ?? '-' }}</span></p>
                                                 <p class="text-zinc-600">Dimensi: <span class="font-medium text-black">{{ $itemDetail['dimension'] ?? '-' }}</span></p>
                                             </div>
                                         </div>
@@ -323,18 +323,18 @@
                             </div>
 
                             <div class="rounded-xl border border-zinc-200 p-4 text-sm space-y-2">
-                                <p class="text-xs font-semibold uppercase tracking-wide text-zinc-500">Catatan</p>
+                                <p class="text-xs font-semibold uppercase tracking-wide text-zinc-500">Notes</p>
                                 <p class="font-medium text-black">{{ $biteshipDetail['note'] ?? '-' }}</p>
                             </div>
 
                             <div class="rounded-xl border border-zinc-200 p-4 text-sm">
-                                <p class="mb-3 text-xs font-semibold uppercase tracking-wide text-zinc-500">Rincian Tagihan</p>
+                                <p class="mb-3 text-xs font-semibold uppercase tracking-wide text-zinc-500">Billing Details</p>
                                 <div class="flex items-center justify-between py-1">
-                                    <span class="text-zinc-600">Ongkos Kirim</span>
+                                    <span class="text-zinc-600">Shipping Cost</span>
                                     <span class="font-semibold text-black">{{ data_get($biteshipDetail, 'billing.shipping_cost', '-') }}</span>
                                 </div>
                                 <div class="mt-2 border-t border-zinc-200 pt-3 flex items-center justify-between">
-                                    <span class="font-semibold text-black">Total Tagihan</span>
+                                    <span class="font-semibold text-black">Total Bill</span>
                                     <span class="font-semibold text-black">{{ data_get($biteshipDetail, 'billing.total', $order->formatted_total) }}</span>
                                 </div>
                             </div>
@@ -386,19 +386,19 @@
 
                 @if($order->shipment_stage === 'selesai')
                 <div class="rounded-2xl bg-white p-6 shadow-sm">
-                    <h3 class="mb-4 text-base font-semibold text-black">Bukti Pengiriman</h3>
+                    <h3 class="mb-4 text-base font-semibold text-black">Delivery Proof</h3>
                     @if($order->delivery_photo)
                         <div class="overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50 p-3">
                             <img
                                 src="{{ asset('storage/' . $order->delivery_photo) }}"
                                 class="w-full rounded-lg cursor-pointer hover:opacity-90 transition"
-                                onclick="openPhotoModal('{{ asset('storage/' . $order->delivery_photo) }}', 'Bukti Foto Pengiriman')"
-                                alt="Bukti Pengiriman">
-                            <p class="mt-2 text-center text-xs text-zinc-500">Pesanan sudah selesai. Klik gambar untuk memperbesar.</p>
+                                onclick="openPhotoModal('{{ asset('storage/' . $order->delivery_photo) }}', 'Delivery Photo Proof')"
+                                alt="Delivery Proof">
+                            <p class="mt-2 text-center text-xs text-zinc-500">Order is completed. Click image to enlarge.</p>
                         </div>
                     @else
                         <div class="rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-sm text-zinc-600">
-                            Pesanan sudah selesai, tetapi bukti foto pengiriman belum tersedia.
+                            Order is completed, but delivery photo proof is not yet available.
                         </div>
                     @endif
                 </div>
@@ -407,7 +407,7 @@
                 <!-- Courier Info -->
                 @if(($order->courier_driver_name || $order->courier_id) && in_array($order->status, ['ready_to_ship', 'shipped', 'on_delivery', 'delivered', 'completed']))
                 <div class="rounded-2xl bg-white p-6 shadow-sm">
-                    <h3 class="mb-4 text-base font-semibold text-black">Informasi Kurir</h3>
+                    <h3 class="mb-4 text-base font-semibold text-black">Courier Information</h3>
                     <div class="flex items-center gap-4">
                         <img src="{{ $order->courier_driver_photo ?? 'https://ui-avatars.com/api/?name=' . urlencode($order->courier_driver_name) }}" 
                              class="h-16 w-16 rounded-full object-cover" alt="{{ $order->courier_driver_name }}">
@@ -453,7 +453,7 @@
             <div class="space-y-6">
                 <!-- Items -->
                 <div class="rounded-2xl bg-white p-6 shadow-sm">
-                    <h3 class="mb-4 text-base font-semibold text-black">Item Pesanan</h3>
+                    <h3 class="mb-4 text-base font-semibold text-black">Order Items</h3>
                     <div class="space-y-4">
                         @foreach($order->items as $item)
                         <div class="flex items-start gap-3">
@@ -597,20 +597,20 @@
                 @if($order->canUploadPaymentProof())
                 <a href="{{ route('customer.payment.select-gateway', $order) }}" 
                    class="block w-full rounded-xl bg-black py-3 text-center text-sm font-medium text-white transition hover:bg-black/90">
-                    Bayar Sekarang
+                    Pay Now
                 </a>
                 @endif
 
                 @if($order->canBeCancelled())
                 <button type="button" onclick="showCancelModal()" 
                    class="block w-full rounded-xl border border-red-300 bg-white py-3 text-center text-sm font-medium text-red-600 transition hover:bg-red-50">
-                    Batalkan Pesanan
+                    Cancel Order
                 </button>
                 @endif
 
                 <a href="{{ route('customer.orders.index') }}" 
                    class="block w-full rounded-xl border border-zinc-300 bg-white py-3 text-center text-sm font-medium text-black transition hover:bg-zinc-50">
-                    Kembali
+                    Back
                 </a>
             </div>
         </div>
@@ -648,35 +648,35 @@
             </div>
         </div>
         
-        <h2 class="mb-4 text-center text-2xl font-bold text-black">Batalkan Pesanan?</h2>
+        <h2 class="mb-4 text-center text-2xl font-bold text-black">Cancel Order?</h2>
         
         <div class="mb-6 space-y-3 text-center">
-            <p class="text-sm text-zinc-600">Apakah Anda yakin ingin membatalkan pesanan ini?</p>
+            <p class="text-sm text-zinc-600">Are you sure you want to cancel this order?</p>
             
             @if($order->requiresRefund())
             <div class="rounded-xl bg-blue-50 p-4 text-left">
                 <h3 class="mb-2 flex items-center gap-2 text-sm font-semibold text-blue-900">
                     <i class="fas fa-info-circle"></i>
-                    Informasi Refund:
+                    Refund Information:
                 </h3>
                 <ul class="space-y-2 text-xs text-blue-800">
                     <li class="flex items-start gap-2">
                         <i class="fas fa-check-circle mt-0.5 flex-shrink-0"></i>
-                        <span>Dana sebesar <strong>{{ $order->formatted_total }}</strong> akan dikembalikan</span>
+                        <span>Amount of <strong>{{ $order->formatted_total }}</strong> will be refunded</span>
                     </li>
                     <li class="flex items-start gap-2">
                         <i class="fas fa-check-circle mt-0.5 flex-shrink-0"></i>
-                        <span>Proses refund memakan waktu 1-3 hari kerja</span>
+                        <span>Refund process takes 1-3 business days</span>
                     </li>
                     <li class="flex items-start gap-2">
                         <i class="fas fa-check-circle mt-0.5 flex-shrink-0"></i>
-                        <span>Stok produk akan dikembalikan</span>
+                        <span>Product stock will be returned</span>
                     </li>
                 </ul>
             </div>
             @else
             <div class="rounded-xl bg-zinc-100 p-4">
-                <p class="text-xs text-zinc-600">Stok produk akan dikembalikan setelah pembatalan.</p>
+                <p class="text-xs text-zinc-600">Product stock will be returned after cancellation.</p>
             </div>
             @endif
         </div>
@@ -686,18 +686,18 @@
             @method('PATCH')
             
             <div class="mb-4">
-                <label class="block text-sm font-medium text-zinc-700 mb-2">Alasan Pembatalan (Opsional)</label>
-                <textarea name="cancel_reason" rows="3" class="w-full rounded-xl border border-zinc-300 px-4 py-2 text-sm focus:border-black focus:outline-none focus:ring-2 focus:ring-black/20" placeholder="Berikan alasan pembatalan..."></textarea>
+                <label class="block text-sm font-medium text-zinc-700 mb-2">Cancellation Reason (Optional)</label>
+                <textarea name="cancel_reason" rows="3" class="w-full rounded-xl border border-zinc-300 px-4 py-2 text-sm focus:border-black focus:outline-none focus:ring-2 focus:ring-black/20" placeholder="Provide cancellation reason..."></textarea>
             </div>
             
             <div class="flex gap-3">
                 <button type="button" onclick="closeCancelModal()" 
                         class="flex-1 rounded-xl border-2 border-zinc-300 bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-zinc-50">
-                    Tidak
+                    No
                 </button>
                 <button type="submit" 
                         class="flex-1 rounded-xl bg-red-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-red-700">
-                    Ya, Batalkan
+                    Yes, Cancel
                 </button>
             </div>
         </form>
@@ -721,7 +721,7 @@ function togglePhotoDropdown(id) {
     dropdown.classList.toggle('hidden');
 }
 
-// Toggle Detail Pesanan panel
+// Toggle Order Details panel
 function toggleOrderDetailPanel() {
     const panel = document.getElementById('orderDetailPanel');
     const label = document.getElementById('orderDetailToggleLabel');
@@ -730,7 +730,7 @@ function toggleOrderDetailPanel() {
 
     panel.classList.toggle('hidden');
     const isHidden = panel.classList.contains('hidden');
-    label.textContent = isHidden ? 'Lihat Detail' : 'Sembunyikan Detail';
+    label.textContent = isHidden ? 'View Details' : 'Hide Details';
 }
 
 // Open Photo Modal

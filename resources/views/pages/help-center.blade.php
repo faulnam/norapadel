@@ -90,26 +90,26 @@
                 <div class="mx-auto max-w-3xl text-center">
                     <p class="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">Support</p>
                     <h1 class="mt-3 text-3xl font-semibold tracking-tight text-black sm:text-4xl">Help Center</h1>
-                    <p class="mt-4 text-zinc-600">Butuh bantuan seputar order, pengiriman, atau pembayaran? Temukan jawaban cepat di sini.</p>
+                    <p class="mt-4 text-zinc-600">Need help with orders, shipping, or payment? Find quick answers here.</p>
                 </div>
 
                 <div class="mx-auto mt-12 grid max-w-5xl gap-5 md:grid-cols-2">
                     <article class="rounded-2xl border border-black/10 bg-white p-6 shadow-sm">
-                        <h2 class="text-lg font-semibold text-black">Cara melacak pesanan</h2>
-                        <p class="mt-3 text-sm leading-relaxed text-zinc-600">Masuk ke akun Anda, buka menu riwayat pesanan, lalu pilih order untuk melihat status pickup, pengiriman, hingga selesai.</p>
+                        <h2 class="text-lg font-semibold text-black">How to track order</h2>
+                        <p class="mt-3 text-sm leading-relaxed text-zinc-600">Log in to your account, open order history menu, then select order to view pickup, shipping, and completion status.</p>
                     </article>
                     <article class="rounded-2xl border border-black/10 bg-white p-6 shadow-sm">
-                        <h2 class="text-lg font-semibold text-black">Informasi pembayaran</h2>
-                        <p class="mt-3 text-sm leading-relaxed text-zinc-600">Kami mendukung transfer bank, gateway pembayaran online, dan COD pada area tertentu sesuai kebijakan pengiriman.</p>
+                        <h2 class="text-lg font-semibold text-black">Payment Information</h2>
+                        <p class="mt-3 text-sm leading-relaxed text-zinc-600">We support bank transfers, online payment gateways, and COD in certain areas according to shipping policy.</p>
                     </article>
                     <article class="rounded-2xl border border-black/10 bg-white p-6 shadow-sm">
-                        <h2 class="text-lg font-semibold text-black">Kebijakan retur</h2>
-                        <p class="mt-3 text-sm leading-relaxed text-zinc-600">Pengajuan retur dapat dilakukan maksimal 7 hari setelah produk diterima, selama produk belum dipakai dan kemasan masih lengkap.</p>
+                        <h2 class="text-lg font-semibold text-black">Return policy</h2>
+                        <p class="mt-3 text-sm leading-relaxed text-zinc-600">Return requests can be made maximum 7 days after product is received, as long as product hasn't been used and packaging is still complete.</p>
                     </article>
                     <article class="rounded-2xl border border-black/10 bg-white p-6 shadow-sm">
-                        <h2 class="text-lg font-semibold text-black">Masih butuh bantuan?</h2>
-                        <p class="mt-3 text-sm leading-relaxed text-zinc-600">Tim support siap membantu Anda melalui halaman kontak untuk pertanyaan teknis maupun konsultasi produk.</p>
-                        <a href="{{ route('contact') }}" class="mt-4 inline-flex rounded-full bg-black px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-800">Hubungi Kami</a>
+                        <h2 class="text-lg font-semibold text-black">Still need help?</h2>
+                        <p class="mt-3 text-sm leading-relaxed text-zinc-600">Our support team is ready to help you through the contact page for technical questions or product consultation.</p>
+                        <a href="{{ route('contact') }}" class="mt-4 inline-flex rounded-full bg-black px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-800">Contact Us</a>
                     </article>
                 </div>
             </div>

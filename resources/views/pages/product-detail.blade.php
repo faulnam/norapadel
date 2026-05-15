@@ -244,7 +244,7 @@
                     @endif
                 </a>
                 
-                <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-black" aria-label="Cart" title="Keranjang">
+                <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-black" aria-label="Cart" title="Cart">
                     <i class="fas fa-shopping-bag text-sm"></i>
                     @php
                         if (auth()->check() && auth()->user()->role === 'customer') {
@@ -364,13 +364,13 @@
                             
                             @if($product->hasActiveDiscount())
                                 <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700 border border-red-200">
-                                    Diskon {{ $product->formatted_discount_percent }}
+                                    Discount {{ $product->formatted_discount_percent }}
                                 </span>
                             @endif
 
                             @if($product->stock <= 0)
                                 <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-zinc-100 text-zinc-500 border border-zinc-200">
-                                    Stok Habis
+                                    Out of Stock
                                 </span>
                             @endif
                         </div>
@@ -414,7 +414,7 @@
                                     <span class="text-lg text-zinc-400 line-through">{{ $product->formatted_price }}</span>
                                 </div>
                                 <p class="text-sm text-green-600 font-medium">
-                                    <i class="fas fa-tag mr-1"></i>Hemat {{ $product->formatted_discount_amount }}
+                                    <i class="fas fa-tag mr-1"></i>Save {{ $product->formatted_discount_amount }}
                                 </p>
                             @else
                                 <span class="text-3xl font-bold text-black">{{ $product->formatted_price }}</span>
@@ -423,7 +423,7 @@
 
                         <!-- Description -->
                         <div class="border-t border-zinc-200 pt-4">
-                            <h3 class="text-xs font-semibold text-black uppercase tracking-wider mb-2">Deskripsi Produk</h3>
+                            <h3 class="text-xs font-semibold text-black uppercase tracking-wider mb-2">Product Description</h3>
                             @php
                                 $rawDescription = trim((string) $product->description);
 
@@ -472,7 +472,7 @@
                                 @forelse($displayParts as $paragraph)
                                     <p>{{ $paragraph }}</p>
                                 @empty
-                                    <p class="text-zinc-500">Belum ada deskripsi.</p>
+                                    <p class="text-zinc-500">No description available.</p>
                                 @endforelse
                                 @if($hasMore)
                                     <p class="text-zinc-500">...</p>
@@ -482,15 +482,15 @@
 
                         <!-- Product Details -->
                         <div class="border-t border-zinc-200 pt-4">
-                            <h3 class="text-xs font-semibold text-black uppercase tracking-wider mb-2">Detail Produk</h3>
+                            <h3 class="text-xs font-semibold text-black uppercase tracking-wider mb-2">Product Details</h3>
                             <div class="grid grid-cols-2 gap-2 text-sm">
                                 <div class="flex items-center gap-2 text-zinc-600">
                                     <i class="fas fa-weight-hanging w-4 text-xs"></i>
-                                    <span>Berat: <strong class="text-black">{{ $product->formatted_weight }}</strong></span>
+                                    <span>Weight: <strong class="text-black">{{ $product->formatted_weight }}</strong></span>
                                 </div>
                                 <div class="flex items-center gap-2 text-zinc-600">
                                     <i class="fas fa-boxes w-4 text-xs"></i>
-                                    <span>Stok: <strong class="text-black">{{ $product->stock }}</strong></span>
+                                    <span>Stock: <strong class="text-black">{{ $product->stock }}</strong></span>
                                 </div>
                             </div>
                         </div>
@@ -508,7 +508,7 @@
                                 </form>
                             @else
                                 <button disabled class="w-full bg-zinc-200 text-zinc-500 py-3 font-semibold text-sm cursor-not-allowed">
-                                    Stok Habis
+                                    Out of Stock
                                 </button>
                             @endif
                         </div>
@@ -816,15 +816,15 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('Produk berhasil ditambahkan ke keranjang!');
+                alert('Product successfully added to cart!');
                 location.reload();
             } else {
-                alert(data.message || 'Gagal menambahkan produk ke keranjang');
+                alert(data.message || 'Failed to add product to cart');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Terjadi kesalahan. Silakan coba lagi.');
+            alert('An error occurred. Please try again.');
         });
     }
 
@@ -845,15 +845,15 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('Produk berhasil ditambahkan ke wishlist!');
+                alert('Product successfully added to wishlist!');
                 location.reload();
             } else {
-                alert(data.message || 'Produk sudah ada di wishlist');
+                alert(data.message || 'Product already in wishlist');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Terjadi kesalahan. Silakan coba lagi.');
+            alert('An error occurred. Please try again.');
         });
     }
 
@@ -1161,7 +1161,7 @@ document.getElementById('reviewForm')?.addEventListener('submit', function(e) {
             closeReviewModal();
             location.reload();
         } else {
-            alert(data.message || 'Gagal mengirim review');
+            alert(data.message || 'Failed to submit review');
         }
     })
     .catch(error => {
