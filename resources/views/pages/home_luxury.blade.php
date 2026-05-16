@@ -18,11 +18,14 @@
             </div>
         </div>
 
-        <header class="fixed left-0 top-8 z-50 w-full border-b border-transparent bg-transparent backdrop-blur-none transition-all duration-300" id="mainHeader">
+        <header class="fixed left-0 z-50 w-full transition-all duration-300
+            top-8 border-b border-transparent bg-transparent backdrop-blur-none
+            max-[767px]:top-8 max-[767px]:bg-white/95 max-[767px]:backdrop-blur-md max-[767px]:border-black/10" id="mainHeader">
             <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-10 lg:px-12">
                 <a href="{{ route('home') }}" class="flex items-center gap-2">
                     <img src="{{ asset('storage/logo.png') }}" alt="NoraPadel" class="h-7 w-7 object-contain" loading="lazy">
-                    <span class="text-xl font-semibold tracking-tight text-white transition-colors duration-300" id="logoText">NoraPadel</span>
+                    <span class="text-xl font-semibold tracking-tight transition-colors duration-300
+                        text-white max-[767px]:text-black" id="logoText">NoraPadel</span>
                 </a>
 
                 <nav class="hidden items-center gap-8 md:flex" id="navLinks">
@@ -302,7 +305,7 @@
                     </button>
                     
                     <button type="button"
-                        class="inline-flex h-9 w-9 items-center justify-center rounded border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20 md:hidden"
+                        class="inline-flex h-9 w-9 items-center justify-center rounded border border-black/15 bg-white text-black backdrop-blur transition duration-300 hover:bg-black/5 md:hidden"
                         data-mobile-menu-toggle aria-label="Toggle navigation" aria-expanded="false">
                         <i class="fas fa-bars text-sm"></i>
                     </button>
@@ -381,8 +384,8 @@
             </div>
         </div>
 
-        <main class="pt-24 md:pt-8">
-            <section class="relative h-[200px] overflow-hidden bg-zinc-900 md:h-[250px] lg:h-[300px]">
+        <main class="pt-[92px] md:pt-8">
+            <section class="relative h-[220px] overflow-hidden bg-zinc-900 md:h-[250px] lg:h-[300px]">
                 <div class="absolute inset-0">
                     <img src="{{ asset('storage/fiks.jpeg') }}" 
                         alt="Padel Tennis" 
@@ -408,12 +411,12 @@
                     
                     <div class="relative group">
                         <!-- Left Arrow -->
-                        <button class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded w-10 h-10 flex items-center justify-center transition duration-300" onclick="scrollNewArrivals('left')">
+                        <button class="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded w-10 h-10 items-center justify-center transition duration-300" onclick="scrollNewArrivals('left')">
                             <i class="fas fa-chevron-left text-black text-sm"></i>
                         </button>
                         
                         <!-- Right Arrow -->
-                        <button class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded w-10 h-10 flex items-center justify-center transition duration-300" onclick="scrollNewArrivals('right')">
+                        <button class="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded w-10 h-10 items-center justify-center transition duration-300" onclick="scrollNewArrivals('right')">
                             <i class="fas fa-chevron-right text-black text-sm"></i>
                         </button>
                         
@@ -777,6 +780,11 @@
             display: none !important;
         }
 
+        /* Override app.blade.php body padding-top that's for the Bootstrap navbar */
+        body {
+            padding-top: 0 !important;
+        }
+
         html {
             scroll-behavior: smooth;
         }
@@ -1101,27 +1109,31 @@
             const navLinks = document.getElementById('navLinks');
             const navIcons = document.getElementById('navIcons');
 
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 50) {
-                    // Hide marquee and adjust header position
-                    marqueeBar.style.transform = 'translateY(-100%)';
-                    marqueeBar.style.opacity = '0';
-                    header.style.top = '0';
-                    
-                    header.classList.add('bg-white/80', 'backdrop-blur-xl', 'border-black/6');
-                    header.classList.remove('bg-transparent', 'backdrop-blur-none', 'border-transparent');
-                    
-                    logoText.classList.remove('text-white');
-                    logoText.classList.add('text-black');
-                    
+            const isMobile = () => window.innerWidth < 768;
+
+            function applyScrolledState() {
+                // Hide marquee and adjust header position
+                marqueeBar.style.transform = 'translateY(-100%)';
+                marqueeBar.style.opacity = '0';
+                header.style.top = '0';
+
+                header.classList.add('bg-white/80', 'backdrop-blur-xl', 'border-black/6');
+                header.classList.remove('bg-transparent', 'backdrop-blur-none', 'border-transparent');
+
+                logoText.classList.remove('text-white');
+                logoText.classList.add('text-black');
+
+                if (navLinks) {
                     navLinks.querySelectorAll('a').forEach(link => {
                         link.classList.remove('text-white/90', 'hover:border-white/30', 'hover:text-white');
                         link.classList.add('text-black/80', 'hover:border-black/30', 'hover:text-black');
                     });
-                    
+                }
+
+                if (navIcons) {
                     navIcons.classList.remove('text-white/90');
                     navIcons.classList.add('text-black/80');
-                    
+
                     navIcons.querySelectorAll('a, button').forEach(el => {
                         if (el.classList.contains('border-white/30')) {
                             el.classList.remove('border-white/30', 'bg-white/10', 'hover:bg-white/20', 'text-white');
@@ -1130,26 +1142,45 @@
                         el.classList.remove('hover:text-white');
                         el.classList.add('hover:text-black');
                     });
-                } else {
-                    // Show marquee and adjust header position
+                }
+            }
+
+            function applyTopState() {
+                // On mobile: always keep solid, just show marquee again
+                if (isMobile()) {
                     marqueeBar.style.transform = 'translateY(0)';
                     marqueeBar.style.opacity = '1';
                     header.style.top = '2rem';
-                    
-                    header.classList.remove('bg-white/80', 'backdrop-blur-xl', 'border-black/6');
-                    header.classList.add('bg-transparent', 'backdrop-blur-none', 'border-transparent');
-                    
-                    logoText.classList.add('text-white');
-                    logoText.classList.remove('text-black');
-                    
+                    // Keep solid white on mobile – do NOT go transparent
+                    header.classList.add('bg-white/95', 'backdrop-blur-md', 'border-black/10');
+                    header.classList.remove('bg-transparent', 'backdrop-blur-none', 'border-transparent');
+                    logoText.classList.remove('text-white');
+                    logoText.classList.add('text-black');
+                    return;
+                }
+
+                // Desktop: go transparent over hero
+                marqueeBar.style.transform = 'translateY(0)';
+                marqueeBar.style.opacity = '1';
+                header.style.top = '2rem';
+
+                header.classList.remove('bg-white/80', 'bg-white/95', 'backdrop-blur-xl', 'backdrop-blur-md', 'border-black/6', 'border-black/10');
+                header.classList.add('bg-transparent', 'backdrop-blur-none', 'border-transparent');
+
+                logoText.classList.add('text-white');
+                logoText.classList.remove('text-black');
+
+                if (navLinks) {
                     navLinks.querySelectorAll('a').forEach(link => {
                         link.classList.add('text-white/90', 'hover:border-white/30', 'hover:text-white');
                         link.classList.remove('text-black/80', 'hover:border-black/30', 'hover:text-black');
                     });
-                    
+                }
+
+                if (navIcons) {
                     navIcons.classList.add('text-white/90');
                     navIcons.classList.remove('text-black/80');
-                    
+
                     navIcons.querySelectorAll('a, button').forEach(el => {
                         if (el.classList.contains('border-black/15')) {
                             el.classList.add('border-white/30', 'bg-white/10', 'hover:bg-white/20', 'text-white');
@@ -1159,6 +1190,24 @@
                         el.classList.remove('hover:text-black');
                     });
                 }
+            }
+
+            // Apply correct initial state
+            if (isMobile()) {
+                applyScrolledState();
+            }
+
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    applyScrolledState();
+                } else {
+                    applyTopState();
+                }
+            }, { passive: true });
+
+            // Re-evaluate on resize (e.g. rotate phone)
+            window.addEventListener('resize', () => {
+                if (window.scrollY <= 50) applyTopState();
             }, { passive: true });
 
             const revealEls = document.querySelectorAll('.np-fade-section');
