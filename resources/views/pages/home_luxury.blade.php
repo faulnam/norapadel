@@ -18,11 +18,14 @@
             </div>
         </div>
 
-        <header class="fixed left-0 top-8 z-50 w-full border-b border-transparent bg-transparent backdrop-blur-none transition-all duration-300" id="mainHeader">
+        <header class="fixed left-0 z-50 w-full transition-all duration-300
+            top-8 border-b border-transparent bg-transparent backdrop-blur-none
+            max-[767px]:top-8 max-[767px]:bg-white/95 max-[767px]:backdrop-blur-md max-[767px]:border-black/10" id="mainHeader">
             <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-10 lg:px-12">
                 <a href="{{ route('home') }}" class="flex items-center gap-2">
                     <img src="{{ asset('storage/logo.png') }}" alt="NoraPadel" class="h-7 w-7 object-contain" loading="lazy">
-                    <span class="text-xl font-semibold tracking-tight text-white transition-colors duration-300" id="logoText">NoraPadel</span>
+                    <span class="text-xl font-semibold tracking-tight transition-colors duration-300
+                        text-white max-[767px]:text-black" id="logoText">NoraPadel</span>
                 </a>
 
                 <nav class="hidden items-center gap-8 md:flex" id="navLinks">
@@ -131,7 +134,7 @@
                     <div class="relative group" data-dropdown="shoes">
                         <a href="{{ route('shoes') }}"
                             class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white flex items-center gap-1">
-                            Shoes
+                            Shoess
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-300 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
@@ -302,7 +305,7 @@
                     </button>
                     
                     <button type="button"
-                        class="inline-flex h-9 w-9 items-center justify-center rounded border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20 md:hidden"
+                        class="inline-flex h-9 w-9 items-center justify-center rounded border border-black/15 bg-white text-black backdrop-blur transition duration-300 hover:bg-black/5 md:hidden"
                         data-mobile-menu-toggle aria-label="Toggle navigation" aria-expanded="false">
                         <i class="fas fa-bars text-sm"></i>
                     </button>
@@ -381,8 +384,8 @@
             </div>
         </div>
 
-        <main class="pt-24 md:pt-8">
-            <section class="relative h-[200px] overflow-hidden bg-zinc-900 md:h-[250px] lg:h-[300px]">
+        <main class="pt-[92px] md:pt-8">
+            <section class="relative h-[220px] overflow-hidden bg-zinc-900 md:h-[250px] lg:h-[300px]">
                 <div class="absolute inset-0">
                     <img src="{{ asset('storage/fiks.jpeg') }}" 
                         alt="Padel Tennis" 
@@ -395,7 +398,7 @@
                         <h1 class="text-2xl font-semibold tracking-tight sm:text-3xl lg:text-4xl">NoraPadel</h1>
                         <p class="mt-4 text-sm text-zinc-200">Experience the ultimate in padel equipment. Premium quality rackets, shoes, and accessories for players who demand excellence.</p>
                         <div class="mt-6 flex flex-wrap justify-center gap-4">
-                            <a href="{{ route('shop') }}" class="inline-flex rounded border-2 border-white bg-white/10 backdrop-blur-md px-6 py-2 text-xs font-semibold text-white transition duration-300 hover:bg-white hover:text-black">Shop Now</a>
+                            <a href="{{ route('shop') }}" class="inline-flex items-center gap-1 rounded border border-white/30 bg-white/10 px-6 py-2 text-xs font-semibold text-white backdrop-blur transition duration-300 hover:bg-white/20">Shop Now</a>
                         </div>
                     </div>
                 </div>
@@ -408,12 +411,12 @@
                     
                     <div class="relative group">
                         <!-- Left Arrow -->
-                        <button class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded w-10 h-10 flex items-center justify-center transition duration-300" onclick="scrollNewArrivals('left')">
+                        <button class="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded w-10 h-10 items-center justify-center transition duration-300" onclick="scrollNewArrivals('left')">
                             <i class="fas fa-chevron-left text-black text-sm"></i>
                         </button>
                         
                         <!-- Right Arrow -->
-                        <button class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded w-10 h-10 flex items-center justify-center transition duration-300" onclick="scrollNewArrivals('right')">
+                        <button class="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded w-10 h-10 items-center justify-center transition duration-300" onclick="scrollNewArrivals('right')">
                             <i class="fas fa-chevron-right text-black text-sm"></i>
                         </button>
                         
@@ -545,7 +548,7 @@
                     <div class="mb-6 flex flex-col md:flex-row gap-3">
                         <div class="flex gap-2 flex-wrap">
                             <select id="filterBrand" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition bg-white">
-                                <option value="">Semua Brand</option>
+                                <option value="">All Brands</option>
                                 <option value="Bullpadel" {{ $selectedBrand === 'Bullpadel' ? 'selected' : '' }}>Bullpadel</option>
                                 <option value="Babolat" {{ $selectedBrand === 'Babolat' ? 'selected' : '' }}>Babolat</option>
                                 <option value="Nox" {{ $selectedBrand === 'Nox' ? 'selected' : '' }}>Nox</option>
@@ -554,7 +557,7 @@
                                 <option value="Arronax" {{ $selectedBrand === 'Arronax' ? 'selected' : '' }}>Arronax</option>
                             </select>
                             <select id="filterLevel" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition bg-white">
-                                <option value="">Semua Level</option>
+                                <option value="">All Levels</option>
                                 <option value="beginner" {{ $selectedLevel === 'beginner' ? 'selected' : '' }}>Beginner</option>
                                 <option value="intermediate" {{ $selectedLevel === 'intermediate' ? 'selected' : '' }}>Intermediate</option>
                                 <option value="pro" {{ $selectedLevel === 'pro' ? 'selected' : '' }}>Pro</option>
@@ -563,7 +566,7 @@
                                 <a href="{{ request()->fullUrlWithQuery(['brand' => null, 'level' => null]) }}" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition bg-white text-rose-600 hover:border-rose-600 hover:text-rose-600">Reset</a>
                             @endif
                             <select id="filterPriceRange" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition bg-white">
-                                <option value="">Semua Harga</option>
+                                <option value="">All Prices</option>
                                 <option value="0-500000">< Rp 500.000</option>
                                 <option value="500000-1000000">Rp 500.000 - Rp 1.000.000</option>
                                 <option value="1000000-2000000">Rp 1.000.000 - Rp 2.000.000</option>
@@ -717,46 +720,46 @@
                             <div class="mb-4">
                                 <i class="fas fa-gift text-6xl"></i>
                             </div>
-                            <h2 class="mb-2 text-3xl font-bold">Selamat Datang!</h2>
-                            <p class="text-lg opacity-90">Bonus Spesial Untuk Anda</p>
+                            <h2 class="mb-2 text-3xl font-bold">Welcome!</h2>
+                            <p class="text-lg opacity-90">Special Bonus For You</p>
                         </div>
                         
                         <div class="px-8 py-8 text-center">
                             <div class="mb-4">
                                 <div class="mb-3">
-                                    <div class="text-3xl font-semibold text-blue-600">🎁 Bonus Pembelian Pertama</div>
+                                    <div class="text-3xl font-semibold text-blue-600">🎁 First Purchase Bonus</div>
                                 </div>
                                 <div class="space-y-2 text-left">
                                     <div class="flex items-center gap-3 rounded-lg bg-blue-50 p-3">
                                         <i class="fas fa-coins text-2xl text-blue-600"></i>
                                         <div>
-                                            <div class="font-semibold text-black">100 Poin Gratis</div>
-                                            <div class="text-xs text-zinc-600">Senilai Rp 10.000 untuk diskon</div>
+                                            <div class="font-semibold text-black">100 Free Points</div>
+                                            <div class="text-xs text-zinc-600">Worth Rp 10,000 for discount</div>
                                         </div>
                                     </div>
                                     <div class="flex items-center gap-3 rounded-lg bg-purple-50 p-3">
                                         <i class="fas fa-hand-holding-heart text-2xl text-purple-600"></i>
                                         <div>
                                             <div class="font-semibold text-black">Free Grip</div>
-                                            <div class="text-xs text-zinc-600">Gratis grip pada pembelian pertama</div>
+                                            <div class="text-xs text-zinc-600">Free grip on first purchase</div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             
                             <p class="mb-6 text-xs text-zinc-500">
-                                *Bonus hanya berlaku untuk pembelian pertama Anda
+                                *Bonus only applies to your first purchase
                             </p>
                             
                             <form action="{{ route('customer.claim-welcome-bonus') }}" method="POST">
                                 @csrf
                                 <button type="submit" class="w-full rounded bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-3 text-sm font-semibold text-white transition duration-300 hover:shadow-lg">
-                                    <i class="fas fa-check-circle mr-2"></i>Klaim Bonus Sekarang
+                                    <i class="fas fa-check-circle mr-2"></i>Claim Bonus Now
                                 </button>
                             </form>
                             
                             <button onclick="closeWelcomeBonus()" class="mt-3 text-sm text-zinc-500 hover:text-zinc-700">
-                                Nanti Saja
+                                Maybe Later
                             </button>
                         </div>
                     </div>
@@ -775,6 +778,11 @@
         #mainNavbar,
         .mobile-bottom-nav {
             display: none !important;
+        }
+
+        /* Override app.blade.php body padding-top that's for the Bootstrap navbar */
+        body {
+            padding-top: 0 !important;
         }
 
         html {
@@ -1101,27 +1109,31 @@
             const navLinks = document.getElementById('navLinks');
             const navIcons = document.getElementById('navIcons');
 
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 50) {
-                    // Hide marquee and adjust header position
-                    marqueeBar.style.transform = 'translateY(-100%)';
-                    marqueeBar.style.opacity = '0';
-                    header.style.top = '0';
-                    
-                    header.classList.add('bg-white/80', 'backdrop-blur-xl', 'border-black/6');
-                    header.classList.remove('bg-transparent', 'backdrop-blur-none', 'border-transparent');
-                    
-                    logoText.classList.remove('text-white');
-                    logoText.classList.add('text-black');
-                    
+            const isMobile = () => window.innerWidth < 768;
+
+            function applyScrolledState() {
+                // Hide marquee and adjust header position
+                marqueeBar.style.transform = 'translateY(-100%)';
+                marqueeBar.style.opacity = '0';
+                header.style.top = '0';
+
+                header.classList.add('bg-white/80', 'backdrop-blur-xl', 'border-black/6');
+                header.classList.remove('bg-transparent', 'backdrop-blur-none', 'border-transparent');
+
+                logoText.classList.remove('text-white');
+                logoText.classList.add('text-black');
+
+                if (navLinks) {
                     navLinks.querySelectorAll('a').forEach(link => {
                         link.classList.remove('text-white/90', 'hover:border-white/30', 'hover:text-white');
                         link.classList.add('text-black/80', 'hover:border-black/30', 'hover:text-black');
                     });
-                    
+                }
+
+                if (navIcons) {
                     navIcons.classList.remove('text-white/90');
                     navIcons.classList.add('text-black/80');
-                    
+
                     navIcons.querySelectorAll('a, button').forEach(el => {
                         if (el.classList.contains('border-white/30')) {
                             el.classList.remove('border-white/30', 'bg-white/10', 'hover:bg-white/20', 'text-white');
@@ -1130,26 +1142,45 @@
                         el.classList.remove('hover:text-white');
                         el.classList.add('hover:text-black');
                     });
-                } else {
-                    // Show marquee and adjust header position
+                }
+            }
+
+            function applyTopState() {
+                // On mobile: always keep solid, just show marquee again
+                if (isMobile()) {
                     marqueeBar.style.transform = 'translateY(0)';
                     marqueeBar.style.opacity = '1';
                     header.style.top = '2rem';
-                    
-                    header.classList.remove('bg-white/80', 'backdrop-blur-xl', 'border-black/6');
-                    header.classList.add('bg-transparent', 'backdrop-blur-none', 'border-transparent');
-                    
-                    logoText.classList.add('text-white');
-                    logoText.classList.remove('text-black');
-                    
+                    // Keep solid white on mobile – do NOT go transparent
+                    header.classList.add('bg-white/95', 'backdrop-blur-md', 'border-black/10');
+                    header.classList.remove('bg-transparent', 'backdrop-blur-none', 'border-transparent');
+                    logoText.classList.remove('text-white');
+                    logoText.classList.add('text-black');
+                    return;
+                }
+
+                // Desktop: go transparent over hero
+                marqueeBar.style.transform = 'translateY(0)';
+                marqueeBar.style.opacity = '1';
+                header.style.top = '2rem';
+
+                header.classList.remove('bg-white/80', 'bg-white/95', 'backdrop-blur-xl', 'backdrop-blur-md', 'border-black/6', 'border-black/10');
+                header.classList.add('bg-transparent', 'backdrop-blur-none', 'border-transparent');
+
+                logoText.classList.add('text-white');
+                logoText.classList.remove('text-black');
+
+                if (navLinks) {
                     navLinks.querySelectorAll('a').forEach(link => {
                         link.classList.add('text-white/90', 'hover:border-white/30', 'hover:text-white');
                         link.classList.remove('text-black/80', 'hover:border-black/30', 'hover:text-black');
                     });
-                    
+                }
+
+                if (navIcons) {
                     navIcons.classList.add('text-white/90');
                     navIcons.classList.remove('text-black/80');
-                    
+
                     navIcons.querySelectorAll('a, button').forEach(el => {
                         if (el.classList.contains('border-black/15')) {
                             el.classList.add('border-white/30', 'bg-white/10', 'hover:bg-white/20', 'text-white');
@@ -1159,6 +1190,24 @@
                         el.classList.remove('hover:text-black');
                     });
                 }
+            }
+
+            // Apply correct initial state
+            if (isMobile()) {
+                applyScrolledState();
+            }
+
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    applyScrolledState();
+                } else {
+                    applyTopState();
+                }
+            }, { passive: true });
+
+            // Re-evaluate on resize (e.g. rotate phone)
+            window.addEventListener('resize', () => {
+                if (window.scrollY <= 50) applyTopState();
             }, { passive: true });
 
             const revealEls = document.querySelectorAll('.np-fade-section');

@@ -9,25 +9,25 @@
         <div class="row align-items-center">
             <div class="col-lg-6 text-white">
                 <h1 class="display-4 fw-bold mb-4">Nora Padel</h1>
-                <h2 class="h4 mb-4">Perlengkapan Padel Premium</h2>
-                <p class="lead mb-4">Raket, bola, tas, sepatu, dan aksesori padel berkualitas untuk pemula hingga profesional.</p>
+                <h2 class="h4 mb-4">Premium Padel Equipment</h2>
+                <p class="lead mb-4">Quality padel rackets, balls, bags, shoes, and accessories for beginners to professionals.</p>
                 <div class="d-flex gap-3 mb-4">
                     @auth
                         <a href="{{ route('customer.products.index') }}" class="btn btn-warning btn-lg px-4">
-                            <i class="fas fa-shopping-cart me-2"></i>Belanja Sekarang
+                            <i class="fas fa-shopping-cart me-2"></i>Shop Now
                         </a>
                     @else
                         <a href="{{ route('login') }}" class="btn btn-warning btn-lg px-4">
-                            <i class="fas fa-shopping-cart me-2"></i>Belanja Sekarang
+                            <i class="fas fa-shopping-cart me-2"></i>Shop Now
                         </a>
                     @endauth
-                    <a href="#about" class="btn btn-outline-light btn-lg px-4">Pelajari Lebih</a>
+                    <a href="#about" class="btn btn-outline-light btn-lg px-4">Learn More</a>
                 </div>
                 <!-- Stats -->
                 <div class="d-flex gap-4 mt-4">
                     <div class="text-center">
                         <div class="h3 fw-bold mb-0">{{ $stats['total_customers'] }}+</div>
-                        <small class="text-white-50">Pelanggan Puas</small>
+                        <small class="text-white-50">Satisfied Customers</small>
                     </div>
                     <div class="border-start border-white-50 ps-4 text-center">
                         <div class="h3 fw-bold mb-0">{{ $stats['total_reviews'] }}+</div>
@@ -169,39 +169,39 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6 mb-4 mb-lg-0">
-                <img src="https://images.unsplash.com/photo-1599058917212-d750089bc07e?w=900" alt="Tentang Nora Padel" class="img-fluid rounded-4 shadow">
+                <img src="https://images.unsplash.com/photo-1599058917212-d750089bc07e?w=900" alt="About Nora Padel" class="img-fluid rounded-4 shadow">
             </div>
             <div class="col-lg-6">
-                <h2 class="fw-bold mb-4">Tentang Nora Padel</h2>
+                <h2 class="fw-bold mb-4">About Nora Padel</h2>
                 <p class="text-muted mb-4">
-                    Nora Padel adalah brand perlengkapan olahraga yang fokus menyediakan gear padel berkualitas untuk pasar Indonesia.
+                    Nora Padel is a sports equipment brand focused on providing quality padel gear for the Indonesian market.
                 </p>
                 <p class="text-muted mb-4">
-                    Kami berkomitmen memberikan pengalaman belanja yang cepat, aman, dan profesional dengan produk yang relevan untuk kebutuhan pemain modern.
+                    We are committed to providing a fast, safe, and professional shopping experience with products relevant to the needs of modern players.
                 </p>
                 <div class="row g-3">
                     <div class="col-6">
                         <div class="d-flex align-items-center">
                             <i class="fas fa-check-circle text-success me-2"></i>
-                            <span>Kualitas Original</span>
+                            <span>Original Quality</span>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="d-flex align-items-center">
                             <i class="fas fa-check-circle text-success me-2"></i>
-                            <span>Garansi Produk</span>
+                            <span>Product Warranty</span>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="d-flex align-items-center">
                             <i class="fas fa-check-circle text-success me-2"></i>
-                            <span>Konsultasi Gear</span>
+                            <span>Gear Consultation</span>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="d-flex align-items-center">
                             <i class="fas fa-check-circle text-success me-2"></i>
-                            <span>Support Komunitas</span>
+                            <span>Community Support</span>
                         </div>
                     </div>
                 </div>
@@ -281,15 +281,15 @@
 <!-- CTA Section -->
 <section class="py-5" style="background: linear-gradient(135deg, #1B5E20 0%, #43A047 100%);">
     <div class="container text-center text-white">
-    <h2 class="fw-bold mb-4">Siap Upgrade Gear Padel Kamu?</h2>
-    <p class="lead mb-4">Belanja sekarang dan tingkatkan performa permainanmu bersama Nora Padel!</p>
+    <h2 class="fw-bold mb-4">Ready to Upgrade Your Padel Gear?</h2>
+    <p class="lead mb-4">Shop now and improve your game performance with Nora Padel!</p>
         @auth
             <a href="{{ route('customer.products.index') }}" class="btn btn-warning btn-lg px-5">
-                <i class="fas fa-shopping-cart me-2"></i>Belanja Sekarang
+                <i class="fas fa-shopping-cart me-2"></i>Shop Now
             </a>
         @else
             <a href="{{ route('register') }}" class="btn btn-warning btn-lg px-5">
-                <i class="fas fa-user-plus me-2"></i>Daftar & Belanja
+                <i class="fas fa-user-plus me-2"></i>Register & Shop
             </a>
         @endauth
     </div>

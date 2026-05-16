@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Kurir') - Nora Padel</title>
+    <title>@yield('title', 'Courier') - Nora Padel</title>
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -789,19 +789,19 @@
             <img src="{{ asset(config('branding.logo', 'storage/logo.png')) }}" alt="{{ config('branding.name', 'Nora Padel') }}" height="40" class="brand-logo">
             <div class="sidebar-brand-text">
                 {{ config('branding.name', 'Nora Padel') }}
-                <span>Panel Kurir</span>
+                <span>Courier Panel</span>
             </div>
         </div>
         
         <nav class="sidebar-menu">
-            <div class="sidebar-label">Menu Utama</div>
+            <div class="sidebar-label">Main Menu</div>
             
             <a href="{{ route('courier.dashboard') }}" class="nav-link {{ request()->routeIs('courier.dashboard') ? 'active' : '' }}">
                 <i class="fas fa-th-large"></i> Dashboard
             </a>
             
             <a href="{{ route('courier.deliveries.index') }}" class="nav-link {{ request()->routeIs('courier.deliveries.index') || request()->routeIs('courier.deliveries.show') ? 'active' : '' }}">
-                <i class="fas fa-truck"></i> Tugas Pengiriman
+                <i class="fas fa-truck"></i> Delivery Tasks
                 @php
                     $activeDeliveries = auth()->user()->activeDeliveries()->count();
                 @endphp
@@ -811,20 +811,20 @@
             </a>
             
             <a href="{{ route('courier.deliveries.history') }}" class="nav-link {{ request()->routeIs('courier.deliveries.history') ? 'active' : '' }}">
-                <i class="fas fa-history"></i> Riwayat
+                <i class="fas fa-history"></i> History
             </a>
             
             <div class="sidebar-divider"></div>
-            <div class="sidebar-label">Akun</div>
+            <div class="sidebar-label">Account</div>
             
             <a href="{{ route('courier.profile') }}" class="nav-link {{ request()->routeIs('courier.profile') ? 'active' : '' }}">
-                <i class="fas fa-user-cog"></i> Profil Saya
+                <i class="fas fa-user-cog"></i> My Profile
             </a>
             
             <form action="{{ route('logout') }}" method="POST">
                 @csrf
                 <button type="submit" class="nav-link w-100 text-start border-0 bg-transparent" style="color: var(--gray);">
-                    <i class="fas fa-sign-out-alt"></i> Keluar
+                    <i class="fas fa-sign-out-alt"></i> Logout
                 </button>
             </form>
         </nav>
@@ -835,7 +835,7 @@
                  class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
             <div class="user-panel-info">
                 <h6>{{ Str::limit(auth()->user()->name, 15) }}</h6>
-                <span>Kurir Aktif</span>
+                <span>Active Courier</span>
             </div>
         </div>
     </div>

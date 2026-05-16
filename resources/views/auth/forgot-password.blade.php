@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Lupa Password - Nora Padel')
+@section('title', 'Forgot Password - Nora Padel')
 
 @section('content')
     <div class="min-h-screen bg-[#f5f5f7] text-black antialiased">
@@ -22,9 +22,9 @@
 
                 <div class="flex items-center gap-3 text-black/80">
                     @guest
-                        <a href="{{ route('login') }}" class="inline-flex items-center gap-1 rounded-full border border-black/15 px-3 py-1.5 text-xs font-medium text-black/80 transition duration-300 hover:border-black/30 hover:text-black" aria-label="Masuk">
+                        <a href="{{ route('login') }}" class="inline-flex items-center gap-1 rounded-full border border-black/15 px-3 py-1.5 text-xs font-medium text-black/80 transition duration-300 hover:border-black/30 hover:text-black" aria-label="Login">
                             <i class="fas fa-sign-in-alt text-[11px]"></i>
-                            <span>Masuk</span>
+                            <span>Login</span>
                         </a>
                     @endguest
                     
@@ -82,8 +82,8 @@
                 <div class="rounded-3xl border border-black/8 bg-white p-6 shadow-[0_16px_42px_rgba(0,0,0,0.08)] sm:p-8">
                     <div class="mb-6 text-center">
                         <img src="{{ asset(config('branding.logo', 'storage/logo.png')) }}" alt="{{ config('branding.name', 'Nora Padel') }}" class="mx-auto h-12 w-auto">
-                        <h2 class="mt-4 text-2xl font-semibold tracking-tight text-black">Lupa Password</h2>
-                        <p class="mt-2 text-sm text-zinc-600">Masukkan email Anda untuk menerima kode OTP</p>
+                        <h2 class="mt-4 text-2xl font-semibold tracking-tight text-black">Forgot Password</h2>
+                        <p class="mt-2 text-sm text-zinc-600">Enter your email to receive OTP code</p>
                     </div>
 
                     <div id="alertContainer"></div>
@@ -102,13 +102,13 @@
                                     required
                                     autofocus
                                     class="w-full border-0 bg-transparent py-3 text-sm text-black outline-none focus:ring-0"
-                                    placeholder="email@contoh.com"
+                                    placeholder="email@example.com"
                                 >
                             </div>
                         </div>
 
                         <button type="submit" class="inline-flex w-full items-center justify-center rounded-full bg-black px-5 py-3 text-sm font-medium text-white transition duration-300 hover:bg-zinc-800">
-                            <i class="fas fa-paper-plane mr-2 text-xs"></i>Kirim Kode OTP
+                            <i class="fas fa-paper-plane mr-2 text-xs"></i>Send OTP Code
                         </button>
                     </form>
 
@@ -118,7 +118,7 @@
                         <input type="hidden" id="verify_email" name="email">
                         
                         <div>
-                            <label for="otp" class="mb-2 block text-sm font-medium text-zinc-700">Kode OTP</label>
+                            <label for="otp" class="mb-2 block text-sm font-medium text-zinc-700">OTP Code</label>
                             <div class="flex items-center gap-2 rounded-xl border border-black/10 bg-white px-3 focus-within:border-black/30">
                                 <i class="fas fa-key text-xs text-zinc-400"></i>
                                 <input
@@ -129,18 +129,18 @@
                                     pattern="[0-9]{6}"
                                     required
                                     class="w-full border-0 bg-transparent py-3 text-sm text-black outline-none focus:ring-0"
-                                    placeholder="Masukkan 6 digit kode OTP"
+                                    placeholder="Enter 6-digit OTP code"
                                 >
                             </div>
-                            <p class="mt-1 text-xs text-zinc-500">Kode OTP telah dikirim ke email Anda</p>
+                            <p class="mt-1 text-xs text-zinc-500">OTP code has been sent to your email</p>
                         </div>
 
                         <button type="submit" class="inline-flex w-full items-center justify-center rounded-full bg-black px-5 py-3 text-sm font-medium text-white transition duration-300 hover:bg-zinc-800">
-                            <i class="fas fa-check mr-2 text-xs"></i>Verifikasi OTP
+                            <i class="fas fa-check mr-2 text-xs"></i>Verify OTP
                         </button>
 
                         <button type="button" id="resendOtpBtn" class="w-full text-center text-sm text-zinc-600 hover:text-black">
-                            Kirim ulang kode OTP
+                            Resend OTP code
                         </button>
                     </form>
 
@@ -150,7 +150,7 @@
                         <input type="hidden" id="reset_email" name="email">
                         
                         <div>
-                            <label for="password" class="mb-2 block text-sm font-medium text-zinc-700">Password Baru</label>
+                            <label for="password" class="mb-2 block text-sm font-medium text-zinc-700">New Password</label>
                             <div class="flex items-center gap-2 rounded-xl border border-black/10 bg-white px-3 focus-within:border-black/30">
                                 <i class="fas fa-lock text-xs text-zinc-400"></i>
                                 <input
@@ -160,13 +160,13 @@
                                     required
                                     minlength="8"
                                     class="w-full border-0 bg-transparent py-3 text-sm text-black outline-none focus:ring-0"
-                                    placeholder="Minimal 8 karakter"
+                                    placeholder="Minimum 8 characters"
                                 >
                             </div>
                         </div>
 
                         <div>
-                            <label for="password_confirmation" class="mb-2 block text-sm font-medium text-zinc-700">Konfirmasi Password</label>
+                            <label for="password_confirmation" class="mb-2 block text-sm font-medium text-zinc-700">Confirm Password</label>
                             <div class="flex items-center gap-2 rounded-xl border border-black/10 bg-white px-3 focus-within:border-black/30">
                                 <i class="fas fa-lock text-xs text-zinc-400"></i>
                                 <input
@@ -176,7 +176,7 @@
                                     required
                                     minlength="8"
                                     class="w-full border-0 bg-transparent py-3 text-sm text-black outline-none focus:ring-0"
-                                    placeholder="Ulangi password baru"
+                                    placeholder="Repeat new password"
                                 >
                             </div>
                         </div>
@@ -187,8 +187,8 @@
                     </form>
 
                     <p class="mt-6 text-center text-sm text-zinc-600">
-                        Sudah ingat password?
-                        <a href="{{ route('login') }}" class="font-medium text-black underline decoration-black/30 underline-offset-4 transition hover:decoration-black">Masuk</a>
+                        Already remember password?
+                        <a href="{{ route('login') }}" class="font-medium text-black underline decoration-black/30 underline-offset-4 transition hover:decoration-black">Login</a>
                     </p>
                 </div>
             </div>

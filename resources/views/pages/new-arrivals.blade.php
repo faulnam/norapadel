@@ -305,7 +305,7 @@
                         <!-- Search -->
                         <div>
                             <h3 class="mb-3 text-sm font-semibold text-black">Search</h3>
-                            <input type="text" id="searchProduct" placeholder="Cari produk..." class="w-full rounded-lg border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-black transition">
+                            <input type="text" id="searchProduct" placeholder="Search products..." class="w-full rounded-lg border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-black transition">
                         </div>
 
                         <!-- Brand -->
@@ -458,7 +458,7 @@
 
                     <div id="noResults" class="hidden text-center py-12">
                         <i class="fas fa-search text-4xl text-zinc-300 mb-3"></i>
-                        <p class="text-zinc-500">Tidak ada produk yang ditemukan</p>
+                        <p class="text-zinc-500">No products found</p>
                     </div>
                 </div>
             </div>
@@ -523,15 +523,15 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('Produk berhasil ditambahkan ke keranjang!');
+                    alert('Product successfully added to cart!');
                     location.reload();
                 } else {
-                    alert(data.message || 'Gagal menambahkan produk ke keranjang');
+                    alert(data.message || 'Failed to add product to cart');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Terjadi kesalahan. Silakan coba lagi.');
+                alert('An error occurred. Please try again.');
             });
         }
 
@@ -551,15 +551,15 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('Produk berhasil ditambahkan ke wishlist!');
+                    alert('Product successfully added to wishlist!');
                     location.reload();
                 } else {
-                    alert(data.message || 'Produk sudah ada di wishlist');
+                    alert(data.message || 'Product already in wishlist');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Terjadi kesalahan. Silakan coba lagi.');
+                alert('An error occurred. Please try again.');
             });
         }
 

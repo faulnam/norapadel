@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Menunggu Pembayaran - Nora Padel')
+@section('title', 'Waiting for Payment - Nora Padel')
 
 @push('styles')
 <style>
@@ -211,8 +211,8 @@
                         <i class="fas fa-clock"></i>
                     </div>
                     
-                    <h4 class="mb-2">Menunggu Pembayaran</h4>
-                    <p class="text-muted mb-3">Silakan selesaikan pembayaran Anda</p>
+                    <h4 class="mb-2">Waiting for Payment</h4>
+                    <p class="text-muted mb-3">Please complete your payment</p>
                     
                     <div class="payment-amount">
                         Rp {{ number_format($paymentTransaction['total_payment'] ?? $order->total_amount, 0, ',', '.') }}
@@ -228,14 +228,14 @@
 
                     @if($paymentTransaction['fee'] > 0)
                     <p class="text-muted small mb-3">
-                        Termasuk biaya layanan: Rp {{ number_format($paymentTransaction['fee'], 0, ',', '.') }}
+                        Includes service fee: Rp {{ number_format($paymentTransaction['fee'], 0, ',', '.') }}
                     </p>
                     @endif
 
                     @if($paymentTransaction['expired_at'])
                     <div class="timer-box">
-                        <div class="small text-muted mb-1">Selesaikan pembayaran dalam:</div>
-                        <div class="timer" id="countdown">Memuat...</div>
+                        <div class="small text-muted mb-1">Complete payment within:</div>
+                        <div class="timer" id="countdown">Loading...</div>
                         <div class="small text-muted mt-1" id="expiredTime"></div>
                     </div>
                     @endif
@@ -245,21 +245,21 @@
                         <div class="qr-container">
                             <div id="qrcode"></div>
                         </div>
-                        <p class="text-muted small">Scan QR code dengan aplikasi e-wallet Anda</p>
+                        <p class="text-muted small">Scan QR code with your e-wallet app</p>
                     @else
                         <!-- Virtual Account Display -->
                         <div class="va-number-box">
-                            <div class="small text-muted mb-2">Nomor Virtual Account</div>
+                            <div class="small text-muted mb-2">Virtual Account Number</div>
                             <div class="va-number" id="vaNumber">{{ $paymentTransaction['payment_number'] }}</div>
                         </div>
                         <button type="button" class="btn-copy" onclick="copyVA()">
-                            <i class="fas fa-copy me-1"></i>Salin Nomor
+                            <i class="fas fa-copy me-1"></i>Copy Number
                         </button>
                     @endif
 
                     <div class="checking-status">
                         <i class="fas fa-sync-alt"></i>
-                        Memeriksa status pembayaran...
+                        Checking payment status...
                     </div>
                     </div>
                 </div>
@@ -267,53 +267,53 @@
                 <!-- Payment Instructions -->
                 <div class="instruction-card">
                     <div class="instruction-header">
-                        <i class="fas fa-info-circle me-2"></i>Cara Pembayaran
+                        <i class="fas fa-info-circle me-2"></i>Payment Instructions
                     </div>
                     <div class="instruction-body">
                         @if($paymentTransaction['method'] === 'qris')
                         <ol class="instruction-list">
                             <li>
                                 <span class="instruction-number">1</span>
-                                <span>Buka aplikasi e-wallet (GoPay, OVO, Dana, ShopeePay, dll)</span>
+                                <span>Open e-wallet app (GoPay, OVO, Dana, ShopeePay, etc.)</span>
                             </li>
                             <li>
                                 <span class="instruction-number">2</span>
-                                <span>Pilih menu <strong>Scan</strong> atau <strong>Bayar</strong></span>
+                                <span>Select <strong>Scan</strong> or <strong>Pay</strong> menu</span>
                             </li>
                             <li>
                                 <span class="instruction-number">3</span>
-                                <span>Arahkan kamera ke QR code di atas</span>
+                                <span>Point camera to QR code above</span>
                             </li>
                             <li>
                                 <span class="instruction-number">4</span>
-                                <span>Periksa nominal dan konfirmasi pembayaran</span>
+                                <span>Check the amount and confirm payment</span>
                             </li>
                             <li>
                                 <span class="instruction-number">5</span>
-                                <span>Pembayaran selesai! Halaman akan otomatis terupdate</span>
+                                <span>Payment completed! Page will automatically update</span>
                             </li>
                         </ol>
                         @else
                         <ol class="instruction-list">
                             <li>
                                 <span class="instruction-number">1</span>
-                                <span>Salin nomor Virtual Account di atas</span>
+                                <span>Copy Virtual Account number above</span>
                             </li>
                             <li>
                                 <span class="instruction-number">2</span>
-                                <span>Buka aplikasi m-banking atau internet banking Anda</span>
+                                <span>Open your m-banking or internet banking app</span>
                             </li>
                             <li>
                                 <span class="instruction-number">3</span>
-                                <span>Pilih menu <strong>Transfer</strong> ke Virtual Account</span>
+                                <span>Select <strong>Transfer</strong> menu to Virtual Account</span>
                             </li>
                             <li>
                                 <span class="instruction-number">4</span>
-                                <span>Masukkan nomor Virtual Account dan nominal transfer</span>
+                                <span>Enter Virtual Account number and transfer amount</span>
                             </li>
                             <li>
                                 <span class="instruction-number">5</span>
-                                <span>Konfirmasi dan selesaikan pembayaran</span>
+                                <span>Confirm and complete payment</span>
                             </li>
                         </ol>
                         @endif
@@ -322,7 +322,7 @@
 
                 <div class="text-center mt-4">
                     <a href="{{ route('customer.orders.show', $order) }}" class="btn btn-outline-secondary">
-                        <i class="fas fa-arrow-left me-1"></i>Kembali ke Detail Pesanan
+                        <i class="fas fa-arrow-left me-1"></i>Back to Order Details
                     </a>
                 </div>
             </div>
@@ -408,7 +408,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.querySelector('.payment-status-icon').classList.remove('status-pending');
                     document.querySelector('.payment-status-icon').classList.add('status-success');
                     document.querySelector('.payment-status-icon').innerHTML = '<i class="fas fa-check"></i>';
-                    document.querySelector('.waiting-card h4').textContent = 'Pembayaran Berhasil!';
+                    document.querySelector('.waiting-card h4').textContent = 'Payment Successful!';
                     document.querySelector('.checking-status').innerHTML = '<i class="fas fa-check-circle text-success"></i> ' + data.message;
                     
                     // Redirect after 2 seconds

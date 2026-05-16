@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Riwayat Pesanan')
+@section('title', 'Order History')
 
 @push('styles')
 <script src="https://cdn.tailwindcss.com"></script>
@@ -28,13 +28,13 @@
                         class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Contact</a>
         </nav>
         <div class="flex items-center gap-3 text-black/80">
-            <a href="{{ route('customer.orders.index') }}" class="transition duration-300 hover:text-black" title="Riwayat Pesanan">
+            <a href="{{ route('customer.orders.index') }}" class="transition duration-300 hover:text-black" title="Order History">
                 <i class="fas fa-history text-sm"></i>
             </a>
             <a href="{{ route('customer.profile.index') }}" class="transition duration-300 hover:text-black" title="Profile">
                 <i class="fas fa-user text-sm"></i>
             </a>
-            <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-black" title="Keranjang">
+            <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-black" title="Cart">
                 <i class="fas fa-shopping-bag text-sm"></i>
             </a>
             <button type="button" class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-black transition duration-300 hover:border-black/35 md:hidden" data-mobile-menu-toggle aria-label="Toggle navigation" aria-expanded="false">
@@ -49,7 +49,7 @@
             <a href="{{ route('racket') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Racket</a>
             <a href="{{ route('shoes') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Shoes</a>
             <a href="{{ route('apparel') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Accessories</a>
-            <a href="{{ route('customer.profile.index') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Profil</a>
+            <a href="{{ route('customer.profile.index') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Profile</a>
         </nav>
     </div>
 </header>
@@ -57,18 +57,18 @@
 <div class="min-h-screen bg-zinc-50 py-8 pt-16 md:pt-0">
     <div class="mx-auto max-w-7xl px-6 md:px-10 lg:px-12">
         <div class="mb-6 flex items-center justify-between">
-            <h1 class="text-2xl font-semibold text-black">Riwayat Pesanan</h1>
+            <h1 class="text-2xl font-semibold text-black">Order History</h1>
         </div>
 
         <!-- Filter -->
         <div class="mb-6 rounded-2xl bg-white p-4 shadow-sm">
             <form action="{{ route('customer.orders.index') }}" method="GET" class="flex flex-col gap-3 sm:flex-row">
                 <select name="status" class="flex-1 rounded-xl border border-zinc-300 px-4 py-2 text-sm focus:border-black focus:outline-none">
-                    <option value="">Semua Status</option>
-                    <option value="pending_payment" {{ request('status') == 'pending_payment' ? 'selected' : '' }}>Menunggu Pembayaran</option>
-                    <option value="paid" {{ request('status') == 'paid' ? 'selected' : '' }}>Dibayar</option>
-                    <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Selesai</option>
-                    <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Dibatalkan</option>
+                    <option value="">All Status</option>
+                    <option value="pending_payment" {{ request('status') == 'pending_payment' ? 'selected' : '' }}>Waiting Payment</option>
+                    <option value="paid" {{ request('status') == 'paid' ? 'selected' : '' }}>Paid</option>
+                    <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed</option>
+                    <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                 </select>
                 <button type="submit" class="rounded-xl bg-black px-6 py-2 text-sm font-medium text-white hover:bg-black/90">
                     Filter
@@ -116,7 +116,7 @@
                     </div>
                     <a href="{{ route('customer.orders.show', $order) }}" 
                        class="rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-black hover:bg-zinc-50">
-                        Lihat Detail
+                        View Details
                     </a>
                 </div>
             </div>
@@ -125,11 +125,11 @@
                 <div class="mb-4 flex h-20 w-20 mx-auto items-center justify-center rounded-full bg-zinc-100">
                     <i class="fas fa-shopping-bag text-3xl text-zinc-400"></i>
                 </div>
-                <h3 class="mb-2 text-lg font-semibold text-black">Belum Ada Pesanan</h3>
-                <p class="mb-6 text-sm text-zinc-600">Ayo mulai berbelanja perlengkapan padel!</p>
+                <h3 class="mb-2 text-lg font-semibold text-black">No Orders Yet</h3>
+                <p class="mb-6 text-sm text-zinc-600">Let's start shopping for padel equipment!</p>
                 <a href="{{ route('produk.index') }}" 
                    class="inline-block rounded-xl bg-black px-6 py-3 text-sm font-medium text-white hover:bg-black/90">
-                    Mulai Belanja
+                    Start Shopping
                 </a>
             </div>
             @endforelse
@@ -157,7 +157,7 @@
                     <i class="fas fa-chevron-down text-[10px] text-zinc-500 transition group-open:rotate-180"></i>
                 </summary>
                 <ul class="mt-3 space-y-2 text-sm">
-                    <li><a href="{{ route('produk.index') }}" class="hover:underline">Produk</a></li>
+                    <li><a href="{{ route('produk.index') }}" class="hover:underline">Products</a></li>
                 </ul>
             </details>
             <details class="group rounded-xl border border-black/10 bg-white px-4 py-3">
@@ -166,8 +166,8 @@
                     <i class="fas fa-chevron-down text-[10px] text-zinc-500 transition group-open:rotate-180"></i>
                 </summary>
                 <ul class="mt-3 space-y-2 text-sm">
-                    <li><a href="{{ route('customer.profile.index') }}" class="hover:underline">Profil</a></li>
-                    <li><a href="{{ route('customer.orders.index') }}" class="hover:underline">Riwayat Pesanan</a></li>
+                    <li><a href="{{ route('customer.profile.index') }}" class="hover:underline">Profile</a></li>
+                    <li><a href="{{ route('customer.orders.index') }}" class="hover:underline">Order History</a></li>
                 </ul>
             </details>
         </div>

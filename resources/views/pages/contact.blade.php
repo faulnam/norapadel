@@ -37,7 +37,7 @@
                                 <span>Dashboard</span>
                             </a>
                         @elseif(auth()->user()->role === 'customer')
-                            <a href="{{ route('customer.orders.index') }}" class="transition duration-300 hover:text-black" aria-label="Riwayat Pesanan" title="Riwayat Pesanan">
+                            <a href="{{ route('customer.orders.index') }}" class="transition duration-300 hover:text-black" aria-label="Order History" title="Order History">
                                 <i class="fas fa-history text-sm"></i>
                             </a>
                             <a href="{{ route('customer.profile.index') }}" class="transition duration-300 hover:text-black" aria-label="Profile" title="Profile">
@@ -94,16 +94,16 @@
                 <div class="mx-auto max-w-3xl text-center">
                     <p class="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">Support</p>
                     <h1 class="mt-3 text-3xl font-semibold tracking-tight text-black sm:text-4xl">Contact NoraPadel</h1>
-                    <p class="mt-4 text-zinc-600">Kirimkan pertanyaan Anda. Kami akan merespons secepat mungkin pada jam operasional.</p>
+                    <p class="mt-4 text-zinc-600">Send your questions. We will respond as soon as possible during business hours.</p>
                 </div>
 
                 <div class="mx-auto mt-12 grid max-w-5xl gap-8 lg:grid-cols-[1fr_1.35fr]">
                     <div class="rounded-2xl border border-black/10 bg-white p-6 shadow-sm">
-                        <h2 class="text-lg font-semibold text-black">Informasi Kontak</h2>
+                        <h2 class="text-lg font-semibold text-black">Contact Information</h2>
                         <ul class="mt-5 space-y-3 text-sm text-zinc-600">
                             <li><span class="font-medium text-black">WhatsApp:</span> {{ config('branding.phone', '08511735858') }}</li>
                             <li><span class="font-medium text-black">Email:</span> support@norapadel.com</li>
-                            <li><span class="font-medium text-black">Alamat:</span> {{ config('branding.address', 'Citraland, Surabaya, East Java, Indonesia') }}</li>
+                            <li><span class="font-medium text-black">Address:</span> {{ config('branding.address', 'Citraland, Surabaya, East Java, Indonesia') }}</li>
                         </ul>
                     </div>
 
@@ -111,7 +111,7 @@
                         @csrf
                         <div class="grid gap-5 sm:grid-cols-2">
                             <div class="sm:col-span-1">
-                                <label for="name" class="mb-2 block text-sm font-medium text-zinc-700">Nama</label>
+                                <label for="name" class="mb-2 block text-sm font-medium text-zinc-700">Name</label>
                                 <input id="name" name="name" type="text" value="{{ old('name') }}" required class="w-full rounded-xl border border-zinc-300 px-4 py-2.5 text-sm outline-none transition focus:border-black" />
                                 @error('name')<p class="mt-1 text-xs text-rose-600">{{ $message }}</p>@enderror
                             </div>
@@ -121,17 +121,17 @@
                                 @error('email')<p class="mt-1 text-xs text-rose-600">{{ $message }}</p>@enderror
                             </div>
                             <div class="sm:col-span-2">
-                                <label for="subject" class="mb-2 block text-sm font-medium text-zinc-700">Subjek</label>
+                                <label for="subject" class="mb-2 block text-sm font-medium text-zinc-700">Subject</label>
                                 <input id="subject" name="subject" type="text" value="{{ old('subject') }}" required class="w-full rounded-xl border border-zinc-300 px-4 py-2.5 text-sm outline-none transition focus:border-black" />
                                 @error('subject')<p class="mt-1 text-xs text-rose-600">{{ $message }}</p>@enderror
                             </div>
                             <div class="sm:col-span-2">
-                                <label for="message" class="mb-2 block text-sm font-medium text-zinc-700">Pesan</label>
+                                <label for="message" class="mb-2 block text-sm font-medium text-zinc-700">Message</label>
                                 <textarea id="message" name="message" rows="5" required class="w-full rounded-xl border border-zinc-300 px-4 py-2.5 text-sm outline-none transition focus:border-black">{{ old('message') }}</textarea>
                                 @error('message')<p class="mt-1 text-xs text-rose-600">{{ $message }}</p>@enderror
                             </div>
                         </div>
-                        <button type="submit" class="mt-6 inline-flex rounded-full bg-black px-5 py-2.5 text-sm font-medium text-white transition hover:bg-zinc-800">Kirim Pesan</button>
+                        <button type="submit" class="mt-6 inline-flex rounded-full bg-black px-5 py-2.5 text-sm font-medium text-white transition hover:bg-zinc-800">Send Message</button>
                     </form>
                 </div>
             </div>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resi Pesanan - {{ $order->order_number }}</title>
+    <title>Order Receipt - {{ $order->order_number }}</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -427,10 +427,10 @@
     <div class="receipt-wrapper">
         <div class="print-actions">
             <button onclick="window.print()" class="btn-print">
-                🖨️ Cetak Resi
+                🖨️ Print Receipt
             </button>
             <a href="{{ route('customer.orders.show', $order) }}" class="btn-back">
-                ← Kembali
+                ← Back
             </a>
         </div>
 
@@ -441,7 +441,7 @@
                     <img src="{{ asset(config('branding.logo', 'storage/logo.png')) }}" alt="Nora Padel" class="brand-logo" style="width: 60px; height: 60px; object-fit: contain;">
                     <div class="brand-info">
                         <h1>{{ config('branding.name', 'Nora Padel') }}</h1>
-                        <p>Perlengkapan Padel Premium</p>
+                        <p>Premium Padel Equipment</p>
                         <p>{{ config('branding.address', 'Kec. Tarik, Sidoarjo, Jawa Timur 61265') }}</p>
                     </div>
                 </div>
@@ -450,19 +450,19 @@
             <!-- Order Meta -->
             <div class="order-meta">
                 <div class="order-meta-item">
-                    <label>No. Pesanan</label>
+                    <label>Order No.</label>
                     <span class="order-number">{{ $order->order_number }}</span>
                 </div>
                 <div class="order-meta-item">
-                    <label>Tanggal Pesanan</label>
+                    <label>Order Date</label>
                     <span>{{ $order->created_at->format('d F Y') }}</span>
                 </div>
                 <div class="order-meta-item">
-                    <label>Waktu Pesanan</label>
+                    <label>Order Time</label>
                     <span>{{ $order->created_at->format('H:i') }} WIB</span>
                 </div>
                 <div class="order-meta-item">
-                    <label>Metode Bayar</label>
+                    <label>Payment Method</label>
                     <span>{{ $order->payment_method === 'cod' ? 'COD' : 'Transfer' }}</span>
                 </div>
             </div>
@@ -470,34 +470,34 @@
             <!-- Address Section -->
             <div class="address-section">
                 <div class="address-box">
-                    <h3>Pengirim</h3>
+                    <h3>Sender</h3>
                     <p class="name">Nora Padel Store</p>
                     <p class="detail">Kec. Tarik, Kab. Sidoarjo</p>
                     <p class="detail">Jawa Timur 61265</p>
-                    <p class="detail">Telp: {{ config('branding.phone', '+62 812 3456 7890') }}</p>
+                    <p class="detail">Phone: {{ config('branding.phone', '+62 812 3456 7890') }}</p>
                 </div>
                 <div class="address-box">
-                    <h3>Penerima</h3>
+                    <h3>Recipient</h3>
                     <p class="name">{{ $order->shipping_name }}</p>
                     <p class="detail">{{ $order->shipping_address }}</p>
-                    <p class="detail">Telp: {{ $order->shipping_phone }}</p>
+                    <p class="detail">Phone: {{ $order->shipping_phone }}</p>
                 </div>
             </div>
 
             <!-- Schedule -->
             <div class="schedule-box">
-                <h3>Jadwal Pengiriman</h3>
+                <h3>Delivery Schedule</h3>
                 <div class="schedule-grid">
                     <div class="schedule-item">
-                        <label>Tanggal Kirim</label>
+                        <label>Shipping Date</label>
                         <span>{{ $order->delivery_date ? $order->formatted_delivery_date : '-' }}</span>
                     </div>
                     <div class="schedule-item">
-                        <label>Jam Pengiriman</label>
+                        <label>Delivery Time</label>
                         <span>{{ $order->delivery_time_slot ?? '10:00 - 16:00' }} WIB</span>
                     </div>
                     <div class="schedule-item">
-                        <label>Estimasi Jarak</label>
+                        <label>Estimated Distance</label>
                         <span>{{ $order->formatted_delivery_distance }}</span>
                     </div>
                 </div>
@@ -505,13 +505,13 @@
             
             <!-- Items -->
             <div class="items-section">
-                <h3>Detail Pesanan</h3>
+                <h3>Order Details</h3>
                 <table>
                     <thead>
                         <tr>
-                            <th>Produk</th>
+                            <th>Product</th>
                             <th class="text-center">Qty</th>
-                            <th class="text-right">Harga</th>
+                            <th class="text-right">Price</th>
                             <th class="text-right">Subtotal</th>
                         </tr>
                     </thead>

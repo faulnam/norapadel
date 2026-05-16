@@ -1,14 +1,14 @@
 @extends('layouts.app')
 
-@section('title', 'Produk - Nora Padel')
+@section('title', 'Products - Nora Padel')
 
 @section('content')
 <!-- Hero -->
 <section class="page-hero">
     <div class="container">
-        <span class="section-badge">Produk Kami</span>
-        <h1 class="page-title">Pilihan Gear <span class="text-primary">Padel</span></h1>
-        <p class="page-subtitle">Temukan raket dan aksesori Nora Padel favoritmu</p>
+        <span class="section-badge">Our Products</span>
+        <h1 class="page-title">Padel <span class="text-primary">Gear Selection</span></h1>
+        <p class="page-subtitle">Find your favorite Nora Padel rackets and accessories</p>
     </div>
 </section>
 
@@ -24,12 +24,12 @@
                         name="q"
                         value="{{ request('q') }}"
                         class="form-control"
-                        placeholder="Cari semua produk..."
+                        placeholder="Search all products..."
                     >
                 </div>
                 <div class="filter-item">
                     <select name="category" class="form-select" onchange="this.form.submit()">
-                        <option value="">Semua Kategori</option>
+                        <option value="">All Categories</option>
                         @foreach(\App\Models\Product::categories() as $value => $label)
                             <option value="{{ $value }}" {{ request('category') == $value ? 'selected' : '' }}>{{ $label }}</option>
                         @endforeach
@@ -37,13 +37,13 @@
                 </div>
                 <div class="filter-item">
                     <select name="sort" class="form-select" onchange="this.form.submit()">
-                        <option value="">Urutkan</option>
-                        <option value="price_low" {{ request('sort') == 'price_low' ? 'selected' : '' }}>Harga Terendah</option>
-                        <option value="price_high" {{ request('sort') == 'price_high' ? 'selected' : '' }}>Harga Tertinggi</option>
-                        <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Terbaru</option>
+                        <option value="">Sort</option>
+                        <option value="price_low" {{ request('sort') == 'price_low' ? 'selected' : '' }}>Lowest Price</option>
+                        <option value="price_high" {{ request('sort') == 'price_high' ? 'selected' : '' }}>Highest Price</option>
+                        <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest</option>
                     </select>
                 </div>
-                <button type="submit" class="btn btn-primary">Cari</button>
+                <button type="submit" class="btn btn-primary">Search</button>
                 @if(request()->hasAny(['q', 'category', 'sort']))
                     <a href="{{ route('produk.index') }}" class="btn btn-outline-secondary">Reset</a>
                 @endif
@@ -103,7 +103,7 @@
                                         <span class="d-none d-md-inline">Detail</span>
                                     </a>
                                 @else
-                                    <span class="badge bg-secondary">Habis</span>
+                                    <span class="badge bg-secondary">Sold Out</span>
                                 @endif
                             </div>
                         </div>
@@ -113,8 +113,8 @@
                 <div class="col-12">
                     <div class="text-center py-5">
                         <i class="fas fa-box-open fa-4x text-gray mb-3"></i>
-                        <h5>Produk Tidak Ditemukan</h5>
-                        <p class="text-gray">Coba ubah filter atau kembali lain waktu</p>
+                        <h5>Products Not Found</h5>
+                        <p class="text-gray">Try changing filter or come back later</p>
                     </div>
                 </div>
             @endforelse

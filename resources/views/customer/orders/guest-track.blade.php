@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Lacak Pesanan #' . $order->order_number)
+@section('title', 'Track Order #' . $order->order_number)
 
 @section('content')
 <div class="container mx-auto px-4 py-8 max-w-4xl">
@@ -8,7 +8,7 @@
     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
         <div class="flex items-center justify-between mb-4">
             <div>
-                <h1 class="text-2xl font-bold text-gray-800">Pesanan #{{ $order->order_number }}</h1>
+                <h1 class="text-2xl font-bold text-gray-800">Order #{{ $order->order_number }}</h1>
                 <p class="text-sm text-gray-600 mt-1">{{ $order->created_at->format('d M Y, H:i') }}</p>
             </div>
             <div class="text-right">
@@ -34,11 +34,11 @@
                     <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                 </svg>
                 <div class="flex-1">
-                    <h3 class="font-semibold text-yellow-800 mb-1">Menunggu Pembayaran</h3>
-                    <p class="text-sm text-yellow-700">Silakan pilih metode pembayaran untuk melanjutkan pesanan Anda.</p>
+                    <h3 class="font-semibold text-yellow-800 mb-1">Waiting for Payment</h3>
+                    <p class="text-sm text-yellow-700">Please select a payment method to continue your order.</p>
                     <a href="{{ route('customer.payment.select-gateway', $order) }}" 
                        class="inline-block mt-3 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition">
-                        Bayar Sekarang
+                        Pay Now
                     </a>
                 </div>
             </div>
@@ -48,21 +48,21 @@
         <!-- Shipping Info -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             <div>
-                <h3 class="font-semibold text-gray-700 mb-2">Informasi Penerima</h3>
+                <h3 class="font-semibold text-gray-700 mb-2">Recipient Information</h3>
                 <p class="text-sm text-gray-600">{{ $order->shipping_name }}</p>
                 <p class="text-sm text-gray-600">{{ $order->shipping_phone }}</p>
                 <p class="text-sm text-gray-600 mt-1">{{ $order->shipping_address }}</p>
             </div>
             <div>
-                <h3 class="font-semibold text-gray-700 mb-2">Informasi Pengiriman</h3>
+                <h3 class="font-semibold text-gray-700 mb-2">Shipping Information</h3>
                 @if($order->courier_name)
                 <p class="text-sm text-gray-600">{{ $order->courier_name }} - {{ $order->courier_service_name }}</p>
                 @endif
                 @if($order->waybill_id)
-                <p class="text-sm text-gray-600">Resi: <span class="font-mono font-semibold">{{ $order->waybill_id }}</span></p>
+                <p class="text-sm text-gray-600">Tracking Number: <span class="font-mono font-semibold">{{ $order->waybill_id }}</span></p>
                 @endif
                 @if($order->estimated_delivery_date)
-                <p class="text-sm text-gray-600">Estimasi: {{ $order->estimated_delivery_date }}</p>
+                <p class="text-sm text-gray-600">Estimate: {{ $order->estimated_delivery_date }}</p>
                 @endif
             </div>
         </div>
@@ -70,7 +70,7 @@
 
     <!-- Order Items -->
     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h2 class="text-lg font-bold text-gray-800 mb-4">Produk yang Dipesan</h2>
+        <h2 class="text-lg font-bold text-gray-800 mb-4">Products Ordered</h2>
         <div class="space-y-4">
             @foreach($order->items as $item)
             <div class="flex items-center gap-4 pb-4 border-b last:border-b-0">
@@ -105,17 +105,17 @@
                 </div>
                 @if($order->product_discount > 0)
                 <div class="flex justify-between text-sm">
-                    <span class="text-gray-600">Diskon Produk</span>
+                    <span class="text-gray-600">Product Discount</span>
                     <span class="text-green-600">-{{ $order->formatted_product_discount }}</span>
                 </div>
                 @endif
                 <div class="flex justify-between text-sm">
-                    <span class="text-gray-600">Ongkir</span>
+                    <span class="text-gray-600">Shipping Cost</span>
                     <span class="text-gray-800">{{ $order->formatted_shipping_cost }}</span>
                 </div>
                 @if($order->shipping_discount > 0)
                 <div class="flex justify-between text-sm">
-                    <span class="text-gray-600">Diskon Ongkir</span>
+                    <span class="text-gray-600">Shipping Discount</span>
                     <span class="text-green-600">-{{ $order->formatted_shipping_discount }}</span>
                 </div>
                 @endif
@@ -130,14 +130,14 @@
     <!-- Tracking Info -->
     @if($order->waybill_id && $biteshipDetail)
     <div class="bg-white rounded-lg shadow-md p-6">
-        <h2 class="text-lg font-bold text-gray-800 mb-4">Lacak Pengiriman</h2>
+        <h2 class="text-lg font-bold text-gray-800 mb-4">Track Delivery</h2>
         <div class="space-y-3">
             <div class="flex justify-between items-center">
                 <span class="text-sm text-gray-600">Status</span>
                 <span class="font-semibold text-gray-800">{{ $biteshipDetail['status_label'] }}</span>
             </div>
             <div class="flex justify-between items-center">
-                <span class="text-sm text-gray-600">Kurir</span>
+                <span class="text-sm text-gray-600">Courier</span>
                 <span class="font-semibold text-gray-800">{{ $biteshipDetail['courier_name'] }}</span>
             </div>
             @if($biteshipDetail['driver_name'] !== '-')

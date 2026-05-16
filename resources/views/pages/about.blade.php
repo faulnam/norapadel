@@ -91,22 +91,22 @@
             <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
                 <div class="mx-auto max-w-3xl text-center">
                     <p class="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">About NoraPadel</p>
-                    <h1 class="mt-3 text-3xl font-semibold tracking-tight text-black sm:text-4xl">Performa premium untuk setiap pemain padel</h1>
-                    <p class="mt-4 text-zinc-600">NoraPadel hadir untuk menghadirkan perlengkapan padel berkualitas tinggi, mulai dari racket, shoes, hingga accessories untuk pemain pemula sampai profesional.</p>
+                    <h1 class="mt-3 text-3xl font-semibold tracking-tight text-black sm:text-4xl">Premium performance for every padel player</h1>
+                    <p class="mt-4 text-zinc-600">NoraPadel is here to provide high-quality padel equipment, from rackets, shoes, to accessories for beginner to professional players.</p>
                 </div>
 
                 <div class="mx-auto mt-12 grid max-w-5xl gap-6 md:grid-cols-3">
                     <article class="rounded-2xl border border-black/10 bg-zinc-50 p-6">
-                        <h2 class="text-base font-semibold text-black">Misi Kami</h2>
-                        <p class="mt-3 text-sm leading-relaxed text-zinc-600">Menyediakan produk terbaik dengan pengalaman belanja yang cepat, aman, dan memuaskan.</p>
+                        <h2 class="text-base font-semibold text-black">Our Mission</h2>
+                        <p class="mt-3 text-sm leading-relaxed text-zinc-600">Providing the best products with a fast, safe, and satisfying shopping experience.</p>
                     </article>
                     <article class="rounded-2xl border border-black/10 bg-zinc-50 p-6">
-                        <h2 class="text-base font-semibold text-black">Standar Kualitas</h2>
-                        <p class="mt-3 text-sm leading-relaxed text-zinc-600">Setiap produk melalui kurasi ketat agar performa, kenyamanan, dan daya tahan tetap optimal.</p>
+                        <h2 class="text-base font-semibold text-black">Quality Standards</h2>
+                        <p class="mt-3 text-sm leading-relaxed text-zinc-600">Every product undergoes strict curation to ensure optimal performance, comfort, and durability.</p>
                     </article>
                     <article class="rounded-2xl border border-black/10 bg-zinc-50 p-6">
-                        <h2 class="text-base font-semibold text-black">Layanan Pelanggan</h2>
-                        <p class="mt-3 text-sm leading-relaxed text-zinc-600">Tim kami siap membantu kebutuhan Anda, dari konsultasi produk hingga after-sales support.</p>
+                        <h2 class="text-base font-semibold text-black">Customer Service</h2>
+                        <p class="mt-3 text-sm leading-relaxed text-zinc-600">Our team is ready to help your needs, from product consultation to after-sales support.</p>
                     </article>
                 </div>
             </div>

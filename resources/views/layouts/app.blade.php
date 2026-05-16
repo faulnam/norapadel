@@ -839,19 +839,19 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-lg-center">
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">Beranda</a>
+                        <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('tentang') ? 'active' : '' }}" href="{{ route('tentang') }}">Tentang</a>
+                        <a class="nav-link {{ request()->routeIs('tentang') ? 'active' : '' }}" href="{{ route('tentang') }}">About</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('produk.*') ? 'active' : '' }}" href="{{ route('produk.index') }}">Produk</a>
+                        <a class="nav-link {{ request()->routeIs('produk.*') ? 'active' : '' }}" href="{{ route('produk.index') }}">Products</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('galeri') ? 'active' : '' }}" href="{{ route('galeri') }}">Galeri</a>
+                        <a class="nav-link {{ request()->routeIs('galeri') ? 'active' : '' }}" href="{{ route('galeri') }}">Gallery</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('testimoni') ? 'active' : '' }}" href="{{ route('testimoni') }}">Testimoni</a>
+                        <a class="nav-link {{ request()->routeIs('testimoni') ? 'active' : '' }}" href="{{ route('testimoni') }}">Testimonials</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('contact') ? 'active' : '' }}" href="{{ route('contact') }}">Contact</a>
@@ -859,7 +859,7 @@
 
                     @guest
                         <li class="nav-item ms-lg-1 d-none d-lg-block">
-                            <a class="nav-link position-relative" href="{{ route('customer.cart.index') }}" aria-label="Keranjang">
+                            <a class="nav-link position-relative" href="{{ route('customer.cart.index') }}" aria-label="Cart">
                                 <i class="fas fa-shopping-cart"></i>
                                 @php 
                                     $guestCart = session()->get('guest_cart', []);
@@ -871,7 +871,7 @@
                             </a>
                         </li>
                         <li class="nav-item ms-lg-3">
-                            <a class="btn-nav-login" href="{{ route('login') }}">Masuk</a>
+                            <a class="btn-nav-login" href="{{ route('login') }}">Login</a>
                         </li>
                     @else
                         <!-- Desktop: Cart Icon -->
@@ -897,24 +897,24 @@
                             <ul class="dropdown-menu dropdown-menu-end">
                                 @if(auth()->user()->isAdmin())
                                     <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}">
-                                        <i class="fas fa-tachometer-alt me-2 text-primary"></i>Dashboard Admin
+                                        <i class="fas fa-tachometer-alt me-2 text-primary"></i>Admin Dashboard
                                     </a></li>
                                 @elseif(auth()->user()->isCourier())
                                     <li><a class="dropdown-item" href="{{ route('courier.dashboard') }}">
-                                        <i class="fas fa-tachometer-alt me-2 text-primary"></i>Dashboard Kurir
+                                        <i class="fas fa-tachometer-alt me-2 text-primary"></i>Courier Dashboard
                                     </a></li>
                                 @else
                                     <li><a class="dropdown-item" href="{{ route('customer.products.index') }}">
-                                        <i class="fas fa-store me-2 text-primary"></i>Belanja
+                                        <i class="fas fa-store me-2 text-primary"></i>Shop
                                     </a></li>
                                     <li><a class="dropdown-item" href="{{ route('customer.orders.index') }}">
-                                        <i class="fas fa-history me-2 text-primary"></i>Riwayat Pesanan
+                                        <i class="fas fa-history me-2 text-primary"></i>Order History
                                     </a></li>
                                     <li><a class="dropdown-item" href="{{ route('customer.profile.index') }}">
-                                        <i class="fas fa-user me-2 text-primary"></i>Profil
+                                        <i class="fas fa-user me-2 text-primary"></i>Profilee
                                     </a></li>
                                     <li><a class="dropdown-item" href="{{ route('customer.notifications.index') }}">
-                                        <i class="fas fa-bell me-2 text-primary"></i>Notifikasi
+                                        <i class="fas fa-bell me-2 text-primary"></i>Notifications
                                         @if(auth()->user()->unreadNotifications->count() > 0)
                                             <span class="badge bg-danger ms-2">{{ auth()->user()->unreadNotifications->count() }}</span>
                                         @endif
@@ -925,7 +925,7 @@
                                     <form action="{{ route('logout') }}" method="POST">
                                         @csrf
                                         <button type="submit" class="dropdown-item text-danger">
-                                            <i class="fas fa-sign-out-alt me-2"></i>Keluar
+                                            <i class="fas fa-sign-out-alt me-2"></i>Logout
                                         </button>
                                     </form>
                                 </li>
@@ -945,22 +945,22 @@
                                 </a>
                             @else
                                 <a class="nav-link" href="{{ route('customer.cart.index') }}">
-                                    <i class="fas fa-shopping-cart me-2 text-primary"></i>Keranjang
+                                    <i class="fas fa-shopping-cart me-2 text-primary"></i>Cart
                                     @if($cartCount > 0)
                                         <span class="badge bg-primary ms-1">{{ $cartCount }}</span>
                                     @endif
                                 </a>
                                 <a class="nav-link" href="{{ route('customer.products.index') }}">
-                                    <i class="fas fa-store me-2 text-primary"></i>Belanja
+                                    <i class="fas fa-store me-2 text-primary"></i>Shop
                                 </a>
                                 <a class="nav-link" href="{{ route('customer.orders.index') }}">
-                                    <i class="fas fa-history me-2 text-primary"></i>Riwayat Pesanan
+                                    <i class="fas fa-history me-2 text-primary"></i>Order History
                                 </a>
                                 <a class="nav-link" href="{{ route('customer.profile.index') }}">
-                                    <i class="fas fa-user me-2 text-primary"></i>Profil
+                                    <i class="fas fa-user me-2 text-primary"></i>Profile
                                 </a>
                                 <a class="nav-link" href="{{ route('customer.notifications.index') }}">
-                                    <i class="fas fa-bell me-2 text-primary"></i>Notifikasi
+                                    <i class="fas fa-bell me-2 text-primary"></i>Notifications
                                     @if(auth()->user()->unreadNotifications->count() > 0)
                                         <span class="badge bg-danger ms-1">{{ auth()->user()->unreadNotifications->count() }}</span>
                                     @endif
@@ -969,7 +969,7 @@
                             <form action="{{ route('logout') }}" method="POST">
                                 @csrf
                                 <button type="submit" class="nav-link text-danger border-0 bg-transparent w-100 text-start">
-                                    <i class="fas fa-sign-out-alt me-2"></i>Keluar
+                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
                                 </button>
                             </form>
                         </li>
@@ -1026,9 +1026,9 @@
                         </div>
                         <div class="col-md-7">
                             <div class="np-product-content">
-                                <div id="npModalCategory" class="np-product-category">Produk</div>
-                                <h3 id="npProductModalTitle" class="np-product-title">Detail Produk</h3>
-                                <p id="npModalDescription" class="np-product-description">Deskripsi produk akan ditampilkan di sini.</p>
+                                <div id="npModalCategory" class="np-product-category">Product</div>
+                                <h3 id="npProductModalTitle" class="np-product-title">Product Details</h3>
+                                <p id="npModalDescription" class="np-product-description">Product description will be displayed here.</p>
 
                                 <div>
                                     <div id="npModalPrice" class="np-product-price">-</div>
@@ -1038,15 +1038,15 @@
                                 {{-- Varian Section (dinamis via JS) --}}
                                 <div id="npModalVariants" class="mt-3 mb-3 d-none">
                                     <div class="mb-2">
-                                        <small class="fw-bold text-dark">Pilih Varian <span class="text-danger">*</span></small>
+                                        <small class="fw-bold text-dark">Select Variant <span class="text-danger">*</span></small>
                                     </div>
                                     
                                     <select class="form-select form-select-sm" id="npModalVariantSelect" style="max-width: 300px;">
-                                        <option value="">-- Pilih Varian --</option>
+                                        <option value="">-- Select Variant --</option>
                                     </select>
                                     
                                     <small id="npModalVariantHint" class="text-muted d-block mt-1">
-                                        <i class="fas fa-info-circle me-1"></i>Pilih varian yang tersedia
+                                        <i class="fas fa-info-circle me-1"></i>Select available variant
                                     </small>
                                 </div>
 
@@ -1059,26 +1059,26 @@
                                                 <input type="hidden" name="variant_id" id="npModalVariantId">
                                                 <input type="hidden" name="quantity" value="1">
                                                 <button type="submit" class="btn np-product-buy-btn" id="npModalBuyBtn">
-                                                    <i class="fas fa-shopping-bag me-2"></i>Beli
+                                                    <i class="fas fa-shopping-bag me-2"></i>Buy
                                                 </button>
                                             </form>
                                         @else
-                                            <span class="badge bg-secondary">Akun ini tidak dapat melakukan pembelian</span>
+                                            <span class="badge bg-secondary">This account cannot make purchases</span>
                                         @endif
                                     @else
                                         <a href="{{ route('login') }}" class="btn np-product-buy-btn">
-                                            <i class="fas fa-shopping-bag me-2"></i>Beli
+                                            <i class="fas fa-shopping-bag me-2"></i>Buy
                                         </a>
-                                        <a href="{{ route('login') }}" class="btn np-product-cart-btn" aria-label="Keranjang (login terlebih dahulu)">
+                                        <a href="{{ route('login') }}" class="btn np-product-cart-btn" aria-label="Cart (login first)">
                                             <i class="fas fa-shopping-cart"></i>
                                         </a>
                                     @endauth
                                 </div>
                                 <div id="npModalContact" class="alert alert-warning mt-3 d-none" role="alert">
-                                    <div class="fw-semibold mb-1">Produk ini memiliki varian.</div>
-                                    <div class="small">Silakan hubungi admin terlebih dahulu untuk pemesanan.</div>
+                                    <div class="fw-semibold mb-1">This product has variants.</div>
+                                    <div class="small">Please contact admin first for ordering.</div>
                                     <a href="{{ route('contact') }}" class="btn btn-outline-dark btn-sm mt-2">
-                                        <i class="fas fa-headset me-1"></i>Hubungi Admin
+                                        <i class="fas fa-headset me-1"></i>Contact Admin
                                     </a>
                                 </div>
                             </div>

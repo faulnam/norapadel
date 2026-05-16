@@ -207,7 +207,7 @@
                         <span>Dashboard</span>
                     </a>
                 @elseif(auth()->user()->role === 'customer')
-                    <a href="{{ route('customer.orders.index') }}" class="transition duration-300 hover:text-black" title="Riwayat Pesanan">
+                    <a href="{{ route('customer.orders.index') }}" class="transition duration-300 hover:text-black" title="Order History">
                         <i class="fas fa-history text-sm"></i>
                     </a>
                     <a href="{{ route('customer.profile.index') }}" class="transition duration-300 hover:text-black" title="Profile">
@@ -218,7 +218,7 @@
             @guest
                 <a href="{{ route('login') }}" class="inline-flex items-center gap-1 rounded border border-black/15 bg-white px-3 py-1.5 text-xs font-medium text-black transition duration-300 hover:bg-black/5">
                     <i class="fas fa-sign-in-alt text-[11px]"></i>
-                    <span>Masuk</span>
+                    <span>Login</span>
                 </a>
             @endguest
 
@@ -237,7 +237,7 @@
                 @endif
             </a>
 
-            <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-black" title="Keranjang">
+            <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-black" title="Cart">
                 <i class="fas fa-shopping-bag text-sm"></i>
                 @php
                     if (auth()->check() && auth()->user()->role === 'customer') {
