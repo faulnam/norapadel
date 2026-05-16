@@ -206,31 +206,101 @@
                         class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Contact</a>
             </nav>
 
-            <div class="flex items-center gap-3 text-black/80">
-                @guest
-                    <a href="{{ route('login') }}" class="inline-flex items-center gap-1 rounded-full border border-black/15 bg-black/5 px-3 py-1.5 text-xs font-medium text-black transition duration-300 hover:bg-black/10" aria-label="Masuk">
-                        <i class="fas fa-sign-in-alt text-[11px]"></i>
-                        <span>Masuk</span>
-                    </a>
-                @endauth
-                @auth
-                    <a href="{{ route('customer.orders.index') }}" class="transition duration-300 hover:text-black" title="Riwayat Pesanan">
-                        <i class="fas fa-history text-sm"></i>
-                    </a>
-                    <a href="{{ route('customer.profile.index') }}" class="transition duration-300 hover:text-black" aria-label="Profile">
-                        <i class="fas fa-user text-sm"></i>
-                    </a>
-                @endauth
-
-                <a href="{{ route('customer.wishlist.index') }}" class="relative transition duration-300 hover:text-black" aria-label="Wishlist" title="Wishlist">
-                    <i class="fas fa-heart text-sm"></i>
-                </a>
-
-                <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-black" aria-label="Cart" title="Keranjang">
-                    <i class="fas fa-shopping-bag text-sm"></i>
-                </a>
-
-                
+            <div class="flex items-center gap-3 text-black/80" id="navIcons">
+                <!-- Hamburger Menu with combined elements -->
+                <div class="relative" id="hamburgerMenuWrapper">
+                    <button type="button" id="hamburgerMenuBtn" class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/15 bg-transparent text-black transition duration-300 hover:border-black/30">
+                        <i class="fas fa-bars text-sm"></i>
+                    </button>
+                    <div id="hamburgerMenuDropdown" class="absolute right-0 mt-2 w-48 z-50 hidden">
+                        <div class="bg-white rounded-lg shadow-lg border border-zinc-100 overflow-hidden">
+                            <!-- Login -->
+                            @guest
+                                <a href="{{ route('login') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
+                                    <i class="fas fa-sign-in-alt text-zinc-500 text-sm"></i>
+                                    <span class="text-sm text-zinc-700">Login</span>
+                                </a>
+                            @endauth
+                            
+                            <!-- Language Switcher -->
+                            <div class="border-b border-zinc-100">
+                                <div class="px-3 py-2 bg-zinc-50">
+                                    <div class="flex gap-2">
+                                        <a href="{{ request()->fullUrlWithQuery(['locale' => 'en']) }}" class="flex-1 px-2 py-1.5 text-xs text-zinc-700 hover:bg-white rounded transition {{ session('locale', 'en') === 'en' ? 'bg-white font-semibold' : 'bg-white/50' }}">
+                                            EN
+                                        </a>
+                                        <a href="{{ request()->fullUrlWithQuery(['locale' => 'id']) }}" class="flex-1 px-2 py-1.5 text-xs text-zinc-700 hover:bg-white rounded transition {{ session('locale', 'en') === 'id' ? 'bg-white font-semibold' : 'bg-white/50' }}">
+                                            ID
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Cart -->
+                            <a href="{{ route('customer.cart.index') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
+                                <div class="relative">
+                                    <i class="fas fa-shopping-bag text-zinc-500 text-sm"></i>
+                                    @auth
+                                        @if (auth()->user()->role === 'customer')
+                                            @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
+                                            @if ($cartCount > 0)
+                                                <span class="absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
+                                            @endif
+                                        @endif
+                                    @endauth
+                                    @guest
+                                        @php 
+                                            $guestCart = session()->get('guest_cart', []);
+                                            $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
+                                        @endphp
+                                        @if($guestCartCount > 0)
+                                            <span class="absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $guestCartCount > 9 ? '9+' : $guestCartCount }}</span>
+                                        @endif
+                                    @endguest
+                                </div>
+                                <span class="text-sm text-zinc-700">Cart</span>
+                            </a>
+                            
+                            <!-- Wishlist -->
+                            <a href="{{ route('customer.wishlist.index') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
+                                <div class="relative">
+                                    <i class="fas fa-heart text-zinc-500 text-sm"></i>
+                                    @php
+                                        if (auth()->check() && auth()->user()->role === 'customer') {
+                                            $wishlistCount = auth()->user()->wishlistItems()->count();
+                                        } else {
+                                            $guestWishlist = session()->get('guest_wishlist', []);
+                                            $wishlistCount = count($guestWishlist);
+                                        }
+                                    @endphp
+                                    @if($wishlistCount > 0)
+                                        <span class="absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
+                                    @endif
+                                </div>
+                                <span class="text-sm text-zinc-700">Wishlist</span>
+                            </a>
+                            
+                            <!-- Auth Section for logged-in users -->
+                            @auth
+                                @if (auth()->user()->role === 'admin')
+                                    <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-t border-zinc-100">
+                                        <i class="fas fa-arrow-left text-zinc-500 text-sm"></i>
+                                        <span class="text-sm text-zinc-700">Dashboard</span>
+                                    </a>
+                                @elseif(auth()->user()->role === 'customer')
+                                    <a href="{{ route('customer.orders.index') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-t border-zinc-100">
+                                        <i class="fas fa-history text-zinc-500 text-sm"></i>
+                                        <span class="text-sm text-zinc-700">Orders</span>
+                                    </a>
+                                    <a href="{{ route('customer.profile.index') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-t border-zinc-100">
+                                        <i class="fas fa-user text-zinc-500 text-sm"></i>
+                                        <span class="text-sm text-zinc-700">Profile</span>
+                                    </a>
+                                @endif
+                            @endauth
+                        </div>
+                    </div>
+                </div>
 
                 <button type="button" class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-black transition duration-300 hover:border-black/35 md:hidden" data-mobile-menu-toggle aria-label="Toggle navigation" aria-expanded="false">
                     <i class="fas fa-bars text-sm"></i>
@@ -434,5 +504,15 @@
             });
         }
     });
+
+    // Hamburger Menu Toggle
+    (function() {
+        const btn = document.getElementById('hamburgerMenuBtn');
+        const dropdown = document.getElementById('hamburgerMenuDropdown');
+        const wrapper = document.getElementById('hamburgerMenuWrapper');
+        if (!btn || !dropdown || !wrapper) return;
+        btn.addEventListener('click', function(e){ e.stopPropagation(); dropdown.classList.toggle('hidden'); });
+        document.addEventListener('click', function(e){ if(!wrapper.contains(e.target)) dropdown.classList.add('hidden'); });
+    })();
 </script>
 @endpush

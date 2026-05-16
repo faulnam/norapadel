@@ -107,6 +107,10 @@
                     </div>
                 </div>
                 <div class="border-t border-black/6">
+                    <a href="{{ route('customer.profile.rewards') }}" class="flex items-center justify-between border-b border-black/6 px-6 py-3 transition hover:bg-zinc-50">
+                        <span class="text-sm text-zinc-600"><i class="fas fa-gift mr-2"></i>Reward & Points</span>
+                        <span class="text-sm font-medium text-violet-600">Lihat <i class="fas fa-chevron-right text-xs ml-1"></i></span>
+                    </a>
                     <div class="flex items-center justify-between border-b border-black/6 px-6 py-3">
                         <span class="text-sm text-zinc-600"><i class="fas fa-phone mr-2"></i>Phone</span>
                         <span class="text-sm font-medium text-black">{{ $user->phone ?? '-' }}</span>

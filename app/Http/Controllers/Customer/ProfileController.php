@@ -20,6 +20,17 @@ class ProfileController extends Controller
     }
 
     /**
+     * Show rewards & points page
+     */
+    public function rewards()
+    {
+        $user = auth()->user()->load('pointTransactions');
+        $pointTransactions = $user->pointTransactions()->latest()->paginate(15);
+
+        return view('customer.profile.rewards', compact('user', 'pointTransactions'));
+    }
+
+    /**
      * Update profile
      */
     public function update(Request $request)

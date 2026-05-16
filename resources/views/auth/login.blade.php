@@ -4,13 +4,13 @@
 
 @section('content')
 @include('partials.main-navbar')
-<div class="min-h-[100dvh] w-full flex flex-col md:flex-row bg-white text-zinc-900 antialiased pt-28">
+<div class="min-h-[100dvh] w-full flex flex-col md:flex-row bg-white text-zinc-900 antialiased pt-16 md:pt-20">
     <!-- Left: Form -->
     <section class="flex-1 flex items-center justify-center p-6 md:p-10 overflow-y-auto">
-        <div class="w-full max-w-md">
-            <div class="flex flex-col gap-6">
-                <h1 class="animate-element animate-delay-100 text-4xl md:text-5xl font-light leading-tight tracking-tighter">Welcome <span class="font-semibold">back</span></h1>
-                <p class="animate-element animate-delay-200 text-zinc-500">Access your account and continue your journey with NoraPadel.</p>
+        <div class="w-full max-w-sm">
+            <div class="flex flex-col gap-3">
+                <h1 class="animate-element animate-delay-100 text-3xl md:text-4xl font-light leading-tight tracking-tighter">Welcome <span class="font-semibold">back</span></h1>
+                <p class="animate-element animate-delay-200 text-sm text-zinc-500">Access your account and continue your journey with NoraPadel.</p>
 
                 @if($errors->any())
                     <div class="animate-element animate-delay-250 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
@@ -22,13 +22,13 @@
                     </div>
                 @endif
 
-                <form action="{{ route('login') }}" method="POST" class="space-y-5">
+                <form action="{{ route('login') }}" method="POST" class="space-y-3">
                     @csrf
 
                     <div class="animate-element animate-delay-300">
                         <label for="email" class="text-sm font-medium text-zinc-500">Email Address</label>
                         <div class="mt-1 rounded-2xl border border-zinc-200 bg-zinc-50 transition-colors focus-within:border-violet-400 focus-within:bg-violet-50">
-                            <input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus placeholder="Enter your email address" class="w-full bg-transparent text-sm p-3 rounded-2xl focus:outline-none">
+                            <input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus placeholder="Enter your email address" class="w-full bg-transparent text-sm p-2.5 rounded-2xl focus:outline-none">
                         </div>
                     </div>
 
@@ -36,7 +36,7 @@
                         <label for="password" class="text-sm font-medium text-zinc-500">Password</label>
                         <div class="mt-1 rounded-2xl border border-zinc-200 bg-zinc-50 transition-colors focus-within:border-violet-400 focus-within:bg-violet-50">
                             <div class="relative">
-                                <input type="password" id="password" name="password" required placeholder="Enter your password" class="w-full bg-transparent text-sm p-3 pr-12 rounded-2xl focus:outline-none">
+                                <input type="password" id="password" name="password" required placeholder="Enter your password" class="w-full bg-transparent text-sm p-2.5 pr-12 rounded-2xl focus:outline-none">
                                 <button type="button" id="togglePassword" class="absolute inset-y-0 right-3 flex items-center text-zinc-400 hover:text-zinc-700" aria-label="Toggle password">
                                     <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
                                     <svg id="eyeOffIcon" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.94 17.94A10.94 10.94 0 0112 20c-7 0-11-8-11-8a19.77 19.77 0 014.22-5.36M9.9 4.24A10.94 10.94 0 0112 4c7 0 11 8 11 8a19.77 19.77 0 01-3.16 4.19M1 1l22 22M14.12 14.12a3 3 0 11-4.24-4.24"/></svg>
@@ -53,7 +53,7 @@
                         <a href="{{ route('password.request') }}" class="text-violet-500 hover:underline transition-colors">Reset password</a>
                     </div>
 
-                    <button type="submit" class="animate-element animate-delay-600 w-full rounded-2xl bg-zinc-900 py-3 font-medium text-white hover:bg-zinc-800 transition-colors">
+                    <button type="submit" class="animate-element animate-delay-600 w-full rounded-2xl bg-zinc-900 py-2.5 font-medium text-white hover:bg-zinc-800 transition-colors">
                         Sign In
                     </button>
                 </form>

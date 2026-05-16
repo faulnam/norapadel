@@ -699,6 +699,10 @@
                 <i class="fas fa-tags"></i> Shipping Discounts
             </a>
             
+            <a href="{{ route('admin.vouchers.index') }}" class="nav-link {{ request()->routeIs('admin.vouchers.*') ? 'active' : '' }}">
+                <i class="fas fa-ticket-alt"></i> Vouchers
+            </a>
+            
             <a href="{{ route('admin.history.index') }}" class="nav-link {{ request()->routeIs('admin.history.*') ? 'active' : '' }}">
                 <i class="fas fa-history"></i> History
             </a>
