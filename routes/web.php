@@ -108,6 +108,9 @@ Route::get('/apparel', [PageController::class, 'apparel'])->name('apparel');
 Route::get('/accessories', [PageController::class, 'apparel'])->name('accessories');
 Route::get('/shop', [PageController::class, 'shop'])->name('shop');
 Route::get('/help-center', [PageController::class, 'helpCenter'])->name('help-center');
+Route::get('/policy', [PageController::class, 'policy'])->name('policy');
+Route::get('/return-refund', [PageController::class, 'returnRefund'])->name('return-refund');
+Route::get('/guarantee', [PageController::class, 'guarantee'])->name('guarantee');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::post('/contact', [PageController::class, 'submitContact'])->name('contact.submit');
 Route::get('/produk', [PageController::class, 'produkIndex'])->name('produk.index');
@@ -129,6 +132,10 @@ Route::middleware('guest')->group(function () {
     Route::post('/forgot-password/request-otp', [AuthController::class, 'requestPasswordResetOtp'])->name('password.request-otp')->middleware('throttle:3,1');
     Route::post('/forgot-password/verify-otp', [AuthController::class, 'verifyPasswordResetOtp'])->name('password.verify-otp')->middleware('throttle:5,1');
     Route::post('/forgot-password/reset', [AuthController::class, 'resetPassword'])->name('password.reset');
+
+    // Google OAuth Routes
+    Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])->name('google.login');
+    Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback'])->name('google.callback');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');

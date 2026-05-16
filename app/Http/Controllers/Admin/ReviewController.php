@@ -8,11 +8,21 @@ use Illuminate\Http\Request;
 
 class ReviewController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $reviews = Review::with(['product', 'user'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(20);
+        $query = Review::with(['product', 'user']);
+
+        // Filter by status
+        if ($request->filled('status')) {
+            $query->where('is_approved', $request->status === 'approved');
+        }
+
+        // Filter by rating
+        if ($request->filled('rating')) {
+            $query->where('rating', $request->rating);
+        }
+
+        $reviews = $query->orderBy('created_at', 'desc')->paginate(20);
 
         return view('admin.reviews.index', compact('reviews'));
     }

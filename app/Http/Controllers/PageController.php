@@ -478,6 +478,30 @@ class PageController extends Controller
     }
 
     /**
+     * Show privacy policy page
+     */
+    public function policy()
+    {
+        return view('pages.policy');
+    }
+
+    /**
+     * Show return and refund page
+     */
+    public function returnRefund()
+    {
+        return view('pages.return-refund');
+    }
+
+    /**
+     * Show guarantee page
+     */
+    public function guarantee()
+    {
+        return view('pages.guarantee');
+    }
+
+    /**
      * Show contact page
      */
     public function contact()
@@ -567,15 +591,16 @@ class PageController extends Controller
             abort(404);
         }
 
-        // Get reviews with user data
+        // Get reviews with user data (max 10 untuk tampilan detail)
         $reviews = $product->reviews()
             ->with('user')
             ->approved()
             ->latest()
+            ->take(10)
             ->get();
 
-        // Calculate review statistics
-        $totalReviews = $reviews->count();
+        // Total approved reviews untuk statistik
+        $totalReviews = $product->reviews()->approved()->count();
         $avgRating = $totalReviews > 0 ? round($reviews->avg('rating'), 1) : 0;
         
         // Rating breakdown
@@ -584,20 +609,6 @@ class PageController extends Controller
             $count = $reviews->where('rating', $i)->count();
             $ratingBreakdown[$i] = $totalReviews > 0 ? round(($count / $totalReviews) * 100) : 0;
         }
-
-        // Quality average (0-100 scale)
-        $avgQuality = $totalReviews > 0 ? round($reviews->avg('quality_rating')) : 0;
-        
-        // Sizing average (0-100 scale, 50 = true to size)
-        $avgSizing = $totalReviews > 0 ? round($reviews->avg('sizing_rating')) : 50;
-        
-        // Usual sizes distribution
-        $usualSizes = $reviews->whereNotNull('usual_size')
-            ->groupBy('usual_size')
-            ->map(function($group) {
-                return $group->count();
-            })
-            ->sortDesc();
 
         $relatedProducts = Product::active()
             ->inStock()
@@ -614,16 +625,13 @@ class PageController extends Controller
             ->get();
 
         return view('pages.product-detail', compact(
-            'product', 
-            'relatedProducts', 
+            'product',
+            'relatedProducts',
             'testimonials',
             'reviews',
             'totalReviews',
             'avgRating',
-            'ratingBreakdown',
-            'avgQuality',
-            'avgSizing',
-            'usualSizes'
+            'ratingBreakdown'
         ));
     }
 

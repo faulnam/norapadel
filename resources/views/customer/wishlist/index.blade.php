@@ -206,12 +206,25 @@
             </nav>
 
             <div class="flex items-center gap-3 text-black/80" id="navIcons">
+                <!-- Desktop Inline Search -->
+                <div class="hidden md:flex items-center relative" id="navSearchWrapper">
+                    <i class="fas fa-search absolute left-3 text-sm text-zinc-400 pointer-events-none transition-colors duration-300" id="navSearchIcon"></i>
+                    <input type="text" id="navSearchInput" placeholder="Cari produk..."
+                           class="bg-zinc-50 border border-zinc-200 rounded-full pl-9 pr-4 py-1.5 text-sm text-black placeholder-zinc-400 focus:outline-none focus:bg-white focus:border-zinc-300 w-40 lg:w-48 transition-all duration-300"
+                           autocomplete="off">
+                </div>
+
+                <!-- Mobile Search Icon -->
+                <button type="button" id="searchToggleBtn" class="transition duration-300 hover:text-black md:hidden" aria-label="Search" title="Cari Produk">
+                    <i class="fas fa-search text-sm"></i>
+                </button>
+
                 <!-- Hamburger Menu with combined elements -->
-                <div class="relative" id="hamburgerMenuWrapper">
-                    <button type="button" id="hamburgerMenuBtn" class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/15 bg-transparent text-black transition duration-300 hover:border-black/30">
+                <div class="relative" id="hamburgerMenuWrapperCustom">
+                    <button type="button" id="hamburgerMenuBtnCustom" class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/15 bg-transparent text-black transition duration-300 hover:border-black/30">
                         <i class="fas fa-bars text-sm"></i>
                     </button>
-                    <div id="hamburgerMenuDropdown" class="absolute right-0 mt-2 w-48 z-50 hidden">
+                    <div id="hamburgerMenuDropdownCustom" class="absolute right-0 mt-2 w-48 z-50 hidden">
                         <div class="bg-white rounded-lg shadow-lg border border-zinc-100 overflow-hidden">
                             <!-- Login -->
                             @guest
@@ -219,7 +232,7 @@
                                     <i class="fas fa-sign-in-alt text-zinc-500 text-sm"></i>
                                     <span class="text-sm text-zinc-700">Login</span>
                                 </a>
-                            @endauth
+                            @endguest
                             
                             <!-- Language Switcher -->
                             <div class="border-b border-zinc-100">
@@ -317,6 +330,66 @@
             </nav>
         </div>
     </header>
+
+    <!-- ============================ -->
+    <!-- Modern Search Overlay -->
+    <!-- ============================ -->
+    <div id="searchOverlay" class="fixed inset-0 z-[100] hidden opacity-0 transition-opacity duration-300" aria-modal="true" role="dialog">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" id="searchBackdrop"></div>
+
+        <!-- Search Panel -->
+        <div class="relative mx-auto mt-20 w-full max-w-3xl px-4 sm:px-6 transform transition-all duration-300 -translate-y-4" id="searchPanel">
+            <div class="overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-black/5">
+                <!-- Search Input -->
+                <div class="flex items-center gap-3 border-b border-zinc-100 px-5 py-4">
+                    <i class="fas fa-search text-zinc-400"></i>
+                    <input
+                        type="text"
+                        id="searchInput"
+                        placeholder="Cari produk, brand, atau kategori..."
+                        class="flex-1 bg-transparent text-base text-zinc-900 placeholder-zinc-400 focus:outline-none"
+                        autocomplete="off"
+                        spellcheck="false"
+                    >
+                    <div id="searchLoading" class="hidden">
+                        <svg class="h-5 w-5 animate-spin text-zinc-400" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                        </svg>
+                    </div>
+                    <button type="button" id="searchCloseBtn" class="rounded-md p-1 text-zinc-400 transition hover:bg-zinc-100 hover:text-zinc-700" aria-label="Tutup">
+                        <i class="fas fa-times text-sm"></i>
+                    </button>
+                    <span class="hidden text-[10px] font-medium uppercase tracking-wider text-zinc-400 sm:inline-block">ESC</span>
+                </div>
+
+                <!-- Results Area -->
+                <div id="searchResultsArea" class="max-h-[60vh] overflow-y-auto">
+                    <!-- Initial State -->
+                    <div id="searchInitial" class="px-6 py-12 text-center">
+                        <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-zinc-100">
+                            <i class="fas fa-search text-zinc-400"></i>
+                        </div>
+                        <p class="text-sm text-zinc-500">Mulai mengetik untuk mencari produk</p>
+                        <p class="mt-1 text-xs text-zinc-400">Cari berdasarkan nama, brand, atau kategori</p>
+                    </div>
+
+                    <!-- Empty State -->
+                    <div id="searchEmpty" class="hidden px-6 py-12 text-center">
+                        <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-zinc-100">
+                            <i class="fas fa-box-open text-zinc-400"></i>
+                        </div>
+                        <p class="text-sm font-medium text-zinc-700">No products found</p>
+                        <p class="mt-1 text-xs text-zinc-400">Coba kata kunci lain</p>
+                    </div>
+
+                    <!-- Results List -->
+                    <div id="searchResults" class="hidden divide-y divide-zinc-100"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="mx-auto w-full max-w-7xl px-6 py-8 pt-16 md:px-10 md:py-12 md:pt-0 lg:px-12 lg:py-16">
         <h3 class="mb-6 text-3xl font-semibold tracking-tight text-black sm:text-4xl">
@@ -482,12 +555,207 @@
 
     // Hamburger Menu Toggle
     (function() {
-        const btn = document.getElementById('hamburgerMenuBtn');
-        const dropdown = document.getElementById('hamburgerMenuDropdown');
-        const wrapper = document.getElementById('hamburgerMenuWrapper');
+        const btn = document.getElementById('hamburgerMenuBtnCustom');
+        const dropdown = document.getElementById('hamburgerMenuDropdownCustom');
+        const wrapper = document.getElementById('hamburgerMenuWrapperCustom');
         if (!btn || !dropdown || !wrapper) return;
         btn.addEventListener('click', function(e){ e.stopPropagation(); dropdown.classList.toggle('hidden'); });
         document.addEventListener('click', function(e){ if(!wrapper.contains(e.target)) dropdown.classList.add('hidden'); });
+    })();
+
+    // Mega Dropdown Hover Control
+    (function() {
+        const dropdownContainers = document.querySelectorAll('[data-dropdown]');
+        let activeDropdown = null;
+        let hoverTimeout = null;
+
+        dropdownContainers.forEach(container => {
+            const dropdown = container.querySelector('.absolute');
+
+            container.addEventListener('mouseenter', () => {
+                if (hoverTimeout) {
+                    clearTimeout(hoverTimeout);
+                    hoverTimeout = null;
+                }
+
+                dropdownContainers.forEach(otherContainer => {
+                    if (otherContainer !== container) {
+                        const otherDropdown = otherContainer.querySelector('.absolute');
+                        if (otherDropdown) {
+                            otherDropdown.classList.add('invisible', 'opacity-0', 'translate-y-[-10px]');
+                            otherDropdown.classList.remove('visible', 'opacity-100', 'translate-y-0');
+                        }
+                    }
+                });
+
+                if (dropdown) {
+                    dropdown.classList.remove('invisible', 'opacity-0', 'translate-y-[-10px]');
+                    dropdown.classList.add('visible', 'opacity-100', 'translate-y-0');
+                }
+                activeDropdown = container;
+            });
+
+            container.addEventListener('mouseleave', () => {
+                hoverTimeout = setTimeout(() => {
+                    if (dropdown) {
+                        dropdown.classList.add('invisible', 'opacity-0', 'translate-y-[-10px]');
+                        dropdown.classList.remove('visible', 'opacity-100', 'translate-y-0');
+                    }
+                    activeDropdown = null;
+                }, 100);
+            });
+
+            if (dropdown) {
+                dropdown.addEventListener('mouseenter', () => {
+                    if (hoverTimeout) {
+                        clearTimeout(hoverTimeout);
+                        hoverTimeout = null;
+                    }
+                });
+
+                dropdown.addEventListener('mouseleave', () => {
+                    hoverTimeout = setTimeout(() => {
+                        dropdown.classList.add('invisible', 'opacity-0', 'translate-y-[-10px]');
+                        dropdown.classList.remove('visible', 'opacity-100', 'translate-y-0');
+                        activeDropdown = null;
+                    }, 100);
+                });
+            }
+        });
+    })();
+
+    // Modern Search Overlay
+    (function() {
+        const overlay = document.getElementById('searchOverlay');
+        const panel = document.getElementById('searchPanel');
+        const toggleBtn = document.getElementById('searchToggleBtn');
+        const closeBtn = document.getElementById('searchCloseBtn');
+        const backdrop = document.getElementById('searchBackdrop');
+        const input = document.getElementById('searchInput');
+        const loading = document.getElementById('searchLoading');
+        const initialState = document.getElementById('searchInitial');
+        const emptyState = document.getElementById('searchEmpty');
+        const resultsList = document.getElementById('searchResults');
+
+        if (!overlay || !toggleBtn || !input) return;
+
+        let debounceTimer;
+        let currentController;
+
+        function openOverlay() {
+            overlay.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            requestAnimationFrame(() => {
+                overlay.classList.remove('opacity-0');
+                overlay.classList.add('opacity-100');
+                panel.classList.remove('-translate-y-4');
+                panel.classList.add('translate-y-0');
+                setTimeout(() => input.focus(), 50);
+            });
+        }
+
+        function closeOverlay() {
+            overlay.classList.add('opacity-0');
+            overlay.classList.remove('opacity-100');
+            panel.classList.add('-translate-y-4');
+            panel.classList.remove('translate-y-0');
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+                document.body.style.overflow = '';
+                input.value = '';
+                initialState.classList.remove('hidden');
+                emptyState.classList.add('hidden');
+                resultsList.classList.add('hidden');
+            }, 300);
+        }
+
+        function escapeHtml(s) {
+            return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        }
+
+        function renderResults(products) {
+            resultsList.innerHTML = products.map(p => `
+                <a href="${escapeHtml(p.detail_url)}" class="flex items-center gap-4 px-5 py-3 transition hover:bg-zinc-50">
+                    <div class="h-14 w-14 flex-shrink-0 overflow-hidden rounded-lg bg-zinc-100">
+                        <img src="${escapeHtml(p.image_url)}" alt="${escapeHtml(p.name)}" class="h-full w-full object-cover" onerror="this.onerror=null;this.src='/images/logo.png';" loading="lazy">
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <p class="truncate text-sm font-medium text-zinc-900">${escapeHtml(p.name)}</p>
+                        <div class="mt-0.5 flex items-center gap-2 text-xs text-zinc-500">
+                            ${p.brand ? `<span class="font-medium">${escapeHtml(p.brand)}</span>` : ''}
+                            ${p.brand && p.category_label ? '<span class="text-zinc-300">·</span>' : ''}
+                            ${p.category_label ? `<span>${escapeHtml(p.category_label)}</span>` : ''}
+                        </div>
+                    </div>
+                    <p class="flex-shrink-0 text-sm font-semibold text-zinc-900">${escapeHtml(p.formatted_price)}</p>
+                </a>
+            `).join('');
+        }
+
+        async function performSearch(query) {
+            if (currentController) currentController.abort();
+            currentController = new AbortController();
+            loading.classList.remove('hidden');
+            try {
+                const res = await fetch(`/api/search-products?q=${encodeURIComponent(query)}`, {
+                    signal: currentController.signal,
+                    headers: { 'Accept': 'application/json' }
+                });
+                const data = await res.json();
+                loading.classList.add('hidden');
+                if (data.products && data.products.length > 0) {
+                    renderResults(data.products);
+                    initialState.classList.add('hidden');
+                    emptyState.classList.add('hidden');
+                    resultsList.classList.remove('hidden');
+                } else {
+                    initialState.classList.add('hidden');
+                    emptyState.classList.remove('hidden');
+                    resultsList.classList.add('hidden');
+                }
+            } catch (err) {
+                if (err.name !== 'AbortError') {
+                    loading.classList.add('hidden');
+                    console.error('Search error:', err);
+                }
+            }
+        }
+
+        input.addEventListener('input', function() {
+            const q = this.value.trim();
+            clearTimeout(debounceTimer);
+            if (q.length < 2) {
+                loading.classList.add('hidden');
+                if (currentController) currentController.abort();
+                initialState.classList.remove('hidden');
+                emptyState.classList.add('hidden');
+                resultsList.classList.add('hidden');
+                return;
+            }
+            debounceTimer = setTimeout(() => performSearch(q), 250);
+        });
+
+        toggleBtn.addEventListener('click', openOverlay);
+        closeBtn.addEventListener('click', closeOverlay);
+        backdrop.addEventListener('click', closeOverlay);
+
+        const navSearchInputEl = document.getElementById('navSearchInput');
+        if (navSearchInputEl) {
+            navSearchInputEl.addEventListener('focus', function() {
+                openOverlay();
+                const q = this.value.trim();
+                if (q.length >= 2) {
+                    input.value = q;
+                    performSearch(q);
+                }
+            });
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && !overlay.classList.contains('hidden')) {
+                closeOverlay();
+            }
+        });
     })();
 </script>
 @endpush

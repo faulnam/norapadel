@@ -69,7 +69,7 @@ class Product extends Model
             self::CATEGORY_ORIGINAL => 'Raket Padel',
             self::CATEGORY_PEDAS => 'Aksesori Padel',
             self::CATEGORY_SHOES => 'Shoes Padel',
-            self::CATEGORY_SHOES => 'New Arrivals',
+            self::CATEGORY_ARRIVALS => 'New Arrivals',
         ];
     }
 

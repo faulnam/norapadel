@@ -121,8 +121,10 @@
                 <div>
                     <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">Support</h3>
                     <ul class="space-y-2">
-                        <li><a href="{{ route('tentang') }}" class="hover:underline">Help Center</a></li>
-                        <li><a href="{{ route('tentang') }}" class="hover:underline">Contact</a></li>
+                        <li><a href="{{ route('policy') }}" class="hover:underline">Policy</a></li>
+                        <li><a href="{{ route('return-refund') }}" class="hover:underline">Return & Refund</a></li>
+                        <li><a href="{{ route('guarantee') }}" class="hover:underline">Nora Guarantee</a></li>
+                        <li><a href="{{ route('help-center') }}" class="hover:underline">Help Center</a></li>
                     </ul>
                 </div>
                 <div>
@@ -166,8 +168,10 @@
                         <i class="fas fa-chevron-down text-[10px] text-zinc-500 transition group-open:rotate-180"></i>
                     </summary>
                     <ul class="mt-3 space-y-2 text-sm">
-                        <li><a href="{{ route('tentang') }}" class="hover:underline">Help Center</a></li>
-                        <li><a href="{{ route('tentang') }}" class="hover:underline">Contact</a></li>
+                        <li><a href="{{ route('policy') }}" class="hover:underline">Policy</a></li>
+                        <li><a href="{{ route('return-refund') }}" class="hover:underline">Return & Refund</a></li>
+                        <li><a href="{{ route('guarantee') }}" class="hover:underline">Nora Guarantee</a></li>
+                        <li><a href="{{ route('help-center') }}" class="hover:underline">Help Center</a></li>
                     </ul>
                 </details>
 

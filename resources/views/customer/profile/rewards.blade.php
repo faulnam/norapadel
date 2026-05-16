@@ -235,10 +235,52 @@
         </div>
     </div>
 
-    <footer class="border-t border-black/10 bg-white py-14 text-sm text-zinc-500">
+    <footer class="border-t border-black/10 bg-white py-10 text-sm text-zinc-500">
         <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
-            <div class="text-center">
-                <p class="text-xs text-zinc-400">&copy; {{ now()->year }} NoraPadel. All rights reserved.</p>
+            <div class="hidden grid-cols-2 gap-8 md:grid md:grid-cols-4">
+                <div>
+                    <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">Support</h3>
+                    <ul class="space-y-2">
+                        <li><a href="{{ route('policy') }}" class="hover:underline">Policy</a></li>
+                        <li><a href="{{ route('return-refund') }}" class="hover:underline">Return & Refund</a></li>
+                        <li><a href="{{ route('guarantee') }}" class="hover:underline">Nora Guarantee</a></li>
+                        <li><a href="{{ route('help-center') }}" class="hover:underline">Help Center</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">Account</h3>
+                    <ul class="space-y-2">
+                        <li><a href="{{ route('customer.profile.index') }}" class="hover:underline">Profile</a></li>
+                        <li><a href="{{ route('customer.orders.index') }}" class="hover:underline">Orders</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="space-y-2 md:hidden">
+                <details class="group rounded-xl border border-black/10 bg-white px-4 py-3">
+                    <summary class="flex cursor-pointer list-none items-center justify-between text-xs font-semibold uppercase tracking-wide text-black">
+                        Support
+                        <i class="fas fa-chevron-down text-[10px] text-zinc-500 transition group-open:rotate-180"></i>
+                    </summary>
+                    <ul class="mt-3 space-y-2 text-sm">
+                        <li><a href="{{ route('policy') }}" class="hover:underline">Policy</a></li>
+                        <li><a href="{{ route('return-refund') }}" class="hover:underline">Return & Refund</a></li>
+                        <li><a href="{{ route('guarantee') }}" class="hover:underline">Nora Guarantee</a></li>
+                        <li><a href="{{ route('help-center') }}" class="hover:underline">Help Center</a></li>
+                    </ul>
+                </details>
+                <details class="group rounded-xl border border-black/10 bg-white px-4 py-3">
+                    <summary class="flex cursor-pointer list-none items-center justify-between text-xs font-semibold uppercase tracking-wide text-black">
+                        Account
+                        <i class="fas fa-chevron-down text-[10px] text-zinc-500 transition group-open:rotate-180"></i>
+                    </summary>
+                    <ul class="mt-3 space-y-2 text-sm">
+                        <li><a href="{{ route('customer.profile.index') }}" class="hover:underline">Profile</a></li>
+                        <li><a href="{{ route('customer.orders.index') }}" class="hover:underline">Orders</a></li>
+                    </ul>
+                </details>
+            </div>
+            <div class="mx-auto mt-8 w-full max-w-7xl border-t border-black/10 px-6 pt-5 text-xs text-zinc-400 md:px-10 lg:px-12 text-center">
+                © {{ now()->year }} NoraPadel. All rights reserved.
             </div>
         </div>
     </footer>

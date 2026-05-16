@@ -3,10 +3,24 @@
 @section('page-title', 'Manajemen Testimoni')
 
 @section('content')
+<!-- Tabs -->
+<ul class="nav nav-tabs mb-3">
+    <li class="nav-item">
+        <a class="nav-link active" href="{{ route('admin.testimonials.index') }}">
+            <i class="fas fa-images me-1"></i>Testimoni Gambar <small class="text-muted">(home)</small>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ route('admin.reviews.index') }}">
+            <i class="fas fa-comments me-1"></i>Review Produk <small class="text-muted">(detail)</small>
+        </a>
+    </li>
+</ul>
+
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
         <div>
-            <i class="fas fa-comment me-2"></i>Daftar Testimoni
+            <i class="fas fa-comment me-2"></i>Daftar Testimoni Gambar
         </div>
         <a href="{{ route('admin.testimonials.create') }}" class="btn btn-primary btn-sm">
             <i class="fas fa-plus me-1"></i>Tambah Testimoni

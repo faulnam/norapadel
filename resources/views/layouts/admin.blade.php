@@ -674,8 +674,8 @@
             
             
             
-            <a href="{{ route('admin.testimonials.index') }}" class="nav-link {{ request()->routeIs('admin.testimonials.*') ? 'active' : '' }}">
-                <i class="fas fa-star"></i> Testimonials
+            <a href="{{ route('admin.testimonials.index') }}" class="nav-link {{ request()->routeIs('admin.testimonials.*') || request()->routeIs('admin.reviews.*') ? 'active' : '' }}">
+                <i class="fas fa-star"></i> Testimonials & Reviews
                 @php
                     $pendingTestimonials = \App\Models\Testimonial::where('is_approved', false)->count();
                 @endphp

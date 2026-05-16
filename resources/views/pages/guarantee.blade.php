@@ -1,16 +1,14 @@
 @extends('layouts.app')
 
-@section('title', 'Contact - NoraPadel')
+@section('title', 'Nora Guarantee - NoraPadel')
 
 @section('content')
     <style>
-        #mainNavbar {
-            display: none !important;
-        }
+        #mainNavbar { display: none !important; }
     </style>
 
     <div class="bg-white text-black antialiased">
-   <header class="fixed left-0 top-0 z-50 w-full border-b border-black/6 bg-white/80 backdrop-blur-xl transition-all duration-300" id="mainHeader">
+        <header class="fixed left-0 top-0 z-50 w-full border-b border-black/6 bg-white/80 backdrop-blur-xl transition-all duration-300" id="mainHeader">
             <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-10 lg:px-12">
                 <a href="{{ route('home') }}" class="flex items-center gap-2">
                     <img src="{{ asset('storage/logo.png') }}" alt="NoraPadel" class="h-7 w-7 object-contain" loading="lazy">
@@ -234,11 +232,11 @@
                     </button>
 
                     <!-- Hamburger Menu with combined elements -->
-                    <div class="relative" id="hamburgerMenuWrapper">
-                        <button type="button" id="hamburgerMenuBtn" class="inline-flex h-9 w-9 items-center justify-center rounded border border-black/15 bg-transparent text-black transition duration-300 hover:bg-black/5">
+                    <div class="relative" id="hamburgerMenuWrapperCustom">
+                        <button type="button" id="hamburgerMenuBtnCustom" class="inline-flex h-9 w-9 items-center justify-center rounded border border-black/15 bg-transparent text-black transition duration-300 hover:bg-black/5">
                             <i class="fas fa-bars text-sm"></i>
                         </button>
-                        <div id="hamburgerMenuDropdown" class="absolute right-0 mt-2 w-48 z-50 hidden">
+                        <div id="hamburgerMenuDropdownCustom" class="absolute right-0 mt-2 w-48 z-50 hidden">
                             <div class="bg-white rounded-lg shadow-lg border border-zinc-100 overflow-hidden">
                                 <!-- Login -->
                                 @guest
@@ -409,54 +407,71 @@
             </div>
         </div>
 
-    <main class="pt-16">
-    <section class="bg-[#f8fafc] pt-8 pb-14 lg:pt-10 lg:pb-16">
-            <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
-                <div class="mx-auto max-w-3xl text-center">
-                    <p class="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">Support</p>
-                    <h1 class="mt-3 text-3xl font-semibold tracking-tight text-black sm:text-4xl">Contact NoraPadel</h1>
-                    <p class="mt-4 text-zinc-600">Send your questions. We will respond as soon as possible during business hours.</p>
-                </div>
-
-                <div class="mx-auto mt-12 grid max-w-5xl gap-8 lg:grid-cols-[1fr_1.35fr]">
-                    <div class="rounded-2xl border border-black/10 bg-white p-6 shadow-sm">
-                        <h2 class="text-lg font-semibold text-black">Contact Information</h2>
-                        <ul class="mt-5 space-y-3 text-sm text-zinc-600">
-                            <li><span class="font-medium text-black">WhatsApp:</span> {{ config('branding.phone', '08511735858') }}</li>
-                            <li><span class="font-medium text-black">Email:</span> support@norapadel.com</li>
-                            <li><span class="font-medium text-black">Address:</span> {{ config('branding.address', 'Citraland, Surabaya, East Java, Indonesia') }}</li>
-                        </ul>
+        <main class="pt-16">
+            <section class="bg-[#f8fafc] pt-8 pb-14 lg:pt-10 lg:pb-16">
+                <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
+                    <div class="mx-auto max-w-3xl text-center">
+                        <p class="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">Our Promise</p>
+                        <h1 class="mt-3 text-3xl font-semibold tracking-tight text-black sm:text-4xl">Nora Guarantee</h1>
+                        <p class="mt-4 text-zinc-600">Shop with confidence knowing every product is backed by our commitment.</p>
                     </div>
 
-                    <form method="POST" action="{{ route('contact.submit') }}" class="rounded-2xl border border-black/10 bg-white p-6 shadow-sm">
-                        @csrf
-                        <div class="grid gap-5 sm:grid-cols-2">
-                            <div class="sm:col-span-1">
-                                <label for="name" class="mb-2 block text-sm font-medium text-zinc-700">Name</label>
-                                <input id="name" name="name" type="text" value="{{ old('name') }}" required class="w-full rounded-xl border border-zinc-300 px-4 py-2.5 text-sm outline-none transition focus:border-black" />
-                                @error('name')<p class="mt-1 text-xs text-rose-600">{{ $message }}</p>@enderror
+                    <div class="mx-auto mt-12 max-w-3xl rounded-2xl border border-black/10 bg-white p-6 shadow-sm md:p-8">
+                        <div class="prose prose-zinc max-w-none text-sm text-zinc-600">
+                            <div class="mb-6 flex items-center gap-3">
+                                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-black text-white">
+                                    <i class="fas fa-shield-alt text-base"></i>
+                                </div>
+                                <h2 class="text-lg font-semibold text-black">100% Authentic Products</h2>
                             </div>
-                            <div class="sm:col-span-1">
-                                <label for="email" class="mb-2 block text-sm font-medium text-zinc-700">Email</label>
-                                <input id="email" name="email" type="email" value="{{ old('email') }}" required class="w-full rounded-xl border border-zinc-300 px-4 py-2.5 text-sm outline-none transition focus:border-black" />
-                                @error('email')<p class="mt-1 text-xs text-rose-600">{{ $message }}</p>@enderror
+                            <p class="mt-2">Every product sold at NoraPadel is 100% authentic and sourced directly from authorized distributors or the brands themselves. We never sell counterfeit or replica items.</p>
+
+                            <div class="mb-6 mt-8 flex items-center gap-3">
+                                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-black text-white">
+                                    <i class="fas fa-check-circle text-base"></i>
+                                </div>
+                                <h2 class="text-lg font-semibold text-black">Quality Inspection</h2>
                             </div>
-                            <div class="sm:col-span-2">
-                                <label for="subject" class="mb-2 block text-sm font-medium text-zinc-700">Subject</label>
-                                <input id="subject" name="subject" type="text" value="{{ old('subject') }}" required class="w-full rounded-xl border border-zinc-300 px-4 py-2.5 text-sm outline-none transition focus:border-black" />
-                                @error('subject')<p class="mt-1 text-xs text-rose-600">{{ $message }}</p>@enderror
+                            <p class="mt-2">All rackets, shoes, and gear are inspected by our team before shipping. We check for defects, verify string tension accuracy, and ensure every item meets our standards.</p>
+
+                            <div class="mb-6 mt-8 flex items-center gap-3">
+                                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-black text-white">
+                                    <i class="fas fa-undo text-base"></i>
+                                </div>
+                                <h2 class="text-lg font-semibold text-black">7-Day Return</h2>
                             </div>
-                            <div class="sm:col-span-2">
-                                <label for="message" class="mb-2 block text-sm font-medium text-zinc-700">Message</label>
-                                <textarea id="message" name="message" rows="5" required class="w-full rounded-xl border border-zinc-300 px-4 py-2.5 text-sm outline-none transition focus:border-black">{{ old('message') }}</textarea>
-                                @error('message')<p class="mt-1 text-xs text-rose-600">{{ $message }}</p>@enderror
+                            <p class="mt-2">Not satisfied? Return your unused, unopened purchase within 7 days for a full refund. See our <a href="{{ route('return-refund') }}" class="underline hover:text-black">Return & Refund Policy</a> for full details.</p>
+
+                            <div class="mb-6 mt-8 flex items-center gap-3">
+                                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-black text-white">
+                                    <i class="fas fa-tools text-base"></i>
+                                </div>
+                                <h2 class="text-lg font-semibold text-black">Stringing Warranty</h2>
                             </div>
+                            <p class="mt-2">Rackets strung by NoraPadel come with a 30-day stringing warranty. If the strings break within 30 days under normal playing conditions, we will restring your racket free of charge.</p>
+
+                            <div class="mb-6 mt-8 flex items-center gap-3">
+                                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-black text-white">
+                                    <i class="fas fa-headset text-base"></i>
+                                </div>
+                                <h2 class="text-lg font-semibold text-black">Expert Support</h2>
+                            </div>
+                            <p class="mt-2">Our team consists of padel enthusiasts and certified stringers. Whether you need advice on racket selection, string tension, or shoe sizing, we are here to help you make the right choice.</p>
+
+                            <div class="mb-6 mt-8 flex items-center gap-3">
+                                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-black text-white">
+                                    <i class="fas fa-lock text-base"></i>
+                                </div>
+                                <h2 class="text-lg font-semibold text-black">Secure Shopping</h2>
+                            </div>
+                            <p class="mt-2">Your payment and personal information are protected with industry-standard encryption. We partner with trusted payment gateways to ensure every transaction is safe.</p>
+
+                            <h2 class="mt-8 text-lg font-semibold text-black">Questions?</h2>
+                            <p class="mt-2">If you have any questions about the Nora Guarantee, feel free to reach out at support@norapadel.com or WhatsApp {{ config('branding.phone', '08511735858') }}.</p>
                         </div>
-                        <button type="submit" class="mt-6 inline-flex rounded-full bg-black px-5 py-2.5 text-sm font-medium text-white transition hover:bg-zinc-800">Send Message</button>
-                    </form>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
         </main>
     </div>
 @endsection
@@ -466,7 +481,6 @@
         (function () {
             const mobileMenuToggle = document.querySelector('[data-mobile-menu-toggle]');
             const mobileMenu = document.querySelector('[data-mobile-menu]');
-
             if (mobileMenuToggle && mobileMenu) {
                 mobileMenuToggle.addEventListener('click', () => {
                     mobileMenu.classList.toggle('hidden');
@@ -475,11 +489,10 @@
             }
         })();
 
-        // Hamburger Menu Toggle - independent IIFE
         (function() {
-            const btn = document.getElementById('hamburgerMenuBtn');
-            const dropdown = document.getElementById('hamburgerMenuDropdown');
-            const wrapper = document.getElementById('hamburgerMenuWrapper');
+            const btn = document.getElementById('hamburgerMenuBtnCustom');
+            const dropdown = document.getElementById('hamburgerMenuDropdownCustom');
+            const wrapper = document.getElementById('hamburgerMenuWrapperCustom');
             if (!btn || !dropdown || !wrapper) return;
             btn.addEventListener('click', function(e){ e.stopPropagation(); dropdown.classList.toggle('hidden'); });
             document.addEventListener('click', function(e){ if(!wrapper.contains(e.target)) dropdown.classList.add('hidden'); });

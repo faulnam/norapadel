@@ -1,16 +1,14 @@
 @extends('layouts.app')
 
-@section('title', 'Contact - NoraPadel')
+@section('title', 'Privacy Policy - NoraPadel')
 
 @section('content')
     <style>
-        #mainNavbar {
-            display: none !important;
-        }
+        #mainNavbar { display: none !important; }
     </style>
 
     <div class="bg-white text-black antialiased">
-   <header class="fixed left-0 top-0 z-50 w-full border-b border-black/6 bg-white/80 backdrop-blur-xl transition-all duration-300" id="mainHeader">
+        <header class="fixed left-0 top-0 z-50 w-full border-b border-black/6 bg-white/80 backdrop-blur-xl transition-all duration-300" id="mainHeader">
             <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-10 lg:px-12">
                 <a href="{{ route('home') }}" class="flex items-center gap-2">
                     <img src="{{ asset('storage/logo.png') }}" alt="NoraPadel" class="h-7 w-7 object-contain" loading="lazy">
@@ -234,11 +232,11 @@
                     </button>
 
                     <!-- Hamburger Menu with combined elements -->
-                    <div class="relative" id="hamburgerMenuWrapper">
-                        <button type="button" id="hamburgerMenuBtn" class="inline-flex h-9 w-9 items-center justify-center rounded border border-black/15 bg-transparent text-black transition duration-300 hover:bg-black/5">
+                    <div class="relative" id="hamburgerMenuWrapperCustom">
+                        <button type="button" id="hamburgerMenuBtnCustom" class="inline-flex h-9 w-9 items-center justify-center rounded border border-black/15 bg-transparent text-black transition duration-300 hover:bg-black/5">
                             <i class="fas fa-bars text-sm"></i>
                         </button>
-                        <div id="hamburgerMenuDropdown" class="absolute right-0 mt-2 w-48 z-50 hidden">
+                        <div id="hamburgerMenuDropdownCustom" class="absolute right-0 mt-2 w-48 z-50 hidden">
                             <div class="bg-white rounded-lg shadow-lg border border-zinc-100 overflow-hidden">
                                 <!-- Login -->
                                 @guest
@@ -409,54 +407,44 @@
             </div>
         </div>
 
-    <main class="pt-16">
-    <section class="bg-[#f8fafc] pt-8 pb-14 lg:pt-10 lg:pb-16">
-            <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
-                <div class="mx-auto max-w-3xl text-center">
-                    <p class="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">Support</p>
-                    <h1 class="mt-3 text-3xl font-semibold tracking-tight text-black sm:text-4xl">Contact NoraPadel</h1>
-                    <p class="mt-4 text-zinc-600">Send your questions. We will respond as soon as possible during business hours.</p>
-                </div>
-
-                <div class="mx-auto mt-12 grid max-w-5xl gap-8 lg:grid-cols-[1fr_1.35fr]">
-                    <div class="rounded-2xl border border-black/10 bg-white p-6 shadow-sm">
-                        <h2 class="text-lg font-semibold text-black">Contact Information</h2>
-                        <ul class="mt-5 space-y-3 text-sm text-zinc-600">
-                            <li><span class="font-medium text-black">WhatsApp:</span> {{ config('branding.phone', '08511735858') }}</li>
-                            <li><span class="font-medium text-black">Email:</span> support@norapadel.com</li>
-                            <li><span class="font-medium text-black">Address:</span> {{ config('branding.address', 'Citraland, Surabaya, East Java, Indonesia') }}</li>
-                        </ul>
+        <main class="pt-16">
+            <section class="bg-[#f8fafc] pt-8 pb-14 lg:pt-10 lg:pb-16">
+                <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
+                    <div class="mx-auto max-w-3xl text-center">
+                        <p class="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">Legal</p>
+                        <h1 class="mt-3 text-3xl font-semibold tracking-tight text-black sm:text-4xl">Privacy Policy</h1>
+                        <p class="mt-4 text-zinc-600">Last updated: {{ now()->format('F d, Y') }}</p>
                     </div>
 
-                    <form method="POST" action="{{ route('contact.submit') }}" class="rounded-2xl border border-black/10 bg-white p-6 shadow-sm">
-                        @csrf
-                        <div class="grid gap-5 sm:grid-cols-2">
-                            <div class="sm:col-span-1">
-                                <label for="name" class="mb-2 block text-sm font-medium text-zinc-700">Name</label>
-                                <input id="name" name="name" type="text" value="{{ old('name') }}" required class="w-full rounded-xl border border-zinc-300 px-4 py-2.5 text-sm outline-none transition focus:border-black" />
-                                @error('name')<p class="mt-1 text-xs text-rose-600">{{ $message }}</p>@enderror
-                            </div>
-                            <div class="sm:col-span-1">
-                                <label for="email" class="mb-2 block text-sm font-medium text-zinc-700">Email</label>
-                                <input id="email" name="email" type="email" value="{{ old('email') }}" required class="w-full rounded-xl border border-zinc-300 px-4 py-2.5 text-sm outline-none transition focus:border-black" />
-                                @error('email')<p class="mt-1 text-xs text-rose-600">{{ $message }}</p>@enderror
-                            </div>
-                            <div class="sm:col-span-2">
-                                <label for="subject" class="mb-2 block text-sm font-medium text-zinc-700">Subject</label>
-                                <input id="subject" name="subject" type="text" value="{{ old('subject') }}" required class="w-full rounded-xl border border-zinc-300 px-4 py-2.5 text-sm outline-none transition focus:border-black" />
-                                @error('subject')<p class="mt-1 text-xs text-rose-600">{{ $message }}</p>@enderror
-                            </div>
-                            <div class="sm:col-span-2">
-                                <label for="message" class="mb-2 block text-sm font-medium text-zinc-700">Message</label>
-                                <textarea id="message" name="message" rows="5" required class="w-full rounded-xl border border-zinc-300 px-4 py-2.5 text-sm outline-none transition focus:border-black">{{ old('message') }}</textarea>
-                                @error('message')<p class="mt-1 text-xs text-rose-600">{{ $message }}</p>@enderror
-                            </div>
+                    <div class="mx-auto mt-12 max-w-3xl rounded-2xl border border-black/10 bg-white p-6 shadow-sm md:p-8">
+                        <div class="prose prose-zinc max-w-none text-sm text-zinc-600">
+                            <h2 class="text-lg font-semibold text-black">1. Information We Collect</h2>
+                            <p class="mt-2">We collect information you provide directly to us, such as when you create an account, make a purchase, or contact our support team. This may include your name, email address, phone number, shipping address, and payment information.</p>
+
+                            <h2 class="mt-6 text-lg font-semibold text-black">2. How We Use Your Information</h2>
+                            <p class="mt-2">We use the information we collect to process your orders, communicate with you about your account and orders, send you marketing communications (with your consent), and improve our services.</p>
+
+                            <h2 class="mt-6 text-lg font-semibold text-black">3. Information Sharing</h2>
+                            <p class="mt-2">We do not sell your personal information to third parties. We may share your information with service providers who assist us in operating our business, such as payment processors and shipping carriers.</p>
+
+                            <h2 class="mt-6 text-lg font-semibold text-black">4. Data Security</h2>
+                            <p class="mt-2">We implement appropriate technical and organizational measures to protect your personal data against unauthorized access, alteration, disclosure, or destruction.</p>
+
+                            <h2 class="mt-6 text-lg font-semibold text-black">5. Your Rights</h2>
+                            <p class="mt-2">You have the right to access, correct, or delete your personal information. You may also object to the processing of your data or request data portability.</p>
+
+                            <h2 class="mt-6 text-lg font-semibold text-black">6. Cookies</h2>
+                            <p class="mt-2">We use cookies and similar technologies to enhance your browsing experience, analyze site traffic, and personalize content.</p>
+
+                            <h2 class="mt-6 text-lg font-semibold text-black">7. Changes to This Policy</h2>
+                            <p class="mt-2">We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new policy on this page.</p>
+
+                            <h2 class="mt-6 text-lg font-semibold text-black">8. Contact Us</h2>
+                            <p class="mt-2">If you have any questions about this Privacy Policy, please contact us at support@norapadel.com or via WhatsApp at {{ config('branding.phone', '08511735858') }}.</p>
                         </div>
-                        <button type="submit" class="mt-6 inline-flex rounded-full bg-black px-5 py-2.5 text-sm font-medium text-white transition hover:bg-zinc-800">Send Message</button>
-                    </form>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
         </main>
     </div>
 @endsection
@@ -466,7 +454,6 @@
         (function () {
             const mobileMenuToggle = document.querySelector('[data-mobile-menu-toggle]');
             const mobileMenu = document.querySelector('[data-mobile-menu]');
-
             if (mobileMenuToggle && mobileMenu) {
                 mobileMenuToggle.addEventListener('click', () => {
                     mobileMenu.classList.toggle('hidden');
@@ -475,11 +462,10 @@
             }
         })();
 
-        // Hamburger Menu Toggle - independent IIFE
         (function() {
-            const btn = document.getElementById('hamburgerMenuBtn');
-            const dropdown = document.getElementById('hamburgerMenuDropdown');
-            const wrapper = document.getElementById('hamburgerMenuWrapper');
+            const btn = document.getElementById('hamburgerMenuBtnCustom');
+            const dropdown = document.getElementById('hamburgerMenuDropdownCustom');
+            const wrapper = document.getElementById('hamburgerMenuWrapperCustom');
             if (!btn || !dropdown || !wrapper) return;
             btn.addEventListener('click', function(e){ e.stopPropagation(); dropdown.classList.toggle('hidden'); });
             document.addEventListener('click', function(e){ if(!wrapper.contains(e.target)) dropdown.classList.add('hidden'); });

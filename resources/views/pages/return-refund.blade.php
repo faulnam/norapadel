@@ -1,16 +1,14 @@
 @extends('layouts.app')
 
-@section('title', 'Contact - NoraPadel')
+@section('title', 'Return & Refund - NoraPadel')
 
 @section('content')
     <style>
-        #mainNavbar {
-            display: none !important;
-        }
+        #mainNavbar { display: none !important; }
     </style>
 
     <div class="bg-white text-black antialiased">
-   <header class="fixed left-0 top-0 z-50 w-full border-b border-black/6 bg-white/80 backdrop-blur-xl transition-all duration-300" id="mainHeader">
+        <header class="fixed left-0 top-0 z-50 w-full border-b border-black/6 bg-white/80 backdrop-blur-xl transition-all duration-300" id="mainHeader">
             <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-10 lg:px-12">
                 <a href="{{ route('home') }}" class="flex items-center gap-2">
                     <img src="{{ asset('storage/logo.png') }}" alt="NoraPadel" class="h-7 w-7 object-contain" loading="lazy">
@@ -234,11 +232,11 @@
                     </button>
 
                     <!-- Hamburger Menu with combined elements -->
-                    <div class="relative" id="hamburgerMenuWrapper">
-                        <button type="button" id="hamburgerMenuBtn" class="inline-flex h-9 w-9 items-center justify-center rounded border border-black/15 bg-transparent text-black transition duration-300 hover:bg-black/5">
+                    <div class="relative" id="hamburgerMenuWrapperCustom">
+                        <button type="button" id="hamburgerMenuBtnCustom" class="inline-flex h-9 w-9 items-center justify-center rounded border border-black/15 bg-transparent text-black transition duration-300 hover:bg-black/5">
                             <i class="fas fa-bars text-sm"></i>
                         </button>
-                        <div id="hamburgerMenuDropdown" class="absolute right-0 mt-2 w-48 z-50 hidden">
+                        <div id="hamburgerMenuDropdownCustom" class="absolute right-0 mt-2 w-48 z-50 hidden">
                             <div class="bg-white rounded-lg shadow-lg border border-zinc-100 overflow-hidden">
                                 <!-- Login -->
                                 @guest
@@ -409,54 +407,47 @@
             </div>
         </div>
 
-    <main class="pt-16">
-    <section class="bg-[#f8fafc] pt-8 pb-14 lg:pt-10 lg:pb-16">
-            <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
-                <div class="mx-auto max-w-3xl text-center">
-                    <p class="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">Support</p>
-                    <h1 class="mt-3 text-3xl font-semibold tracking-tight text-black sm:text-4xl">Contact NoraPadel</h1>
-                    <p class="mt-4 text-zinc-600">Send your questions. We will respond as soon as possible during business hours.</p>
-                </div>
-
-                <div class="mx-auto mt-12 grid max-w-5xl gap-8 lg:grid-cols-[1fr_1.35fr]">
-                    <div class="rounded-2xl border border-black/10 bg-white p-6 shadow-sm">
-                        <h2 class="text-lg font-semibold text-black">Contact Information</h2>
-                        <ul class="mt-5 space-y-3 text-sm text-zinc-600">
-                            <li><span class="font-medium text-black">WhatsApp:</span> {{ config('branding.phone', '08511735858') }}</li>
-                            <li><span class="font-medium text-black">Email:</span> support@norapadel.com</li>
-                            <li><span class="font-medium text-black">Address:</span> {{ config('branding.address', 'Citraland, Surabaya, East Java, Indonesia') }}</li>
-                        </ul>
+        <main class="pt-16">
+            <section class="bg-[#f8fafc] pt-8 pb-14 lg:pt-10 lg:pb-16">
+                <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
+                    <div class="mx-auto max-w-3xl text-center">
+                        <p class="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">Customer Service</p>
+                        <h1 class="mt-3 text-3xl font-semibold tracking-tight text-black sm:text-4xl">Return & Refund Policy</h1>
+                        <p class="mt-4 text-zinc-600">We want you to be completely satisfied with your purchase.</p>
                     </div>
 
-                    <form method="POST" action="{{ route('contact.submit') }}" class="rounded-2xl border border-black/10 bg-white p-6 shadow-sm">
-                        @csrf
-                        <div class="grid gap-5 sm:grid-cols-2">
-                            <div class="sm:col-span-1">
-                                <label for="name" class="mb-2 block text-sm font-medium text-zinc-700">Name</label>
-                                <input id="name" name="name" type="text" value="{{ old('name') }}" required class="w-full rounded-xl border border-zinc-300 px-4 py-2.5 text-sm outline-none transition focus:border-black" />
-                                @error('name')<p class="mt-1 text-xs text-rose-600">{{ $message }}</p>@enderror
-                            </div>
-                            <div class="sm:col-span-1">
-                                <label for="email" class="mb-2 block text-sm font-medium text-zinc-700">Email</label>
-                                <input id="email" name="email" type="email" value="{{ old('email') }}" required class="w-full rounded-xl border border-zinc-300 px-4 py-2.5 text-sm outline-none transition focus:border-black" />
-                                @error('email')<p class="mt-1 text-xs text-rose-600">{{ $message }}</p>@enderror
-                            </div>
-                            <div class="sm:col-span-2">
-                                <label for="subject" class="mb-2 block text-sm font-medium text-zinc-700">Subject</label>
-                                <input id="subject" name="subject" type="text" value="{{ old('subject') }}" required class="w-full rounded-xl border border-zinc-300 px-4 py-2.5 text-sm outline-none transition focus:border-black" />
-                                @error('subject')<p class="mt-1 text-xs text-rose-600">{{ $message }}</p>@enderror
-                            </div>
-                            <div class="sm:col-span-2">
-                                <label for="message" class="mb-2 block text-sm font-medium text-zinc-700">Message</label>
-                                <textarea id="message" name="message" rows="5" required class="w-full rounded-xl border border-zinc-300 px-4 py-2.5 text-sm outline-none transition focus:border-black">{{ old('message') }}</textarea>
-                                @error('message')<p class="mt-1 text-xs text-rose-600">{{ $message }}</p>@enderror
-                            </div>
+                    <div class="mx-auto mt-12 max-w-3xl rounded-2xl border border-black/10 bg-white p-6 shadow-sm md:p-8">
+                        <div class="prose prose-zinc max-w-none text-sm text-zinc-600">
+                            <h2 class="text-lg font-semibold text-black">1. Return Eligibility</h2>
+                            <p class="mt-2">You may return most new, unopened items within 7 days of delivery for a full refund. Items must be in their original packaging with all tags attached. Used, damaged, or altered products are not eligible for return.</p>
+
+                            <h2 class="mt-6 text-lg font-semibold text-black">2. Non-Returnable Items</h2>
+                            <p class="mt-2">The following items cannot be returned:</p>
+                            <ul class="mt-2 list-disc pl-5">
+                                <li>Grips, overgrips, and other consumable accessories that have been opened or used</li>
+                                <li>Custom strung rackets at customer specification</li>
+                                <li>Items marked as "Final Sale" or "Clearance"</li>
+                                <li>Gift cards and promotional vouchers</li>
+                            </ul>
+
+                            <h2 class="mt-6 text-lg font-semibold text-black">3. How to Request a Return</h2>
+                            <p class="mt-2">To initiate a return, please contact our customer service team via WhatsApp at {{ config('branding.phone', '08511735858') }} or email at support@norapadel.com with your order number and reason for return. We will provide you with a return authorization and instructions.</p>
+
+                            <h2 class="mt-6 text-lg font-semibold text-black">4. Refund Process</h2>
+                            <p class="mt-2">Once we receive and inspect your returned item, we will notify you of the approval or rejection of your refund. If approved, your refund will be processed within 5-7 business days to your original payment method. Shipping costs for returns are the responsibility of the customer unless the item was defective or incorrect.</p>
+
+                            <h2 class="mt-6 text-lg font-semibold text-black">5. Exchanges</h2>
+                            <p class="mt-2">We only replace items if they are defective or damaged. If you need to exchange an item for the same product, contact us with your order details and photos of the defect.</p>
+
+                            <h2 class="mt-6 text-lg font-semibold text-black">6. Damaged or Incorrect Items</h2>
+                            <p class="mt-2">If you receive a damaged or incorrect item, please contact us within 48 hours of delivery with photos. We will arrange a replacement or full refund at no additional cost, including return shipping.</p>
+
+                            <h2 class="mt-6 text-lg font-semibold text-black">7. Contact Us</h2>
+                            <p class="mt-2">For any return or refund inquiries, reach out to us at support@norapadel.com or WhatsApp {{ config('branding.phone', '08511735858') }}. Our team is available Monday-Saturday, 9 AM - 6 PM WIB.</p>
                         </div>
-                        <button type="submit" class="mt-6 inline-flex rounded-full bg-black px-5 py-2.5 text-sm font-medium text-white transition hover:bg-zinc-800">Send Message</button>
-                    </form>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
         </main>
     </div>
 @endsection
@@ -466,7 +457,6 @@
         (function () {
             const mobileMenuToggle = document.querySelector('[data-mobile-menu-toggle]');
             const mobileMenu = document.querySelector('[data-mobile-menu]');
-
             if (mobileMenuToggle && mobileMenu) {
                 mobileMenuToggle.addEventListener('click', () => {
                     mobileMenu.classList.toggle('hidden');
@@ -475,11 +465,10 @@
             }
         })();
 
-        // Hamburger Menu Toggle - independent IIFE
         (function() {
-            const btn = document.getElementById('hamburgerMenuBtn');
-            const dropdown = document.getElementById('hamburgerMenuDropdown');
-            const wrapper = document.getElementById('hamburgerMenuWrapper');
+            const btn = document.getElementById('hamburgerMenuBtnCustom');
+            const dropdown = document.getElementById('hamburgerMenuDropdownCustom');
+            const wrapper = document.getElementById('hamburgerMenuWrapperCustom');
             if (!btn || !dropdown || !wrapper) return;
             btn.addEventListener('click', function(e){ e.stopPropagation(); dropdown.classList.toggle('hidden'); });
             document.addEventListener('click', function(e){ if(!wrapper.contains(e.target)) dropdown.classList.add('hidden'); });

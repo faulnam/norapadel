@@ -547,51 +547,6 @@
                                 @endforeach
                             </div>
 
-                            @if($totalReviews > 0)
-                            <!-- Quality Indicator -->
-                            <div class="pt-4 border-t border-zinc-100">
-                                <p class="text-[10px] font-semibold tracking-[0.15em] text-zinc-400 uppercase mb-3">Quality</p>
-                                <div class="relative">
-                                    <div class="h-1 bg-zinc-100">
-                                        <div class="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-black rounded-full" style="left: {{ $avgQuality }}%"></div>
-                                    </div>
-                                    <div class="flex justify-between mt-2">
-                                        <span class="text-[9px] text-zinc-400 uppercase tracking-wider">Very Low</span>
-                                        <span class="text-[9px] text-zinc-400 uppercase tracking-wider">Very High</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Sizing Indicator -->
-                            <div class="pt-4 border-t border-zinc-100">
-                                <p class="text-[10px] font-semibold tracking-[0.15em] text-zinc-400 uppercase mb-3">How was the sizing?</p>
-                                <div class="relative">
-                                    <div class="h-1 bg-zinc-100">
-                                        <div class="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-black rounded-full" style="left: {{ $avgSizing }}%"></div>
-                                    </div>
-                                    <div class="flex justify-between mt-2">
-                                        <span class="text-[9px] text-zinc-400 uppercase tracking-wider">Runs Small</span>
-                                        <span class="text-[9px] text-zinc-400 uppercase tracking-wider">True to Size</span>
-                                        <span class="text-[9px] text-zinc-400 uppercase tracking-wider">Runs Large</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Usual Size -->
-                            @if($usualSizes->count() > 0)
-                            <div class="pt-4 border-t border-zinc-100">
-                                <p class="text-[10px] font-semibold tracking-[0.15em] text-zinc-400 uppercase mb-3">Usual Size?</p>
-                                <div class="flex gap-2 flex-wrap">
-                                    @foreach($usualSizes as $size => $count)
-                                        <span class="text-xs text-zinc-600">{{ $size }} ({{ $count }})</span>
-                                        @if(!$loop->last)
-                                            <span class="text-zinc-300">·</span>
-                                        @endif
-                                    @endforeach
-                                </div>
-                            </div>
-                            @endif
-                            @endif
                         </div>
 
                         <!-- Right Column - Reviews List -->
@@ -612,26 +567,26 @@
 
                             <!-- Search & Filter -->
                             <div class="flex gap-3 mb-8">
-                                <input type="text" placeholder="Search reviews" class="flex-1 px-4 py-2.5 border border-zinc-200 text-sm focus:outline-none focus:border-zinc-400 transition">
-                                <select class="px-4 py-2.5 border border-zinc-200 text-sm focus:outline-none focus:border-zinc-400 transition bg-white">
-                                    <option>All ratings</option>
-                                    <option>5 stars</option>
-                                    <option>4 stars</option>
-                                    <option>3 stars</option>
-                                    <option>2 stars</option>
-                                    <option>1 star</option>
+                                <input type="text" id="reviewSearch" placeholder="Search reviews" class="flex-1 px-4 py-2.5 border border-zinc-200 text-sm focus:outline-none focus:border-zinc-400 transition">
+                                <select id="reviewRatingFilter" class="px-4 py-2.5 border border-zinc-200 text-sm focus:outline-none focus:border-zinc-400 transition bg-white">
+                                    <option value="all">All ratings</option>
+                                    <option value="5">5 stars</option>
+                                    <option value="4">4 stars</option>
+                                    <option value="3">3 stars</option>
+                                    <option value="2">2 stars</option>
+                                    <option value="1">1 star</option>
                                 </select>
                             </div>
 
                             <!-- Reviews List -->
                             @if($reviews->count() > 0)
-                            <div class="space-y-0">
+                            <div class="space-y-0 max-h-[600px] overflow-y-auto pr-2" id="reviewsList">
                                 @foreach($reviews as $review)
-                                <div class="py-8 border-b border-zinc-100 last:border-0">
+                                <div class="py-8 border-b border-zinc-100 last:border-0 review-item" data-rating="{{ $review->rating }}">
                                     <div class="flex items-start justify-between mb-3">
                                         <div>
                                             <div class="flex items-center gap-2 mb-1">
-                                                <h4 class="text-xs font-semibold tracking-[0.05em] text-black uppercase">{{ $review->user->name }}</h4>
+                                                <h4 class="text-xs font-semibold tracking-[0.05em] text-black uppercase">{{ $review->reviewer_name ?? $review->user->name }}</h4>
                                                 @if($review->is_verified)
                                                 <span class="text-[9px] text-zinc-400 uppercase tracking-wider">· Verified Buyer</span>
                                                 @endif
@@ -646,33 +601,8 @@
                                     </div>
 
                                     @if($review->comment)
-                                    <p class="text-sm text-zinc-600 leading-relaxed mb-4">{{ $review->comment }}</p>
+                                    <p class="text-sm text-zinc-600 leading-relaxed mb-4 review-text">{{ $review->comment }}</p>
                                     @endif
-
-                                    <div class="grid grid-cols-3 gap-4 pt-4 border-t border-zinc-50">
-                                        @if($review->usual_size)
-                                        <div>
-                                            <p class="text-[9px] font-semibold tracking-[0.1em] text-zinc-400 uppercase mb-2">Usual Size</p>
-                                            <p class="text-xs text-zinc-600">{{ $review->usual_size }}</p>
-                                        </div>
-                                        @endif
-                                        @if($review->quality_rating)
-                                        <div>
-                                            <p class="text-[9px] font-semibold tracking-[0.1em] text-zinc-400 uppercase mb-2">Quality</p>
-                                            <div class="relative h-1 bg-zinc-100 mt-2">
-                                                <div class="absolute top-0 left-0 h-full bg-black" style="width: {{ $review->quality_rating }}%"></div>
-                                            </div>
-                                        </div>
-                                        @endif
-                                        @if($review->sizing_rating)
-                                        <div>
-                                            <p class="text-[9px] font-semibold tracking-[0.1em] text-zinc-400 uppercase mb-2">Sizing</p>
-                                            <div class="relative h-1 bg-zinc-100 mt-2">
-                                                <div class="absolute top-1/2 -translate-y-1/2 w-2 h-2 bg-black rounded-full" style="left: {{ $review->sizing_rating }}%"></div>
-                                            </div>
-                                        </div>
-                                        @endif
-                                    </div>
                                 </div>
                                 @endforeach
                             </div>
@@ -1169,6 +1099,37 @@ document.getElementById('reviewForm')?.addEventListener('submit', function(e) {
         alert('Terjadi kesalahan. Silakan coba lagi.');
     });
 });
+
+// Review Filter: Search + Rating
+(function() {
+    const searchInput = document.getElementById('reviewSearch');
+    const ratingSelect = document.getElementById('reviewRatingFilter');
+    const reviewsList = document.getElementById('reviewsList');
+    if (!searchInput || !ratingSelect || !reviewsList) return;
+
+    const items = reviewsList.querySelectorAll('.review-item');
+
+    function filterReviews() {
+        const query = searchInput.value.toLowerCase().trim();
+        const rating = ratingSelect.value;
+
+        items.forEach(item => {
+            const textEl = item.querySelector('.review-text');
+            const text = textEl ? textEl.textContent.toLowerCase() : '';
+            const nameEl = item.querySelector('h4');
+            const reviewerName = nameEl ? nameEl.textContent.toLowerCase() : '';
+            const itemRating = item.getAttribute('data-rating');
+
+            const matchesSearch = !query || text.includes(query) || reviewerName.includes(query);
+            const matchesRating = rating === 'all' || itemRating === rating;
+
+            item.style.display = (matchesSearch && matchesRating) ? '' : 'none';
+        });
+    }
+
+    searchInput.addEventListener('input', filterReviews);
+    ratingSelect.addEventListener('change', filterReviews);
+})();
 </script>
 
 <!-- Review Modal -->
