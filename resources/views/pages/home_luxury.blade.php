@@ -22,15 +22,13 @@
             top-8 border-b border-transparent bg-transparent backdrop-blur-none
             max-[767px]:top-8 max-[767px]:bg-white/95 max-[767px]:backdrop-blur-md max-[767px]:border-black/10" id="mainHeader">
             <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-10 lg:px-12">
-                <a href="{{ route('home') }}" class="flex items-center gap-2">
-                    <img src="{{ asset('storage/logo.png') }}" alt="NoraPadel" class="h-7 w-7 object-contain" loading="lazy">
-                    <span class="text-xl font-semibold tracking-tight transition-colors duration-300
-                        text-white max-[767px]:text-black" id="logoText">NoraPadel</span>
-                </a>
+                <div></div>
 
                 <nav class="hidden items-center gap-8 md:flex" id="navLinks">
-                    <a href="{{ route('home') }}"
-                        class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">Home</a>
+                    <img src="{{ asset('storage/logo.png') }}" alt="NoraPadel" class="h-12 w-12 object-contain -ml-4" loading="lazy">
+                    <a href="{{ route('home') }}" class="flex items-center gap-2.5">
+                        <span class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">Home</span>
+                    </a>
 
                     <!-- New Arrivals Mega Dropdown -->
                     <div class="relative group" data-dropdown="new-arrivals">
@@ -134,7 +132,7 @@
                     <div class="relative group" data-dropdown="shoes">
                         <a href="{{ route('shoes') }}"
                             class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white flex items-center gap-1">
-                            Shoess
+                            Shoes
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-300 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
