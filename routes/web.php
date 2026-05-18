@@ -14,6 +14,8 @@ use App\Http\Controllers\Admin\UserManagementController as AdminStaff;
 use App\Http\Controllers\Admin\ShippingDiscountController;
 use App\Http\Controllers\Admin\ReportController as AdminReport;
 use App\Http\Controllers\Admin\ReviewController as AdminReview;
+use App\Http\Controllers\Admin\AdminVoucherController;
+use App\Http\Controllers\Customer\VoucherController as CustomerVoucher;
 use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Customer\OrderController as CustomerOrder;
 use App\Http\Controllers\Customer\PaymentController;
@@ -64,6 +66,9 @@ Route::get('/api/search-products', function (Illuminate\Http\Request $request) {
     return response()->json(['products' => $products]);
 })->name('api.search-products');
 
+// API Filter New Arrivals
+Route::get('/api/new-arrivals/filter', [PageController::class, 'filterNewArrivals'])->name('api.new-arrivals.filter');
+
 Route::get('/media/products/{path}', function (string $path) {
     $normalizedPath = ltrim(str_replace('\\', '/', $path), '/');
 
@@ -103,6 +108,9 @@ Route::get('/apparel', [PageController::class, 'apparel'])->name('apparel');
 Route::get('/accessories', [PageController::class, 'apparel'])->name('accessories');
 Route::get('/shop', [PageController::class, 'shop'])->name('shop');
 Route::get('/help-center', [PageController::class, 'helpCenter'])->name('help-center');
+Route::get('/policy', [PageController::class, 'policy'])->name('policy');
+Route::get('/return-refund', [PageController::class, 'returnRefund'])->name('return-refund');
+Route::get('/guarantee', [PageController::class, 'guarantee'])->name('guarantee');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::post('/contact', [PageController::class, 'submitContact'])->name('contact.submit');
 Route::get('/produk', [PageController::class, 'produkIndex'])->name('produk.index');
@@ -124,6 +132,10 @@ Route::middleware('guest')->group(function () {
     Route::post('/forgot-password/request-otp', [AuthController::class, 'requestPasswordResetOtp'])->name('password.request-otp')->middleware('throttle:3,1');
     Route::post('/forgot-password/verify-otp', [AuthController::class, 'verifyPasswordResetOtp'])->name('password.verify-otp')->middleware('throttle:5,1');
     Route::post('/forgot-password/reset', [AuthController::class, 'resetPassword'])->name('password.reset');
+
+    // Google OAuth Routes
+    Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])->name('google.login');
+    Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback'])->name('google.callback');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
@@ -276,6 +288,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::resource('shipping-discounts', ShippingDiscountController::class)->except(['show']);
     Route::patch('/shipping-discounts/{shipping_discount}/toggle', [ShippingDiscountController::class, 'toggleActive'])->name('shipping-discounts.toggle');
 
+    // Vouchers
+    Route::resource('vouchers', AdminVoucherController::class);
+    Route::patch('/vouchers/{id}/toggle-status', [AdminVoucherController::class, 'toggleStatus'])->name('vouchers.toggle-status');
+    Route::patch('/vouchers/{id}/toggle-display', [AdminVoucherController::class, 'toggleDisplay'])->name('vouchers.toggle-display');
+
     // Reports
     Route::get('/reports', [AdminReport::class, 'index'])->name('reports.index');
     Route::get('/reports/download-sales', [AdminReport::class, 'downloadSalesReport'])->name('reports.download-sales');
@@ -329,25 +346,31 @@ Route::get('/customer/checkout', [CustomerOrder::class, 'checkout'])->name('cust
 Route::post('/customer/checkout', [CustomerOrder::class, 'processCheckout'])->name('customer.checkout.process');
 Route::post('/customer/shipping/rates', [\App\Http\Controllers\Customer\ShippingController::class, 'getRates'])->name('customer.shipping.rates');
 
+// Guest Voucher Claim (accessible without login)
+Route::post('/customer/vouchers/claim', [CustomerVoucher::class, 'claim'])->name('customer.vouchers.claim');
+
 // Guest Payment Routes (accessible without login)
-Route::get('/customer/payment/{order}/select-gateway', [PaymentController::class, 'selectGateway'])->name('customer.payment.select-gateway');
-Route::get('/customer/payment/{order}', [PaymentController::class, 'show'])->name('customer.payment.show');
-Route::post('/customer/payment/{order}/process', [PaymentController::class, 'process'])->name('customer.payment.process');
-Route::get('/customer/payment/{order}/waiting', [PaymentController::class, 'waiting'])->name('customer.payment.waiting');
-Route::get('/customer/payment/{order}/check-status', [PaymentController::class, 'checkStatus'])->name('customer.payment.check-status');
-Route::get('/customer/payment/{order}/redirect', [PaymentController::class, 'redirect'])->name('customer.payment.redirect');
-Route::get('/customer/payment/{order}/callback', [PakasirWebhookController::class, 'handleCallback'])->name('customer.payment.callback');
+Route::get('/guest/payment/{order}/select-gateway', [PaymentController::class, 'selectGateway'])->name('customer.payment.select-gateway');
+Route::get('/guest/payment/{order}', [PaymentController::class, 'show'])->name('customer.payment.show');
+Route::post('/guest/payment/{order}/process', [PaymentController::class, 'process'])->name('customer.payment.process');
+Route::get('/guest/payment/{order}/waiting', [PaymentController::class, 'waiting'])->name('customer.payment.waiting');
+Route::get('/guest/payment/{order}/check-status', [PaymentController::class, 'checkStatus'])->name('customer.payment.check-status');
+Route::get('/guest/payment/{order}/redirect', [PaymentController::class, 'redirect'])->name('customer.payment.redirect');
+Route::get('/guest/payment/{order}/callback', [PakasirWebhookController::class, 'handleCallback'])->name('customer.payment.callback');
 
 // Guest Paylabs Payment Routes
-Route::get('/customer/payment-paylabs/{order}', [\App\Http\Controllers\Customer\PaylabsPaymentController::class, 'show'])->name('customer.payment.paylabs.show');
-Route::post('/customer/payment-paylabs/{order}/process', [\App\Http\Controllers\Customer\PaylabsPaymentController::class, 'process'])->name('customer.payment.paylabs.process');
-Route::get('/customer/payment-paylabs/{order}/waiting', [\App\Http\Controllers\Customer\PaylabsPaymentController::class, 'waiting'])->name('customer.payment.paylabs.waiting');
-Route::get('/customer/payment-paylabs/{order}/check-status', [\App\Http\Controllers\Customer\PaylabsPaymentController::class, 'checkStatus'])->name('customer.payment.paylabs.check-status');
-Route::get('/customer/payment-paylabs/{order}/callback', [\App\Http\Controllers\PaylabsWebhookController::class, 'handleCallback'])->name('customer.payment.paylabs.callback');
+Route::get('/guest/payment-paylabs/{order}', [\App\Http\Controllers\Customer\PaylabsPaymentController::class, 'show'])->name('customer.payment.paylabs.show');
+Route::post('/guest/payment-paylabs/{order}/process', [\App\Http\Controllers\Customer\PaylabsPaymentController::class, 'process'])->name('customer.payment.paylabs.process');
+Route::get('/guest/payment-paylabs/{order}/waiting', [\App\Http\Controllers\Customer\PaylabsPaymentController::class, 'waiting'])->name('customer.payment.paylabs.waiting');
+Route::get('/guest/payment-paylabs/{order}/check-status', [\App\Http\Controllers\Customer\PaylabsPaymentController::class, 'checkStatus'])->name('customer.payment.paylabs.check-status');
+Route::get('/guest/payment-paylabs/{order}/callback', [\App\Http\Controllers\PaylabsWebhookController::class, 'handleCallback'])->name('customer.payment.paylabs.callback');
 
 // Guest Order Tracking
 Route::get('/customer/orders/{order}/track', [CustomerOrder::class, 'guestTrackOrder'])->name('customer.orders.guest-track');
 Route::get('/customer/orders/{order}/guest-tracking', [CustomerOrder::class, 'guestGetTracking'])->name('customer.orders.guest-tracking');
+
+// Guest Order Detail (accessible without login)
+Route::get('/guest/orders/{order}', [CustomerOrder::class, 'guestShow'])->name('customer.orders.guest-show');
 
 // Customer Routes
 Route::prefix('customer')->name('customer.')->middleware(['auth', 'customer'])->group(function () {
@@ -394,12 +417,19 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'customer'])->
     
     // Profile
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::get('/profile/rewards', [ProfileController::class, 'rewards'])->name('profile.rewards');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::post('/profile/avatar', [ProfileController::class, 'updateAvatar'])->name('profile.avatar');
     Route::patch('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.update-password');
 
     // Welcome Bonus
     Route::post('/claim-welcome-bonus', [\App\Http\Controllers\Customer\WelcomeBonusController::class, 'claimBonus'])->name('claim-welcome-bonus');
+
+    // Vouchers (require auth)
+    Route::get('/vouchers', [CustomerVoucher::class, 'index'])->name('vouchers.index');
+    Route::get('/my-vouchers', [CustomerVoucher::class, 'myVouchers'])->name('vouchers.my-vouchers');
+    Route::get('/vouchers/checkout-available', [CustomerVoucher::class, 'getAvailableForCheckout'])->name('vouchers.checkout-available');
+    Route::post('/vouchers/validate', [CustomerVoucher::class, 'validate'])->name('vouchers.validate');
 
     // Notifications
     Route::get('/notifications', function () {

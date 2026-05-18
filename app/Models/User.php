@@ -159,6 +159,24 @@ class User extends Authenticatable
     }
 
     /**
+     * Get user vouchers
+     */
+    public function userVouchers()
+    {
+        return $this->hasMany(UserVoucher::class);
+    }
+
+    /**
+     * Get vouchers through user_vouchers
+     */
+    public function vouchers()
+    {
+        return $this->belongsToMany(Voucher::class, 'user_vouchers')
+            ->withPivot('claimed_at', 'is_used', 'used_at')
+            ->withTimestamps();
+    }
+
+    /**
      * Get avatar URL
      */
     public function getAvatarUrlAttribute(): string

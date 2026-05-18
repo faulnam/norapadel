@@ -20,6 +20,15 @@ class PaymentController extends Controller
         $guestOrders = session()->get('guest_orders', []);
         $guestUserId = session()->get('guest_user_id');
 
+        \Log::info('PaymentController canAccessOrder check', [
+            'order_id' => $order->id,
+            'order_user_id' => $order->user_id,
+            'guest_orders' => $guestOrders,
+            'guest_user_id' => $guestUserId,
+            'in_guest_orders' => in_array($order->id, $guestOrders, true),
+            'user_id_match' => $guestUserId && (int) $guestUserId === (int) $order->user_id
+        ]);
+
         return in_array($order->id, $guestOrders, true) || ($guestUserId && (int) $guestUserId === (int) $order->user_id);
     }
 

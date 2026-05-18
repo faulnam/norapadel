@@ -663,50 +663,102 @@
                 class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Contact</a>
         </nav>
 
-        <div class="flex items-center gap-3 text-black/80">
-            @guest
-                <a href="{{ route('login') }}"
-                    class="inline-flex items-center gap-1 rounded-full border border-black/15 bg-black/5 px-3 py-1.5 text-xs font-medium text-black transition duration-300 hover:bg-black/10"
-                    aria-label="Masuk">
-                    <i class="fas fa-sign-in-alt text-[11px]"></i>
-                    <span>Masuk</span>
-                </a>
-            @endguest
-            @auth
-                @if(auth()->user()->role === 'customer')
-                    <a href="{{ route('customer.orders.index') }}" class="transition duration-300 hover:text-black" aria-label="History">
-                        <i class="fas fa-history text-sm"></i>
-                    </a>
-                    <a href="{{ route('customer.profile.index') }}" class="transition duration-300 hover:text-black" aria-label="Profile">
-                        <i class="fas fa-user text-sm"></i>
-                    </a>
-                @endif
-            @endauth
-            @auth
-                <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-black"
-                    aria-label="Cart">
-                    <i class="fas fa-shopping-bag text-sm"></i>
-                    @if(auth()->user()->role === 'customer')
-                        @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
-                        @if($cartCount > 0)
-                            <span class="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
-                        @endif
-                    @endif
-                </a>
-            @endauth
-            @guest
-                <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-black"
-                    aria-label="Cart" title="Keranjang">
-                    <i class="fas fa-shopping-bag text-sm"></i>
-                    @php
-                        $guestCart = session()->get('guest_cart', []);
-                        $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
-                    @endphp
-                    @if($guestCartCount > 0)
-                        <span class="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $guestCartCount > 9 ? '9+' : $guestCartCount }}</span>
-                    @endif
-                </a>
-            @endguest
+        <div class="flex items-center gap-3 text-black/80" id="navIcons">
+            <!-- Hamburger Menu with combined elements -->
+            <div class="relative" id="hamburgerMenuWrapper">
+                <button type="button" id="hamburgerMenuBtn" class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/15 bg-transparent text-black transition duration-300 hover:border-black/30">
+                    <i class="fas fa-bars text-sm"></i>
+                </button>
+                <div id="hamburgerMenuDropdown" class="absolute right-0 mt-2 w-48 z-50 hidden">
+                    <div class="bg-white rounded-lg shadow-lg border border-zinc-100 overflow-hidden">
+                        <!-- Login -->
+                        @guest
+                            <a href="{{ route('login') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
+                                <i class="fas fa-sign-in-alt text-zinc-500 text-sm"></i>
+                                <span class="text-sm text-zinc-700">Login</span>
+                            </a>
+                        @endauth
+                        
+                        <!-- Language Switcher -->
+                        <div class="border-b border-zinc-100">
+                            <div class="px-3 py-2 bg-zinc-50">
+                                <div class="flex gap-2">
+                                    <a href="{{ request()->fullUrlWithQuery(['locale' => 'en']) }}" class="flex-1 px-2 py-1.5 text-xs text-zinc-700 hover:bg-white rounded transition {{ session('locale', 'en') === 'en' ? 'bg-white font-semibold' : 'bg-white/50' }}">
+                                        EN
+                                    </a>
+                                    <a href="{{ request()->fullUrlWithQuery(['locale' => 'id']) }}" class="flex-1 px-2 py-1.5 text-xs text-zinc-700 hover:bg-white rounded transition {{ session('locale', 'en') === 'id' ? 'bg-white font-semibold' : 'bg-white/50' }}">
+                                        ID
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Cart -->
+                        <a href="{{ route('customer.cart.index') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
+                            <div class="relative">
+                                <i class="fas fa-shopping-bag text-zinc-500 text-sm"></i>
+                                @auth
+                                    @if (auth()->user()->role === 'customer')
+                                        @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
+                                        @if ($cartCount > 0)
+                                            <span class="absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
+                                        @endif
+                                    @endif
+                                @endauth
+                                @guest
+                                    @php 
+                                        $guestCart = session()->get('guest_cart', []);
+                                        $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
+                                    @endphp
+                                    @if($guestCartCount > 0)
+                                        <span class="absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $guestCartCount > 9 ? '9+' : $guestCartCount }}</span>
+                                    @endif
+                                @endguest
+                            </div>
+                            <span class="text-sm text-zinc-700">Cart</span>
+                        </a>
+                        
+                        <!-- Wishlist -->
+                        <a href="{{ route('customer.wishlist.index') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
+                            <div class="relative">
+                                <i class="fas fa-heart text-zinc-500 text-sm"></i>
+                                @php
+                                    if (auth()->check() && auth()->user()->role === 'customer') {
+                                        $wishlistCount = auth()->user()->wishlistItems()->count();
+                                    } else {
+                                        $guestWishlist = session()->get('guest_wishlist', []);
+                                        $wishlistCount = count($guestWishlist);
+                                    }
+                                @endphp
+                                @if($wishlistCount > 0)
+                                    <span class="absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
+                                @endif
+                            </div>
+                            <span class="text-sm text-zinc-700">Wishlist</span>
+                        </a>
+                        
+                        <!-- Auth Section for logged-in users -->
+                        @auth
+                            @if (auth()->user()->role === 'admin')
+                                <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-t border-zinc-100">
+                                    <i class="fas fa-arrow-left text-zinc-500 text-sm"></i>
+                                    <span class="text-sm text-zinc-700">Dashboard</span>
+                                </a>
+                            @elseif(auth()->user()->role === 'customer')
+                                <a href="{{ route('customer.orders.index') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-t border-zinc-100">
+                                    <i class="fas fa-history text-zinc-500 text-sm"></i>
+                                    <span class="text-sm text-zinc-700">Orders</span>
+                                </a>
+                                <a href="{{ route('customer.profile.index') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-t border-zinc-100">
+                                    <i class="fas fa-user text-zinc-500 text-sm"></i>
+                                    <span class="text-sm text-zinc-700">Profile</span>
+                                </a>
+                            @endif
+                        @endauth
+                    </div>
+                </div>
+            </div>
+
             <button type="button"
                 class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-black transition duration-300 hover:border-black/35 md:hidden"
                 data-mobile-menu-toggle aria-label="Toggle navigation" aria-expanded="false">
@@ -757,6 +809,9 @@
         
         <form action="{{ route('customer.checkout.process') }}" method="POST" id="checkoutForm">
             @csrf
+            @auth
+            <input type="hidden" name="user_id" value="{{ auth()->id() }}">
+            @endauth
             
             <div class="row">
                 <div class="col-lg-7">
@@ -771,19 +826,19 @@
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Recipient Name <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control @error('shipping_name') is-invalid @enderror" 
-                                           name="shipping_name" value="{{ old('shipping_name', auth()->check() ? auth()->user()->name : '') }}" required>
+                                           name="shipping_name" value="{{ old('shipping_name', auth()->check() ? auth()->user()->name : '') }}" @guest required @endguest>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Phone Number <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control @error('shipping_phone') is-invalid @enderror" 
-                                           name="shipping_phone" value="{{ old('shipping_phone', auth()->check() ? auth()->user()->phone : '') }}" required>
+                                           name="shipping_phone" value="{{ old('shipping_phone', auth()->check() ? auth()->user()->phone : '') }}" @guest required @endguest>
                                 </div>
                             </div>
                             
                             <div class="mb-3">
                                 <label class="form-label">Full Address <span class="text-danger">*</span></label>
                                 <textarea class="form-control @error('shipping_address') is-invalid @enderror" 
-                                          name="shipping_address" rows="3" required placeholder="Street, House No., RT/RW, Village, District, City">{{ old('shipping_address', auth()->check() ? auth()->user()->address : '') }}</textarea>
+                                          name="shipping_address" rows="3" @guest required @endguest placeholder="Street, House No., RT/RW, Village, District, City">{{ old('shipping_address', auth()->check() ? auth()->user()->address : '') }}</textarea>
                             </div>
 
                             @guest
@@ -934,26 +989,41 @@
                         <div class="checkout-card mb-3">
                             <div class="checkout-card-header">
                                 <i class="fas fa-coins"></i>
-                                Use Points
+                                Gunakan Point
                             </div>
                             <div class="checkout-card-body">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <span class="text-muted small">Available Points</span>
-                                    <span class="fw-bold">{{ auth()->user()->points }} points</span>
+                                <div class="d-flex justify-content-between align-items-center mb-3" style="background: #f9fafb; border-radius: 12px; padding: 0.75rem 1rem;">
+                                    <div>
+                                        <span class="text-muted small d-block">Total Point Anda</span>
+                                        <span class="fw-bold" style="font-size: 1.125rem; color: #1d1d1f;">{{ number_format(auth()->user()->points) }} Points</span>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="text-muted small d-block">Nilai</span>
+                                        <span class="fw-semibold" style="color: #059669; font-size: 0.9375rem;">{{ auth()->user()->formatted_points_value }}</span>
+                                    </div>
                                 </div>
-                                <div class="form-check mb-2">
+                                <div class="form-check mb-3">
                                     <input class="form-check-input" type="checkbox" id="usePoints" name="use_points" value="1">
-                                    <label class="form-check-label" for="usePoints">
-                                        Use points for discount
+                                    <label class="form-check-label" for="usePoints" style="font-weight: 500; color: #374151;">
+                                        Gunakan point untuk potongan harga
                                     </label>
                                 </div>
                                 <div id="pointsSlider" style="display: none;">
-                                    <label class="form-label small">Points Amount</label>
-                                    <input type="range" class="form-range" id="pointsRange" name="points_used" 
-                                           min="0" max="{{ auth()->user()->points }}" value="0" step="10">
-                                    <div class="d-flex justify-content-between align-items-center mt-2">
-                                        <span class="small text-muted"><span id="pointsUsed">0</span> points</span>
-                                        <span class="small fw-bold text-success">-<span id="pointsDiscount">Rp 0</span></span>
+                                    <div class="mb-2">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <label class="form-label small mb-0">Jumlah Point</label>
+                                            <span class="small" style="color: #6b7280;">1 Point = Rp100</span>
+                                        </div>
+                                        <input type="range" class="form-range" id="pointsRange" name="points_used"
+                                               min="0" max="{{ auth()->user()->points }}" value="0" step="10"
+                                               style="accent-color: #0071e3;">
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center" style="background: #ecfdf5; border-radius: 8px; padding: 0.5rem 0.75rem;">
+                                        <span class="small" style="color: #065f46;"><span id="pointsUsed">0</span> point digunakan</span>
+                                        <span class="small fw-bold" style="color: #059669;">Potongan <span id="pointsDiscount">Rp 0</span></span>
+                                    </div>
+                                    <div id="pointsValidationError" class="small mt-2" style="display: none; color: #dc2626;">
+                                        <i class="fas fa-exclamation-circle me-1"></i> Point tidak boleh melebihi total checkout atau saldo point.
                                     </div>
                                 </div>
                             </div>
@@ -982,6 +1052,71 @@
                             </div>
                         </div>
                     @endif
+                    
+                    <!-- Voucher & Promo -->
+                    @auth
+                    <div class="checkout-card mb-3">
+                        <div class="checkout-card-header">
+                            <i class="fas fa-ticket-alt"></i>
+                            Voucher & Promo
+                        </div>
+                        <div class="checkout-card-body">
+                            <!-- Voucher Selection -->
+                            <div class="mb-4">
+                                <label class="form-label mb-2" style="font-weight: 500; color: #374151;">Pilih Voucher</label>
+                                <select class="form-select" id="voucherSelect" onchange="selectVoucher()" style="border-radius: 0.5rem; border: 1px solid #e5e7eb; padding: 0.75rem;">
+                                    <option value="">-- Pilih Voucher --</option>
+                                </select>
+                                <div id="voucherEmptyState" class="small mt-2" style="display: none; color: #6b7280; padding: 0.5rem 0;">
+                                    <i class="fas fa-info-circle me-1"></i> Tidak ada voucher tersedia
+                                </div>
+                            </div>
+
+                            <!-- Voucher Code Input -->
+                            <div class="mb-4">
+                                <label class="form-label mb-2" style="font-weight: 500; color: #374151;">Redeem Kode Voucher</label>
+                                <div class="d-flex gap-2">
+                                    <input type="text" class="form-control" id="voucherCode" placeholder="Masukkan kode voucher" style="border-radius: 0.5rem; border: 1px solid #e5e7eb; padding: 0.75rem;">
+                                    <button type="button" onclick="applyVoucherCode()" class="btn-calc" style="background: #6b7280; color: white; border: none; border-radius: 0.5rem; padding: 0.75rem 1.5rem; font-weight: 500; transition: all 0.2s ease; cursor: pointer; white-space: nowrap;" onmouseover="this.style.background='#4b5563'" onmouseout="this.style.background='#6b7280'">
+                                        Apply
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Voucher Applied Card -->
+                            <div id="voucherAppliedCard" style="display: none; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 1px solid #86efac; border-radius: 0.75rem; padding: 1rem;">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <div style="font-weight: 600; color: #166534; font-size: 0.875rem; margin-bottom: 0.25rem;">
+                                            <i class="fas fa-check-circle me-1"></i> Voucher Digunakan
+                                        </div>
+                                        <div id="voucherAppliedName" style="color: #166534; font-weight: 500; font-size: 0.875rem;"></div>
+                                        <div id="voucherAppliedDiscount" style="color: #15803d; font-size: 0.8125rem; margin-top: 0.25rem;"></div>
+                                    </div>
+                                    <button type="button" onclick="removeVoucher()" style="background: white; color: #dc2626; border: 1px solid #fca5a5; border-radius: 0.5rem; padding: 0.375rem 0.75rem; font-size: 0.75rem; font-weight: 500; transition: all 0.2s ease; cursor: pointer;" onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='white'">
+                                        Hapus
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Error Message -->
+                            <div id="voucherError" style="display: none; background: #fef2f2; border: 1px solid #fecaca; border-radius: 0.5rem; padding: 0.75rem; margin-top: 0.5rem;">
+                                <div style="color: #dc2626; font-size: 0.8125rem;">
+                                    <i class="fas fa-exclamation-circle me-1"></i>
+                                    <span id="voucherErrorText"></span>
+                                </div>
+                            </div>
+
+                            <!-- Success Message -->
+                            <div id="voucherSuccess" style="display: none; background: #f0fdf4; border: 1px solid #86efac; border-radius: 0.5rem; padding: 0.75rem; margin-top: 0.5rem;">
+                                <div style="color: #166534; font-size: 0.8125rem;">
+                                    <i class="fas fa-check-circle me-1"></i>
+                                    <span id="voucherSuccessText"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endauth
                     
                     <!-- Order Summary -->
                     <div class="checkout-card summary-sticky">
@@ -1031,7 +1166,7 @@
                             @endauth
                             
                             <div class="summary-divider"></div>
-                            
+
                             @php
                                 $totalDiscount = $cartItems->sum('discount_amount');
                                 $originalTotal = $cartItems->sum('original_subtotal');
@@ -1048,11 +1183,11 @@
                                 </div>
                             @endif
                             <div class="summary-item">
-                                <span>Subtotal</span>
-                                <span>Rp {{ number_format($actualSubtotal, 0, ',', '.') }}</span>
+                                <span style="font-weight: 500;">Subtotal</span>
+                                <span style="font-weight: 500;">Rp {{ number_format($actualSubtotal, 0, ',', '.') }}</span>
                             </div>
                             <div class="summary-item">
-                                <span>Shipping Cost</span>
+                                <span>Shipping</span>
                                 <span id="displayShippingCost" class="text-muted">Not calculated yet</span>
                             </div>
 
@@ -1062,18 +1197,25 @@
                             </div>
 
                             @auth
+                            <div class="summary-item" id="voucherDiscountRow" style="display: none;">
+                                <span>Voucher Discount</span>
+                                <span id="displayVoucherDiscount" style="color: #059669; font-weight: 600;">-Rp 0</span>
+                            </div>
+                            @endauth
+
+                            @auth
                             @if(auth()->user()->role === 'customer' && auth()->user()->points > 0)
-                            <div class="summary-item text-success" id="pointsDiscountRow" style="display: none;">
-                                <span>Points Discount</span>
-                                <span id="displayPointsDiscount">-Rp 0</span>
+                            <div class="summary-item" id="pointsDiscountRow" style="display: none;">
+                                <span>Point Discount</span>
+                                <span id="displayPointsDiscount" style="color: #059669; font-weight: 600;">-Rp 0</span>
                             </div>
                             @endif
                             @endauth
-                            
+
                             <div class="summary-divider"></div>
-                            
+
                             <div class="summary-total">
-                                <span>Total</span>
+                                <span>Total Payment</span>
                                 <span id="displayTotal">Rp {{ number_format($actualSubtotal, 0, ',', '.') }}</span>
                             </div>
 
@@ -1111,6 +1253,16 @@
             });
         }
     });
+
+    // Hamburger Menu Toggle
+    (function() {
+        const btn = document.getElementById('hamburgerMenuBtn');
+        const dropdown = document.getElementById('hamburgerMenuDropdown');
+        const wrapper = document.getElementById('hamburgerMenuWrapper');
+        if (!btn || !dropdown || !wrapper) return;
+        btn.addEventListener('click', function(e){ e.stopPropagation(); dropdown.classList.toggle('hidden'); });
+        document.addEventListener('click', function(e){ if(!wrapper.contains(e.target)) dropdown.classList.add('hidden'); });
+    })();
 </script>
 <script>
     const STORE_LAT = {{ config('branding.store_latitude', -7.278417) }};
@@ -1163,13 +1315,19 @@
         const pointsRange = document.getElementById('pointsRange');
         const pointsUsedSpan = document.getElementById('pointsUsed');
         const pointsDiscountSpan = document.getElementById('pointsDiscount');
+        const pointsValidationError = document.getElementById('pointsValidationError');
 
         if (!usePointsCheckbox) return;
+
+        // Max usable points: can't exceed subtotal (1pt = Rp100)
+        const maxUsablePoints = Math.min(USER_POINTS, Math.floor(SUBTOTAL / 100));
 
         usePointsCheckbox.addEventListener('change', function() {
             if (this.checked) {
                 pointsSlider.style.display = 'block';
-                pointsRange.value = USER_POINTS; // Set to max by default
+                // Default to max usable points, not exceeding user's balance
+                pointsRange.value = Math.min(maxUsablePoints, USER_POINTS);
+                pointsRange.max = Math.min(maxUsablePoints, USER_POINTS);
                 updatePointsDisplay();
             } else {
                 pointsSlider.style.display = 'none';
@@ -1183,11 +1341,34 @@
         }
 
         function updatePointsDisplay() {
-            const points = parseInt(pointsRange.value) || 0;
+            let points = parseInt(pointsRange.value) || 0;
+            const maxPoints = parseInt(pointsRange.max) || USER_POINTS;
+
+            // Validate: points cannot exceed subtotal value or user balance
+            if (points > maxPoints) {
+                points = maxPoints;
+                pointsRange.value = points;
+            }
+            if (points < 0) {
+                points = 0;
+                pointsRange.value = 0;
+            }
+
             const discount = points * 100; // 1 point = Rp 100
 
             pointsUsedSpan.textContent = points;
             pointsDiscountSpan.textContent = formatRupiah(discount);
+
+            // Show/hide validation error
+            if (pointsValidationError) {
+                if (points > 0 && points === maxPoints && SUBTOTAL < USER_POINTS * 100) {
+                    pointsValidationError.style.display = 'block';
+                    pointsValidationError.innerHTML = '<i class="fas fa-info-circle me-1"></i> Point maksimal ' + maxPoints + ' (1 point = Rp100)';
+                    pointsValidationError.style.color = '#059669';
+                } else {
+                    pointsValidationError.style.display = 'none';
+                }
+            }
 
             // Update summary
             if (points > 0) {
@@ -1230,8 +1411,18 @@
             pointsDiscount = pointsUsed * 100; // 1 point = Rp 100
         }
 
-        const finalTotal = normalizeRupiahAmount(SUBTOTAL + shippingPrice - shippingDiscount - pointsDiscount);
+        // Include voucher discount
+        const finalTotal = normalizeRupiahAmount(SUBTOTAL + shippingPrice - shippingDiscount - pointsDiscount - voucherDiscount);
         document.getElementById('displayTotal').textContent = formatRupiah(finalTotal);
+        
+        // Update voucher discount display
+        const voucherDiscountRow = document.getElementById('voucherDiscountRow');
+        if (voucherDiscountRow && voucherDiscount > 0) {
+            voucherDiscountRow.style.display = 'flex';
+            document.getElementById('displayVoucherDiscount').textContent = '-' + formatRupiah(voucherDiscount);
+        } else if (voucherDiscountRow) {
+            voucherDiscountRow.style.display = 'none';
+        }
     }
     
     function initMap() {
@@ -1654,6 +1845,272 @@
         return 'Rp ' + normalized.toLocaleString('id-ID');
     }
 
+    // Voucher functionality
+    let selectedVoucher = null;
+    let voucherDiscount = 0;
+    let voucherData = null;
+
+    // Load available vouchers into dropdown
+    function loadAvailableVouchers() {
+        const cartTotal = SUBTOTAL;
+
+        fetch('{{ route('customer.vouchers.checkout-available') }}?cart_total=' + cartTotal, {
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            const select = document.getElementById('voucherSelect');
+            const emptyState = document.getElementById('voucherEmptyState');
+            select.innerHTML = '<option value="">-- Pilih Voucher --</option>';
+
+            if (data.success && data.data && data.data.length > 0) {
+                emptyState.style.display = 'none';
+                select.style.display = 'block';
+
+                data.data.forEach(voucher => {
+                    const option = document.createElement('option');
+                    option.value = voucher.id;
+                    option.dataset.type = voucher.type;
+                    option.dataset.discountValue = voucher.discount_value;
+                    option.dataset.maximumDiscount = voucher.maximum_discount || 0;
+                    option.dataset.cashbackCoin = voucher.cashback_coin || 0;
+                    option.dataset.minimumPurchase = voucher.minimum_purchase;
+
+                    let discountText = '';
+                    if (voucher.type === 'fixed') {
+                        discountText = 'Diskon Rp' + number_format(voucher.discount_value, 0, ',', '.');
+                    } else if (voucher.type === 'percent') {
+                        discountText = 'Diskon ' + voucher.discount_value + '%';
+                        if (voucher.maximum_discount > 0) {
+                            discountText += ' Max Rp' + number_format(voucher.maximum_discount, 0, ',', '.');
+                        }
+                    } else {
+                        discountText = 'Cashback ' + voucher.cashback_coin + ' Coin';
+                    }
+
+                    option.textContent = voucher.title + ' - ' + discountText + ' (Min. Rp' + number_format(voucher.minimum_purchase, 0, ',', '.') + ')';
+                    select.appendChild(option);
+                });
+            } else {
+                select.style.display = 'none';
+                emptyState.style.display = 'block';
+            }
+        })
+        .catch(error => {
+            console.error('Error loading vouchers:', error);
+            const select = document.getElementById('voucherSelect');
+            const emptyState = document.getElementById('voucherEmptyState');
+            select.style.display = 'none';
+            emptyState.style.display = 'block';
+        });
+    }
+
+    // Select voucher from dropdown (validated server-side via AJAX)
+    function selectVoucher() {
+        const select = document.getElementById('voucherSelect');
+        const voucherId = select.value;
+
+        hideVoucherMessages();
+
+        if (!voucherId) {
+            removeVoucher();
+            return;
+        }
+
+        // Server-side validation
+        fetch('{{ route('customer.vouchers.validate') }}', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                code: voucherId,
+                cart_total: SUBTOTAL,
+                by_id: true
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const voucher = data.data.voucher;
+                const discountValue = data.data.discount_value;
+
+                selectedVoucher = voucher.id;
+                voucherDiscount = discountValue;
+                voucherData = {
+                    id: voucher.id,
+                    title: voucher.title,
+                    type: voucher.type,
+                    discountValue: voucher.discount_value,
+                    cashbackCoin: voucher.cashback_coin || 0
+                };
+
+                showVoucherApplied();
+                recalculateOrderTotal();
+            } else {
+                showVoucherError(data.message || 'Voucher tidak dapat digunakan');
+                select.value = '';
+                removeVoucher();
+            }
+        })
+        .catch(error => {
+            console.error('Error validating voucher:', error);
+            showVoucherError('Terjadi kesalahan validasi voucher. Silakan coba lagi.');
+            select.value = '';
+            removeVoucher();
+        });
+    }
+
+    // Apply voucher by code
+    function applyVoucherCode() {
+        const codeInput = document.getElementById('voucherCode');
+        const code = codeInput.value.trim();
+
+        if (!code) {
+            showVoucherError('Silakan masukkan kode voucher');
+            return;
+        }
+
+        hideVoucherMessages();
+
+        const cartTotal = SUBTOTAL;
+
+        fetch('{{ route('customer.vouchers.validate') }}', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                code: code,
+                cart_total: cartTotal
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const voucher = data.data.voucher;
+                const discountValue = data.data.discount_value;
+
+                selectedVoucher = voucher.id;
+                voucherDiscount = discountValue;
+                voucherData = {
+                    id: voucher.id,
+                    title: voucher.title,
+                    type: voucher.type,
+                    discountValue: voucher.discount_value,
+                    cashbackCoin: voucher.cashback_coin || 0
+                };
+
+                showVoucherApplied();
+                showVoucherSuccess('Voucher berhasil diterapkan');
+                document.getElementById('voucherCode').value = '';
+                document.getElementById('voucherSelect').value = '';
+                recalculateOrderTotal();
+            } else {
+                showVoucherError(data.message || 'Kode voucher tidak valid');
+            }
+        })
+        .catch(error => {
+            console.error('Error validating voucher:', error);
+            showVoucherError('Terjadi kesalahan. Silakan coba lagi.');
+        });
+    }
+
+    function showVoucherApplied() {
+        if (!voucherData) return;
+
+        const card = document.getElementById('voucherAppliedCard');
+        const nameEl = document.getElementById('voucherAppliedName');
+        const discountEl = document.getElementById('voucherAppliedDiscount');
+
+        nameEl.textContent = voucherData.title;
+
+        let discountText = '';
+        if (voucherData.type === 'fixed') {
+            discountText = 'Potongan Rp ' + number_format(voucherDiscount, 0, ',', '.');
+        } else if (voucherData.type === 'percent') {
+            discountText = 'Potongan ' + voucherData.discountValue + '% (Rp ' + number_format(voucherDiscount, 0, ',', '.') + ')';
+        } else {
+            discountText = 'Cashback ' + voucherData.cashbackCoin + ' Coin';
+        }
+
+        discountEl.textContent = discountText;
+        card.style.display = 'block';
+    }
+
+    function showVoucherError(message) {
+        document.getElementById('voucherError').style.display = 'block';
+        document.getElementById('voucherErrorText').textContent = message;
+    }
+
+    function showVoucherSuccess(message) {
+        document.getElementById('voucherSuccess').style.display = 'block';
+        document.getElementById('voucherSuccessText').textContent = message;
+        setTimeout(() => {
+            document.getElementById('voucherSuccess').style.display = 'none';
+        }, 3000);
+    }
+
+    function hideVoucherMessages() {
+        document.getElementById('voucherError').style.display = 'none';
+        document.getElementById('voucherSuccess').style.display = 'none';
+    }
+
+    function removeVoucher() {
+        selectedVoucher = null;
+        voucherDiscount = 0;
+        voucherData = null;
+        document.getElementById('voucherAppliedCard').style.display = 'none';
+        document.getElementById('voucherSelect').value = '';
+        document.getElementById('voucherCode').value = '';
+        hideVoucherMessages();
+        recalculateOrderTotal();
+    }
+
+    // Helper function for number formatting
+    function number_format(number, decimals, dec_point, thousands_sep) {
+        number = (number + '').replace(/[^0-9+\-Ee.]/g, '');
+        var n = !isFinite(+number) ? 0 : +number,
+            prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
+            sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep,
+            dec = (typeof dec_point === 'undefined') ? '.' : dec_point,
+            s = '',
+            toFixedFix = function (n, prec) {
+                var k = Math.pow(10, prec);
+                return '' + Math.round(n * k) / k;
+            };
+        s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.');
+        if (s[0].length > 3) {
+            s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
+        }
+        if ((s[1] || '').length < prec) {
+            s[1] = s[1] || '';
+            s[1] += new Array(prec - s[1].length + 1).join('0');
+        }
+        return s.join(dec);
+    }
+
+    // Load vouchers when shipping is calculated
+    const originalSelectCourier = window.selectCourier;
+    if (originalSelectCourier) {
+        window.selectCourier = function() {
+            originalSelectCourier.apply(this, arguments);
+            setTimeout(loadAvailableVouchers, 500);
+        };
+    }
+
+    // Load vouchers on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        loadAvailableVouchers();
+    });
+
     // Form validation before submit
     document.getElementById('checkoutForm').addEventListener('submit', function(e) {
         const courierCode = document.getElementById('courier_code').value;
@@ -1663,6 +2120,19 @@
             e.preventDefault();
             alert('Please select delivery location and courier first.');
             return false;
+        }
+        
+        // Add voucher_id to form if selected
+        if (selectedVoucher) {
+            let voucherInput = document.getElementById('voucher_id_input');
+            if (!voucherInput) {
+                voucherInput = document.createElement('input');
+                voucherInput.type = 'hidden';
+                voucherInput.name = 'voucher_id';
+                voucherInput.id = 'voucher_id_input';
+                document.getElementById('checkoutForm').appendChild(voucherInput);
+            }
+            voucherInput.value = selectedVoucher;
         }
         
         console.log('Submitting form with:', {

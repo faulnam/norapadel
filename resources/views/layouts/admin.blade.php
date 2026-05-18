@@ -674,8 +674,8 @@
             
             
             
-            <a href="{{ route('admin.testimonials.index') }}" class="nav-link {{ request()->routeIs('admin.testimonials.*') ? 'active' : '' }}">
-                <i class="fas fa-star"></i> Testimonials
+            <a href="{{ route('admin.testimonials.index') }}" class="nav-link {{ request()->routeIs('admin.testimonials.*') || request()->routeIs('admin.reviews.*') ? 'active' : '' }}">
+                <i class="fas fa-star"></i> Testimonials & Reviews
                 @php
                     $pendingTestimonials = \App\Models\Testimonial::where('is_approved', false)->count();
                 @endphp
@@ -697,6 +697,10 @@
         
             <a href="{{ route('admin.shipping-discounts.index') }}" class="nav-link {{ request()->routeIs('admin.shipping-discounts.*') ? 'active' : '' }}">
                 <i class="fas fa-tags"></i> Shipping Discounts
+            </a>
+            
+            <a href="{{ route('admin.vouchers.index') }}" class="nav-link {{ request()->routeIs('admin.vouchers.*') ? 'active' : '' }}">
+                <i class="fas fa-ticket-alt"></i> Vouchers
             </a>
             
             <a href="{{ route('admin.history.index') }}" class="nav-link {{ request()->routeIs('admin.history.*') ? 'active' : '' }}">

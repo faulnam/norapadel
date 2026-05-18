@@ -202,7 +202,9 @@
 @endpush
 
 @section('content')
-<div class="payment-waiting-page">
+<div class="bg-white text-black antialiased">
+    @include('components.luxury-navbar')
+    <div class="payment-waiting-page pt-24 md:pt-20">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-6">

@@ -35,40 +35,25 @@
 @endpush
 
 @section('content')
-<!-- Navbar -->
-<header class="fixed left-0 top-0 z-50 w-full border-b border-black/6 bg-white/80 backdrop-blur-xl md:sticky">
-    <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-10 lg:px-12">
-        <a href="{{ route('home') }}" class="flex items-center gap-2">
-            <img src="{{ asset('storage/logo.png') }}" alt="NoraPadel" class="h-7 w-7 object-contain" loading="lazy">
-            <span class="text-xl font-semibold tracking-tight text-black">NoraPadel</span>
-        </a>
-         <nav class="hidden items-center gap-8 md:flex" id="navLinks">
-                    <a href="{{ route('home') }}"
-                        class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">Home</a>
-                    <a href="{{ route('new-arrivals') }}"
-                        class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">New Arrivals</a>
-                    <a href="{{ route('racket') }}"
-                        class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">Racket</a>
-                    <a href="{{ route('shoes') }}"
-                        class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">Shoes</a>
-                    <a href="{{ route('apparel') }}"
-                        class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">Accessories</a>
-                    <a href="{{ route('contact') }}"
-                        class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">Contact</a>
-                </nav>
-        <div class="flex items-center gap-3 text-black/80">
-            <a href="{{ route('customer.orders.index') }}" class="transition duration-300 hover:text-black" title="Riwayat Pesanan">
-                <i class="fas fa-history text-sm"></i>
-            </a>
-            <a href="{{ route('customer.profile.index') }}" class="transition duration-300 hover:text-black" title="Profile">
-                <i class="fas fa-user text-sm"></i>
-            </a>
-            <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-black" title="Keranjang">
-                <i class="fas fa-shopping-bag text-sm"></i>
-            </a>
-        </div>
-    </div>
-</header>
+@include('components.luxury-navbar')
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const hamburgerBtn = document.getElementById('hamburgerMenuBtn');
+        const hamburgerDropdown = document.getElementById('hamburgerMenuDropdown');
+        if (hamburgerBtn && hamburgerDropdown) {
+            hamburgerBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                hamburgerDropdown.classList.toggle('hidden');
+            });
+            document.addEventListener('click', function(e) {
+                if (!hamburgerDropdown.contains(e.target) && e.target !== hamburgerBtn && !hamburgerBtn.contains(e.target)) {
+                    hamburgerDropdown.classList.add('hidden');
+                }
+            });
+        }
+    });
+</script>
 
 <div class="min-h-screen bg-zinc-50 py-12 pt-16 md:pt-0">
     <div class="mx-auto max-w-3xl px-6">
@@ -161,7 +146,7 @@
             @endif
 
             <div class="flex gap-3">
-                <a href="{{ route('customer.payment.select-gateway', $order) }}" 
+                <a href="{{ route('customer.orders.show', $order) }}" 
                    class="flex-1 rounded-xl border border-zinc-300 bg-white py-3 text-center text-sm font-medium text-black transition hover:bg-zinc-50">
                     Back
                 </a>

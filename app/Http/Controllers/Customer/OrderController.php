@@ -132,9 +132,9 @@ class OrderController extends Controller
             'guest_name' => 'required_without:user_id|string|max:255',
             'guest_email' => 'required_without:user_id|email|max:255',
             'guest_phone' => 'required_without:user_id|string|max:20',
-            'shipping_name' => 'required|string|max:255',
-            'shipping_phone' => 'required|string|max:20',
-            'shipping_address' => 'required|string|max:500',
+            'shipping_name' => 'required_without:user_id|string|max:255',
+            'shipping_phone' => 'required_without:user_id|string|max:20',
+            'shipping_address' => 'required_without:user_id|string|max:500',
             'shipping_latitude' => 'required|numeric',
             'shipping_longitude' => 'required|numeric',
             'delivery_distance_km' => 'nullable|numeric|min:0',
@@ -154,9 +154,9 @@ class OrderController extends Controller
             'guest_name.required_without' => 'Nama wajib diisi.',
             'guest_email.required_without' => 'Email wajib diisi.',
             'guest_phone.required_without' => 'Nomor telepon wajib diisi.',
-            'shipping_name.required' => 'Nama penerima wajib diisi.',
-            'shipping_phone.required' => 'Nomor telepon penerima wajib diisi.',
-            'shipping_address.required' => 'Alamat pengiriman wajib diisi.',
+            'shipping_name.required_without' => 'Nama penerima wajib diisi.',
+            'shipping_phone.required_without' => 'Nomor telepon penerima wajib diisi.',
+            'shipping_address.required_without' => 'Alamat pengiriman wajib diisi.',
             'shipping_latitude.required' => 'Koordinat latitude wajib diisi.',
             'shipping_latitude.numeric' => 'Koordinat latitude harus berupa angka.',
             'shipping_longitude.required' => 'Koordinat longitude wajib diisi.',
@@ -240,6 +240,16 @@ class OrderController extends Controller
             $userId = null;
             if (auth()->check()) {
                 $userId = auth()->id();
+                // Use user profile data as fallback for shipping fields
+                if (empty($validated['shipping_name'])) {
+                    $validated['shipping_name'] = auth()->user()->name;
+                }
+                if (empty($validated['shipping_phone'])) {
+                    $validated['shipping_phone'] = auth()->user()->phone ?? '';
+                }
+                if (empty($validated['shipping_address'])) {
+                    $validated['shipping_address'] = auth()->user()->address ?? '';
+                }
             } else {
                 // Create guest user or find existing by email
                 $guestUser = User::where('email', $validated['guest_email'])->first();
@@ -286,15 +296,30 @@ class OrderController extends Controller
             if (auth()->check() && $request->input('use_points') && $request->input('points_used') > 0) {
                 $user = auth()->user();
                 $requestedPoints = (int) $request->input('points_used');
-                
-                // Validate user has enough points
-                if ($requestedPoints <= $user->points) {
+                $maxUsablePoints = min($user->points, (int) floor($netSubtotal / 100));
+
+                // Validate: points cannot exceed user balance or subtotal value
+                if ($requestedPoints > 0 && $requestedPoints <= $maxUsablePoints) {
                     $pointsUsed = $requestedPoints;
-                    $pointsDiscount = $pointsUsed * 100; // 100 points = Rp10,000, so 1 point = Rp100
+                    $pointsDiscount = $pointsUsed * 100; // 1 point = Rp100
+                }
+            }
+
+            // Apply voucher discount if provided
+            $voucherDiscount = 0;
+            $voucherId = $request->input('voucher_id');
+            if ($voucherId && auth()->check()) {
+                $voucherService = app(\App\Services\VoucherService::class);
+                $result = $voucherService->validateVoucherForCheckout(auth()->id(), $voucherId, $netSubtotal);
+                
+                if ($result['success']) {
+                    $voucherDiscount = $result['data']['discount'] ?? 0;
+                    // Mark voucher as used
+                    $voucherService->useVoucher(auth()->id(), $voucherId);
                 }
             }
             
-            $total = max(0, (int) round($netSubtotal + $shippingPaid - $pointsDiscount));
+            $total = max(0, (int) round($netSubtotal + $shippingPaid - $pointsDiscount - $voucherDiscount));
 
             $deliveryNotes = null;
             if (!empty($validated['courier_service_code'])) {
@@ -310,6 +335,8 @@ class OrderController extends Controller
                 'shipping_cost' => $shippingCost,
                 'points_used' => $pointsUsed,
                 'points_discount' => $pointsDiscount,
+                'voucher_id' => $voucherId,
+                'voucher_discount' => $voucherDiscount,
                 'total' => $total,
                 'ongkir_asli' => $shippingCost,
                 'diskon_ongkir' => $shippingDiscount,
@@ -441,9 +468,9 @@ class OrderController extends Controller
                 session()->put('guest_orders', $guestOrders);
             }
 
-            // Redirect to select payment gateway
-            return redirect()->route('customer.payment.select-gateway', $order)
-                ->with('success', 'Pesanan berhasil dibuat. Silakan pilih metode pembayaran.');
+            // Redirect to Paylabs payment page directly
+            return redirect()->route('customer.payment.paylabs.show', $order)
+                ->with('success', 'Pesanan berhasil dibuat. Silakan lanjutkan pembayaran.');
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -485,6 +512,49 @@ class OrderController extends Controller
                 $order->refresh();
             } catch (\Throwable $e) {
                 \Log::warning('Sinkronisasi Biteship dilewati karena error saat membuka detail order customer', [
+                    'order_number' => $order->order_number,
+                    'biteship_order_id' => $order->biteship_order_id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+
+        $order->load('items.product');
+
+        $biteshipDetail = null;
+        if (!empty($order->biteship_order_id)) {
+            $biteshipDetail = $this->buildBiteshipDetailPayload($order, $biteshipRawDetail ?? []);
+        }
+
+        return view('customer.orders.show', compact('order', 'biteshipDetail'));
+    }
+
+    /**
+     * Show order detail for guest (accessible without login)
+     */
+    public function guestShow(Order $order)
+    {
+        // Check if guest can access this order
+        if (auth()->check()) {
+            if ($order->user_id !== auth()->id()) {
+                abort(403);
+            }
+        } else {
+            $guestOrders = session()->get('guest_orders', []);
+            $guestUserId = session()->get('guest_user_id');
+
+            if (!in_array($order->id, $guestOrders, true) && !($guestUserId && (int) $guestUserId === (int) $order->user_id)) {
+                abort(403);
+            }
+        }
+
+        $biteshipRawDetail = null;
+        if (!empty($order->biteship_order_id)) {
+            try {
+                $biteshipRawDetail = $this->syncOrderStatusFromBiteship($order);
+                $order->refresh();
+            } catch (\Throwable $e) {
+                \Log::warning('Sinkronisasi Biteship dilewati karena error saat membuka detail order guest', [
                     'order_number' => $order->order_number,
                     'biteship_order_id' => $order->biteship_order_id,
                     'error' => $e->getMessage(),

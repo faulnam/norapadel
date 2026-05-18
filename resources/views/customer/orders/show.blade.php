@@ -7,16 +7,6 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
 <style>
-    body { padding-top: 0 !important; padding-bottom: 0 !important; }
-    #mainNavbar, .mobile-bottom-nav, .footer { display: none !important; }
-    
-    /* Fix z-index for navbar */
-    header {
-        position: sticky;
-        top: 0;
-        z-index: 9999 !important;
-    }
-    
     /* Map container with proper z-index */
     #courierMap { 
         height: 450px; 
@@ -36,18 +26,17 @@
     
     .leaflet-top,
     .leaflet-bottom {
-        z-index: 10 !important;
+        z-index: 2 !important;
     }
     
-    /* Hide routing instructions */
-    .leaflet-routing-container {
-        display: none;
+    .leaflet-control {
+        z-index: 3 !important;
     }
     
-    /* Pulse animation for courier marker */
+    /* Courier marker animation */
     @keyframes pulse {
         0%, 100% { transform: scale(1); opacity: 1; }
-        50% { transform: scale(1.05); opacity: 0.9; }
+        50% { transform: scale(1.2); opacity: 0.8; }
     }
     
     .courier-marker {
@@ -57,34 +46,10 @@
 @endpush
 
 @section('content')
-<!-- Navbar -->
-<header class="fixed left-0 top-0 z-[9999] w-full border-b border-black/6 bg-white/80 backdrop-blur-xl md:sticky">
-    <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-10 lg:px-12">
-        <a href="{{ route('home') }}" class="flex items-center gap-2">
-            <img src="{{ asset('storage/logo.png') }}" alt="NoraPadel" class="h-7 w-7 object-contain" loading="lazy">
-            <span class="text-xl font-semibold tracking-tight text-black">NoraPadel</span>
-        </a>
-        <nav class="hidden items-center gap-8 md:flex">
-            <a href="{{ route('home') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Home</a>
-            <a href="{{ route('racket') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Racket</a>
-            <a href="{{ route('shoes') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Shoes</a>
-            <a href="{{ route('apparel') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Accessories</a>
-        </nav>
-        <div class="flex items-center gap-3 text-black/80">
-            <a href="{{ route('customer.orders.index') }}" class="transition duration-300 hover:text-black" title="Order History">
-                <i class="fas fa-history text-sm"></i>
-            </a>
-            <a href="{{ route('customer.profile.index') }}" class="transition duration-300 hover:text-black" title="Profile">
-                <i class="fas fa-user text-sm"></i>
-            </a>
-            <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-black" title="Cart">
-                <i class="fas fa-shopping-bag text-sm"></i>
-            </a>
-        </div>
-    </div>
-</header>
+<div class="bg-white text-black antialiased">
+    @include('components.luxury-navbar')
 
-<div class="min-h-screen bg-zinc-50 py-8 pt-16 md:pt-0">
+<div class="min-h-screen bg-zinc-50 py-8 pt-16 md:pt-20">
     <div class="mx-auto max-w-7xl px-6 md:px-10 lg:px-12">
         <!-- Breadcrumb -->
         <div class="mb-6 text-sm text-zinc-500">
@@ -129,6 +94,7 @@
                                     <p class="text-sm font-semibold text-amber-900 mb-1">Make Payment Now</p>
                                     <p class="text-xs text-amber-800 mb-2">Order will be automatically cancelled if not paid within:</p>
                                     <div class="text-lg font-bold text-amber-900" id="expirationTimer">{{ $order->formatted_expiration_time }}</div>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -595,7 +561,7 @@
 
                 <!-- Actions -->
                 @if($order->canUploadPaymentProof())
-                <a href="{{ route('customer.payment.select-gateway', $order) }}" 
+                <a href="{{ route('customer.payment.paylabs.waiting', $order) }}"
                    class="block w-full rounded-xl bg-black py-3 text-center text-sm font-medium text-white transition hover:bg-black/90">
                     Pay Now
                 </a>
@@ -620,8 +586,50 @@
 <!-- Footer -->
 <footer class="border-t border-black/10 bg-white py-10 text-sm text-zinc-500">
     <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
-        <div class="text-center">
-            <p>© {{ now()->year }} NoraPadel. All rights reserved.</p>
+        <div class="hidden grid-cols-2 gap-8 md:grid md:grid-cols-4">
+            <div>
+                <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">Support</h3>
+                <ul class="space-y-2">
+                    <li><a href="{{ route('policy') }}" class="hover:underline">Policy</a></li>
+                    <li><a href="{{ route('return-refund') }}" class="hover:underline">Return & Refund</a></li>
+                    <li><a href="{{ route('guarantee') }}" class="hover:underline">Nora Guarantee</a></li>
+                    <li><a href="{{ route('help-center') }}" class="hover:underline">Help Center</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-black">Account</h3>
+                <ul class="space-y-2">
+                    <li><a href="{{ route('customer.profile.index') }}" class="hover:underline">Profile</a></li>
+                    <li><a href="{{ route('customer.orders.index') }}" class="hover:underline">Order History</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="space-y-2 md:hidden">
+            <details class="group rounded-xl border border-black/10 bg-white px-4 py-3">
+                <summary class="flex cursor-pointer list-none items-center justify-between text-xs font-semibold uppercase tracking-wide text-black">
+                    Support
+                    <i class="fas fa-chevron-down text-[10px] text-zinc-500 transition group-open:rotate-180"></i>
+                </summary>
+                <ul class="mt-3 space-y-2 text-sm">
+                    <li><a href="{{ route('policy') }}" class="hover:underline">Policy</a></li>
+                    <li><a href="{{ route('return-refund') }}" class="hover:underline">Return & Refund</a></li>
+                    <li><a href="{{ route('guarantee') }}" class="hover:underline">Nora Guarantee</a></li>
+                    <li><a href="{{ route('help-center') }}" class="hover:underline">Help Center</a></li>
+                </ul>
+            </details>
+            <details class="group rounded-xl border border-black/10 bg-white px-4 py-3">
+                <summary class="flex cursor-pointer list-none items-center justify-between text-xs font-semibold uppercase tracking-wide text-black">
+                    Account
+                    <i class="fas fa-chevron-down text-[10px] text-zinc-500 transition group-open:rotate-180"></i>
+                </summary>
+                <ul class="mt-3 space-y-2 text-sm">
+                    <li><a href="{{ route('customer.profile.index') }}" class="hover:underline">Profile</a></li>
+                    <li><a href="{{ route('customer.orders.index') }}" class="hover:underline">Order History</a></li>
+                </ul>
+            </details>
+        </div>
+        <div class="mx-auto mt-8 w-full max-w-7xl border-t border-black/10 px-6 pt-5 text-xs text-zinc-400 md:px-10 lg:px-12 text-center">
+            © {{ now()->year }} NoraPadel. All rights reserved.
         </div>
     </div>
 </footer>

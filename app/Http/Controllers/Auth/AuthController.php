@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules\Password;
+use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
@@ -248,6 +249,66 @@ class AuthController extends Controller
     private function registrationOtpCacheKey(string $email): string
     {
         return 'register_otp:' . sha1(strtolower($email));
+    }
+
+    /**
+     * Redirect to Google OAuth
+     */
+    public function redirectToGoogle()
+    {
+        return Socialite::driver('google')->redirect();
+    }
+
+    /**
+     * Handle Google OAuth callback
+     */
+    public function handleGoogleCallback(Request $request)
+    {
+        try {
+            $googleUser = Socialite::driver('google')->user();
+        } catch (\Exception $e) {
+            Log::error('Google OAuth error: ' . $e->getMessage());
+            return redirect()->route('login')->with('error', 'Gagal login dengan Google. Silakan coba lagi.');
+        }
+
+        $user = User::where('email', $googleUser->getEmail())->first();
+
+        if ($user) {
+            if (!$user->google_id) {
+                $user->update(['google_id' => $googleUser->getId()]);
+            }
+
+            if (!$user->is_active) {
+                return redirect()->route('login')->with('error', 'Akun Anda telah dinonaktifkan. Silakan hubungi admin.');
+            }
+
+            Auth::login($user, true);
+
+            app(\App\Http\Controllers\Customer\CartController::class)->mergeGuestCart();
+            app(\App\Http\Controllers\Customer\WishlistController::class)->mergeGuestWishlist();
+
+            return redirect()->intended(route('home'));
+        }
+
+        $newUser = User::create([
+            'name' => $googleUser->getName(),
+            'email' => $googleUser->getEmail(),
+            'google_id' => $googleUser->getId(),
+            'password' => Hash::make(uniqid()),
+            'role' => 'customer',
+            'is_active' => true,
+            'email_verified_at' => now(),
+            'points' => 100,
+            'welcome_bonus_claimed' => false,
+            'first_purchase_completed' => false,
+        ]);
+
+        Auth::login($newUser, true);
+
+        app(\App\Http\Controllers\Customer\CartController::class)->mergeGuestCart();
+        app(\App\Http\Controllers\Customer\WishlistController::class)->mergeGuestWishlist();
+
+        return redirect()->intended(route('home'));
     }
 
     /**

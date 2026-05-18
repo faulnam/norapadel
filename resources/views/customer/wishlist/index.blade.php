@@ -4,243 +4,8 @@
 
 @section('content')
 <div class="bg-white text-black antialiased">
-    <header class="fixed left-0 top-0 z-50 w-full border-b border-black/6 bg-white/80 backdrop-blur-xl md:sticky">
-        <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-10 lg:px-12">
-            <a href="{{ route('home') }}" class="flex items-center gap-2">
-                <img src="{{ asset('storage/logo.png') }}" alt="NoraPadel" class="h-7 w-7 object-contain" loading="lazy">
-                <span class="text-xl font-semibold tracking-tight text-black">NoraPadel</span>
-            </a>
-
-            <nav class="hidden items-center gap-8 md:flex" id="navLinks">
-                <a href="{{ route('home') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Home</a>
-
-                <!-- New Arrivals Mega Dropdown -->
-                <div class="relative group" data-dropdown="new-arrivals">
-                    <a href="{{ route('new-arrivals') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black flex items-center gap-1">
-                        New Arrivals
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-300 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </a>
-                    <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[700px] opacity-0 invisible translate-y-[-10px] transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
-                        <div class="bg-white/95 backdrop-blur-md rounded-xl shadow-2xl border border-zinc-100 p-0 overflow-hidden aspect-video">
-                            <div class="grid grid-cols-[1fr_1fr] h-full">
-                                <!-- Left: Brand & Level (Centered) -->
-                                <div class="flex flex-col justify-center items-center bg-zinc-50/50 p-8 space-y-6">
-                                    <div class="w-full text-center">
-                                        <h4 class="text-sm font-bold text-black mb-4 tracking-wide">BRAND</h4>
-                                        <div class="flex flex-wrap justify-center gap-2">
-                                            <a href="{{ route('new-arrivals', ['brand' => 'Bullpadel']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Bullpadel</a>
-                                            <a href="{{ route('new-arrivals', ['brand' => 'Babolat']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Babolat</a>
-                                            <a href="{{ route('new-arrivals', ['brand' => 'Nox']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Nox</a>
-                                            <a href="{{ route('new-arrivals', ['brand' => 'Alpha']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Alpha</a>
-                                            <a href="{{ route('new-arrivals', ['brand' => 'Zephyr']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Zephyr</a>
-                                            <a href="{{ route('new-arrivals', ['brand' => 'Arronax']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Arronax</a>
-                                        </div>
-                                    </div>
-                                    <div class="w-full text-center">
-                                        <h4 class="text-sm font-bold text-black mb-4 tracking-wide">LEVEL</h4>
-                                        <div class="flex flex-wrap justify-center gap-2">
-                                            <a href="{{ route('new-arrivals', ['level' => 'beginner']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Beginner</a>
-                                            <a href="{{ route('new-arrivals', ['level' => 'intermediate']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Intermediate</a>
-                                            <a href="{{ route('new-arrivals', ['level' => 'pro']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Pro</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Right: Image -->
-                                <div class="relative overflow-hidden">
-                                    <img src="{{ asset('storage/fiks.jpeg') }}" alt="New Arrivals" class="w-full h-full object-cover">
-                                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
-                                    <div class="absolute bottom-6 left-6 right-6">
-                                        <h5 class="text-white font-bold text-2xl mb-1">New Arrivals</h5>
-                                        <p class="text-white/90 text-sm font-medium">Discover the Latest</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Racket Mega Dropdown -->
-                <div class="relative group" data-dropdown="racket">
-                    <a href="{{ route('racket') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black flex items-center gap-1">
-                        Racket
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-300 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </a>
-                    <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[700px] opacity-0 invisible translate-y-[-10px] transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
-                        <div class="bg-white/95 backdrop-blur-md rounded-xl shadow-2xl border border-zinc-100 p-0 overflow-hidden aspect-video">
-                            <div class="grid grid-cols-[1fr_1.2fr] h-full">
-                                <!-- Left: Categories (Centered) -->
-                                <div class="flex flex-col justify-center items-center bg-zinc-50/50 p-8 space-y-6">
-                                    <div class="w-full text-center">
-                                        <h4 class="text-sm font-bold text-black mb-4 tracking-wide">BRAND</h4>
-                                        <div class="flex flex-wrap justify-center gap-2">
-                                            <a href="{{ route('racket', ['brand' => 'Bullpadel']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Bullpadel</a>
-                                            <a href="{{ route('racket', ['brand' => 'Babolat']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Babolat</a>
-                                            <a href="{{ route('racket', ['brand' => 'Nox']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Nox</a>
-                                            <a href="{{ route('racket', ['brand' => 'Alpha']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Alpha</a>
-                                            <a href="{{ route('racket', ['brand' => 'Zephyr']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Zephyr</a>
-                                            <a href="{{ route('racket', ['brand' => 'Arronax']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Arronax</a>
-                                        </div>
-                                    </div>
-                                    <div class="w-full text-center">
-                                        <h4 class="text-sm font-bold text-black mb-4 tracking-wide">LEVEL</h4>
-                                        <div class="flex flex-wrap justify-center gap-2">
-                                            <a href="{{ route('racket', ['level' => 'beginner']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Beginner</a>
-                                            <a href="{{ route('racket', ['level' => 'intermediate']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Intermediate</a>
-                                            <a href="{{ route('racket', ['level' => 'pro']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Pro</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Right: Image -->
-                                <div class="relative overflow-hidden">
-                                    <img src="{{ asset('storage/iconracket.jpg') }}" alt="Racket Collection" class="w-full h-full object-cover">
-                                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
-                                    <div class="absolute bottom-6 left-6 right-6">
-                                        <h5 class="text-white font-bold text-2xl mb-1">Premium Rackets</h5>
-                                        <p class="text-white/90 text-sm font-medium">Precision & Power</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Shoes Mega Dropdown -->
-                <div class="relative group" data-dropdown="shoes">
-                    <a href="{{ route('shoes') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black flex items-center gap-1">
-                        Shoes
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-300 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </a>
-                    <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[700px] opacity-0 invisible translate-y-[-10px] transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
-                        <div class="bg-white/95 backdrop-blur-md rounded-xl shadow-2xl border border-zinc-100 p-0 overflow-hidden aspect-video">
-                            <div class="grid grid-cols-[1fr_1.2fr] h-full">
-                                <!-- Left: Categories (Centered) -->
-                                <div class="flex flex-col justify-center items-center bg-zinc-50/50 p-8 space-y-6">
-                                    <div class="w-full text-center">
-                                        <h4 class="text-sm font-bold text-black mb-4 tracking-wide">BRAND</h4>
-                                        <div class="flex flex-wrap justify-center gap-2">
-                                            <a href="{{ route('shoes', ['brand' => 'Bullpadel']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Bullpadel</a>
-                                            <a href="{{ route('shoes', ['brand' => 'Babolat']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Babolat</a>
-                                            <a href="{{ route('shoes', ['brand' => 'Nox']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Nox</a>
-                                            <a href="{{ route('shoes', ['brand' => 'Alpha']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Alpha</a>
-                                            <a href="{{ route('shoes', ['brand' => 'Zephyr']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Zephyr</a>
-                                            <a href="{{ route('shoes', ['brand' => 'Arronax']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Arronax</a>
-                                        </div>
-                                    </div>
-                                    <div class="w-full text-center">
-                                        <h4 class="text-sm font-bold text-black mb-4 tracking-wide">LEVEL</h4>
-                                        <div class="flex flex-wrap justify-center gap-2">
-                                            <a href="{{ route('shoes', ['level' => 'beginner']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Beginner</a>
-                                            <a href="{{ route('shoes', ['level' => 'intermediate']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Intermediate</a>
-                                            <a href="{{ route('shoes', ['level' => 'pro']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Pro</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Right: Image -->
-                                <div class="relative overflow-hidden">
-                                    <img src="{{ asset('storage/iconsepatu.png') }}" alt="Shoes Collection" class="w-full h-full object-cover">
-                                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
-                                    <div class="absolute bottom-6 left-6 right-6">
-                                        <h5 class="text-white font-bold text-2xl mb-1">Premium Shoes</h5>
-                                        <p class="text-white/90 text-sm font-medium">Move Faster, Play Smarter</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Accessories Mega Dropdown -->
-                <div class="relative group" data-dropdown="accessories">
-                    <a href="{{ route('apparel') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black flex items-center gap-1">
-                        Accessories
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-300 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </a>
-                    <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[700px] opacity-0 invisible translate-y-[-10px] transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
-                        <div class="bg-white/95 backdrop-blur-md rounded-xl shadow-2xl border border-zinc-100 p-0 overflow-hidden aspect-video">
-                            <div class="grid grid-cols-[1fr_1.2fr] h-full">
-                                <!-- Left: Categories (Centered) -->
-                                <div class="flex flex-col justify-center items-center bg-zinc-50/50 p-8 space-y-6">
-                                    <div class="w-full text-center">
-                                        <h4 class="text-sm font-bold text-black mb-4 tracking-wide">BRAND</h4>
-                                        <div class="flex flex-wrap justify-center gap-2">
-                                            <a href="{{ route('apparel', ['brand' => 'Bullpadel']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Bullpadel</a>
-                                            <a href="{{ route('apparel', ['brand' => 'Babolat']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Babolat</a>
-                                            <a href="{{ route('apparel', ['brand' => 'Nox']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Nox</a>
-                                            <a href="{{ route('apparel', ['brand' => 'Alpha']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Alpha</a>
-                                            <a href="{{ route('apparel', ['brand' => 'Zephyr']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Zephyr</a>
-                                            <a href="{{ route('apparel', ['brand' => 'Arronax']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Arronax</a>
-                                        </div>
-                                    </div>
-                                    <div class="w-full text-center">
-                                        <h4 class="text-sm font-bold text-black mb-4 tracking-wide">LEVEL</h4>
-                                        <div class="flex flex-wrap justify-center gap-2">
-                                            <a href="{{ route('apparel', ['level' => 'beginner']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Beginner</a>
-                                            <a href="{{ route('apparel', ['level' => 'intermediate']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Intermediate</a>
-                                            <a href="{{ route('apparel', ['level' => 'pro']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Pro</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Right: Image -->
-                                <div class="relative overflow-hidden">
-                                    <img src="{{ asset('storage/icontas.jpg') }}" alt="Accessories Collection" class="w-full h-full object-cover">
-                                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
-                                    <div class="absolute bottom-6 left-6 right-6">
-                                        <h5 class="text-white font-bold text-2xl mb-1">Premium Accessories</h5>
-                                        <p class="text-white/90 text-sm font-medium">Comfort Meets Performance</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <a href="{{ route('contact') }}" class="border-b border-transparent text-sm text-black/80 transition duration-300 hover:border-black/30 hover:text-black">Contact</a>
-            </nav>
-
-            <div class="flex items-center gap-3 text-black/80">
-                @auth
-                    <a href="{{ route('customer.orders.index') }}" class="transition duration-300 hover:text-black" title="Riwayat Pesanan">
-                        <i class="fas fa-history text-sm"></i>
-                    </a>
-                    <a href="{{ route('customer.profile.index') }}" class="transition duration-300 hover:text-black" aria-label="Profile">
-                        <i class="fas fa-user text-sm"></i>
-                    </a>
-                @endauth
-                
-                <a href="{{ route('customer.wishlist.index') }}" class="relative transition duration-300 hover:text-black" aria-label="Wishlist" title="Wishlist">
-                    <i class="fas fa-heart text-sm"></i>
-                </a>
-                
-                <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-black" aria-label="Cart" title="Keranjang">
-                    <i class="fas fa-shopping-bag text-sm"></i>
-                </a>
-                
-                <button type="button" class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-black transition duration-300 hover:border-black/35 md:hidden" data-mobile-menu-toggle aria-label="Toggle navigation" aria-expanded="false">
-                    <i class="fas fa-bars text-sm"></i>
-                </button>
-            </div>
-        </div>
-
-        <div class="hidden border-t border-black/10 bg-white/95 px-6 py-4 md:hidden" data-mobile-menu>
-            <nav class="flex flex-col gap-3 text-sm font-medium text-black/85">
-                <a href="{{ route('home') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Home</a>
-                <a href="{{ route('new-arrivals') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">New Arrivals</a>
-                <a href="{{ route('racket') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Racket</a>
-                <a href="{{ route('shoes') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Shoes</a>
-                <a href="{{ route('apparel') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Accessories</a>
-            </nav>
-        </div>
-    </header>
-
-    <div class="mx-auto w-full max-w-7xl px-6 py-8 pt-16 md:px-10 md:py-12 md:pt-0 lg:px-12 lg:py-16">
+    @include('components.luxury-navbar')
+    <div class="mx-auto w-full max-w-7xl px-6 py-8 pt-24 md:px-10 md:py-12 md:pt-20 lg:px-12 lg:py-16">
         <h3 class="mb-6 text-3xl font-semibold tracking-tight text-black sm:text-4xl">
             <i class="fas fa-heart mr-3 text-rose-500"></i>My Wishlist
         </h3>
@@ -401,5 +166,210 @@
             });
         }
     });
+
+    // Hamburger Menu Toggle
+    (function() {
+        const btn = document.getElementById('hamburgerMenuBtnCustom');
+        const dropdown = document.getElementById('hamburgerMenuDropdownCustom');
+        const wrapper = document.getElementById('hamburgerMenuWrapperCustom');
+        if (!btn || !dropdown || !wrapper) return;
+        btn.addEventListener('click', function(e){ e.stopPropagation(); dropdown.classList.toggle('hidden'); });
+        document.addEventListener('click', function(e){ if(!wrapper.contains(e.target)) dropdown.classList.add('hidden'); });
+    })();
+
+    // Mega Dropdown Hover Control
+    (function() {
+        const dropdownContainers = document.querySelectorAll('[data-dropdown]');
+        let activeDropdown = null;
+        let hoverTimeout = null;
+
+        dropdownContainers.forEach(container => {
+            const dropdown = container.querySelector('.absolute');
+
+            container.addEventListener('mouseenter', () => {
+                if (hoverTimeout) {
+                    clearTimeout(hoverTimeout);
+                    hoverTimeout = null;
+                }
+
+                dropdownContainers.forEach(otherContainer => {
+                    if (otherContainer !== container) {
+                        const otherDropdown = otherContainer.querySelector('.absolute');
+                        if (otherDropdown) {
+                            otherDropdown.classList.add('invisible', 'opacity-0', 'translate-y-[-10px]');
+                            otherDropdown.classList.remove('visible', 'opacity-100', 'translate-y-0');
+                        }
+                    }
+                });
+
+                if (dropdown) {
+                    dropdown.classList.remove('invisible', 'opacity-0', 'translate-y-[-10px]');
+                    dropdown.classList.add('visible', 'opacity-100', 'translate-y-0');
+                }
+                activeDropdown = container;
+            });
+
+            container.addEventListener('mouseleave', () => {
+                hoverTimeout = setTimeout(() => {
+                    if (dropdown) {
+                        dropdown.classList.add('invisible', 'opacity-0', 'translate-y-[-10px]');
+                        dropdown.classList.remove('visible', 'opacity-100', 'translate-y-0');
+                    }
+                    activeDropdown = null;
+                }, 100);
+            });
+
+            if (dropdown) {
+                dropdown.addEventListener('mouseenter', () => {
+                    if (hoverTimeout) {
+                        clearTimeout(hoverTimeout);
+                        hoverTimeout = null;
+                    }
+                });
+
+                dropdown.addEventListener('mouseleave', () => {
+                    hoverTimeout = setTimeout(() => {
+                        dropdown.classList.add('invisible', 'opacity-0', 'translate-y-[-10px]');
+                        dropdown.classList.remove('visible', 'opacity-100', 'translate-y-0');
+                        activeDropdown = null;
+                    }, 100);
+                });
+            }
+        });
+    })();
+
+    // Modern Search Overlay
+    (function() {
+        const overlay = document.getElementById('searchOverlay');
+        const panel = document.getElementById('searchPanel');
+        const toggleBtn = document.getElementById('searchToggleBtn');
+        const closeBtn = document.getElementById('searchCloseBtn');
+        const backdrop = document.getElementById('searchBackdrop');
+        const input = document.getElementById('searchInput');
+        const loading = document.getElementById('searchLoading');
+        const initialState = document.getElementById('searchInitial');
+        const emptyState = document.getElementById('searchEmpty');
+        const resultsList = document.getElementById('searchResults');
+
+        if (!overlay || !toggleBtn || !input) return;
+
+        let debounceTimer;
+        let currentController;
+
+        function openOverlay() {
+            overlay.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            requestAnimationFrame(() => {
+                overlay.classList.remove('opacity-0');
+                overlay.classList.add('opacity-100');
+                panel.classList.remove('-translate-y-4');
+                panel.classList.add('translate-y-0');
+                setTimeout(() => input.focus(), 50);
+            });
+        }
+
+        function closeOverlay() {
+            overlay.classList.add('opacity-0');
+            overlay.classList.remove('opacity-100');
+            panel.classList.add('-translate-y-4');
+            panel.classList.remove('translate-y-0');
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+                document.body.style.overflow = '';
+                input.value = '';
+                initialState.classList.remove('hidden');
+                emptyState.classList.add('hidden');
+                resultsList.classList.add('hidden');
+            }, 300);
+        }
+
+        function escapeHtml(s) {
+            return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        }
+
+        function renderResults(products) {
+            resultsList.innerHTML = products.map(p => `
+                <a href="${escapeHtml(p.detail_url)}" class="flex items-center gap-4 px-5 py-3 transition hover:bg-zinc-50">
+                    <div class="h-14 w-14 flex-shrink-0 overflow-hidden rounded-lg bg-zinc-100">
+                        <img src="${escapeHtml(p.image_url)}" alt="${escapeHtml(p.name)}" class="h-full w-full object-cover" onerror="this.onerror=null;this.src='/images/logo.png';" loading="lazy">
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <p class="truncate text-sm font-medium text-zinc-900">${escapeHtml(p.name)}</p>
+                        <div class="mt-0.5 flex items-center gap-2 text-xs text-zinc-500">
+                            ${p.brand ? `<span class="font-medium">${escapeHtml(p.brand)}</span>` : ''}
+                            ${p.brand && p.category_label ? '<span class="text-zinc-300">·</span>' : ''}
+                            ${p.category_label ? `<span>${escapeHtml(p.category_label)}</span>` : ''}
+                        </div>
+                    </div>
+                    <p class="flex-shrink-0 text-sm font-semibold text-zinc-900">${escapeHtml(p.formatted_price)}</p>
+                </a>
+            `).join('');
+        }
+
+        async function performSearch(query) {
+            if (currentController) currentController.abort();
+            currentController = new AbortController();
+            loading.classList.remove('hidden');
+            try {
+                const res = await fetch(`/api/search-products?q=${encodeURIComponent(query)}`, {
+                    signal: currentController.signal,
+                    headers: { 'Accept': 'application/json' }
+                });
+                const data = await res.json();
+                loading.classList.add('hidden');
+                if (data.products && data.products.length > 0) {
+                    renderResults(data.products);
+                    initialState.classList.add('hidden');
+                    emptyState.classList.add('hidden');
+                    resultsList.classList.remove('hidden');
+                } else {
+                    initialState.classList.add('hidden');
+                    emptyState.classList.remove('hidden');
+                    resultsList.classList.add('hidden');
+                }
+            } catch (err) {
+                if (err.name !== 'AbortError') {
+                    loading.classList.add('hidden');
+                    console.error('Search error:', err);
+                }
+            }
+        }
+
+        input.addEventListener('input', function() {
+            const q = this.value.trim();
+            clearTimeout(debounceTimer);
+            if (q.length < 2) {
+                loading.classList.add('hidden');
+                if (currentController) currentController.abort();
+                initialState.classList.remove('hidden');
+                emptyState.classList.add('hidden');
+                resultsList.classList.add('hidden');
+                return;
+            }
+            debounceTimer = setTimeout(() => performSearch(q), 250);
+        });
+
+        toggleBtn.addEventListener('click', openOverlay);
+        closeBtn.addEventListener('click', closeOverlay);
+        backdrop.addEventListener('click', closeOverlay);
+
+        const navSearchInputEl = document.getElementById('navSearchInput');
+        if (navSearchInputEl) {
+            navSearchInputEl.addEventListener('focus', function() {
+                openOverlay();
+                const q = this.value.trim();
+                if (q.length >= 2) {
+                    input.value = q;
+                    performSearch(q);
+                }
+            });
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && !overlay.classList.contains('hidden')) {
+                closeOverlay();
+            }
+        });
+    })();
 </script>
 @endpush
