@@ -660,11 +660,11 @@
                                             @endphp
                                             @for($i = 1; $i <= 5; $i++)
                                                 @if($i <= $fullStars)
-                                                    <i class="fas fa-star text-amber-400 text-[10px]"></i>
+                                                    <i class="fas fa-star text-black text-[10px]"></i>
                                                 @elseif($i == $fullStars + 1 && $hasHalfStar)
-                                                    <i class="fas fa-star-half-alt text-amber-400 text-[10px]"></i>
+                                                    <i class="fas fa-star-half-alt text-black text-[10px]"></i>
                                                 @else
-                                                    <i class="far fa-star text-zinc-300 text-[10px]"></i>
+                                                    <i class="far fa-star text-zinc-200 text-[10px]"></i>
                                                 @endif
                                             @endfor
                                             @if($product->total_reviews > 0)
@@ -699,30 +699,30 @@
             <!-- Category Icons -->
             <section class="np-fade-section bg-white py-4 pt-4">
                 <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
-                    <div class="grid grid-cols-4 gap-2 md:grid-cols-4 md:gap-6">
-                        <a href="{{ route('racket') }}" class="flex flex-col items-center justify-center p-2 md:p-6 bg-white cursor-pointer transition hover:opacity-80">
-                            <div class="w-16 h-16 md:w-48 md:h-48 mb-2 md:mb-4 flex items-center justify-center">
+                    <div class="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
+                        <a href="{{ route('racket') }}" class="flex flex-col items-center justify-center p-4 md:p-6 bg-white cursor-pointer transition hover:opacity-80">
+                            <div class="w-36 h-36 md:w-48 md:h-48 mb-3 md:mb-4 flex items-center justify-center">
                                 <img src="{{ asset('storage/iconracket.jpg') }}" alt="Racket" class="w-full h-full object-contain">
                             </div>
-                            <h3 class="text-xs md:text-base font-medium text-black">Racket</h3>
+                            <h3 class="text-sm md:text-base font-medium text-black">Racket</h3>
                         </a>
-                        <a href="{{ route('shoes') }}" class="flex flex-col items-center justify-center p-2 md:p-6 bg-white cursor-pointer transition hover:opacity-80">
-                            <div class="w-16 h-16 md:w-48 md:h-48 mb-2 md:mb-4 flex items-center justify-center">
+                        <a href="{{ route('shoes') }}" class="flex flex-col items-center justify-center p-4 md:p-6 bg-white cursor-pointer transition hover:opacity-80">
+                            <div class="w-36 h-36 md:w-48 md:h-48 mb-3 md:mb-4 flex items-center justify-center">
                                 <img src="{{ asset('storage/iconsepatu.png') }}" alt="Shoes" class="w-full h-full object-contain">
                             </div>
-                            <h3 class="text-xs md:text-base font-medium text-black">Shoes</h3>
+                            <h3 class="text-sm md:text-base font-medium text-black">Shoes</h3>
                         </a>
-                        <a href="{{ route('apparel') }}" class="flex flex-col items-center justify-center p-2 md:p-6 bg-white cursor-pointer transition hover:opacity-80">
-                            <div class="w-16 h-16 md:w-48 md:h-48 mb-2 md:mb-4 flex items-center justify-center">
+                        <a href="{{ route('apparel') }}" class="flex flex-col items-center justify-center p-4 md:p-6 bg-white cursor-pointer transition hover:opacity-80">
+                            <div class="w-36 h-36 md:w-48 md:h-48 mb-3 md:mb-4 flex items-center justify-center">
                                 <img src="{{ asset('storage/icontas.jpg') }}" alt="Bag" class="w-full h-full object-contain">
                             </div>
-                            <h3 class="text-xs md:text-base font-medium text-black">Bags</h3>
+                            <h3 class="text-sm md:text-base font-medium text-black">Bags</h3>
                         </a>
-                        <a href="{{ route('apparel') }}" class="flex flex-col items-center justify-center p-2 md:p-6 bg-white cursor-pointer transition hover:opacity-80">
-                            <div class="w-16 h-16 md:w-48 md:h-48 mb-2 md:mb-4 flex items-center justify-center">
+                        <a href="{{ route('apparel') }}" class="flex flex-col items-center justify-center p-4 md:p-6 bg-white cursor-pointer transition hover:opacity-80">
+                            <div class="w-36 h-36 md:w-48 md:h-48 mb-3 md:mb-4 flex items-center justify-center">
                                 <img src="{{ asset('storage/icongrip.jpg') }}" alt="Grip" class="w-full h-full object-contain">
                             </div>
-                            <h3 class="text-xs md:text-base font-medium text-black">Grips</h3>
+                            <h3 class="text-sm md:text-base font-medium text-black">Grips</h3>
                         </a>
                     </div>
                 </div>
@@ -856,11 +856,11 @@
                                             @endphp
                                             @for($i = 1; $i <= 5; $i++)
                                                 @if($i <= $fullStars)
-                                                    <i class="fas fa-star text-amber-400 text-[10px]"></i>
+                                                    <i class="fas fa-star text-black text-[10px]"></i>
                                                 @elseif($i == $fullStars + 1 && $hasHalfStar)
-                                                    <i class="fas fa-star-half-alt text-amber-400 text-[10px]"></i>
+                                                    <i class="fas fa-star-half-alt text-black text-[10px]"></i>
                                                 @else
-                                                    <i class="far fa-star text-zinc-300 text-[10px]"></i>
+                                                    <i class="far fa-star text-zinc-200 text-[10px]"></i>
                                                 @endif
                                             @endfor
                                             @if($product->total_reviews > 0)
@@ -1600,18 +1600,12 @@
 
             // Navbar scroll effect
             const header = document.getElementById('mainHeader');
-            const marqueeBar = document.getElementById('marqueeBar');
             const logoText = document.getElementById('logoText');
             const navLinks = document.getElementById('navLinks');
             const navIcons = document.getElementById('navIcons');
 
             window.addEventListener('scroll', () => {
                 if (window.scrollY > 50) {
-                    // Hide marquee and adjust header position
-                    marqueeBar.style.transform = 'translateY(-100%)';
-                    marqueeBar.style.opacity = '0';
-                    header.style.top = '0';
-                    
                     header.classList.add('bg-white/80', 'backdrop-blur-xl', 'border-black/6');
                     header.classList.remove('bg-transparent', 'backdrop-blur-none', 'border-transparent');
                     
@@ -1646,11 +1640,6 @@
                         el.classList.add('hover:text-black');
                     });
                 } else {
-                    // Show marquee and adjust header position
-                    marqueeBar.style.transform = 'translateY(0)';
-                    marqueeBar.style.opacity = '1';
-                    header.style.top = '2rem';
-                    
                     header.classList.remove('bg-white/80', 'backdrop-blur-xl', 'border-black/6');
                     header.classList.add('bg-transparent', 'backdrop-blur-none', 'border-transparent');
                     

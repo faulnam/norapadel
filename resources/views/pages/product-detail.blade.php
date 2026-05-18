@@ -758,16 +758,6 @@ function selectRating(rating) {
     document.getElementById('ratingInput').value = rating;
 }
 
-// Handle quality rating slider
-document.getElementById('qualityRatingInput')?.addEventListener('input', function() {
-    document.getElementById('qualityRatingValue').textContent = this.value + '%';
-});
-
-// Handle sizing rating slider
-document.getElementById('sizingRatingInput')?.addEventListener('input', function() {
-    document.getElementById('sizingRatingValue').textContent = this.value + '%';
-});
-
 // Submit review form
 document.getElementById('reviewForm')?.addEventListener('submit', function(e) {
     e.preventDefault();
@@ -846,7 +836,7 @@ document.getElementById('reviewForm')?.addEventListener('submit', function(e) {
                 <i class="fas fa-times text-xl"></i>
             </button>
         </div>
-        <form id="reviewForm" class="p-6 space-y-4">
+        <form id="reviewForm" class="p-4 space-y-3">
             <!-- Rating -->
             <div>
                 <label class="block text-sm font-medium text-black mb-2">Rating *</label>
@@ -863,35 +853,7 @@ document.getElementById('reviewForm')?.addEventListener('submit', function(e) {
             <!-- Comment -->
             <div>
                 <label for="comment" class="block text-sm font-medium text-black mb-2">Comment</label>
-                <textarea id="comment" name="comment" rows="4" class="w-full px-4 py-2.5 border border-zinc-200 rounded-lg text-sm focus:outline-none focus:border-zinc-400 transition" placeholder="Share your experience with this product..."></textarea>
-            </div>
-
-            <!-- Quality Rating -->
-            <div>
-                <label for="qualityRatingInput" class="block text-sm font-medium text-black mb-2">Quality Rating</label>
-                <input type="range" id="qualityRatingInput" name="quality_rating" min="0" max="100" value="50" class="w-full">
-                <div class="flex justify-between text-xs text-zinc-500 mt-1">
-                    <span>Low</span>
-                    <span id="qualityRatingValue">50%</span>
-                    <span>High</span>
-                </div>
-            </div>
-
-            <!-- Sizing Rating -->
-            <div>
-                <label for="sizingRatingInput" class="block text-sm font-medium text-black mb-2">Sizing Rating</label>
-                <input type="range" id="sizingRatingInput" name="sizing_rating" min="0" max="100" value="50" class="w-full">
-                <div class="flex justify-between text-xs text-zinc-500 mt-1">
-                    <span>Runs Small</span>
-                    <span id="sizingRatingValue">50%</span>
-                    <span>Runs Large</span>
-                </div>
-            </div>
-
-            <!-- Usual Size -->
-            <div>
-                <label for="usualSize" class="block text-sm font-medium text-black mb-2">Usual Size (Optional)</label>
-                <input type="text" id="usualSize" name="usual_size" class="w-full px-4 py-2.5 border border-zinc-200 rounded-lg text-sm focus:outline-none focus:border-zinc-400 transition" placeholder="e.g., M, L, 42, etc.">
+                <textarea id="comment" name="comment" rows="3" class="w-full px-4 py-2.5 border border-zinc-200 rounded-lg text-sm focus:outline-none focus:border-zinc-400 transition" placeholder="Share your experience with this product..."></textarea>
             </div>
 
             <!-- Submit Button -->

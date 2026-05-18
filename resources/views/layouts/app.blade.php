@@ -826,7 +826,7 @@
     @stack('styles')
 </head>
 <body>
-    @unless(request()->routeIs('home', 'racket', 'shoes', 'apparel', 'shop', 'login', 'register', 'customer.products.*', 'customer.cart.*', 'customer.cart.index', 'customer.wishlist.index', 'customer.checkout', 'customer.orders.checkout', 'customer.orders.show', 'customer.orders.guest-show', 'customer.profile.*', 'new-arrivals', 'contact', 'policy', 'help-center', 'return-refund', 'guarantee', 'product.detail', 'produk.show'))
+    @unless(request()->routeIs('home', 'racket', 'shoes', 'apparel', 'shop', 'login', 'register', 'customer.products.*', 'customer.cart.*', 'customer.cart.index', 'customer.wishlist.index', 'customer.checkout', 'customer.orders.checkout', 'customer.orders.index', 'customer.orders.show', 'customer.orders.guest-show', 'customer.profile.*', 'new-arrivals', 'contact', 'policy', 'help-center', 'return-refund', 'guarantee', 'product.detail', 'produk.show'))
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg sticky-top" id="mainNavbar">
         <div class="container">
