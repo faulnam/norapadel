@@ -826,7 +826,7 @@
     @stack('styles')
 </head>
 <body>
-    @unless(request()->routeIs('home', 'racket', 'shoes', 'apparel', 'shop', 'login', 'register', 'customer.products.*', 'customer.cart.*', 'customer.cart.index', 'customer.wishlist.index', 'customer.checkout', 'customer.orders.checkout', 'customer.profile.*', 'new-arrivals', 'contact', 'policy', 'help-center', 'return-refund', 'guarantee', 'product.detail', 'produk.show'))
+    @unless(request()->routeIs('home', 'racket', 'shoes', 'apparel', 'shop', 'login', 'register', 'customer.products.*', 'customer.cart.*', 'customer.cart.index', 'customer.wishlist.index', 'customer.checkout', 'customer.orders.checkout', 'customer.orders.show', 'customer.orders.guest-show', 'customer.profile.*', 'new-arrivals', 'contact', 'policy', 'help-center', 'return-refund', 'guarantee', 'product.detail', 'produk.show'))
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg sticky-top" id="mainNavbar">
         <div class="container">
@@ -1282,6 +1282,7 @@
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('js/cart-badge-update.js') }}"></script>
     
     <script>
         // Navbar scroll effect

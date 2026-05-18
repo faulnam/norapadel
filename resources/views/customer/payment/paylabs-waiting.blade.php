@@ -8,7 +8,7 @@
     body { padding-top: 0 !important; padding-bottom: 0 !important; }
     #mainNavbar, .mobile-bottom-nav, .footer { display: none !important; }
 </style>
-@endsection
+@endpush
 
 @section('content')
 <div class="bg-white text-black antialiased">
@@ -144,7 +144,7 @@
             </div>
 
             <div class="flex gap-3">
-                <a href="{{ route('customer.orders.show', $order) }}" 
+                <a href="{{ route('customer.orders.guest-show', $order) }}" 
                    class="flex-1 rounded-xl border border-zinc-300 bg-white py-3 text-center text-sm font-medium text-black hover:bg-zinc-50">
                     View Order
                 </a>
@@ -219,7 +219,7 @@ function checkPaymentStatus(isAutoCheck = false) {
                 
                 // Redirect after 2 seconds
                 setTimeout(() => {
-                    window.location.href = '{{ route('customer.orders.show', $order) }}';
+                    window.location.href = '{{ route('customer.orders.guest-show', $order) }}';
                 }, 2000);
             } else {
                 if (!isAutoCheck) {

@@ -161,7 +161,15 @@ class CartController extends Controller
             }
 
             if ($request->expectsJson() || $request->ajax()) {
-                return response()->json(['success' => true, 'message' => 'Produk berhasil ditambahkan ke keranjang.']);
+                $cartCount = auth()->check() 
+                    ? auth()->user()->cartItems()->sum('quantity') 
+                    : array_sum(array_column(session()->get('guest_cart', []), 'quantity'));
+                
+                return response()->json([
+                    'success' => true, 
+                    'message' => 'Produk berhasil ditambahkan ke keranjang.',
+                    'cart_count' => $cartCount
+                ]);
             }
             return back()->with('success', 'Produk berhasil ditambahkan ke keranjang.');
         } catch (\Exception $e) {

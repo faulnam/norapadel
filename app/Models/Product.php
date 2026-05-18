@@ -226,6 +226,30 @@ class Product extends Model
     }
 
     /**
+     * Get average rating for this product
+     */
+    public function getAverageRatingAttribute()
+    {
+        return $this->reviews()->where('is_approved', true)->avg('rating') ?? 0;
+    }
+
+    /**
+     * Get formatted average rating
+     */
+    public function getFormattedRatingAttribute()
+    {
+        return number_format($this->average_rating, 1);
+    }
+
+    /**
+     * Get total reviews count
+     */
+    public function getTotalReviewsAttribute()
+    {
+        return $this->reviews()->where('is_approved', true)->count();
+    }
+
+    /**
      * Scope for active products
      */
     public function scopeActive($query)

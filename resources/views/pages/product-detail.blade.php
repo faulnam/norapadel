@@ -13,7 +13,7 @@
                     <ol class="flex items-center gap-2 text-zinc-600">
                         <li><a href="{{ route('home') }}" class="hover:text-black transition">Home</a></li>
                         <li><i class="fas fa-chevron-right text-[10px]"></i></li>
-                        <li><a href="{{ route('produk.index') }}" class="hover:text-black transition">Produk</a></li>
+                        <li><a href="{{ route('shop') }}" class="hover:text-black transition">Produk</a></li>
                         <li><i class="fas fa-chevron-right text-[10px]"></i></li>
                         <li class="text-black font-medium truncate max-w-[200px]">{{ $product->name }}</li>
                     </ol>

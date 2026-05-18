@@ -18,7 +18,7 @@
                     <span class="text-xl font-semibold tracking-tight text-white transition-colors duration-300" id="logoText">NoraPadel</span>
                 </a>
 
-                <nav class="hidden items-center gap-8 md:flex" id="navLinks">
+                <nav class="hidden items-center gap-6 md:flex" id="navLinks">
                     <a href="{{ route('home') }}"
                         class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">Home</a>
 
@@ -31,7 +31,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
                         </a>
-                        <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[700px] opacity-0 invisible translate-y-[-10px] transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
+                        <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[700px] opacity-0 invisible translate-y-[-10px] transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-[100]">
                             <div class="bg-white/95 backdrop-blur-md rounded-xl shadow-2xl border border-zinc-100 p-0 overflow-hidden aspect-video">
                                 <div class="grid grid-cols-[1fr_1fr] h-full">
                                     <!-- Left: Brand & Level (Centered) -->
@@ -81,7 +81,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
                         </a>
-                        <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[700px] opacity-0 invisible translate-y-[-10px] transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
+                        <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[700px] opacity-0 invisible translate-y-[-10px] transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-[100]">
                             <div class="bg-white/95 backdrop-blur-md rounded-xl shadow-2xl border border-zinc-100 p-0 overflow-hidden aspect-video">
                                 <div class="grid grid-cols-[1fr_1.2fr] h-full">
                                     <!-- Left: Categories (Centered) -->
@@ -129,7 +129,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
                         </a>
-                        <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[700px] opacity-0 invisible translate-y-[-10px] transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
+                        <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[700px] opacity-0 invisible translate-y-[-10px] transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-[100]">
                             <div class="bg-white/95 backdrop-blur-md rounded-xl shadow-2xl border border-zinc-100 p-0 overflow-hidden aspect-video">
                                 <div class="grid grid-cols-[1fr_1.2fr] h-full">
                                     <!-- Left: Categories (Centered) -->
@@ -177,7 +177,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
                         </a>
-                        <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[700px] opacity-0 invisible translate-y-[-10px] transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
+                        <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[700px] opacity-0 invisible translate-y-[-10px] transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-[100]">
                             <div class="bg-white/95 backdrop-blur-md rounded-xl shadow-2xl border border-zinc-100 p-0 overflow-hidden aspect-video">
                                 <div class="grid grid-cols-[1fr_1.2fr] h-full">
                                     <!-- Left: Categories (Centered) -->
@@ -229,6 +229,22 @@
                                autocomplete="off">
                     </div>
 
+                    <!-- Wishlist (mobile only) -->
+                    <a href="{{ route('customer.wishlist.index') }}" class="relative md:hidden transition duration-300 hover:text-white">
+                        <i class="fas fa-heart text-sm"></i>
+                        @php
+                            if (auth()->check() && auth()->user()->role === 'customer') {
+                                $wishlistCount = auth()->user()->wishlistItems()->count();
+                            } else {
+                                $guestWishlist = session()->get('guest_wishlist', []);
+                                $wishlistCount = count($guestWishlist);
+                            }
+                        @endphp
+                        @if($wishlistCount > 0)
+                            <span class="wishlist-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
+                        @endif
+                    </a>
+
                     <!-- Mobile Search Icon (hidden since inline search is now visible) -->
                     <button type="button" id="searchToggleBtn" class="hidden transition duration-300 hover:text-white" aria-label="Search" title="Cari Produk">
                         <i class="fas fa-search text-sm"></i>
@@ -236,10 +252,46 @@
 
                     <!-- Hamburger Menu with combined elements -->
                     <div class="relative" id="hamburgerMenuWrapper">
-                        <button type="button" id="hamburgerMenuBtn" class="inline-flex h-9 w-9 items-center justify-center rounded border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20">
+                        <button type="button" id="hamburgerMenuBtn" class="inline-flex h-9 w-9 items-center justify-center rounded border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20 relative">
                             <i class="fas fa-bars text-sm"></i>
+                            <!-- Cart Badge -->
+                            @auth
+                                @if (auth()->user()->role === 'customer')
+                                    @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
+                                    @if ($cartCount > 0)
+                                        <span class="hamburger-cart-badge absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
+                                    @endif
+                                @endif
+                            @endauth
+                            @guest
+                                @php
+                                    $guestCart = session()->get('guest_cart', []);
+                                    $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
+                                @endphp
+                                @if($guestCartCount > 0)
+                                    <span class="hamburger-cart-badge absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $guestCartCount > 9 ? '9+' : $guestCartCount }}</span>
+                                @endif
+                            @endguest
+                            <!-- Wishlist Badge -->
+                            @auth
+                                @if (auth()->user()->role === 'customer')
+                                    @php $wishlistCount = auth()->user()->wishlistItems()->count(); @endphp
+                                    @if ($wishlistCount > 0)
+                                        <span class="hamburger-wishlist-badge absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
+                                    @endif
+                                @endif
+                            @endauth
+                            @guest
+                                @php
+                                    $guestWishlist = session()->get('guest_wishlist', []);
+                                    $guestWishlistCount = count($guestWishlist);
+                                @endphp
+                                @if($guestWishlistCount > 0)
+                                    <span class="hamburger-wishlist-badge absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">{{ $guestWishlistCount > 9 ? '9+' : $guestWishlistCount }}</span>
+                                @endif
+                            @endguest
                         </button>
-                        <div id="hamburgerMenuDropdown" class="absolute right-0 mt-2 w-48 z-50 hidden">
+                        <div id="hamburgerMenuDropdown" class="absolute right-0 mt-2 w-48 z-[100] hidden">
                             <div class="bg-white rounded-lg shadow-lg border border-zinc-100 overflow-hidden">
                                 <!-- Navigation (mobile only) -->
                                 <div class="md:hidden">
@@ -295,7 +347,7 @@
                                             @if (auth()->user()->role === 'customer')
                                                 @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
                                                 @if ($cartCount > 0)
-                                                    <span class="absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
+                                                    <span class="cart-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
                                                 @endif
                                             @endif
                                         @endauth
@@ -305,7 +357,7 @@
                                                 $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
                                             @endphp
                                             @if($guestCartCount > 0)
-                                                <span class="absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $guestCartCount > 9 ? '9+' : $guestCartCount }}</span>
+                                                <span class="cart-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $guestCartCount > 9 ? '9+' : $guestCartCount }}</span>
                                             @endif
                                         @endguest
                                     </div>
@@ -325,7 +377,7 @@
                                             }
                                         @endphp
                                         @if($wishlistCount > 0)
-                                            <span class="absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
+                                            <span class="wishlist-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
                                         @endif
                                     </div>
                                     <span class="text-sm text-zinc-700">Wishlist</span>
@@ -427,7 +479,7 @@
                 <div class="max-w-2xl text-center text-white">
                     <h1 class="text-lg font-semibold tracking-tight sm:text-2xl md:text-3xl lg:text-4xl drop-shadow-lg">NoraPadel</h1>
                     <p class="mt-2 md:mt-4 text-[11px] md:text-sm text-zinc-100 leading-relaxed drop-shadow-md">Experience the ultimate in padel equipment. Premium quality rackets, shoes, and accessories for players who demand excellence.</p>
-                    <div class="mt-3 md:mt-6 flex flex-wrap justify-center gap-4">
+                    <div class="mt-3 md:mt-6 flex flex-wrap justify-center gap-6">
                         <a href="{{ route('shop') }}" class="inline-flex items-center gap-1 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 md:px-6 md:py-2.5 text-[10px] md:text-xs font-semibold text-white backdrop-blur transition duration-300 hover:bg-white/20 hover:scale-[1.02]">Shop Now</a>
                     </div>
                 </div>
@@ -435,84 +487,84 @@
         </section>
 
         <!-- Marquee Bar -->
-        <div class="bg-white text-black py-2 overflow-hidden transition-all duration-300" id="marqueeBar">
+        <div class="bg-white text-white py-2 overflow-hidden transition-all duration-300" id="marqueeBar">
             <div class="marquee-container">
                 <div class="marquee-content">
                     <!-- Set 1 -->
-                    <span class="marquee-item inline-flex items-center gap-2.5">
-                        <img src="{{ asset('storage/arronax logo.webp') }}" alt="NoraPadel" class="h-8 w-8 object-contain" loading="lazy">
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/arronax logo.webp') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
                         <span>• ARRONAX •</span>
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-2.5">
-                        <img src="{{ asset('storage/Babolat_logo.svg.png') }}" alt="NoraPadel" class="h-8 w-8 object-contain" loading="lazy">
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/Babolat_logo.svg.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
                         <span>• BABOLAT •</span>
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-2.5">
-                        <img src="{{ asset('storage/logobullpadel2 (1).png') }}" alt="NoraPadel" class="h-8 w-8 object-contain" loading="lazy">
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/logobullpadel2 (1).png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
                         <span>• BULLPADEL •</span>
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-2.5">
-                        <img src="{{ asset('storage/logo_nox_1200x1200.png') }}" alt="NoraPadel" class="h-8 w-8 object-contain" loading="lazy">
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/logo_nox_1200x1200.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
                         <span>• NOX •</span>
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-2.5">
-                        <img src="{{ asset('storage/alpha padel.png') }}" alt="NoraPadel" class="h-8 w-8 object-contain" loading="lazy">
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/alpha padel.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
                         <span>• ALPHA •</span>
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-2.5">
-                        <img src="{{ asset('storage/head.jpeg') }}" alt="NoraPadel" class="h-8 w-8 object-contain" loading="lazy">
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/head.jpeg') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
                         <span>• ZEPHYR •</span>
                     </span>
 
                     <!-- Set 2 -->
-                    <span class="marquee-item inline-flex items-center gap-2.5">
-                        <img src="{{ asset('storage/arronax logo.webp') }}" alt="NoraPadel" class="h-8 w-8 object-contain" loading="lazy">
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/arronax logo.webp') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
                         <span>• ARRONAX •</span>
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-2.5">
-                        <img src="{{ asset('storage/Babolat_logo.svg.png') }}" alt="NoraPadel" class="h-8 w-8 object-contain" loading="lazy">
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/Babolat_logo.svg.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
                         <span>• BABOLAT •</span>
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-2.5">
-                        <img src="{{ asset('storage/logobullpadel2 (1).png') }}" alt="NoraPadel" class="h-8 w-8 object-contain" loading="lazy">
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/logobullpadel2 (1).png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
                         <span>• BULLPADEL •</span>
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-2.5">
-                        <img src="{{ asset('storage/logo_nox_1200x1200.png') }}" alt="NoraPadel" class="h-8 w-8 object-contain" loading="lazy">
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/logo_nox_1200x1200.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
                         <span>• NOX •</span>
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-2.5">
-                        <img src="{{ asset('storage/alpha padel.png') }}" alt="NoraPadel" class="h-8 w-8 object-contain" loading="lazy">
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/alpha padel.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
                         <span>• ALPHA •</span>
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-2.5">
-                        <img src="{{ asset('storage/head.jpeg') }}" alt="NoraPadel" class="h-8 w-8 object-contain" loading="lazy">
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/head.jpeg') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
                         <span>• ZEPHYR •</span>
                     </span>
 
                     <!-- Set 3 -->
-                    <span class="marquee-item inline-flex items-center gap-2.5">
-                        <img src="{{ asset('storage/arronax logo.webp') }}" alt="NoraPadel" class="h-8 w-8 object-contain" loading="lazy">
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/arronax logo.webp') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
                         <span>• ARRONAX •</span>
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-2.5">
-                        <img src="{{ asset('storage/Babolat_logo.svg.png') }}" alt="NoraPadel" class="h-8 w-8 object-contain" loading="lazy">
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/Babolat_logo.svg.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
                         <span>• BABOLAT •</span>
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-2.5">
-                        <img src="{{ asset('storage/logobullpadel2 (1).png') }}" alt="NoraPadel" class="h-8 w-8 object-contain" loading="lazy">
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/logobullpadel2 (1).png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
                         <span>• BULLPADEL •</span>
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-2.5">
-                        <img src="{{ asset('storage/logo_nox_1200x1200.png') }}" alt="NoraPadel" class="h-8 w-8 object-contain" loading="lazy">
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/logo_nox_1200x1200.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
                         <span>• NOX •</span>
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-2.5">
-                        <img src="{{ asset('storage/alpha padel.png') }}" alt="NoraPadel" class="h-8 w-8 object-contain" loading="lazy">
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/alpha padel.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
                         <span>• ALPHA •</span>
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-2.5">
-                        <img src="{{ asset('storage/head.jpeg') }}" alt="NoraPadel" class="h-8 w-8 object-contain" loading="lazy">
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/head.jpeg') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
                         <span>• ZEPHYR •</span>
                     </span>
                 </div>
@@ -571,7 +623,7 @@
                             <i class="fas fa-chevron-right text-black text-sm"></i>
                         </button>
                         
-                        <div id="newArrivalsContainer" class="flex gap-4 overflow-x-auto pb-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x snap-mandatory scroll-smooth">
+                        <div id="newArrivalsContainer" class="flex gap-6 overflow-x-auto pb-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x snap-mandatory scroll-smooth">
                         @foreach($newArrivals as $product)
                             @php
                                 $soldCount = \App\Models\OrderItem::where('product_id', $product->id)
@@ -600,6 +652,25 @@
                                     <div class="p-2 md:p-4">
                                         <h3 class="line-clamp-1 text-sm font-medium text-black">{{ $product->name }}</h3>
                                         <p class="mt-1 text-xs text-zinc-600">{{ $product->category_label }}</p>
+                                        <div class="mt-1 flex items-center gap-1">
+                                            @php
+                                                $rating = $product->average_rating;
+                                                $fullStars = floor($rating);
+                                                $hasHalfStar = ($rating - $fullStars) >= 0.5;
+                                            @endphp
+                                            @for($i = 1; $i <= 5; $i++)
+                                                @if($i <= $fullStars)
+                                                    <i class="fas fa-star text-amber-400 text-[10px]"></i>
+                                                @elseif($i == $fullStars + 1 && $hasHalfStar)
+                                                    <i class="fas fa-star-half-alt text-amber-400 text-[10px]"></i>
+                                                @else
+                                                    <i class="far fa-star text-zinc-300 text-[10px]"></i>
+                                                @endif
+                                            @endfor
+                                            @if($product->total_reviews > 0)
+                                                <span class="text-[10px] text-zinc-500">({{ $product->total_reviews }})</span>
+                                            @endif
+                                        </div>
                                         @if($product->hasActiveDiscount())
                                             <p class="mt-1 text-base font-semibold text-black">{{ $product->formatted_discounted_price }}</p>
                                             <p class="text-xs text-zinc-400 line-through">{{ $product->formatted_price }}</p>
@@ -628,7 +699,7 @@
             <!-- Category Icons -->
             <section class="np-fade-section bg-white py-4 pt-4">
                 <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
-                    <div class="grid grid-cols-4 gap-2 md:grid-cols-4 md:gap-4">
+                    <div class="grid grid-cols-4 gap-2 md:grid-cols-4 md:gap-6">
                         <a href="{{ route('racket') }}" class="flex flex-col items-center justify-center p-2 md:p-6 bg-white cursor-pointer transition hover:opacity-80">
                             <div class="w-16 h-16 md:w-48 md:h-48 mb-2 md:mb-4 flex items-center justify-center">
                                 <img src="{{ asset('storage/iconracket.jpg') }}" alt="Racket" class="w-full h-full object-contain">
@@ -662,7 +733,7 @@
             <section class="np-fade-section bg-[#f5f5f5] py-4">
                 <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
                     <!-- Dynamic Vouchers -->
-                    <div class="flex flex-nowrap overflow-x-auto gap-3 pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-2 lg:grid-cols-4 md:overflow-visible md:pb-0 md:gap-4">
+                    <div class="flex flex-nowrap overflow-x-auto gap-3 pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-2 lg:grid-cols-4 md:overflow-visible md:pb-0 md:gap-6">
                         @foreach($vouchers as $voucher)
                         @php
                             $hasClaimed = auth()->check() && $voucher->isClaimedByUser(auth()->id());
@@ -777,6 +848,25 @@
                                     <div class="p-3">
                                         <h3 class="line-clamp-1 text-sm font-medium text-black">{{ $product->name }}</h3>
                                         <p class="mt-1 text-xs text-zinc-600">{{ $product->category_label }}</p>
+                                        <div class="mt-1 flex items-center gap-1">
+                                            @php
+                                                $rating = $product->average_rating;
+                                                $fullStars = floor($rating);
+                                                $hasHalfStar = ($rating - $fullStars) >= 0.5;
+                                            @endphp
+                                            @for($i = 1; $i <= 5; $i++)
+                                                @if($i <= $fullStars)
+                                                    <i class="fas fa-star text-amber-400 text-[10px]"></i>
+                                                @elseif($i == $fullStars + 1 && $hasHalfStar)
+                                                    <i class="fas fa-star-half-alt text-amber-400 text-[10px]"></i>
+                                                @else
+                                                    <i class="far fa-star text-zinc-300 text-[10px]"></i>
+                                                @endif
+                                            @endfor
+                                            @if($product->total_reviews > 0)
+                                                <span class="text-[10px] text-zinc-500">({{ $product->total_reviews }})</span>
+                                            @endif
+                                        </div>
                                         @if($product->hasActiveDiscount())
                                             <p class="mt-1 text-base font-semibold text-black">{{ $product->formatted_discounted_price }}</p>
                                             <p class="text-xs text-zinc-400 line-through">{{ $product->formatted_price }}</p>
@@ -788,7 +878,7 @@
                                 <div class="px-2 pb-2 md:px-3 md:pb-3">
                                     <div class="flex items-center gap-2">
                                         <button onclick="addToCart('{{ $product->slug }}', event)" class="border border-zinc-300 bg-transparent px-2 py-1 text-[10px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950 truncate max-w-[80px] md:max-w-none">
-                                            Add
+                                            Add to cart
                                         </button>
                                         <button onclick="addToWishlist('{{ $product->slug }}', event)" class="text-zinc-400 transition duration-300 hover:text-rose-500">
                                             <i class="fas fa-heart text-xs md:text-sm"></i>
@@ -1039,10 +1129,81 @@
 
 @push('scripts')
     <script>
+        // Animate badge function
+        function animateBadge(badgeElement) {
+            if (!badgeElement) return;
+            
+            // Add animation class
+            badgeElement.classList.add('animate-bounce');
+            
+            // Remove animation after it completes
+            setTimeout(() => {
+                badgeElement.classList.remove('animate-bounce');
+            }, 1000);
+        }
+
+        // Update cart badge count
+        function updateCartBadge(newCount) {
+            const cartBadges = document.querySelectorAll('.cart-badge');
+            cartBadges.forEach(badge => {
+                if (newCount > 0) {
+                    badge.textContent = newCount > 9 ? '9+' : newCount;
+                    badge.classList.remove('hidden');
+                    animateBadge(badge);
+                } else {
+                    badge.classList.add('hidden');
+                }
+            });
+
+            // Update hamburger button badge
+            const hamburgerCartBadges = document.querySelectorAll('.hamburger-cart-badge');
+            hamburgerCartBadges.forEach(badge => {
+                if (newCount > 0) {
+                    badge.textContent = newCount > 9 ? '9+' : newCount;
+                    badge.classList.remove('hidden');
+                    animateBadge(badge);
+                } else {
+                    badge.classList.add('hidden');
+                }
+            });
+        }
+
+        // Update wishlist badge count
+        function updateWishlistBadge(newCount) {
+            const wishlistBadges = document.querySelectorAll('.wishlist-badge');
+            wishlistBadges.forEach(badge => {
+                if (newCount > 0) {
+                    badge.textContent = newCount > 9 ? '9+' : newCount;
+                    badge.classList.remove('hidden');
+                    animateBadge(badge);
+                } else {
+                    badge.classList.add('hidden');
+                }
+            });
+
+            // Update hamburger button badge
+            const hamburgerWishlistBadges = document.querySelectorAll('.hamburger-wishlist-badge');
+            hamburgerWishlistBadges.forEach(badge => {
+                if (newCount > 0) {
+                    badge.textContent = newCount > 9 ? '9+' : newCount;
+                    badge.classList.remove('hidden');
+                    animateBadge(badge);
+                } else {
+                    badge.classList.add('hidden');
+                }
+            });
+        }
+
         // Add to Cart Function
         function addToCart(productId, event) {
             event.preventDefault();
             event.stopPropagation();
+            
+            const button = event.target.closest('button');
+            if (button) {
+                button.disabled = true;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            }
             
             fetch(`/customer/cart/add/${productId}`, {
                 method: 'POST',
@@ -1058,15 +1219,32 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('Produk berhasil ditambahkan ke keranjang!');
-                    location.reload();
+                    // Animate and update cart badge
+                    const currentCount = parseInt(data.cart_count || 0);
+                    updateCartBadge(currentCount);
+                    
+                    if (button) {
+                        button.innerHTML = '✓ Added';
+                        setTimeout(() => {
+                            button.disabled = false;
+                            button.innerHTML = 'Add to cart';
+                        }, 1500);
+                    }
                 } else {
                     alert(data.message || 'Gagal menambahkan produk ke keranjang');
+                    if (button) {
+                        button.disabled = false;
+                        button.innerHTML = 'Add to cart';
+                    }
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
                 alert('Terjadi kesalahan. Silakan coba lagi.');
+                if (button) {
+                    button.disabled = false;
+                    button.innerHTML = 'Add to cart';
+                }
             });
         }
 
@@ -1074,6 +1252,13 @@
         function addToWishlist(productId, event) {
             event.preventDefault();
             event.stopPropagation();
+            
+            const button = event.target.closest('button');
+            const icon = button.querySelector('i');
+            if (icon) {
+                icon.classList.remove('fa-heart');
+                icon.classList.add('fa-spinner', 'fa-spin');
+            }
             
             fetch(`/customer/wishlist/add/${productId}`, {
                 method: 'POST',
@@ -1087,15 +1272,33 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('Produk berhasil ditambahkan ke wishlist!');
-                    location.reload();
+                    // Animate and update wishlist badge
+                    const currentCount = parseInt(data.wishlist_count || 0);
+                    updateWishlistBadge(currentCount);
+                    
+                    if (icon) {
+                        icon.classList.remove('fa-spinner', 'fa-spin');
+                        icon.classList.add('fa-heart');
+                        icon.classList.add('text-rose-500');
+                    }
+                    if (button) {
+                        button.classList.add('text-rose-500');
+                    }
                 } else {
                     alert(data.message || 'Gagal menambahkan produk ke wishlist');
+                    if (icon) {
+                        icon.classList.remove('fa-spinner', 'fa-spin');
+                        icon.classList.add('fa-heart');
+                    }
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
                 alert('Terjadi kesalahan. Silakan coba lagi.');
+                if (icon) {
+                    icon.classList.remove('fa-spinner', 'fa-spin');
+                    icon.classList.add('fa-heart');
+                }
             });
         }
 
@@ -1105,7 +1308,7 @@
             
             const originalText = btn.innerHTML;
             btn.disabled = true;
-            btn.innerHTML = 'Mengklaim...';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
 
             fetch('{{ route('customer.vouchers.claim') }}', {
                 method: 'POST',
@@ -1121,8 +1324,10 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('Voucher berhasil diklaim!');
-                    window.location.href = '{{ route('shop') }}';
+                    btn.innerHTML = '✓ Diklaim';
+                    setTimeout(() => {
+                        window.location.href = '{{ route('shop') }}';
+                    }, 1000);
                 } else {
                     if (data.redirect) {
                         window.location.href = data.redirect;
@@ -1300,7 +1505,7 @@
 
                 function renderResults(products) {
                     resultsList.innerHTML = products.map(p => `
-                        <a href="${escapeHtml(p.detail_url)}" class="flex items-center gap-4 px-5 py-3 transition hover:bg-zinc-50">
+                        <a href="${escapeHtml(p.detail_url)}" class="flex items-center gap-6 px-5 py-3 transition hover:bg-zinc-50">
                             <div class="h-14 w-14 flex-shrink-0 overflow-hidden rounded-lg bg-zinc-100">
                                 <img src="${escapeHtml(p.image_url)}" alt="${escapeHtml(p.name)}" class="h-full w-full object-cover" onerror="this.onerror=null;this.src='/images/logo.png';" loading="lazy">
                             </div>
@@ -1618,8 +1823,8 @@
 
             const layoutClasses = {
                 list: ['flex', 'flex-col', 'space-y-4'],
-                '2col': ['grid', 'grid-cols-2', 'gap-4'],
-                '4col': ['grid', 'grid-cols-1', 'gap-4', 'sm:grid-cols-2', 'lg:grid-cols-4'],
+                '2col': ['grid', 'grid-cols-2', 'gap-6'],
+                '4col': ['grid', 'grid-cols-1', 'gap-6', 'sm:grid-cols-2', 'lg:grid-cols-4'],
             };
 
             const setLayout = (section, mode) => {

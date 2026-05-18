@@ -146,7 +146,7 @@
             @endif
 
             <div class="flex gap-3">
-                <a href="{{ route('customer.payment.select-gateway', $order) }}" 
+                <a href="{{ route('customer.orders.show', $order) }}" 
                    class="flex-1 rounded-xl border border-zinc-300 bg-white py-3 text-center text-sm font-medium text-black transition hover:bg-zinc-50">
                     Back
                 </a>

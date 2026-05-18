@@ -350,24 +350,27 @@ Route::post('/customer/shipping/rates', [\App\Http\Controllers\Customer\Shipping
 Route::post('/customer/vouchers/claim', [CustomerVoucher::class, 'claim'])->name('customer.vouchers.claim');
 
 // Guest Payment Routes (accessible without login)
-Route::get('/customer/payment/{order}/select-gateway', [PaymentController::class, 'selectGateway'])->name('customer.payment.select-gateway');
-Route::get('/customer/payment/{order}', [PaymentController::class, 'show'])->name('customer.payment.show');
-Route::post('/customer/payment/{order}/process', [PaymentController::class, 'process'])->name('customer.payment.process');
-Route::get('/customer/payment/{order}/waiting', [PaymentController::class, 'waiting'])->name('customer.payment.waiting');
-Route::get('/customer/payment/{order}/check-status', [PaymentController::class, 'checkStatus'])->name('customer.payment.check-status');
-Route::get('/customer/payment/{order}/redirect', [PaymentController::class, 'redirect'])->name('customer.payment.redirect');
-Route::get('/customer/payment/{order}/callback', [PakasirWebhookController::class, 'handleCallback'])->name('customer.payment.callback');
+Route::get('/guest/payment/{order}/select-gateway', [PaymentController::class, 'selectGateway'])->name('customer.payment.select-gateway');
+Route::get('/guest/payment/{order}', [PaymentController::class, 'show'])->name('customer.payment.show');
+Route::post('/guest/payment/{order}/process', [PaymentController::class, 'process'])->name('customer.payment.process');
+Route::get('/guest/payment/{order}/waiting', [PaymentController::class, 'waiting'])->name('customer.payment.waiting');
+Route::get('/guest/payment/{order}/check-status', [PaymentController::class, 'checkStatus'])->name('customer.payment.check-status');
+Route::get('/guest/payment/{order}/redirect', [PaymentController::class, 'redirect'])->name('customer.payment.redirect');
+Route::get('/guest/payment/{order}/callback', [PakasirWebhookController::class, 'handleCallback'])->name('customer.payment.callback');
 
 // Guest Paylabs Payment Routes
-Route::get('/customer/payment-paylabs/{order}', [\App\Http\Controllers\Customer\PaylabsPaymentController::class, 'show'])->name('customer.payment.paylabs.show');
-Route::post('/customer/payment-paylabs/{order}/process', [\App\Http\Controllers\Customer\PaylabsPaymentController::class, 'process'])->name('customer.payment.paylabs.process');
-Route::get('/customer/payment-paylabs/{order}/waiting', [\App\Http\Controllers\Customer\PaylabsPaymentController::class, 'waiting'])->name('customer.payment.paylabs.waiting');
-Route::get('/customer/payment-paylabs/{order}/check-status', [\App\Http\Controllers\Customer\PaylabsPaymentController::class, 'checkStatus'])->name('customer.payment.paylabs.check-status');
-Route::get('/customer/payment-paylabs/{order}/callback', [\App\Http\Controllers\PaylabsWebhookController::class, 'handleCallback'])->name('customer.payment.paylabs.callback');
+Route::get('/guest/payment-paylabs/{order}', [\App\Http\Controllers\Customer\PaylabsPaymentController::class, 'show'])->name('customer.payment.paylabs.show');
+Route::post('/guest/payment-paylabs/{order}/process', [\App\Http\Controllers\Customer\PaylabsPaymentController::class, 'process'])->name('customer.payment.paylabs.process');
+Route::get('/guest/payment-paylabs/{order}/waiting', [\App\Http\Controllers\Customer\PaylabsPaymentController::class, 'waiting'])->name('customer.payment.paylabs.waiting');
+Route::get('/guest/payment-paylabs/{order}/check-status', [\App\Http\Controllers\Customer\PaylabsPaymentController::class, 'checkStatus'])->name('customer.payment.paylabs.check-status');
+Route::get('/guest/payment-paylabs/{order}/callback', [\App\Http\Controllers\PaylabsWebhookController::class, 'handleCallback'])->name('customer.payment.paylabs.callback');
 
 // Guest Order Tracking
 Route::get('/customer/orders/{order}/track', [CustomerOrder::class, 'guestTrackOrder'])->name('customer.orders.guest-track');
 Route::get('/customer/orders/{order}/guest-tracking', [CustomerOrder::class, 'guestGetTracking'])->name('customer.orders.guest-tracking');
+
+// Guest Order Detail (accessible without login)
+Route::get('/guest/orders/{order}', [CustomerOrder::class, 'guestShow'])->name('customer.orders.guest-show');
 
 // Customer Routes
 Route::prefix('customer')->name('customer.')->middleware(['auth', 'customer'])->group(function () {

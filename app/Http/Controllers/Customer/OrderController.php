@@ -468,9 +468,9 @@ class OrderController extends Controller
                 session()->put('guest_orders', $guestOrders);
             }
 
-            // Redirect to select payment gateway
-            return redirect()->route('customer.payment.select-gateway', $order)
-                ->with('success', 'Pesanan berhasil dibuat. Silakan pilih metode pembayaran.');
+            // Redirect to Paylabs payment page directly
+            return redirect()->route('customer.payment.paylabs.show', $order)
+                ->with('success', 'Pesanan berhasil dibuat. Silakan lanjutkan pembayaran.');
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -512,6 +512,49 @@ class OrderController extends Controller
                 $order->refresh();
             } catch (\Throwable $e) {
                 \Log::warning('Sinkronisasi Biteship dilewati karena error saat membuka detail order customer', [
+                    'order_number' => $order->order_number,
+                    'biteship_order_id' => $order->biteship_order_id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+
+        $order->load('items.product');
+
+        $biteshipDetail = null;
+        if (!empty($order->biteship_order_id)) {
+            $biteshipDetail = $this->buildBiteshipDetailPayload($order, $biteshipRawDetail ?? []);
+        }
+
+        return view('customer.orders.show', compact('order', 'biteshipDetail'));
+    }
+
+    /**
+     * Show order detail for guest (accessible without login)
+     */
+    public function guestShow(Order $order)
+    {
+        // Check if guest can access this order
+        if (auth()->check()) {
+            if ($order->user_id !== auth()->id()) {
+                abort(403);
+            }
+        } else {
+            $guestOrders = session()->get('guest_orders', []);
+            $guestUserId = session()->get('guest_user_id');
+
+            if (!in_array($order->id, $guestOrders, true) && !($guestUserId && (int) $guestUserId === (int) $order->user_id)) {
+                abort(403);
+            }
+        }
+
+        $biteshipRawDetail = null;
+        if (!empty($order->biteship_order_id)) {
+            try {
+                $biteshipRawDetail = $this->syncOrderStatusFromBiteship($order);
+                $order->refresh();
+            } catch (\Throwable $e) {
+                \Log::warning('Sinkronisasi Biteship dilewati karena error saat membuka detail order guest', [
                     'order_number' => $order->order_number,
                     'biteship_order_id' => $order->biteship_order_id,
                     'error' => $e->getMessage(),
