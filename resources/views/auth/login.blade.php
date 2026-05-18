@@ -3,10 +3,14 @@
 @section('title', 'Login - Nora Padel')
 
 @section('content')
-@include('partials.main-navbar')
+<style>
+    #mainNavbar { display: none !important; }
+    .mobile-bottom-nav { display: none !important; }
+</style>
+@include('components.luxury-navbar')
 <div class="min-h-[100dvh] w-full flex flex-col md:flex-row bg-white text-zinc-900 antialiased pt-16 md:pt-20">
     <!-- Left: Form -->
-    <section class="flex-1 flex items-center justify-center p-6 md:p-10 overflow-y-auto">
+    <section class="flex-1 flex items-start md:items-center justify-center p-4 md:p-10 overflow-y-auto">
         <div class="w-full max-w-sm">
             <div class="flex flex-col gap-3">
                 <h1 class="animate-element animate-delay-100 text-3xl md:text-4xl font-light leading-tight tracking-tighter">Welcome <span class="font-semibold">back</span></h1>

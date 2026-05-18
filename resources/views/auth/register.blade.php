@@ -3,8 +3,12 @@
 @section('title', 'Register - Nora Padel')
 
 @section('content')
-@include('partials.main-navbar')
-<div class="min-h-[100dvh] w-full flex flex-col md:flex-row bg-white text-zinc-900 antialiased pt-14 md:pt-16">
+<style>
+    #mainNavbar { display: none !important; }
+    .mobile-bottom-nav { display: none !important; }
+</style>
+@include('components.luxury-navbar')
+<div class="min-h-[100dvh] w-full flex flex-col md:flex-row bg-white text-zinc-900 antialiased pt-16 md:pt-20">
     <!-- Left: Form -->
     <section class="flex-1 flex items-start md:items-center justify-center p-5 md:p-8 overflow-y-auto">
         <div class="w-full max-w-sm">
