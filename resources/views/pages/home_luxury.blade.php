@@ -8,19 +8,90 @@
         <div class="fixed top-0 left-0 right-0 z-[60] bg-white text-black py-2 overflow-hidden transition-all duration-300" id="marqueeBar">
             <div class="marquee-container">
                 <div class="marquee-content">
-                    <span class="marquee-item">NORAPADEL PREMIUM • PRECISION. POWER. PERFORMANCE. • </span>
-                    <span class="marquee-item">NORAPADEL PREMIUM • PRECISION. POWER. PERFORMANCE. • </span>
-                    <span class="marquee-item">NORAPADEL PREMIUM • PRECISION. POWER. PERFORMANCE. • </span>
-                    <span class="marquee-item">NORAPADEL PREMIUM • PRECISION. POWER. PERFORMANCE. • </span>
-                    <span class="marquee-item">NORAPADEL PREMIUM • PRECISION. POWER. PERFORMANCE. • </span>
-                    <span class="marquee-item">NORAPADEL PREMIUM • PRECISION. POWER. PERFORMANCE. • </span>
+                    <!-- Set 1 -->
+                    <span class="marquee-item inline-flex items-center gap-2.5">
+                        <img src="{{ asset('storage/arronax.jpeg') }}" alt="NoraPadel" class="h-8 w-8 object-contain" loading="lazy">
+                        <span>• ARRONAX •</span>
+                    </span>
+                    <span class="marquee-item inline-flex items-center gap-2.5">
+                        <img src="{{ asset('storage/babolat.png') }}" alt="NoraPadel" class="h-8 w-8 object-contain" loading="lazy">
+                        <span>• BABOLAT •</span>
+                    </span>
+                    <span class="marquee-item inline-flex items-center gap-2.5">
+                        <img src="{{ asset('storage/bullpadel.png') }}" alt="NoraPadel" class="h-8 w-8 object-contain" loading="lazy">
+                        <span>• BULLPADEL •</span>
+                    </span>
+                    <span class="marquee-item inline-flex items-center gap-2.5">
+                        <img src="{{ asset('storage/nox.png') }}" alt="NoraPadel" class="h-8 w-8 object-contain" loading="lazy">
+                        <span>• NOX •</span>
+                    </span>
+                    <span class="marquee-item inline-flex items-center gap-2.5">
+                        <img src="{{ asset('storage/alphapadel.png') }}" alt="NoraPadel" class="h-8 w-8 object-contain" loading="lazy">
+                        <span>• ALPHA •</span>
+                    </span>
+                    <span class="marquee-item inline-flex items-center gap-2.5">
+                        <img src="{{ asset('storage/zephyr1.jpeg') }}" alt="NoraPadel" class="h-8 w-8 object-contain" loading="lazy">
+                        <span>• ZEPHYR •</span>
+                    </span>
+
+                    <!-- Set 2 -->
+                    <span class="marquee-item inline-flex items-center gap-2.5">
+                        <img src="{{ asset('storage/arronax.jpeg') }}" alt="NoraPadel" class="h-8 w-8 object-contain" loading="lazy">
+                        <span>• ARRONAX •</span>
+                    </span>
+                    <span class="marquee-item inline-flex items-center gap-2.5">
+                        <img src="{{ asset('storage/babolat.png') }}" alt="NoraPadel" class="h-8 w-8 object-contain" loading="lazy">
+                        <span>• BABOLAT •</span>
+                    </span>
+                    <span class="marquee-item inline-flex items-center gap-2.5">
+                        <img src="{{ asset('storage/bullpadel.png') }}" alt="NoraPadel" class="h-8 w-8 object-contain" loading="lazy">
+                        <span>• BULLPADEL •</span>
+                    </span>
+                    <span class="marquee-item inline-flex items-center gap-2.5">
+                        <img src="{{ asset('storage/nox.png') }}" alt="NoraPadel" class="h-8 w-8 object-contain" loading="lazy">
+                        <span>• NOX •</span>
+                    </span>
+                    <span class="marquee-item inline-flex items-center gap-2.5">
+                        <img src="{{ asset('storage/alphapadel.png') }}" alt="NoraPadel" class="h-8 w-8 object-contain" loading="lazy">
+                        <span>• ALPHA •</span>
+                    </span>
+                    <span class="marquee-item inline-flex items-center gap-2.5">
+                        <img src="{{ asset('storage/zephyr1.jpeg') }}" alt="NoraPadel" class="h-8 w-8 object-contain" loading="lazy">
+                        <span>• ZEPHYR •</span>
+                    </span>
+
+                    <!-- Set 3 -->
+                    <span class="marquee-item inline-flex items-center gap-2.5">
+                        <img src="{{ asset('storage/arronax.jpeg') }}" alt="NoraPadel" class="h-8 w-8 object-contain" loading="lazy">
+                        <span>• ARRONAX •</span>
+                    </span>
+                    <span class="marquee-item inline-flex items-center gap-2.5">
+                        <img src="{{ asset('storage/babolat.png') }}" alt="NoraPadel" class="h-8 w-8 object-contain" loading="lazy">
+                        <span>• BABOLAT •</span>
+                    </span>
+                    <span class="marquee-item inline-flex items-center gap-2.5">
+                        <img src="{{ asset('storage/bullpadel.png') }}" alt="NoraPadel" class="h-8 w-8 object-contain" loading="lazy">
+                        <span>• BULLPADEL •</span>
+                    </span>
+                    <span class="marquee-item inline-flex items-center gap-2.5">
+                        <img src="{{ asset('storage/nox.png') }}" alt="NoraPadel" class="h-8 w-8 object-contain" loading="lazy">
+                        <span>• NOX •</span>
+                    </span>
+                    <span class="marquee-item inline-flex items-center gap-2.5">
+                        <img src="{{ asset('storage/alphapadel.png') }}" alt="NoraPadel" class="h-8 w-8 object-contain" loading="lazy">
+                        <span>• ALPHA •</span>
+                    </span>
+                    <span class="marquee-item inline-flex items-center gap-2.5">
+                        <img src="{{ asset('storage/zephyr1.jpeg') }}" alt="NoraPadel" class="h-8 w-8 object-contain" loading="lazy">
+                        <span>• ZEPHYR •</span>
+                    </span>
                 </div>
             </div>
         </div>
 
         <header class="fixed left-0 z-50 w-full transition-all duration-300
-            top-8 border-b border-transparent bg-transparent backdrop-blur-none
-            max-[767px]:top-8 max-[767px]:bg-white/95 max-[767px]:backdrop-blur-md max-[767px]:border-black/10" id="mainHeader">
+            top-12 border-b border-transparent bg-transparent backdrop-blur-none
+            max-[767px]:top-12 max-[767px]:bg-white/95 max-[767px]:backdrop-blur-md max-[767px]:border-black/10" id="mainHeader">
             <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-10 lg:px-12">
                 <div></div>
 
@@ -382,7 +453,7 @@
             </div>
         </div>
 
-        <main class="pt-[92px] md:pt-8">
+        <main class="pt-[112px] md:pt-8">
             <section class="relative h-[220px] overflow-hidden bg-zinc-900 md:h-[250px] lg:h-[300px]">
                 <div class="absolute inset-0">
                     <img src="{{ asset('storage/fiks.jpeg') }}" 
@@ -804,7 +875,7 @@
 
         .marquee-item {
             display: inline-block;
-            padding: 0 2rem;
+            padding: 0 2.5rem;
             font-size: 0.75rem;
             font-weight: 500;
             letter-spacing: 0.05em;
@@ -1148,7 +1219,7 @@
                 if (isMobile()) {
                     marqueeBar.style.transform = 'translateY(0)';
                     marqueeBar.style.opacity = '1';
-                    header.style.top = '2rem';
+                    header.style.top = '3rem';
                     // Keep solid white on mobile – do NOT go transparent
                     header.classList.add('bg-white/95', 'backdrop-blur-md', 'border-black/10');
                     header.classList.remove('bg-transparent', 'backdrop-blur-none', 'border-transparent');
@@ -1160,7 +1231,7 @@
                 // Desktop: go transparent over hero
                 marqueeBar.style.transform = 'translateY(0)';
                 marqueeBar.style.opacity = '1';
-                header.style.top = '2rem';
+                header.style.top = '3rem';
 
                 header.classList.remove('bg-white/80', 'bg-white/95', 'backdrop-blur-xl', 'backdrop-blur-md', 'border-black/6', 'border-black/10');
                 header.classList.add('bg-transparent', 'backdrop-blur-none', 'border-transparent');
