@@ -8,6 +8,50 @@
         #mainNavbar, .mobile-bottom-nav {
             display: none !important;
         }
+
+        /* Marquee Animation */
+        .marquee-container {
+            display: flex;
+            overflow: hidden;
+            user-select: none;
+            width: 100%;
+        }
+
+        .marquee-content {
+            display: flex;
+            animation: marquee 30s linear infinite;
+            white-space: nowrap;
+            will-change: transform;
+        }
+
+        .brand-marquee-item {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            width: 17.24vw; /* Exactly 5.8 logos visible on desktop screens to restrict display to 6-7 logos */
+        }
+
+        @media (max-width: 1024px) {
+            .brand-marquee-item {
+                width: 25vw; /* 4 logos visible on tablets */
+            }
+        }
+
+        @media (max-width: 640px) {
+            .brand-marquee-item {
+                width: 33.33vw; /* 3 logos visible on mobile phones */
+            }
+        }
+
+        @keyframes marquee {
+            from {
+                transform: translateX(0);
+            }
+            to {
+                transform: translateX(-33.333%);
+            }
+        }
     </style>
     <header class="sticky top-0 z-50 w-full border-b border-zinc-200 bg-white" id="mainHeader">
         <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-10 lg:px-12">
@@ -291,7 +335,7 @@
     </header>
 
     <main class="bg-white">
-        <br>
+
         <!-- Main Layout: Sidebar + Grid -->
         <div class="mx-auto max-w-7xl px-6 pb-16 md:px-10 lg:px-12">
             <div class="flex flex-col gap-8 md:flex-row">
