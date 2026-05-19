@@ -392,7 +392,7 @@
                         loading="eager">
                     <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent"></div>
                 </div>
-                <div class="relative mx-auto flex h-full max-w-7xl items-end justify-center px-6 md:px-10 lg:px-12 pb-12">
+                <div class="relative mx-auto flex h-full max-w-7xl items-end justify-center px-6 md:px-10 lg:px-12 pb-6 md:pb-8">
                     <div class="max-w-2xl text-center text-white">
                         <h1 class="text-2xl font-semibold tracking-tight sm:text-3xl lg:text-4xl">NoraPadel</h1>
                         <p class="mt-4 text-sm text-zinc-200">Experience the ultimate in padel equipment. Premium quality rackets, shoes, and accessories for players who demand excellence.</p>
@@ -404,67 +404,47 @@
             </section>
 
             <!-- Brand Logo Marquee -->
-            <div class="bg-white text-black py-6 overflow-hidden border-y border-zinc-100 select-none" id="brandMarqueeBar">
+            <div class="bg-white text-black py-2.5 md:py-4 mt-0 overflow-hidden border-y border-zinc-100 select-none" id="brandMarqueeBar">
                 <div class="marquee-container">
-                    <div class="marquee-content">
+                    <div class="brand-marquee-content">
                         <!-- Set 1 -->
                         <span class="brand-marquee-item">
-                            <img src="{{ asset('storage/arronax.jpeg') }}" alt="Arronax" class="h-20 w-20 object-contain flex-shrink-0" loading="lazy">
+                            <img src="{{ asset('storage/babolat.png') }}" alt="Babolat" class="object-contain flex-shrink-0" loading="eager">
                         </span>
                         <span class="brand-marquee-item">
-                            <img src="{{ asset('storage/babolat.png') }}" alt="Babolat" class="h-20 w-20 object-contain flex-shrink-0" loading="lazy">
+                            <img src="{{ asset('storage/zephyrwhite.png') }}" alt="Zephyr" class="object-contain flex-shrink-0" loading="eager">
                         </span>
                         <span class="brand-marquee-item">
-                            <img src="{{ asset('storage/bullpadel.png') }}" alt="Bullpadel" class="h-20 w-20 object-contain flex-shrink-0" loading="lazy">
+                            <img src="{{ asset('storage/nox.png') }}" alt="Nox" class="object-contain flex-shrink-0" loading="eager">
                         </span>
                         <span class="brand-marquee-item">
-                            <img src="{{ asset('storage/nox.png') }}" alt="Nox" class="h-20 w-20 object-contain flex-shrink-0" loading="lazy">
+                            <img src="{{ asset('storage/alphapadel.png') }}" alt="Alpha" class="object-contain flex-shrink-0" loading="eager">
                         </span>
                         <span class="brand-marquee-item">
-                            <img src="{{ asset('storage/alphapadel.png') }}" alt="Alpha" class="h-20 w-20 object-contain flex-shrink-0" loading="lazy">
+                            <img src="{{ asset('storage/bullpadel.png') }}" alt="Bullpadel" class="object-contain flex-shrink-0" loading="eager">
                         </span>
                         <span class="brand-marquee-item">
-                            <img src="{{ asset('storage/zephyr1.jpeg') }}" alt="Zephyr" class="h-20 w-20 object-contain flex-shrink-0" loading="lazy">
+                            <img src="{{ asset('storage/arronaxwhitenew.png') }}" alt="Arronax" class="object-contain flex-shrink-0" loading="eager">
                         </span>
 
                         <!-- Set 2 -->
                         <span class="brand-marquee-item">
-                            <img src="{{ asset('storage/arronax.jpeg') }}" alt="Arronax" class="h-20 w-20 object-contain flex-shrink-0" loading="lazy">
+                            <img src="{{ asset('storage/babolat.png') }}" alt="Babolat" class="object-contain flex-shrink-0" loading="eager">
                         </span>
                         <span class="brand-marquee-item">
-                            <img src="{{ asset('storage/babolat.png') }}" alt="Babolat" class="h-20 w-20 object-contain flex-shrink-0" loading="lazy">
+                            <img src="{{ asset('storage/zephyrwhite.png') }}" alt="Zephyr" class="object-contain flex-shrink-0" loading="eager">
                         </span>
                         <span class="brand-marquee-item">
-                            <img src="{{ asset('storage/bullpadel.png') }}" alt="Bullpadel" class="h-20 w-20 object-contain flex-shrink-0" loading="lazy">
+                            <img src="{{ asset('storage/nox.png') }}" alt="Nox" class="object-contain flex-shrink-0" loading="eager">
                         </span>
                         <span class="brand-marquee-item">
-                            <img src="{{ asset('storage/nox.png') }}" alt="Nox" class="h-20 w-20 object-contain flex-shrink-0" loading="lazy">
+                            <img src="{{ asset('storage/alphapadel.png') }}" alt="Alpha" class="object-contain flex-shrink-0" loading="eager">
                         </span>
                         <span class="brand-marquee-item">
-                            <img src="{{ asset('storage/alphapadel.png') }}" alt="Alpha" class="h-20 w-20 object-contain flex-shrink-0" loading="lazy">
+                            <img src="{{ asset('storage/bullpadel.png') }}" alt="Bullpadel" class="object-contain flex-shrink-0" loading="eager">
                         </span>
                         <span class="brand-marquee-item">
-                            <img src="{{ asset('storage/zephyr1.jpeg') }}" alt="Zephyr" class="h-20 w-20 object-contain flex-shrink-0" loading="lazy">
-                        </span>
-
-                        <!-- Set 3 -->
-                        <span class="brand-marquee-item">
-                            <img src="{{ asset('storage/arronax.jpeg') }}" alt="Arronax" class="h-20 w-20 object-contain flex-shrink-0" loading="lazy">
-                        </span>
-                        <span class="brand-marquee-item">
-                            <img src="{{ asset('storage/babolat.png') }}" alt="Babolat" class="h-20 w-20 object-contain flex-shrink-0" loading="lazy">
-                        </span>
-                        <span class="brand-marquee-item">
-                            <img src="{{ asset('storage/bullpadel.png') }}" alt="Bullpadel" class="h-20 w-20 object-contain flex-shrink-0" loading="lazy">
-                        </span>
-                        <span class="brand-marquee-item">
-                            <img src="{{ asset('storage/nox.png') }}" alt="Nox" class="h-20 w-20 object-contain flex-shrink-0" loading="lazy">
-                        </span>
-                        <span class="brand-marquee-item">
-                            <img src="{{ asset('storage/alphapadel.png') }}" alt="Alpha" class="h-20 w-20 object-contain flex-shrink-0" loading="lazy">
-                        </span>
-                        <span class="brand-marquee-item">
-                            <img src="{{ asset('storage/zephyr1.jpeg') }}" alt="Zephyr" class="h-20 w-20 object-contain flex-shrink-0" loading="lazy">
+                            <img src="{{ asset('storage/arronaxwhitenew.png') }}" alt="Arronax" class="object-contain flex-shrink-0" loading="eager">
                         </span>
                     </div>
                 </div>
@@ -861,6 +841,9 @@
             overflow: hidden;
             user-select: none;
             width: 100%;
+            /* Premium edge fading mask to seamlessly fade out logo entry and exit */
+            -webkit-mask-image: linear-gradient(to right, transparent, white 8%, white 92%, transparent);
+            mask-image: linear-gradient(to right, transparent, white 8%, white 92%, transparent);
         }
 
         .marquee-content {
@@ -868,6 +851,27 @@
             animation: marquee 30s linear infinite;
             white-space: nowrap;
             will-change: transform;
+            font-size: 0; /* Completely eliminates whitespace rounding errors */
+            /* Force GPU Hardware Layer Compositing */
+            transform: translate3d(0, 0, 0);
+            -webkit-transform: translate3d(0, 0, 0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+
+        .brand-marquee-content {
+            display: block !important; /* Standard block-level to bypass Safari/Chrome flexbox dynamic repaint stutters */
+            width: max-content !important; /* Crucial for evaluating percentage translations against actual content width */
+            animation: brandMarquee 28s linear infinite !important; /* Slightly slower speed for incredibly elegant flow */
+            white-space: nowrap !important;
+            will-change: transform !important;
+            font-size: 0 !important; /* Completely eliminates HTML whitespace rendering bugs between sets */
+            flex-shrink: 0 !important;
+            /* Force GPU Hardware Layer Compositing */
+            transform: translate3d(0, 0, 0);
+            -webkit-transform: translate3d(0, 0, 0);
+            backface-visibility: hidden !important;
+            -webkit-backface-visibility: hidden !important;
         }
 
         .marquee-item {
@@ -877,34 +881,70 @@
             font-weight: 500;
             letter-spacing: 0.05em;
             text-transform: uppercase;
+            /* Force GPU Hardware Layer Compositing */
+            transform: translate3d(0, 0, 0);
+            -webkit-transform: translate3d(0, 0, 0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
         }
 
         .brand-marquee-item {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            display: inline-block; /* Standard inline-block layout to bypass Safari/Chrome flexbox dynamic repaint stutters */
+            vertical-align: middle; /* Center logo graphics vertically in the marquee line */
+            text-align: center; /* Center image within cell */
             flex-shrink: 0;
-            width: 17.24vw; /* Exactly 5.8 logos visible on desktop screens to restrict display to 6-7 logos */
+            width: auto; /* Shrink-wrap the logo graphic width exactly to avoid blank spacing gaps */
+            margin: 0 1.5vw; /* Perfectly constant tight margin across all devices to keep spacing 100% uniform */
+            /* Force GPU Hardware Layer Compositing */
+            transform: translate3d(0, 0, 0);
+            -webkit-transform: translate3d(0, 0, 0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+
+        .brand-marquee-item img {
+            height: 6vw !important; /* Linear vw-based sizing, perfectly calibrated to lock exactly 5 logos visible per screen on all desktops */
+            width: auto !important;
+            object-fit: contain;
+            /* GPU hardware acceleration to completely eliminate subpixel jitter and repaints */
+            transform: translate3d(0, 0, 0);
+            -webkit-transform: translate3d(0, 0, 0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
         }
 
         @media (max-width: 1024px) {
-            .brand-marquee-item {
-                width: 25vw; /* 4 logos visible on tablets */
+            .brand-marquee-item img {
+                height: 6.5vw !important; /* Perfectly calibrated to lock exactly 5 logos visible per screen on tablets */
             }
         }
 
-        @media (max-width: 640px) {
+        @media (max-width: 768px) {
             .brand-marquee-item {
-                width: 33.33vw; /* 3 logos visible on mobile phones */
+                width: auto;
+                margin: 0 1.5vw; /* Maintain identical snug margin on mobile */
+            }
+
+            .brand-marquee-item img {
+                height: 6.6vw !important; /* Perfectly calibrated to lock exactly 5 logos visible per screen on mobile devices */
             }
         }
 
         @keyframes marquee {
-            from {
-                transform: translateX(0);
+            0% {
+                transform: translate3d(0, 0, 0);
             }
-            to {
-                transform: translateX(-33.333%);
+            100% {
+                transform: translate3d(-50%, 0, 0); /* Perfectly seamless 50% shift for 2 sets of 3 items */
+            }
+        }
+
+        @keyframes brandMarquee {
+            0% {
+                transform: translate3d(0, 0, 0);
+            }
+            100% {
+                transform: translate3d(-50%, 0, 0); /* Perfectly seamless 50% shift for 2 sets */
             }
         }
 
