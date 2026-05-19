@@ -1,14 +1,15 @@
-<div x-data="{ 
+@guest
+<div x-data="{
     show: false,
     closePopup() {
         this.show = false;
         window._welcomeShown = true;
     }
-}" 
-     x-show="show" 
+}"
+     x-show="show"
      x-cloak
      x-init="
-        if (!window._welcomeShown && @js(!auth()->check())) {
+        if (!window._welcomeShown) {
             setTimeout(() => { show = true; window._welcomeShown = true; }, 800);
         }
      "
@@ -76,3 +77,4 @@
 <style>
     [x-cloak] { display: none !important; }
 </style>
+@endguest

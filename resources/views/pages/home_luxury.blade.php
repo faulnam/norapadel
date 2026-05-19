@@ -725,7 +725,7 @@
                                         $q->whereIn('status', ['completed', 'delivered']);
                                     })->sum('quantity');
                             @endphp
-                            <div class="group snap-start shrink-0 basis-[40%] sm:basis-[48%] md:basis-[32%] lg:basis-[18%] overflow-hidden bg-white transition duration-300 hover:-translate-y-2">
+                            <div class="product-card group snap-start shrink-0 basis-[40%] sm:basis-[48%] md:basis-[32%] lg:basis-[18%] overflow-hidden bg-white transition duration-300 hover:-translate-y-2" data-category="{{ strtolower($product->type) }}" data-brand="{{ strtolower($product->brand ?? '') }}">
                                 <a href="{{ route('produk.show', $product) }}" class="block">
                                     <div class="relative aspect-square overflow-hidden">
                                         <div class="h-full w-full overflow-hidden">
@@ -749,18 +749,9 @@
                                         <div class="mt-1 flex items-center gap-1">
                                             @php
                                                 $rating = $product->average_rating;
-                                                $fullStars = floor($rating);
-                                                $hasHalfStar = ($rating - $fullStars) >= 0.5;
                                             @endphp
-                                            @for($i = 1; $i <= 5; $i++)
-                                                @if($i <= $fullStars)
-                                                    <i class="fas fa-star text-black text-[10px]"></i>
-                                                @elseif($i == $fullStars + 1 && $hasHalfStar)
-                                                    <i class="fas fa-star-half-alt text-black text-[10px]"></i>
-                                                @else
-                                                    <i class="far fa-star text-zinc-200 text-[10px]"></i>
-                                                @endif
-                                            @endfor
+                                            <i class="fas fa-star text-black text-[10px]"></i>
+                                            <span class="text-[10px] text-zinc-600 ml-1">{{ number_format($rating, 1) }}</span>
                                             @if($product->total_reviews > 0)
                                                 <span class="text-[10px] text-zinc-500">({{ $product->total_reviews }})</span>
                                             @endif
@@ -832,9 +823,10 @@
                                         $q->whereIn('status', ['completed', 'delivered']);
                                     })->sum('quantity');
                             @endphp
-                       <div class="product-item group block overflow-hidden bg-white transition duration-300 hover:-translate-y-1"
+                       <div class="product-item product-card group block overflow-hidden bg-white transition duration-300 hover:-translate-y-1"
                                  data-name="{{ strtolower($product->name) }}"
                                  data-price="{{ $product->hasActiveDiscount() ? $product->discounted_price : $product->price }}"
+                                 data-category="{{ strtolower($product->type) }}"
                                  data-brand="{{ strtolower($product->brand ?? '') }}"
                                  data-level="{{ $product->level ?? '' }}"
                                  data-discount="{{ $product->hasActiveDiscount() ? 'yes' : 'no' }}"
@@ -864,18 +856,9 @@
                                         <div class="mt-1 flex items-center gap-1">
                                             @php
                                                 $rating = $product->average_rating;
-                                                $fullStars = floor($rating);
-                                                $hasHalfStar = ($rating - $fullStars) >= 0.5;
                                             @endphp
-                                            @for($i = 1; $i <= 5; $i++)
-                                                @if($i <= $fullStars)
-                                                    <i class="fas fa-star text-black text-[10px]"></i>
-                                                @elseif($i == $fullStars + 1 && $hasHalfStar)
-                                                    <i class="fas fa-star-half-alt text-black text-[10px]"></i>
-                                                @else
-                                                    <i class="far fa-star text-zinc-200 text-[10px]"></i>
-                                                @endif
-                                            @endfor
+                                            <i class="fas fa-star text-black text-[10px]"></i>
+                                            <span class="text-[10px] text-zinc-600 ml-1">{{ number_format($rating, 1) }}</span>
                                             @if($product->total_reviews > 0)
                                                 <span class="text-[10px] text-zinc-500">({{ $product->total_reviews }})</span>
                                             @endif
@@ -910,49 +893,49 @@
                         <p class="text-zinc-500">Tidak ada produk yang ditemukan</p>
                     </div>
             </section>
-
-            <section id="testimonials" class="np-fade-section bg-white py-18 lg:py-22" data-testimonial-showcase>
-                @php
-                        $testimonialItems = $testimonials->take(3);
-                    @endphp
-
-                    @if ($testimonialItems->count() > 0)
-                        <div class="relative overflow-hidden rounded-lg bg-zinc-50/40 px-2 py-2 md:px-4 md:py-4"
-                            data-testimonial-hero>
-                            <div class="np-testimonial-hero-track" data-testimonial-track>
-                                @foreach ($testimonialItems as $index => $testimonial)
-                                    <article class="np-testimonial-hero-slide">
-                                        <div class="relative aspect-video overflow-hidden rounded-2xl">
-                                            <img src="{{ $testimonial->image_url ?? '/images/logo.png' }}"
-                                                alt="Testimoni" class="h-full w-full object-cover" loading="lazy">
-                                            <div
-                                                class="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent">
-                                            </div>
-
-                                        </div>
-                                    </article>
-                                @endforeach
-                            </div>
-
-                            <div class="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded bg-black/35 px-3 py-2 backdrop-blur"
-                                data-testimonial-dots>
-                                @foreach ($testimonialItems as $index => $testimonial)
-                                    <button type="button"
-                                        class="np-testimonial-dot h-2.5 w-2.5 rounded-full bg-white/45 transition duration-300"
-                                        data-slide-to="{{ $index }}"
-                                        aria-label="Slide {{ $index + 1 }}"></button>
-                                @endforeach
-                            </div>
-                        </div>
-                    @else
-                        <div
-                            class="rounded-2xl border border-dashed border-zinc-300 bg-white p-10 text-center text-zinc-500">
-                            Belum ada testimoni.</div>
-                    @endif
-            </section>
                     </div>
                 </div>
             </div>
+
+        <!-- Testimonials Section - Full Width with Proper Margins -->
+        <section id="testimonials" class="np-fade-section bg-white py-18 lg:py-22 mx-auto max-w-7xl px-4 md:px-6 lg:px-12" data-testimonial-showcase>
+            @php
+                $testimonialItems = $testimonials->take(3);
+            @endphp
+
+            @if ($testimonialItems->count() > 0)
+                <div class="relative overflow-hidden rounded-lg bg-zinc-50/40 px-2 py-2 md:px-4 md:py-4"
+                    data-testimonial-hero>
+                    <div class="np-testimonial-hero-track" data-testimonial-track>
+                        @foreach ($testimonialItems as $index => $testimonial)
+                            <article class="np-testimonial-hero-slide">
+                                <div class="relative aspect-video overflow-hidden rounded-2xl">
+                                    <img src="{{ $testimonial->image_url ?? '/images/logo.png' }}"
+                                        alt="Testimoni" class="h-full w-full object-cover" loading="lazy">
+                                    <div
+                                        class="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent">
+                                    </div>
+                                </div>
+                            </article>
+                        @endforeach
+                    </div>
+
+                    <div class="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded bg-black/35 px-3 py-2 backdrop-blur"
+                        data-testimonial-dots>
+                        @foreach ($testimonialItems as $index => $testimonial)
+                            <button type="button"
+                                class="np-testimonial-dot h-2.5 w-2.5 rounded-full bg-white/45 transition duration-300"
+                                data-slide-to="{{ $index }}"
+                                aria-label="Slide {{ $index + 1 }}"></button>
+                        @endforeach
+                    </div>
+                </div>
+            @else
+                <div class="rounded-2xl border border-dashed border-zinc-300 bg-white p-10 text-center text-zinc-500">
+                    Belum ada testimoni.
+                </div>
+            @endif
+        </section>
 
         </main>
 
@@ -1367,56 +1350,148 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
 
-        // Apply Filters Function
+        // Apply Filters Function (for price and sort)
         window.applyFilters = function() {
-            const brand = document.querySelector('input[name="filterPrice"]:checked') ? '' : '';
-            const category = document.querySelector('input[name="filterPrice"]:checked') ? '' : '';
             const price = document.querySelector('input[name="filterPrice"]:checked')?.value || '';
             const sort = document.querySelector('input[name="filterSort"]:checked')?.value || '';
 
-            // Show loading state
-            const container = document.getElementById('newArrivalsContainer');
-            if (container) {
-                container.innerHTML = '<div class="flex items-center justify-center w-full py-8"><i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i></div>';
-
-                // Fetch filtered products via AJAX
-                fetch(`/api/new-arrivals/filter?brand=${brand}&category=${category}&price=${price}&sort=${sort}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success && data.html) {
-                            container.innerHTML = data.html;
-                        } else {
-                            container.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500">No products found</div>';
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        container.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500">Error loading products</div>';
-                    });
+            // Build params from active category/brand filters
+            const activeCategory = document.querySelector('.filter-chip[data-category].bg-black');
+            const activeBrand = document.querySelector('.filter-chip[data-brand].bg-black');
+            
+            const params = new URLSearchParams();
+            if (activeCategory) {
+                params.append('category', activeCategory.dataset.category);
             }
+            if (activeBrand) {
+                params.append('brand', activeBrand.dataset.brand);
+            }
+            if (price) {
+                params.append('price', price);
+            }
+            if (sort) {
+                params.append('sort', sort);
+            }
+
+            console.log('Applying filters with params:', params.toString());
+
+            // Show loading state
+            const newArrivalsContainer = document.getElementById('newArrivalsContainer');
+            const productGrid = document.getElementById('productGrid');
+            
+            if (newArrivalsContainer) {
+                newArrivalsContainer.innerHTML = '<div class="flex items-center justify-center w-full py-8"><i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i></div>';
+            }
+            if (productGrid) {
+                productGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 col-span-full"><i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i></div>';
+            }
+
+            // Fetch filtered products via AJAX
+            fetch(`/api/new-arrivals/filter?${params.toString()}`)
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Response data:', data);
+                    if (data.success && data.html) {
+                        if (newArrivalsContainer) {
+                            newArrivalsContainer.innerHTML = data.html;
+                        }
+                        if (productGrid) {
+                            productGrid.innerHTML = data.html;
+                        }
+                    } else {
+                        if (newArrivalsContainer) {
+                            newArrivalsContainer.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500">No products found</div>';
+                        }
+                        if (productGrid) {
+                            productGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500 col-span-full">No products found</div>';
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    if (newArrivalsContainer) {
+                        newArrivalsContainer.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500">Error loading products</div>';
+                    }
+                    if (productGrid) {
+                        productGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500 col-span-full">Error loading products</div>';
+                    }
+                });
         };
 
         // Apply single filter (for sidebar chips)
         window.applyFilter = function(filterType, value) {
+            console.log('Applying filter:', filterType, value);
+            
             // Update chip styling
-            const chips = document.querySelectorAll(`.filter-chip[data-${filterType}="${value}"]`);
+            const chips = document.querySelectorAll(`.filter-chip[data-${filterType}]`);
             chips.forEach(chip => {
-                chip.classList.add('bg-black', 'text-white', 'border-black');
-                chip.classList.remove('text-zinc-600', 'border-zinc-200');
+                chip.classList.remove('bg-black', 'text-white', 'border-black');
+                chip.classList.add('text-zinc-600', 'border-zinc-200');
             });
-
-            // For now, redirect to category page
-            if (filterType === 'category') {
-                if (value === 'racket') {
-                    window.location.href = '{{ route('racket') }}';
-                } else if (value === 'shoes') {
-                    window.location.href = '{{ route('shoes') }}';
-                } else if (value === 'apparel') {
-                    window.location.href = '{{ route('apparel') }}';
-                }
-            } else if (filterType === 'brand') {
-                window.location.href = `{{ route('shop') }}?brand=${value}`;
+            
+            const activeChip = document.querySelector(`.filter-chip[data-${filterType}="${value}"]`);
+            if (activeChip) {
+                activeChip.classList.add('bg-black', 'text-white', 'border-black');
+                activeChip.classList.remove('text-zinc-600', 'border-zinc-200');
             }
+
+            // Fetch filtered products via AJAX
+            const params = new URLSearchParams();
+            if (filterType === 'category') {
+                params.append('category', value);
+            } else if (filterType === 'brand') {
+                params.append('brand', value);
+            }
+
+            console.log('Fetching:', `/api/new-arrivals/filter?${params.toString()}`);
+
+            // Show loading state
+            const newArrivalsContainer = document.getElementById('newArrivalsContainer');
+            const productGrid = document.getElementById('productGrid');
+            
+            if (newArrivalsContainer) {
+                newArrivalsContainer.innerHTML = '<div class="flex items-center justify-center w-full py-8"><i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i></div>';
+            }
+            if (productGrid) {
+                productGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 col-span-full"><i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i></div>';
+            }
+
+            fetch(`/api/new-arrivals/filter?${params.toString()}`)
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Response data:', data);
+                    if (data.success && data.html) {
+                        // Update both containers with filtered products
+                        if (newArrivalsContainer) {
+                            newArrivalsContainer.innerHTML = data.html;
+                        }
+                        if (productGrid) {
+                            productGrid.innerHTML = data.html;
+                        }
+                    } else {
+                        if (newArrivalsContainer) {
+                            newArrivalsContainer.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500">No products found</div>';
+                        }
+                        if (productGrid) {
+                            productGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500 col-span-full">No products found</div>';
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    if (newArrivalsContainer) {
+                        newArrivalsContainer.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500">Error loading products</div>';
+                    }
+                    if (productGrid) {
+                        productGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500 col-span-full">Error loading products</div>';
+                    }
+                });
         };
 
         // Clear filter
@@ -1426,6 +1501,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 chip.classList.remove('bg-black', 'text-white', 'border-black');
                 chip.classList.add('text-zinc-600', 'border-zinc-200');
             });
+            
+            // Reload page to reset all filters
+            window.location.reload();
         };
 
         // Filter toggle functionality
