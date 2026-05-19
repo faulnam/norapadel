@@ -57,7 +57,7 @@ class PageController extends Controller
             $shopProductsQuery->where('level', $request->level);
         }
 
-        $shopProducts = $shopProductsQuery->latest()->take(10)->get();
+        $shopProducts = $shopProductsQuery->latest()->take(12)->get();
         $brands = Product::active()->whereNotNull('brand')->distinct()->pluck('brand')->sort();
 
         // Fetch active vouchers for frontend
