@@ -20,6 +20,28 @@ class ProfileController extends Controller
     }
 
     /**
+     * Show rewards & points page
+     */
+    public function rewards()
+    {
+        $user = auth()->user()->load('pointTransactions');
+        $pointTransactions = $user->pointTransactions()->latest()->paginate(15);
+
+        return view('customer.profile.rewards', compact('user', 'pointTransactions'));
+    }
+
+    /**
+     * Show user's vouchers
+     */
+    public function vouchers()
+    {
+        $user = auth()->user();
+        $vouchers = $user->vouchers()->withPivot('claimed_at', 'is_used', 'used_at')->latest('user_vouchers.claimed_at')->paginate(15);
+
+        return view('customer.profile.vouchers', compact('user', 'vouchers'));
+    }
+
+    /**
      * Update profile
      */
     public function update(Request $request)

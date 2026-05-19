@@ -3,14 +3,18 @@
 @section('title', 'Register - Nora Padel')
 
 @section('content')
-@include('partials.main-navbar')
-<div class="min-h-[100dvh] w-full flex flex-col md:flex-row bg-white text-zinc-900 antialiased pt-28">
+<style>
+    #mainNavbar { display: none !important; }
+    .mobile-bottom-nav { display: none !important; }
+</style>
+@include('components.luxury-navbar')
+<div class="min-h-[100dvh] w-full flex flex-col md:flex-row bg-white text-zinc-900 antialiased pt-16 md:pt-20">
     <!-- Left: Form -->
-    <section class="flex-1 flex items-center justify-center p-6 md:p-10 overflow-y-auto">
-        <div class="w-full max-w-md">
-            <div class="flex flex-col gap-6">
-                <h1 class="animate-element animate-delay-100 text-4xl md:text-5xl font-light leading-tight tracking-tighter">Create <span class="font-semibold">account</span></h1>
-                <p class="animate-element animate-delay-200 text-zinc-500">Join NoraPadel and enjoy a premium padel shopping experience.</p>
+    <section class="flex-1 flex items-start md:items-center justify-center p-5 md:p-8 overflow-y-auto">
+        <div class="w-full max-w-sm">
+            <div class="flex flex-col gap-2">
+                <h1 class="animate-element animate-delay-100 text-3xl md:text-4xl font-light leading-tight tracking-tighter">Create <span class="font-semibold">account</span></h1>
+                <p class="animate-element animate-delay-200 text-sm text-zinc-500">Join NoraPadel and enjoy a premium padel shopping experience.</p>
 
                 @if($errors->any())
                     <div class="animate-element animate-delay-250 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
@@ -24,57 +28,72 @@
 
                 <div id="registerAlert" class="hidden rounded-2xl border px-4 py-3 text-sm"></div>
 
-                <form id="registerForm" action="{{ route('register.request-otp') }}" method="POST" class="space-y-5" data-request-otp-url="{{ route('register.request-otp') }}" data-verify-otp-url="{{ route('register.verify-otp') }}">
+                <form id="registerForm" action="{{ route('register.request-otp') }}" method="POST" class="space-y-2.5" data-request-otp-url="{{ route('register.request-otp') }}" data-verify-otp-url="{{ route('register.verify-otp') }}">
                     @csrf
 
                     <div class="animate-element animate-delay-300">
-                        <label for="name" class="text-sm font-medium text-zinc-500">Full Name</label>
-                        <div class="mt-1 rounded-2xl border border-zinc-200 bg-zinc-50 transition-colors focus-within:border-violet-400 focus-within:bg-violet-50">
-                            <input type="text" id="name" name="name" value="{{ old('name') }}" required placeholder="Your full name" class="w-full bg-transparent text-sm p-3 rounded-2xl focus:outline-none">
+                        <label for="name" class="text-xs font-medium text-zinc-500">Full Name</label>
+                        <div class="mt-0.5 rounded-xl border border-zinc-200 bg-zinc-50 transition-colors focus-within:border-violet-400 focus-within:bg-violet-50">
+                            <input type="text" id="name" name="name" value="{{ old('name') }}" required placeholder="Your full name" class="w-full bg-transparent text-sm p-2 rounded-xl focus:outline-none">
                         </div>
                     </div>
 
                     <div class="animate-element animate-delay-350">
-                        <label for="email" class="text-sm font-medium text-zinc-500">Email Address</label>
-                        <div class="mt-1 rounded-2xl border border-zinc-200 bg-zinc-50 transition-colors focus-within:border-violet-400 focus-within:bg-violet-50">
-                            <input type="email" id="email" name="email" value="{{ old('email') }}" required placeholder="email@example.com" class="w-full bg-transparent text-sm p-3 rounded-2xl focus:outline-none">
+                        <label for="email" class="text-xs font-medium text-zinc-500">Email Address</label>
+                        <div class="mt-0.5 rounded-xl border border-zinc-200 bg-zinc-50 transition-colors focus-within:border-violet-400 focus-within:bg-violet-50">
+                            <input type="email" id="email" name="email" value="{{ old('email') }}" required placeholder="email@example.com" class="w-full bg-transparent text-sm p-2 rounded-xl focus:outline-none">
                         </div>
                     </div>
 
                     <div class="animate-element animate-delay-400">
-                        <label for="phone" class="text-sm font-medium text-zinc-500">Phone Number</label>
-                        <div class="mt-1 rounded-2xl border border-zinc-200 bg-zinc-50 transition-colors focus-within:border-violet-400 focus-within:bg-violet-50">
-                            <input type="text" id="phone" name="phone" value="{{ old('phone') }}" required placeholder="08xxxxxxxxxx" class="w-full bg-transparent text-sm p-3 rounded-2xl focus:outline-none">
+                        <label for="phone" class="text-xs font-medium text-zinc-500">Phone Number</label>
+                        <div class="mt-0.5 rounded-xl border border-zinc-200 bg-zinc-50 transition-colors focus-within:border-violet-400 focus-within:bg-violet-50">
+                            <input type="text" id="phone" name="phone" value="{{ old('phone') }}" required placeholder="08xxxxxxxxxx" class="w-full bg-transparent text-sm p-2 rounded-xl focus:outline-none">
                         </div>
                     </div>
 
                     <div class="animate-element animate-delay-450">
-                        <label for="address" class="text-sm font-medium text-zinc-500">Address</label>
-                        <div class="mt-1 rounded-2xl border border-zinc-200 bg-zinc-50 transition-colors focus-within:border-violet-400 focus-within:bg-violet-50">
-                            <textarea id="address" name="address" rows="2" required placeholder="Your full address" class="w-full bg-transparent text-sm p-3 rounded-2xl focus:outline-none resize-none">{{ old('address') }}</textarea>
+                        <label for="address" class="text-xs font-medium text-zinc-500">Address</label>
+                        <div class="mt-0.5 rounded-xl border border-zinc-200 bg-zinc-50 transition-colors focus-within:border-violet-400 focus-within:bg-violet-50">
+                            <input type="text" id="address" name="address" value="{{ old('address') }}" required placeholder="Your full address" class="w-full bg-transparent text-sm p-2 rounded-xl focus:outline-none">
                         </div>
                     </div>
 
                     <div class="animate-element animate-delay-500">
-                        <label for="password" class="text-sm font-medium text-zinc-500">Password</label>
-                        <div class="mt-1 rounded-2xl border border-zinc-200 bg-zinc-50 transition-colors focus-within:border-violet-400 focus-within:bg-violet-50">
-                            <input type="password" id="password" name="password" required placeholder="Minimum 8 characters" class="w-full bg-transparent text-sm p-3 rounded-2xl focus:outline-none">
+                        <label for="password" class="text-xs font-medium text-zinc-500">Password</label>
+                        <div class="mt-0.5 rounded-xl border border-zinc-200 bg-zinc-50 transition-colors focus-within:border-violet-400 focus-within:bg-violet-50">
+                            <input type="password" id="password" name="password" required placeholder="Minimum 8 characters" class="w-full bg-transparent text-sm p-2 rounded-xl focus:outline-none">
                         </div>
                     </div>
 
                     <div class="animate-element animate-delay-550">
-                        <label for="password_confirmation" class="text-sm font-medium text-zinc-500">Confirm Password</label>
-                        <div class="mt-1 rounded-2xl border border-zinc-200 bg-zinc-50 transition-colors focus-within:border-violet-400 focus-within:bg-violet-50">
-                            <input type="password" id="password_confirmation" name="password_confirmation" required placeholder="Repeat your password" class="w-full bg-transparent text-sm p-3 rounded-2xl focus:outline-none">
+                        <label for="password_confirmation" class="text-xs font-medium text-zinc-500">Confirm Password</label>
+                        <div class="mt-0.5 rounded-xl border border-zinc-200 bg-zinc-50 transition-colors focus-within:border-violet-400 focus-within:bg-violet-50">
+                            <input type="password" id="password_confirmation" name="password_confirmation" required placeholder="Repeat your password" class="w-full bg-transparent text-sm p-2 rounded-xl focus:outline-none">
                         </div>
                     </div>
 
-                    <button type="submit" id="registerSubmitBtn" class="animate-element animate-delay-600 w-full rounded-2xl bg-zinc-900 py-3 font-medium text-white hover:bg-zinc-800 transition-colors">
+                    <button type="submit" id="registerSubmitBtn" class="animate-element animate-delay-600 w-full rounded-xl bg-zinc-900 py-2 font-medium text-white hover:bg-zinc-800 transition-colors">
                         Create Account
                     </button>
                 </form>
 
-                <p class="animate-element animate-delay-700 text-center text-sm text-zinc-500">
+                <div class="animate-element animate-delay-700 relative flex items-center justify-center">
+                    <span class="w-full border-t border-zinc-200"></span>
+                    <span class="px-4 text-sm text-zinc-500 bg-white absolute">Or continue with</span>
+                </div>
+
+                <a href="{{ route('google.login') }}" class="animate-element animate-delay-750 flex w-full items-center justify-center gap-2 rounded-2xl border border-zinc-200 bg-white py-2.5 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50">
+                    <svg class="h-5 w-5" viewBox="0 0 24 24">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                    </svg>
+                    Sign up with Google
+                </a>
+
+                <p class="animate-element animate-delay-800 text-center text-sm text-zinc-500">
                     Already have an account? <a href="{{ route('login') }}" class="text-violet-500 hover:underline transition-colors">Sign In</a>
                 </p>
             </div>
@@ -153,7 +172,10 @@
         .animate-delay-500 { animation-delay: 500ms; }
         .animate-delay-550 { animation-delay: 550ms; }
         .animate-delay-600 { animation-delay: 600ms; }
+        .animate-delay-650 { animation-delay: 650ms; }
         .animate-delay-700 { animation-delay: 700ms; }
+        .animate-delay-750 { animation-delay: 750ms; }
+        .animate-delay-800 { animation-delay: 800ms; }
         .animate-delay-1000 { animation-delay: 1000ms; }
         .animate-delay-1200 { animation-delay: 1200ms; }
     </style>

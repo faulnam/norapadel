@@ -69,7 +69,7 @@ class Product extends Model
             self::CATEGORY_ORIGINAL => 'Raket Padel',
             self::CATEGORY_PEDAS => 'Aksesori Padel',
             self::CATEGORY_SHOES => 'Shoes Padel',
-            self::CATEGORY_SHOES => 'New Arrivals',
+            self::CATEGORY_ARRIVALS => 'New Arrivals',
         ];
     }
 
@@ -223,6 +223,30 @@ class Product extends Model
     public function reviews()
     {
         return $this->hasMany(Review::class);
+    }
+
+    /**
+     * Get average rating for this product
+     */
+    public function getAverageRatingAttribute()
+    {
+        return $this->reviews()->where('is_approved', true)->avg('rating') ?? 0;
+    }
+
+    /**
+     * Get formatted average rating
+     */
+    public function getFormattedRatingAttribute()
+    {
+        return number_format($this->average_rating, 1);
+    }
+
+    /**
+     * Get total reviews count
+     */
+    public function getTotalReviewsAttribute()
+    {
+        return $this->reviews()->where('is_approved', true)->count();
     }
 
     /**

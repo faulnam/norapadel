@@ -36,7 +36,7 @@
                 <div class="flex-1">
                     <h3 class="font-semibold text-yellow-800 mb-1">Waiting for Payment</h3>
                     <p class="text-sm text-yellow-700">Please select a payment method to continue your order.</p>
-                    <a href="{{ route('customer.payment.select-gateway', $order) }}" 
+                    <a href="{{ route('customer.payment.show', $order) }}" 
                        class="inline-block mt-3 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition">
                         Pay Now
                     </a>

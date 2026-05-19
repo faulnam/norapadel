@@ -165,6 +165,10 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        
+        // Seed Vouchers
+        $this->call(VoucherSeeder::class);
+
+        // Seed Reviews
+        $this->call(ReviewSeeder::class);
     }
 }

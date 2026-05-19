@@ -90,6 +90,11 @@ class PaylabsPaymentController extends Controller
             return back()->with('error', 'Total pembayaran minimal Rp 1.000. Total saat ini: Rp ' . number_format($totalAmount, 0, ',', '.'));
         }
 
+        // Validate QRIS maximum amount (Rp 10.000.000 per transaction)
+        if ($paymentMethod === 'qris' && $totalAmount > 10000000) {
+            return back()->with('error', 'Pembayaran QRIS maksimal Rp 10.000.000 per transaksi. Total saat ini: Rp ' . number_format($totalAmount, 0, ',', '.') . '. Silakan gunakan metode pembayaran lain seperti Virtual Account atau E-Wallet.');
+        }
+
         // Check if payment already exists and still valid
         if ($order->paylabs_transaction_id && $order->payment_data) {
             $paymentData = json_decode($order->payment_data, true);

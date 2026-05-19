@@ -3,32 +3,24 @@
 @section('title', 'NoraPadel — Precision. Power. Performance.')
 
 @section('content')
+    <style>
+        @media (max-width: 991.98px) {
+            body { padding-top: 0 !important; }
+        }
+        html, body { overflow-x: hidden; }
+    </style>
     <div class="bg-white text-black antialiased">
-        <!-- Marquee Text -->
-        <div class="fixed top-0 left-0 right-0 z-[60] bg-white text-black py-2 overflow-hidden transition-all duration-300" id="marqueeBar">
-            <div class="marquee-container">
-                <div class="marquee-content">
-                    <span class="marquee-item">NORAPADEL PREMIUM • PRECISION. POWER. PERFORMANCE. • </span>
-                    <span class="marquee-item">NORAPADEL PREMIUM • PRECISION. POWER. PERFORMANCE. • </span>
-                    <span class="marquee-item">NORAPADEL PREMIUM • PRECISION. POWER. PERFORMANCE. • </span>
-                    <span class="marquee-item">NORAPADEL PREMIUM • PRECISION. POWER. PERFORMANCE. • </span>
-                    <span class="marquee-item">NORAPADEL PREMIUM • PRECISION. POWER. PERFORMANCE. • </span>
-                    <span class="marquee-item">NORAPADEL PREMIUM • PRECISION. POWER. PERFORMANCE. • </span>
-                </div>
-            </div>
-        </div>
 
-        <header class="fixed left-0 z-50 w-full transition-all duration-300
-            top-8 border-b border-transparent bg-transparent backdrop-blur-none
-            max-[767px]:top-8 max-[767px]:bg-white/95 max-[767px]:backdrop-blur-md max-[767px]:border-black/10" id="mainHeader">
-            <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6 md:px-10 lg:px-12">
-                <div></div>
+        <header class="fixed left-0 top-0 z-[70] w-full border-b border-transparent bg-transparent backdrop-blur-none transition-all duration-300" id="mainHeader">
+            <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-3 md:px-10 lg:px-12">
+                <a href="{{ route('home') }}" class="flex items-center gap-2">
+                    <img src="{{ asset('storage/logo.png') }}" alt="NoraPadel" class="h-7 w-7 object-contain" loading="lazy">
+                    <span class="text-xl font-semibold tracking-tight text-white transition-colors duration-300" id="logoText">NoraPadel</span>
+                </a>
 
-                <nav class="hidden items-center gap-8 md:flex" id="navLinks">
-                    <img src="{{ asset('storage/logo.png') }}" alt="NoraPadel" class="h-12 w-12 object-contain -ml-4" loading="lazy">
-                    <a href="{{ route('home') }}" class="flex items-center gap-2.5">
-                        <span class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">Home</span>
-                    </a>
+                <nav class="hidden items-center gap-6 md:flex" id="navLinks">
+                    <a href="{{ route('home') }}"
+                        class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">Home</a>
 
                     <!-- New Arrivals Mega Dropdown -->
                     <div class="relative group" data-dropdown="new-arrivals">
@@ -39,7 +31,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
                         </a>
-                        <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[700px] opacity-0 invisible translate-y-[-10px] transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
+                        <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[700px] opacity-0 invisible translate-y-[-10px] transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-[100]">
                             <div class="bg-white/95 backdrop-blur-md rounded-xl shadow-2xl border border-zinc-100 p-0 overflow-hidden aspect-video">
                                 <div class="grid grid-cols-[1fr_1fr] h-full">
                                     <!-- Left: Brand & Level (Centered) -->
@@ -89,7 +81,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
                         </a>
-                        <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[700px] opacity-0 invisible translate-y-[-10px] transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
+                        <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[700px] opacity-0 invisible translate-y-[-10px] transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-[100]">
                             <div class="bg-white/95 backdrop-blur-md rounded-xl shadow-2xl border border-zinc-100 p-0 overflow-hidden aspect-video">
                                 <div class="grid grid-cols-[1fr_1.2fr] h-full">
                                     <!-- Left: Categories (Centered) -->
@@ -137,7 +129,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
                         </a>
-                        <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[700px] opacity-0 invisible translate-y-[-10px] transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
+                        <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[700px] opacity-0 invisible translate-y-[-10px] transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-[100]">
                             <div class="bg-white/95 backdrop-blur-md rounded-xl shadow-2xl border border-zinc-100 p-0 overflow-hidden aspect-video">
                                 <div class="grid grid-cols-[1fr_1.2fr] h-full">
                                     <!-- Left: Categories (Centered) -->
@@ -185,7 +177,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
                         </a>
-                        <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[700px] opacity-0 invisible translate-y-[-10px] transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
+                        <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[700px] opacity-0 invisible translate-y-[-10px] transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-[100]">
                             <div class="bg-white/95 backdrop-blur-md rounded-xl shadow-2xl border border-zinc-100 p-0 overflow-hidden aspect-video">
                                 <div class="grid grid-cols-[1fr_1.2fr] h-full">
                                     <!-- Left: Categories (Centered) -->
@@ -228,36 +220,17 @@
                         class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">Contact</a>
                 </nav>
 
-                <div class="flex items-center gap-3 text-white/90" id="navIcons">
-                    @auth
-                        @if (auth()->user()->role === 'admin')
-                            <a href="{{ route('admin.dashboard') }}"
-                                class="inline-flex items-center gap-1.5 rounded border border-white/30 bg-white/10 px-4 py-1.5 text-xs font-medium text-white backdrop-blur transition duration-300 hover:bg-white/20"
-                                aria-label="Back to Dashboard">
-                                <i class="fas fa-arrow-left text-[10px]"></i>
-                                <span>Dashboard</span>
-                            </a>
-                        @elseif(auth()->user()->role === 'customer')
-                            <a href="{{ route('customer.orders.index') }}" class="transition duration-300 hover:text-white"
-                                aria-label="Riwayat Pesanan" title="Riwayat Pesanan">
-                                <i class="fas fa-history text-sm"></i>
-                            </a>
-                            <a href="{{ route('customer.profile.index') }}" class="transition duration-300 hover:text-white"
-                                aria-label="Profile" title="Profile">
-                                <i class="fas fa-user text-sm"></i>
-                            </a>
-                        @endif
-                    @endauth
-                    @guest
-                            <a href="{{ route('login') }}"
-                            class="inline-flex items-center gap-1 rounded border border-white/30 bg-white/10 px-3 py-1.5 text-xs font-medium text-white backdrop-blur transition duration-300 hover:bg-white/20"
-                            aria-label="Masuk">
-                            <i class="fas fa-sign-in-alt text-[11px]"></i>
-                            <span>Masuk</span>
-                        </a>
-                    @endguest
-                    
-                    <a href="{{ route('customer.wishlist.index') }}" class="relative transition duration-300 hover:text-white" aria-label="Wishlist" title="Wishlist">
+                <div class="flex items-center gap-2 md:gap-3 text-white/90" id="navIcons">
+                    <!-- Inline Search (all screens) -->
+                    <div class="flex items-center relative" id="navSearchWrapper">
+                        <i class="fas fa-search absolute left-2 md:left-3 text-xs md:text-sm text-white/60 pointer-events-none transition-colors duration-300" id="navSearchIcon"></i>
+                        <input type="text" id="navSearchInput" placeholder="Cari..."
+                               class="bg-white/10 border border-white/20 rounded-full pl-7 md:pl-9 pr-2 md:pr-4 py-1 md:py-1.5 text-xs md:text-sm text-white placeholder-white/60 focus:outline-none focus:bg-white/20 focus:border-white/40 w-24 md:w-40 lg:w-48 transition-all duration-300"
+                               autocomplete="off">
+                    </div>
+
+                    <!-- Wishlist (mobile only) -->
+                    <a href="{{ route('customer.wishlist.index') }}" class="relative md:hidden transition duration-300 hover:text-white">
                         <i class="fas fa-heart text-sm"></i>
                         @php
                             if (auth()->check() && auth()->user()->role === 'customer') {
@@ -268,60 +241,172 @@
                             }
                         @endphp
                         @if($wishlistCount > 0)
-                            <span class="pointer-events-none absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
+                            <span class="wishlist-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
                         @endif
                     </a>
-                    
-                    @auth
-                        <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-white"
-                            aria-label="Cart" title="Keranjang">
-                            <i class="fas fa-shopping-bag text-sm"></i>
-                            @if (auth()->user()->role === 'customer')
-                                @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
-                                @if ($cartCount > 0)
-                                    <span
-                                        class="pointer-events-none absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
-                                @endif
-                            @endif
-                        </a>
-                    @else
-                        <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-white" aria-label="Cart"
-                            title="Keranjang">
-                            <i class="fas fa-shopping-bag text-sm"></i>
-                            @php 
-                                $guestCart = session()->get('guest_cart', []);
-                                $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
-                            @endphp
-                            @if($guestCartCount > 0)
-                                <span class="pointer-events-none absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $guestCartCount > 9 ? '9+' : $guestCartCount }}</span>
-                            @endif
-                        </a>
-                    @endauth
-                    
-                    <button type="button" id="searchToggleBtn" class="transition duration-300 hover:text-white" aria-label="Search" title="Cari Produk">
+
+                    <!-- Mobile Search Icon (hidden since inline search is now visible) -->
+                    <button type="button" id="searchToggleBtn" class="hidden transition duration-300 hover:text-white" aria-label="Search" title="Cari Produk">
                         <i class="fas fa-search text-sm"></i>
                     </button>
-                    
-                    <button type="button"
-                        class="inline-flex h-9 w-9 items-center justify-center rounded border border-black/15 bg-white text-black backdrop-blur transition duration-300 hover:bg-black/5 md:hidden"
-                        data-mobile-menu-toggle aria-label="Toggle navigation" aria-expanded="false">
-                        <i class="fas fa-bars text-sm"></i>
-                    </button>
+
+                    <!-- Hamburger Menu with combined elements -->
+                    <div class="relative" id="hamburgerMenuWrapper">
+                        <button type="button" id="hamburgerMenuBtn" class="inline-flex h-9 w-9 items-center justify-center rounded border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20 relative">
+                            <i class="fas fa-bars text-sm"></i>
+                            <!-- Cart Badge -->
+                            @auth
+                                @if (auth()->user()->role === 'customer')
+                                    @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
+                                    @if ($cartCount > 0)
+                                        <span class="hamburger-cart-badge absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
+                                    @endif
+                                @endif
+                            @endauth
+                            @guest
+                                @php
+                                    $guestCart = session()->get('guest_cart', []);
+                                    $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
+                                @endphp
+                                @if($guestCartCount > 0)
+                                    <span class="hamburger-cart-badge absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $guestCartCount > 9 ? '9+' : $guestCartCount }}</span>
+                                @endif
+                            @endguest
+                            <!-- Wishlist Badge -->
+                            @auth
+                                @if (auth()->user()->role === 'customer')
+                                    @php $wishlistCount = auth()->user()->wishlistItems()->count(); @endphp
+                                    @if ($wishlistCount > 0)
+                                        <span class="hamburger-wishlist-badge absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
+                                    @endif
+                                @endif
+                            @endauth
+                            @guest
+                                @php
+                                    $guestWishlist = session()->get('guest_wishlist', []);
+                                    $guestWishlistCount = count($guestWishlist);
+                                @endphp
+                                @if($guestWishlistCount > 0)
+                                    <span class="hamburger-wishlist-badge absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">{{ $guestWishlistCount > 9 ? '9+' : $guestWishlistCount }}</span>
+                                @endif
+                            @endguest
+                        </button>
+                        <div id="hamburgerMenuDropdown" class="absolute right-0 mt-2 w-48 z-[100] hidden">
+                            <div class="bg-white rounded-lg shadow-lg border border-zinc-100 overflow-hidden">
+                                <!-- Navigation (mobile only) -->
+                                <div class="md:hidden">
+                                    <a href="{{ route('home') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
+                                        <i class="fas fa-home text-zinc-500 text-sm"></i>
+                                        <span class="text-sm text-zinc-700">Home</span>
+                                    </a>
+                                    <a href="{{ route('new-arrivals') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
+                                        <i class="fas fa-star text-zinc-500 text-sm"></i>
+                                        <span class="text-sm text-zinc-700">New Arrivals</span>
+                                    </a>
+                                    <a href="{{ route('racket') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
+                                        <i class="fas fa-table-tennis text-zinc-500 text-sm"></i>
+                                        <span class="text-sm text-zinc-700">Racket</span>
+                                    </a>
+                                    <a href="{{ route('shoes') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
+                                        <i class="fas fa-shoe-prints text-zinc-500 text-sm"></i>
+                                        <span class="text-sm text-zinc-700">Shoes</span>
+                                    </a>
+                                    <a href="{{ route('apparel') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
+                                        <i class="fas fa-tshirt text-zinc-500 text-sm"></i>
+                                        <span class="text-sm text-zinc-700">Accessories</span>
+                                    </a>
+                                </div>
+
+                                <!-- Login -->
+                                @guest
+                                    <a href="{{ route('login') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
+                                        <i class="fas fa-sign-in-alt text-zinc-500 text-sm"></i>
+                                        <span class="text-sm text-zinc-700">Login</span>
+                                    </a>
+                                @endauth
+                                
+                                <!-- Language Switcher -->
+                                <div class="border-b border-zinc-100">
+                                    <div class="px-3 py-2 bg-zinc-50">
+                                        <div class="flex gap-2">
+                                            <a href="{{ request()->fullUrlWithQuery(['locale' => 'en']) }}" class="flex-1 px-2 py-1.5 text-xs text-zinc-700 hover:bg-white rounded transition {{ session('locale', 'en') === 'en' ? 'bg-white font-semibold' : 'bg-white/50' }}">
+                                                EN
+                                            </a>
+                                            <a href="{{ request()->fullUrlWithQuery(['locale' => 'id']) }}" class="flex-1 px-2 py-1.5 text-xs text-zinc-700 hover:bg-white rounded transition {{ session('locale', 'en') === 'id' ? 'bg-white font-semibold' : 'bg-white/50' }}">
+                                                ID
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Cart -->
+                                <a href="{{ route('customer.cart.index') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
+                                    <div class="relative">
+                                        <i class="fas fa-shopping-bag text-zinc-500 text-sm"></i>
+                                        @auth
+                                            @if (auth()->user()->role === 'customer')
+                                                @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
+                                                @if ($cartCount > 0)
+                                                    <span class="cart-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
+                                                @endif
+                                            @endif
+                                        @endauth
+                                        @guest
+                                            @php 
+                                                $guestCart = session()->get('guest_cart', []);
+                                                $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
+                                            @endphp
+                                            @if($guestCartCount > 0)
+                                                <span class="cart-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $guestCartCount > 9 ? '9+' : $guestCartCount }}</span>
+                                            @endif
+                                        @endguest
+                                    </div>
+                                    <span class="text-sm text-zinc-700">Cart</span>
+                                </a>
+                                
+                                <!-- Wishlist -->
+                                <a href="{{ route('customer.wishlist.index') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
+                                    <div class="relative">
+                                        <i class="fas fa-heart text-zinc-500 text-sm"></i>
+                                        @php
+                                            if (auth()->check() && auth()->user()->role === 'customer') {
+                                                $wishlistCount = auth()->user()->wishlistItems()->count();
+                                            } else {
+                                                $guestWishlist = session()->get('guest_wishlist', []);
+                                                $wishlistCount = count($guestWishlist);
+                                            }
+                                        @endphp
+                                        @if($wishlistCount > 0)
+                                            <span class="wishlist-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
+                                        @endif
+                                    </div>
+                                    <span class="text-sm text-zinc-700">Wishlist</span>
+                                </a>
+                                
+                                <!-- Auth Section for logged-in users -->
+                                @auth
+                                    @if (auth()->user()->role === 'admin')
+                                        <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-t border-zinc-100">
+                                            <i class="fas fa-arrow-left text-zinc-500 text-sm"></i>
+                                            <span class="text-sm text-zinc-700">Dashboard</span>
+                                        </a>
+                                    @elseif(auth()->user()->role === 'customer')
+                                        <a href="{{ route('customer.orders.index') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-t border-zinc-100">
+                                            <i class="fas fa-history text-zinc-500 text-sm"></i>
+                                            <span class="text-sm text-zinc-700">Orders</span>
+                                        </a>
+                                        <a href="{{ route('customer.profile.index') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-t border-zinc-100">
+                                            <i class="fas fa-user text-zinc-500 text-sm"></i>
+                                            <span class="text-sm text-zinc-700">Profile</span>
+                                        </a>
+                                    @endif
+                                @endauth
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <div class="hidden border-t border-black/10 bg-white/95 px-6 py-4 md:hidden" data-mobile-menu>
-                <nav class="flex flex-col gap-3 text-sm font-medium text-black/85">
-                    <a href="{{ route('home') }}" class="rounded-lg bg-black/5 px-2 py-1.5 text-black">Home</a>
-                    <a href="{{ route('new-arrivals') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">New Arrivals</a>
-                    <a href="{{ route('racket') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Racket</a>
-                    <a href="{{ route('shoes') }}" class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Shoes</a>
-                    <a href="{{ route('apparel') }}"
-                        class="rounded-lg px-2 py-1.5 transition hover:bg-black/5">Accessories</a>
-                </nav>
-            </div>
         </header>
-
 
         <!-- ============================ -->
         <!-- Modern Search Overlay -->
@@ -402,6 +487,23 @@
                     </div>
                 </div>
             </section>
+        <!-- Hero Banner - Full behind navbar -->
+        <section class="relative w-full min-h-[380px] overflow-hidden bg-zinc-900 sm:min-h-[420px] md:min-h-[360px] lg:min-h-[400px]">
+            <img src="{{ asset('storage/fiks.jpeg') }}"
+                alt="Padel Tennis"
+                class="absolute inset-0 h-full w-full object-cover"
+                loading="eager">
+            <div class="absolute inset-0 bg-gradient-to-b from-black/20 via-black/50 to-black/80"></div>
+            <div class="relative mx-auto flex min-h-[380px] sm:min-h-[420px] md:min-h-[360px] lg:min-h-[400px] max-w-7xl items-center justify-center px-6 md:px-10 lg:px-12 pt-28 md:pt-24">
+                <div class="max-w-2xl text-center text-white">
+                    <h1 class="text-lg font-semibold tracking-tight sm:text-2xl md:text-3xl lg:text-4xl drop-shadow-lg">NoraPadel</h1>
+                    <p class="mt-2 md:mt-4 text-[11px] md:text-sm text-zinc-100 leading-relaxed drop-shadow-md">Experience the ultimate in padel equipment. Premium quality rackets, shoes, and accessories for players who demand excellence.</p>
+                    <div class="mt-3 md:mt-6 flex flex-wrap justify-center gap-6">
+                        <a href="{{ route('shop') }}" class="inline-flex items-center gap-1 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 md:px-6 md:py-2.5 text-[10px] md:text-xs font-semibold text-white backdrop-blur transition duration-300 hover:bg-white/20 hover:scale-[1.02]">Shop Now</a>
+                    </div>
+                </div>
+            </div>
+        </section>
 
             <!-- Brand Logo Marquee -->
             <div class="bg-white text-black py-2.5 md:py-4 mt-0 overflow-hidden border-y border-zinc-100 select-none" id="brandMarqueeBar">
@@ -426,6 +528,35 @@
                         <span class="brand-marquee-item">
                             <img src="{{ asset('storage/arronaxwhitenew.png') }}" alt="Arronax" class="object-contain flex-shrink-0" loading="eager">
                         </span>
+        <!-- Marquee Bar -->
+        <div class="bg-white text-white py-2 overflow-hidden transition-all duration-300" id="marqueeBar">
+            <div class="marquee-container">
+                <div class="marquee-content">
+                    <!-- Set 1 -->
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/arronax logo.webp') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
+                        <span>• ARRONAX •</span>
+                    </span>
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/Babolat_logo.svg.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
+                        <span>• BABOLAT •</span>
+                    </span>
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/logobullpadel2 (1).png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
+                        <span>• BULLPADEL •</span>
+                    </span>
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/logo_nox_1200x1200.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
+                        <span>• NOX •</span>
+                    </span>
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/alpha padel.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
+                        <span>• ALPHA •</span>
+                    </span>
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/head.jpeg') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
+                        <span>• ZEPHYR •</span>
+                    </span>
 
                         <!-- Set 2 -->
                         <span class="brand-marquee-item">
@@ -449,7 +580,97 @@
                     </div>
                 </div>
             </div>
+                    <!-- Set 2 -->
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/arronax logo.webp') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
+                        <span>• ARRONAX •</span>
+                    </span>
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/Babolat_logo.svg.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
+                        <span>• BABOLAT •</span>
+                    </span>
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/logobullpadel2 (1).png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
+                        <span>• BULLPADEL •</span>
+                    </span>
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/logo_nox_1200x1200.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
+                        <span>• NOX •</span>
+                    </span>
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/alpha padel.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
+                        <span>• ALPHA •</span>
+                    </span>
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/head.jpeg') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
+                        <span>• ZEPHYR •</span>
+                    </span>
 
+                    <!-- Set 3 -->
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/arronax logo.webp') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
+                        <span>• ARRONAX •</span>
+                    </span>
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/Babolat_logo.svg.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
+                        <span>• BABOLAT •</span>
+                    </span>
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/logobullpadel2 (1).png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
+                        <span>• BULLPADEL •</span>
+                    </span>
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/logo_nox_1200x1200.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
+                        <span>• NOX •</span>
+                    </span>
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/alpha padel.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
+                        <span>• ALPHA •</span>
+                    </span>
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/head.jpeg') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
+                        <span>• ZEPHYR •</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <main class="relative z-0">
+
+            <!-- Product Filters (Below Hero) -->
+            <section class="bg-zinc-50 py-3 border-b border-zinc-200">
+                <div class="mx-auto w-full max-w-7xl px-3 md:px-10 lg:px-12">
+                    <div class="flex flex-col md:flex-row gap-3 items-center justify-between">
+                        <div class="flex gap-2 flex-nowrap overflow-x-auto pb-1 flex-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                            <select id="filterBrandBottom" class="px-2 py-1.5 border border-zinc-300 rounded-lg text-xs md:text-sm focus:outline-none focus:border-blue-500 transition bg-white shrink-0" onchange="applyFilters()">
+                                <option value="">Brand</option>
+                                <option value="Bullpadel">Bullpadel</option>
+                                <option value="Babolat">Babolat</option>
+                                <option value="Nox">Nox</option>
+                                <option value="Alpha">Alpha</option>
+                                <option value="Zephyr">Zephyr</option>
+                                <option value="Arronax">Arronax</option>
+                            </select>
+                            <select id="filterCategoryBottom" class="px-2 py-1.5 border border-zinc-300 rounded-lg text-xs md:text-sm focus:outline-none focus:border-blue-500 transition bg-white shrink-0" onchange="applyFilters()">
+                                <option value="">Category</option>
+                                <option value="racket">Racket</option>
+                                <option value="shoes">Shoes</option>
+                                <option value="apparel">Accessories</option>
+                            </select>
+                            <select id="filterPriceBottom" class="px-2 py-1.5 border border-zinc-300 rounded-lg text-xs md:text-sm focus:outline-none focus:border-blue-500 transition bg-white shrink-0" onchange="applyFilters()">
+                                <option value="">Price</option>
+                                <option value="low">Low to High</option>
+                                <option value="high">High to Low</option>
+                            </select>
+                            <select id="filterSortBottom" class="px-2 py-1.5 border border-zinc-300 rounded-lg text-xs md:text-sm focus:outline-none focus:border-blue-500 transition bg-white shrink-0" onchange="applyFilters()">
+                                <option value="">Sort</option>
+                                <option value="popular">Popular</option>
+                                <option value="latest">Latest</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
             <!-- New Arrivals -->
             <section class="np-fade-section bg-white py-8 lg:py-10 pb-0">
@@ -457,16 +678,16 @@
                     
                     <div class="relative group">
                         <!-- Left Arrow -->
-                        <button class="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded w-10 h-10 items-center justify-center transition duration-300" onclick="scrollNewArrivals('left')">
+                        <button class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded w-10 h-10 flex items-center justify-center transition duration-300" onclick="scrollNewArrivals('left')">
                             <i class="fas fa-chevron-left text-black text-sm"></i>
                         </button>
                         
                         <!-- Right Arrow -->
-                        <button class="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded w-10 h-10 items-center justify-center transition duration-300" onclick="scrollNewArrivals('right')">
+                        <button class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded w-10 h-10 flex items-center justify-center transition duration-300" onclick="scrollNewArrivals('right')">
                             <i class="fas fa-chevron-right text-black text-sm"></i>
                         </button>
                         
-                        <div id="newArrivalsContainer" class="flex gap-4 overflow-x-auto pb-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x snap-mandatory scroll-smooth">
+                        <div id="newArrivalsContainer" class="flex gap-6 overflow-x-auto pb-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x snap-mandatory scroll-smooth">
                         @foreach($newArrivals as $product)
                             @php
                                 $soldCount = \App\Models\OrderItem::where('product_id', $product->id)
@@ -474,42 +695,61 @@
                                         $q->whereIn('status', ['completed', 'delivered']);
                                     })->sum('quantity');
                             @endphp
-                            <div class="group snap-start shrink-0 basis-[85%] sm:basis-[48%] md:basis-[32%] lg:basis-[18%] overflow-hidden bg-white transition duration-300 hover:-translate-y-2">
+                            <div class="group snap-start shrink-0 basis-[40%] sm:basis-[48%] md:basis-[32%] lg:basis-[18%] overflow-hidden bg-white transition duration-300 hover:-translate-y-2">
                                 <a href="{{ route('produk.show', $product) }}" class="block">
                                     <div class="relative aspect-square overflow-hidden">
                                         <div class="h-full w-full overflow-hidden">
                                             <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" onerror="this.onerror=null;this.src='/images/logo.png';" loading="lazy">
                                         </div>
                                         @if($product->hasActiveDiscount())
-                                            <span class="absolute left-0 top-0 bg-rose-500 px-2.5 py-1 text-[11px] font-semibold text-white pointer-events-none">-{{ $product->formatted_discount_percent }}</span>
+                                            <span class="absolute left-0 top-0 bg-rose-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">-{{ $product->formatted_discount_percent }}</span>
                                         @endif
                                         <!-- Latest Badge for New Arrivals -->
-                                        <span class="absolute left-0 {{ $product->hasActiveDiscount() ? 'top-9' : 'top-0' }} bg-blue-500 px-2.5 py-1 text-[11px] font-semibold text-white pointer-events-none">Latest</span>
+                                        <span class="absolute left-0 {{ $product->hasActiveDiscount() ? 'top-7' : 'top-0' }} bg-blue-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Latest</span>
                                         @if($product->package_type === 'bundle')
-                                            <span class="absolute left-0 {{ $product->hasActiveDiscount() ? 'top-[4.5rem]' : 'top-9' }} bg-purple-500 px-2.5 py-1 text-[11px] font-semibold text-white pointer-events-none">Bundle</span>
+                                            <span class="absolute left-0 {{ $product->hasActiveDiscount() ? 'top-14' : 'top-7' }} bg-purple-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Bundle</span>
                                         @endif
                                         @if($product->isBestSeller())
-                                            <span class="absolute right-0 top-0 bg-amber-500 px-2.5 py-1 text-[11px] font-semibold text-white pointer-events-none">Best Seller</span>
+                                            <span class="absolute right-0 top-0 bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Best Seller</span>
                                         @endif
                                     </div>
-                                    <div class="p-4">
-                                        <h3 class="line-clamp-1 text-base font-medium text-black">{{ $product->name }}</h3>
+                                    <div class="p-2 md:p-4">
+                                        <h3 class="line-clamp-1 text-sm font-medium text-black">{{ $product->name }}</h3>
                                         <p class="mt-1 text-xs text-zinc-600">{{ $product->category_label }}</p>
+                                        <div class="mt-1 flex items-center gap-1">
+                                            @php
+                                                $rating = $product->average_rating;
+                                                $fullStars = floor($rating);
+                                                $hasHalfStar = ($rating - $fullStars) >= 0.5;
+                                            @endphp
+                                            @for($i = 1; $i <= 5; $i++)
+                                                @if($i <= $fullStars)
+                                                    <i class="fas fa-star text-black text-[10px]"></i>
+                                                @elseif($i == $fullStars + 1 && $hasHalfStar)
+                                                    <i class="fas fa-star-half-alt text-black text-[10px]"></i>
+                                                @else
+                                                    <i class="far fa-star text-zinc-200 text-[10px]"></i>
+                                                @endif
+                                            @endfor
+                                            @if($product->total_reviews > 0)
+                                                <span class="text-[10px] text-zinc-500">({{ $product->total_reviews }})</span>
+                                            @endif
+                                        </div>
                                         @if($product->hasActiveDiscount())
-                                            <p class="mt-2 text-lg font-semibold text-black">{{ $product->formatted_discounted_price }}</p>
+                                            <p class="mt-1 text-base font-semibold text-black">{{ $product->formatted_discounted_price }}</p>
                                             <p class="text-xs text-zinc-400 line-through">{{ $product->formatted_price }}</p>
                                         @else
-                                            <p class="mt-2 text-lg font-semibold text-black">{{ $product->formatted_price }}</p>
+                                            <p class="mt-1 text-base font-semibold text-black">{{ $product->formatted_price }}</p>
                                         @endif
                                     </div>
                                 </a>
-                                <div class="px-4 pb-4">
-                                    <div class="flex items-center gap-3">
-                                        <button onclick="addToCart('{{ $product->slug }}', event)" class="border border-zinc-300 bg-transparent px-3 py-1.5 text-[11px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950">
+                                <div class="px-2 pb-2 md:px-4 md:pb-4">
+                                    <div class="flex items-center gap-2">
+                                        <button onclick="addToCart('{{ $product->slug }}', event)" class="border border-zinc-300 bg-transparent px-2 py-1 text-[10px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950">
                                             Add to cart
                                         </button>
                                         <button onclick="addToWishlist('{{ $product->slug }}', event)" class="text-zinc-400 transition duration-300 hover:text-rose-500">
-                                            <i class="fas fa-heart text-base"></i>
+                                            <i class="fas fa-heart text-sm"></i>
                                         </button>
                                     </div>
                                 </div>
@@ -521,109 +761,122 @@
             </section>
 
             <!-- Category Icons -->
-            <section class="np-fade-section bg-white py-0 pt-6">
+            <section class="np-fade-section bg-white py-4 pt-4">
                 <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <a href="{{ route('racket') }}" class="flex flex-col items-center justify-center p-6 bg-white cursor-pointer transition hover:opacity-80">
-                            <div class="w-48 h-48 mb-4 flex items-center justify-center">
+                    <div class="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
+                        <a href="{{ route('racket') }}" class="flex flex-col items-center justify-center p-4 md:p-6 bg-white cursor-pointer transition hover:opacity-80">
+                            <div class="w-36 h-36 md:w-48 md:h-48 mb-3 md:mb-4 flex items-center justify-center">
                                 <img src="{{ asset('storage/iconracket.jpg') }}" alt="Racket" class="w-full h-full object-contain">
                             </div>
-                            <h3 class="text-base font-medium text-black">Racket</h3>
+                            <h3 class="text-sm md:text-base font-medium text-black">Racket</h3>
                         </a>
-                        <a href="{{ route('shoes') }}" class="flex flex-col items-center justify-center p-6 bg-white cursor-pointer transition hover:opacity-80">
-                            <div class="w-48 h-48 mb-4 flex items-center justify-center">
+                        <a href="{{ route('shoes') }}" class="flex flex-col items-center justify-center p-4 md:p-6 bg-white cursor-pointer transition hover:opacity-80">
+                            <div class="w-36 h-36 md:w-48 md:h-48 mb-3 md:mb-4 flex items-center justify-center">
                                 <img src="{{ asset('storage/iconsepatu.png') }}" alt="Shoes" class="w-full h-full object-contain">
                             </div>
-                            <h3 class="text-base font-medium text-black">Shoes</h3>
+                            <h3 class="text-sm md:text-base font-medium text-black">Shoes</h3>
                         </a>
-                        <a href="{{ route('apparel') }}" class="flex flex-col items-center justify-center p-6 bg-white cursor-pointer transition hover:opacity-80">
-                            <div class="w-48 h-48 mb-4 flex items-center justify-center">
+                        <a href="{{ route('apparel') }}" class="flex flex-col items-center justify-center p-4 md:p-6 bg-white cursor-pointer transition hover:opacity-80">
+                            <div class="w-36 h-36 md:w-48 md:h-48 mb-3 md:mb-4 flex items-center justify-center">
                                 <img src="{{ asset('storage/icontas.jpg') }}" alt="Bag" class="w-full h-full object-contain">
                             </div>
-                            <h3 class="text-base font-medium text-black">Bags</h3>
+                            <h3 class="text-sm md:text-base font-medium text-black">Bags</h3>
                         </a>
-                        <a href="{{ route('apparel') }}" class="flex flex-col items-center justify-center p-6 bg-white cursor-pointer transition hover:opacity-80">
-                            <div class="w-48 h-48 mb-4 flex items-center justify-center">
+                        <a href="{{ route('apparel') }}" class="flex flex-col items-center justify-center p-4 md:p-6 bg-white cursor-pointer transition hover:opacity-80">
+                            <div class="w-36 h-36 md:w-48 md:h-48 mb-3 md:mb-4 flex items-center justify-center">
                                 <img src="{{ asset('storage/icongrip.jpg') }}" alt="Grip" class="w-full h-full object-contain">
                             </div>
-                            <h3 class="text-base font-medium text-black">Grips</h3>
+                            <h3 class="text-sm md:text-base font-medium text-black">Grips</h3>
                         </a>
                     </div>
                 </div>
             </section>
 
-            <!-- Featured Collections -->
-            <section class="np-fade-section bg-white py-0">
+            <!-- Voucher Section -->
+            @if($vouchers->isNotEmpty())
+            <section class="np-fade-section bg-[#f5f5f5] py-4">
                 <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
-                    <div class="grid md:grid-cols-2 gap-0">
-                        <!-- Racket Collection -->
-                        <div class="group relative overflow-hidden bg-zinc-900 aspect-[4/5]">
-                            <img src="https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=800" alt="Padel Racket" class="h-full w-full object-cover transition duration-500 group-hover:scale-105">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-                            <div class="absolute bottom-0 left-0 right-0 p-8">
-                                <h3 class="text-3xl font-medium text-white mb-2">Racket Collection</h3>
-                                <p class="text-sm text-white/80 mb-6">Premium padel rackets for every playing style</p>
-                                <a href="{{ route('racket') }}" class="inline-flex items-center gap-2 rounded bg-white px-6 py-3 text-sm font-medium text-black transition duration-300 hover:bg-zinc-100">
-                                    <span>Shop Now</span>
-                                    <i class="fas fa-arrow-right text-xs"></i>
-                                </a>
+                    <!-- Dynamic Vouchers -->
+                    <div class="flex flex-nowrap overflow-x-auto gap-3 pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-2 lg:grid-cols-4 md:overflow-visible md:pb-0 md:gap-6">
+                        @foreach($vouchers as $voucher)
+                        @php
+                            $hasClaimed = auth()->check() && $voucher->isClaimedByUser(auth()->id());
+                            $isUsed = auth()->check() && $voucher->isUsedByUser(auth()->id());
+                            $isExpired = $voucher->is_expired;
+                            $isQuotaFinished = $voucher->is_quota_finished;
+                            $isNotStarted = $voucher->is_not_started;
+                        @endphp
+                        <div class="relative shrink-0 basis-[85%] md:basis-auto bg-gradient-to-r from-white to-gray-50 rounded-12px border border-gray-200 shadow-sm overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 {{ $isUsed ? 'opacity-60' : '' }}">
+                            <div class="flex items-center">
+                                <!-- Left: Voucher Info -->
+                                <div class="flex-1 p-4 relative">
+                                    <!-- Ticket Notch Effect -->
+                                    <div class="absolute left-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-[#f5f5f5] rounded-full"></div>
+
+                                    <div class="font-bold text-gray-700 text-base mb-1">
+                                        @if($voucher->type === 'fixed')
+                                            Diskon Rp{{ number_format($voucher->discount_value, 0, ',', '.') }}
+                                        @elseif($voucher->type === 'percent')
+                                            Diskon {{ $voucher->discount_value }}%
+                                        @else
+                                            Cashback {{ $voucher->cashback_coin }} Coin
+                                        @endif
+                                    </div>
+                                    <div class="text-xs text-gray-500 mb-2">Min. Blj Rp{{ number_format($voucher->minimum_purchase, 0, ',', '.') }}</div>
+
+                                    <!-- Progress Bar -->
+                                    <div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden mb-1">
+                                        <div class="h-full bg-gradient-to-r {{ $voucher->quota_percentage > 80 ? 'from-red-400 to-red-300' : 'from-gray-400 to-gray-300' }} rounded-full" style="width: {{ $voucher->quota_percentage }}%"></div>
+                                    </div>
+                                    <div class="text-xs text-gray-400">
+                                        Sisa: {{ $voucher->remaining_quota }}/{{ $voucher->quota }} • Hingga: {{ $voucher->end_date->format('d.m.Y') }}
+                                    </div>
+                                </div>
+
+                                <!-- Dashed Separator -->
+                                <div class="w-px h-14 border-l-2 border-dashed border-gray-200"></div>
+
+                                <!-- Right: Claim Button -->
+                                <div class="px-3 py-4 flex items-center">
+                                    @if($isUsed)
+                                        <button class="px-4 py-2 bg-rose-100 text-rose-600 font-bold text-xs rounded-8px cursor-not-allowed" disabled>
+                                            Digunakan
+                                        </button>
+                                    @elseif($hasClaimed)
+                                        <button class="px-4 py-2 bg-emerald-100 text-emerald-600 font-bold text-xs rounded-8px cursor-not-allowed" disabled>
+                                            Diklaim
+                                        </button>
+                                    @elseif($isExpired || $isQuotaFinished || $isNotStarted)
+                                        <button class="px-4 py-2 bg-gray-300 text-gray-500 font-bold text-xs rounded-8px cursor-not-allowed" disabled>
+                                            @if($isExpired)
+                                                Expired
+                                            @elseif($isQuotaFinished)
+                                                Habis
+                                            @else
+                                                Segera
+                                            @endif
+                                        </button>
+                                    @else
+                                        <button onclick="claimVoucher({{ $voucher->id }}, this)" class="claim-btn px-4 py-2 bg-gray-600 text-white font-bold text-xs rounded-8px hover:bg-gray-700 hover:shadow-lg hover:scale-105 transition-all duration-300">
+                                            Klaim
+                                        </button>
+                                    @endif
+                                </div>
                             </div>
                         </div>
-                        
-                        <!-- Shoes Collection -->
-                        <div class="group relative overflow-hidden bg-zinc-900 aspect-[4/5]">
-                            <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800" alt="Padel Shoes" class="h-full w-full object-cover transition duration-500 group-hover:scale-105">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-                            <div class="absolute bottom-0 left-0 right-0 p-8">
-                                <h3 class="text-3xl font-medium text-white mb-2">Shoes Collection</h3>
-                                <p class="text-sm text-white/80 mb-6">Professional footwear for maximum performance</p>
-                                <a href="{{ route('shoes') }}" class="inline-flex items-center gap-2 rounded bg-white px-6 py-3 text-sm font-medium text-black transition duration-300 hover:bg-zinc-100">
-                                    <span>Shop Now</span>
-                                    <i class="fas fa-arrow-right text-xs"></i>
-                                </a>
-                            </div>
-                        </div>
+                        @endforeach
                     </div>
                 </div>
             </section>
+            @endif
 
+            
             <!-- Shop -->
             <section class="np-fade-section bg-white py-12 lg:py-14">
                 <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
-                    <!-- Filter -->
-                    <div class="mb-6 flex flex-col md:flex-row gap-3">
-                        <div class="flex gap-2 flex-wrap">
-                            <select id="filterBrand" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition bg-white">
-                                <option value="">All Brands</option>
-                                <option value="Bullpadel" {{ $selectedBrand === 'Bullpadel' ? 'selected' : '' }}>Bullpadel</option>
-                                <option value="Babolat" {{ $selectedBrand === 'Babolat' ? 'selected' : '' }}>Babolat</option>
-                                <option value="Nox" {{ $selectedBrand === 'Nox' ? 'selected' : '' }}>Nox</option>
-                                <option value="Alpha" {{ $selectedBrand === 'Alpha' ? 'selected' : '' }}>Alpha</option>
-                                <option value="Zephyr" {{ $selectedBrand === 'Zephyr' ? 'selected' : '' }}>Zephyr</option>
-                                <option value="Arronax" {{ $selectedBrand === 'Arronax' ? 'selected' : '' }}>Arronax</option>
-                            </select>
-                            <select id="filterLevel" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition bg-white">
-                                <option value="">All Levels</option>
-                                <option value="beginner" {{ $selectedLevel === 'beginner' ? 'selected' : '' }}>Beginner</option>
-                                <option value="intermediate" {{ $selectedLevel === 'intermediate' ? 'selected' : '' }}>Intermediate</option>
-                                <option value="pro" {{ $selectedLevel === 'pro' ? 'selected' : '' }}>Pro</option>
-                            </select>
-                            @if($selectedBrand || $selectedLevel)
-                                <a href="{{ request()->fullUrlWithQuery(['brand' => null, 'level' => null]) }}" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition bg-white text-rose-600 hover:border-rose-600 hover:text-rose-600">Reset</a>
-                            @endif
-                            <select id="filterPriceRange" class="px-4 py-2.5 border border-zinc-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition bg-white">
-                                <option value="">All Prices</option>
-                                <option value="0-500000">< Rp 500.000</option>
-                                <option value="500000-1000000">Rp 500.000 - Rp 1.000.000</option>
-                                <option value="1000000-2000000">Rp 1.000.000 - Rp 2.000.000</option>
-                                <option value="2000000-5000000">Rp 2.000.000 - Rp 5.000.000</option>
-                                <option value="5000000-999999999"> > Rp 5.000.000</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div id="productGrid" class="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-                        @foreach($shopProducts->take(10) as $product)
+                    
+                    <div id="productGrid" class="grid grid-cols-3 gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                        @foreach($shopProducts->take(9) as $product)
                             @php
                                 $soldCount = \App\Models\OrderItem::where('product_id', $product->id)
                                     ->whereHas('order', function($q) {
@@ -659,6 +912,25 @@
                                     <div class="p-3">
                                         <h3 class="line-clamp-1 text-sm font-medium text-black">{{ $product->name }}</h3>
                                         <p class="mt-1 text-xs text-zinc-600">{{ $product->category_label }}</p>
+                                        <div class="mt-1 flex items-center gap-1">
+                                            @php
+                                                $rating = $product->average_rating;
+                                                $fullStars = floor($rating);
+                                                $hasHalfStar = ($rating - $fullStars) >= 0.5;
+                                            @endphp
+                                            @for($i = 1; $i <= 5; $i++)
+                                                @if($i <= $fullStars)
+                                                    <i class="fas fa-star text-black text-[10px]"></i>
+                                                @elseif($i == $fullStars + 1 && $hasHalfStar)
+                                                    <i class="fas fa-star-half-alt text-black text-[10px]"></i>
+                                                @else
+                                                    <i class="far fa-star text-zinc-200 text-[10px]"></i>
+                                                @endif
+                                            @endfor
+                                            @if($product->total_reviews > 0)
+                                                <span class="text-[10px] text-zinc-500">({{ $product->total_reviews }})</span>
+                                            @endif
+                                        </div>
                                         @if($product->hasActiveDiscount())
                                             <p class="mt-1 text-base font-semibold text-black">{{ $product->formatted_discounted_price }}</p>
                                             <p class="text-xs text-zinc-400 line-through">{{ $product->formatted_price }}</p>
@@ -667,13 +939,13 @@
                                         @endif
                                     </div>
                                 </a>
-                                <div class="px-3 pb-3">
-                                    <div class="flex items-center gap-3">
-                                        <button onclick="addToCart('{{ $product->slug }}', event)" class="border border-zinc-300 bg-transparent px-3 py-1.5 text-[11px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950">
+                                <div class="px-2 pb-2 md:px-3 md:pb-3">
+                                    <div class="flex items-center gap-2">
+                                        <button onclick="addToCart('{{ $product->slug }}', event)" class="border border-zinc-300 bg-transparent px-2 py-1 text-[10px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950 truncate max-w-[80px] md:max-w-none">
                                             Add to cart
                                         </button>
                                         <button onclick="addToWishlist('{{ $product->slug }}', event)" class="text-zinc-400 transition duration-300 hover:text-rose-500">
-                                            <i class="fas fa-heart text-sm"></i>
+                                            <i class="fas fa-heart text-xs md:text-sm"></i>
                                         </button>
                                     </div>
                                 </div>
@@ -826,11 +1098,6 @@
             display: none !important;
         }
 
-        /* Override app.blade.php body padding-top that's for the Bootstrap navbar */
-        body {
-            padding-top: 0 !important;
-        }
-
         html {
             scroll-behavior: smooth;
         }
@@ -945,6 +1212,8 @@
             }
             100% {
                 transform: translate3d(-50%, 0, 0); /* Perfectly seamless 50% shift for 2 sets */
+            to {
+                transform: translateX(-50%);
             }
         }
 
@@ -1006,10 +1275,81 @@
 
 @push('scripts')
     <script>
+        // Animate badge function
+        function animateBadge(badgeElement) {
+            if (!badgeElement) return;
+            
+            // Add animation class
+            badgeElement.classList.add('animate-bounce');
+            
+            // Remove animation after it completes
+            setTimeout(() => {
+                badgeElement.classList.remove('animate-bounce');
+            }, 1000);
+        }
+
+        // Update cart badge count
+        function updateCartBadge(newCount) {
+            const cartBadges = document.querySelectorAll('.cart-badge');
+            cartBadges.forEach(badge => {
+                if (newCount > 0) {
+                    badge.textContent = newCount > 9 ? '9+' : newCount;
+                    badge.classList.remove('hidden');
+                    animateBadge(badge);
+                } else {
+                    badge.classList.add('hidden');
+                }
+            });
+
+            // Update hamburger button badge
+            const hamburgerCartBadges = document.querySelectorAll('.hamburger-cart-badge');
+            hamburgerCartBadges.forEach(badge => {
+                if (newCount > 0) {
+                    badge.textContent = newCount > 9 ? '9+' : newCount;
+                    badge.classList.remove('hidden');
+                    animateBadge(badge);
+                } else {
+                    badge.classList.add('hidden');
+                }
+            });
+        }
+
+        // Update wishlist badge count
+        function updateWishlistBadge(newCount) {
+            const wishlistBadges = document.querySelectorAll('.wishlist-badge');
+            wishlistBadges.forEach(badge => {
+                if (newCount > 0) {
+                    badge.textContent = newCount > 9 ? '9+' : newCount;
+                    badge.classList.remove('hidden');
+                    animateBadge(badge);
+                } else {
+                    badge.classList.add('hidden');
+                }
+            });
+
+            // Update hamburger button badge
+            const hamburgerWishlistBadges = document.querySelectorAll('.hamburger-wishlist-badge');
+            hamburgerWishlistBadges.forEach(badge => {
+                if (newCount > 0) {
+                    badge.textContent = newCount > 9 ? '9+' : newCount;
+                    badge.classList.remove('hidden');
+                    animateBadge(badge);
+                } else {
+                    badge.classList.add('hidden');
+                }
+            });
+        }
+
         // Add to Cart Function
         function addToCart(productId, event) {
             event.preventDefault();
             event.stopPropagation();
+            
+            const button = event.target.closest('button');
+            if (button) {
+                button.disabled = true;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            }
             
             fetch(`/customer/cart/add/${productId}`, {
                 method: 'POST',
@@ -1025,15 +1365,32 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('Produk berhasil ditambahkan ke keranjang!');
-                    location.reload();
+                    // Animate and update cart badge
+                    const currentCount = parseInt(data.cart_count || 0);
+                    updateCartBadge(currentCount);
+                    
+                    if (button) {
+                        button.innerHTML = '✓ Added';
+                        setTimeout(() => {
+                            button.disabled = false;
+                            button.innerHTML = 'Add to cart';
+                        }, 1500);
+                    }
                 } else {
                     alert(data.message || 'Gagal menambahkan produk ke keranjang');
+                    if (button) {
+                        button.disabled = false;
+                        button.innerHTML = 'Add to cart';
+                    }
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
                 alert('Terjadi kesalahan. Silakan coba lagi.');
+                if (button) {
+                    button.disabled = false;
+                    button.innerHTML = 'Add to cart';
+                }
             });
         }
 
@@ -1041,6 +1398,13 @@
         function addToWishlist(productId, event) {
             event.preventDefault();
             event.stopPropagation();
+            
+            const button = event.target.closest('button');
+            const icon = button.querySelector('i');
+            if (icon) {
+                icon.classList.remove('fa-heart');
+                icon.classList.add('fa-spinner', 'fa-spin');
+            }
             
             fetch(`/customer/wishlist/add/${productId}`, {
                 method: 'POST',
@@ -1054,17 +1418,148 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('Produk berhasil ditambahkan ke wishlist!');
-                    location.reload();
+                    // Animate and update wishlist badge
+                    const currentCount = parseInt(data.wishlist_count || 0);
+                    updateWishlistBadge(currentCount);
+                    
+                    if (icon) {
+                        icon.classList.remove('fa-spinner', 'fa-spin');
+                        icon.classList.add('fa-heart');
+                        icon.classList.add('text-rose-500');
+                    }
+                    if (button) {
+                        button.classList.add('text-rose-500');
+                    }
                 } else {
-                    alert(data.message || 'Produk sudah ada di wishlist');
+                    alert(data.message || 'Gagal menambahkan produk ke wishlist');
+                    if (icon) {
+                        icon.classList.remove('fa-spinner', 'fa-spin');
+                        icon.classList.add('fa-heart');
+                    }
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
                 alert('Terjadi kesalahan. Silakan coba lagi.');
+                if (icon) {
+                    icon.classList.remove('fa-spinner', 'fa-spin');
+                    icon.classList.add('fa-heart');
+                }
             });
         }
+
+        // Claim Voucher Function
+        function claimVoucher(voucherId, btn) {
+            if (!btn) return;
+            
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+            fetch('{{ route('customer.vouchers.claim') }}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    voucher_id: voucherId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    btn.innerHTML = '✓ Diklaim';
+                    setTimeout(() => {
+                        window.location.href = '{{ route('shop') }}';
+                    }, 1000);
+                } else {
+                    if (data.redirect) {
+                        window.location.href = data.redirect;
+                    } else {
+                        alert(data.message || 'Gagal mengklaim voucher');
+                        btn.disabled = false;
+                        btn.innerHTML = originalText;
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan. Silakan coba lagi.');
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            });
+        }
+
+        // Apply Filters Function
+        window.applyFilters = function() {
+            const brand = document.getElementById('filterBrandBottom').value;
+            const category = document.getElementById('filterCategoryBottom').value;
+            const price = document.getElementById('filterPriceBottom').value;
+            const sort = document.getElementById('filterSortBottom').value;
+
+            // Show loading state
+            const container = document.getElementById('newArrivalsContainer');
+            container.innerHTML = '<div class="flex items-center justify-center w-full py-8"><i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i></div>';
+
+            // Fetch filtered products via AJAX
+            fetch(`/api/new-arrivals/filter?brand=${brand}&category=${category}&price=${price}&sort=${sort}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.html) {
+                        container.innerHTML = data.html;
+                    } else {
+                        container.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500">No products found</div>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    container.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500">Error loading products</div>';
+                });
+        };
+
+        // Hamburger Menu Toggle
+        (function() {
+            const btn = document.getElementById('hamburgerMenuBtn');
+            const dropdown = document.getElementById('hamburgerMenuDropdown');
+            const wrapper = document.getElementById('hamburgerMenuWrapper');
+            if (!btn || !dropdown || !wrapper) return;
+            btn.addEventListener('click', function(e){ e.stopPropagation(); dropdown.classList.toggle('hidden'); });
+            document.addEventListener('click', function(e){ if(!wrapper.contains(e.target)) dropdown.classList.add('hidden'); });
+            return;
+            // legacy
+            
+            if (!btn || !dropdown || !wrapper) return;
+
+            const openClasses = ['opacity-100', 'visible', 'translate-y-0'];
+            const closedClasses = ['opacity-0', 'invisible', 'translate-y-[-10px]'];
+
+            function openMenu() {
+                closedClasses.forEach(c => dropdown.classList.remove(c));
+                openClasses.forEach(c => dropdown.classList.add(c));
+            }
+
+            function closeMenu() {
+                openClasses.forEach(c => dropdown.classList.remove(c));
+                closedClasses.forEach(c => dropdown.classList.add(c));
+            }
+
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (dropdown.classList.contains('invisible')) {
+                    openMenu();
+                } else {
+                    closeMenu();
+                }
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!wrapper.contains(e.target)) {
+                    closeMenu();
+                }
+            });
+        })();
 
         (function() {
             // Scroll New Arrivals Function
@@ -1156,7 +1651,7 @@
 
                 function renderResults(products) {
                     resultsList.innerHTML = products.map(p => `
-                        <a href="${escapeHtml(p.detail_url)}" class="flex items-center gap-4 px-5 py-3 transition hover:bg-zinc-50">
+                        <a href="${escapeHtml(p.detail_url)}" class="flex items-center gap-6 px-5 py-3 transition hover:bg-zinc-50">
                             <div class="h-14 w-14 flex-shrink-0 overflow-hidden rounded-lg bg-zinc-100">
                                 <img src="${escapeHtml(p.image_url)}" alt="${escapeHtml(p.name)}" class="h-full w-full object-cover" onerror="this.onerror=null;this.src='/images/logo.png';" loading="lazy">
                             </div>
@@ -1220,6 +1715,19 @@
                 closeBtn.addEventListener('click', closeOverlay);
                 backdrop.addEventListener('click', closeOverlay);
 
+                // Navbar inline search input
+                const navSearchInputEl = document.getElementById('navSearchInput');
+                if (navSearchInputEl) {
+                    navSearchInputEl.addEventListener('focus', function() {
+                        openOverlay();
+                        const q = this.value.trim();
+                        if (q.length >= 2) {
+                            input.value = q;
+                            performSearch(q);
+                        }
+                    });
+                }
+
                 // ESC to close
                 document.addEventListener('keydown', function(e) {
                     if (e.key === 'Escape' && !overlay.classList.contains('hidden')) {
@@ -1228,37 +1736,46 @@
                 });
             })();
 
+            // Clone marquee content for seamless loop
+            (function() {
+                const marqueeContent = document.getElementById('marqueeContent');
+                if (marqueeContent) {
+                    marqueeContent.innerHTML += marqueeContent.innerHTML;
+                }
+            })();
+
             // Navbar scroll effect
             const header = document.getElementById('mainHeader');
-            const marqueeBar = document.getElementById('marqueeBar');
             const logoText = document.getElementById('logoText');
             const navLinks = document.getElementById('navLinks');
             const navIcons = document.getElementById('navIcons');
 
-            const isMobile = () => window.innerWidth < 768;
-
-            function applyScrolledState() {
-                // Hide marquee and adjust header position
-                marqueeBar.style.transform = 'translateY(-100%)';
-                marqueeBar.style.opacity = '0';
-                header.style.top = '0';
-
-                header.classList.add('bg-white/80', 'backdrop-blur-xl', 'border-black/6');
-                header.classList.remove('bg-transparent', 'backdrop-blur-none', 'border-transparent');
-
-                logoText.classList.remove('text-white');
-                logoText.classList.add('text-black');
-
-                if (navLinks) {
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    header.classList.add('bg-white/80', 'backdrop-blur-xl', 'border-black/6');
+                    header.classList.remove('bg-transparent', 'backdrop-blur-none', 'border-transparent');
+                    
+                    logoText.classList.remove('text-white');
+                    logoText.classList.add('text-black');
+                    
                     navLinks.querySelectorAll('a').forEach(link => {
                         link.classList.remove('text-white/90', 'hover:border-white/30', 'hover:text-white');
                         link.classList.add('text-black/80', 'hover:border-black/30', 'hover:text-black');
                     });
-                }
-
-                if (navIcons) {
+                    
                     navIcons.classList.remove('text-white/90');
                     navIcons.classList.add('text-black/80');
+
+                    const navSearchInputScroll = document.getElementById('navSearchInput');
+                    const navSearchIconScroll = document.getElementById('navSearchIcon');
+                    if (navSearchInputScroll) {
+                        navSearchInputScroll.classList.remove('bg-white/10', 'border-white/20', 'text-white', 'placeholder-white/60', 'focus:bg-white/20', 'focus:border-white/40');
+                        navSearchInputScroll.classList.add('bg-zinc-50', 'border-zinc-200', 'text-black', 'placeholder-zinc-400', 'focus:bg-white', 'focus:border-zinc-300');
+                    }
+                    if (navSearchIconScroll) {
+                        navSearchIconScroll.classList.remove('text-white/60');
+                        navSearchIconScroll.classList.add('text-zinc-400');
+                    }
 
                     navIcons.querySelectorAll('a, button').forEach(el => {
                         if (el.classList.contains('border-white/30')) {
@@ -1268,44 +1785,31 @@
                         el.classList.remove('hover:text-white');
                         el.classList.add('hover:text-black');
                     });
-                }
-            }
-
-            function applyTopState() {
-                // On mobile: always keep solid, just show marquee again
-                if (isMobile()) {
-                    marqueeBar.style.transform = 'translateY(0)';
-                    marqueeBar.style.opacity = '1';
-                    header.style.top = '2rem';
-                    // Keep solid white on mobile – do NOT go transparent
-                    header.classList.add('bg-white/95', 'backdrop-blur-md', 'border-black/10');
-                    header.classList.remove('bg-transparent', 'backdrop-blur-none', 'border-transparent');
-                    logoText.classList.remove('text-white');
-                    logoText.classList.add('text-black');
-                    return;
-                }
-
-                // Desktop: go transparent over hero
-                marqueeBar.style.transform = 'translateY(0)';
-                marqueeBar.style.opacity = '1';
-                header.style.top = '2rem';
-
-                header.classList.remove('bg-white/80', 'bg-white/95', 'backdrop-blur-xl', 'backdrop-blur-md', 'border-black/6', 'border-black/10');
-                header.classList.add('bg-transparent', 'backdrop-blur-none', 'border-transparent');
-
-                logoText.classList.add('text-white');
-                logoText.classList.remove('text-black');
-
-                if (navLinks) {
+                } else {
+                    header.classList.remove('bg-white/80', 'backdrop-blur-xl', 'border-black/6');
+                    header.classList.add('bg-transparent', 'backdrop-blur-none', 'border-transparent');
+                    
+                    logoText.classList.add('text-white');
+                    logoText.classList.remove('text-black');
+                    
                     navLinks.querySelectorAll('a').forEach(link => {
                         link.classList.add('text-white/90', 'hover:border-white/30', 'hover:text-white');
                         link.classList.remove('text-black/80', 'hover:border-black/30', 'hover:text-black');
                     });
-                }
-
-                if (navIcons) {
+                    
                     navIcons.classList.add('text-white/90');
                     navIcons.classList.remove('text-black/80');
+
+                    const navSearchInputScroll = document.getElementById('navSearchInput');
+                    const navSearchIconScroll = document.getElementById('navSearchIcon');
+                    if (navSearchInputScroll) {
+                        navSearchInputScroll.classList.add('bg-white/10', 'border-white/20', 'text-white', 'placeholder-white/60', 'focus:bg-white/20', 'focus:border-white/40');
+                        navSearchInputScroll.classList.remove('bg-zinc-50', 'border-zinc-200', 'text-black', 'placeholder-zinc-400', 'focus:bg-white', 'focus:border-zinc-300');
+                    }
+                    if (navSearchIconScroll) {
+                        navSearchIconScroll.classList.add('text-white/60');
+                        navSearchIconScroll.classList.remove('text-zinc-400');
+                    }
 
                     navIcons.querySelectorAll('a, button').forEach(el => {
                         if (el.classList.contains('border-black/15')) {
@@ -1316,32 +1820,12 @@
                         el.classList.remove('hover:text-black');
                     });
                 }
-            }
-
-            // Apply correct initial state
-            if (isMobile()) {
-                applyScrolledState();
-            }
-
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 50) {
-                    applyScrolledState();
-                } else {
-                    applyTopState();
-                }
-            }, { passive: true });
-
-            // Re-evaluate on resize (e.g. rotate phone)
-            window.addEventListener('resize', () => {
-                if (window.scrollY <= 50) applyTopState();
             }, { passive: true });
 
             const revealEls = document.querySelectorAll('.np-fade-section');
             const heroImages = document.querySelectorAll('.np-parallax-image');
             const layoutSections = document.querySelectorAll('[data-featured-toggle]');
             const testimonialShowcase = document.querySelector('[data-testimonial-showcase]');
-            const mobileMenuToggle = document.querySelector('[data-mobile-menu-toggle]');
-            const mobileMenu = document.querySelector('[data-mobile-menu]');
 
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach((entry) => {
@@ -1474,8 +1958,8 @@
 
             const layoutClasses = {
                 list: ['flex', 'flex-col', 'space-y-4'],
-                '2col': ['grid', 'grid-cols-2', 'gap-4'],
-                '4col': ['grid', 'grid-cols-1', 'gap-4', 'sm:grid-cols-2', 'lg:grid-cols-4'],
+                '2col': ['grid', 'grid-cols-2', 'gap-6'],
+                '4col': ['grid', 'grid-cols-1', 'gap-6', 'sm:grid-cols-2', 'lg:grid-cols-4'],
             };
 
             const setLayout = (section, mode) => {
@@ -1568,13 +2052,6 @@
                 }
             }
 
-            if (mobileMenuToggle && mobileMenu) {
-                mobileMenuToggle.addEventListener('click', () => {
-                    mobileMenu.classList.toggle('hidden');
-                    mobileMenuToggle.setAttribute('aria-expanded', String(!mobileMenu.classList.contains(
-                        'hidden')));
-                });
-            }
 
             // Brand and Level Filter (server-side via URL params)
             const filterBrand = document.getElementById('filterBrand');

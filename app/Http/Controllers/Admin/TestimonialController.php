@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Product;
+use App\Models\Review;
 use App\Models\Testimonial;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class TestimonialController extends Controller
@@ -35,7 +38,9 @@ class TestimonialController extends Controller
      */
     public function create()
     {
-        return view('admin.testimonials.create');
+        $products = Product::active()->select('id', 'name')->get();
+        $users = User::select('id', 'name')->get();
+        return view('admin.testimonials.create', compact('products', 'users'));
     }
 
     /**
@@ -43,6 +48,40 @@ class TestimonialController extends Controller
      */
     public function store(Request $request)
     {
+        $type = $request->input('type', 'image');
+
+        if ($type === 'review') {
+            $validated = $request->validate([
+                'product_id' => 'required|exists:products,id',
+                'user_id' => 'required|exists:users,id',
+                'rating' => 'required|integer|min:1|max:5',
+                'comment' => 'required|string|min:10|max:1000',
+                'quality_rating' => 'nullable|integer|min:0|max:100',
+                'sizing_rating' => 'nullable|integer|min:0|max:100',
+                'usual_size' => 'nullable|string|max:10',
+                'is_verified' => 'nullable|boolean',
+            ]);
+
+            $user = User::find($validated['user_id']);
+            Review::create([
+                'product_id' => $validated['product_id'],
+                'user_id' => $validated['user_id'],
+                'reviewer_name' => $user?->name ?? 'Anonymous',
+                'order_id' => null,
+                'rating' => $validated['rating'],
+                'comment' => $validated['comment'],
+                'quality_rating' => $validated['quality_rating'],
+                'sizing_rating' => $validated['sizing_rating'],
+                'usual_size' => $validated['usual_size'],
+                'is_verified' => $validated['is_verified'] ?? false,
+                'is_approved' => true,
+            ]);
+
+            return redirect()->route('admin.reviews.index')
+                ->with('success', 'Review berhasil ditambahkan.');
+        }
+
+        // Default: image testimonial
         $validated = $request->validate([
             'images' => 'required|array|max:3',
             'images.*' => 'image|mimes:jpeg,jpg,png,webp|max:2048',

@@ -74,7 +74,15 @@ class WishlistController extends Controller
             }
 
             if ($request->expectsJson()) {
-                return response()->json(['success' => true, 'message' => 'Produk berhasil ditambahkan ke wishlist.']);
+                $wishlistCount = auth()->check() 
+                    ? auth()->user()->wishlistItems()->count() 
+                    : count(session()->get('guest_wishlist', []));
+                
+                return response()->json([
+                    'success' => true, 
+                    'message' => 'Produk berhasil ditambahkan ke wishlist.',
+                    'wishlist_count' => $wishlistCount
+                ]);
             }
             return back()->with('success', 'Produk berhasil ditambahkan ke wishlist.');
         } catch (\Exception $e) {

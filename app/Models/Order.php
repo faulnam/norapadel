@@ -81,6 +81,10 @@ class Order extends Model
         'courier_driver_vehicle',
         'courier_driver_vehicle_number',
         'pickup_time',
+        'voucher_id',
+        'voucher_discount',
+        'points_used',
+        'points_discount',
     ];
 
     protected $casts = [

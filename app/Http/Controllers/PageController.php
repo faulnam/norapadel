@@ -7,12 +7,15 @@ use App\Models\Product;
 use App\Models\Testimonial;
 use App\Models\Gallery;
 use App\Models\Order;
+use App\Models\Voucher;
+use App\Repositories\VoucherRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class PageController extends Controller
 {
+
     /**
      * Show home page
      */
@@ -57,6 +60,16 @@ class PageController extends Controller
         $shopProducts = $shopProductsQuery->latest()->take(10)->get();
         $brands = Product::active()->whereNotNull('brand')->distinct()->pluck('brand')->sort();
 
+        // Fetch active vouchers for frontend
+        $voucherRepository = new VoucherRepository();
+        $vouchers = $voucherRepository->getActiveVouchersForFrontend(4);
+        
+        // Get user's claimed vouchers if logged in
+        $userVouchers = [];
+        if (auth()->check()) {
+            $userVouchers = $voucherRepository->getUserVouchers(auth()->id());
+        }
+
         return view('pages.home_luxury', [
             'products' => $products,
             'testimonials' => $testimonials,
@@ -68,6 +81,8 @@ class PageController extends Controller
             'brands' => $brands,
             'selectedBrand' => $request->brand,
             'selectedLevel' => $request->level,
+            'vouchers' => $vouchers,
+            'userVouchers' => $userVouchers,
         ]);
     }
 
@@ -463,6 +478,30 @@ class PageController extends Controller
     }
 
     /**
+     * Show privacy policy page
+     */
+    public function policy()
+    {
+        return view('pages.policy');
+    }
+
+    /**
+     * Show return and refund page
+     */
+    public function returnRefund()
+    {
+        return view('pages.return-refund');
+    }
+
+    /**
+     * Show guarantee page
+     */
+    public function guarantee()
+    {
+        return view('pages.guarantee');
+    }
+
+    /**
      * Show contact page
      */
     public function contact()
@@ -552,15 +591,16 @@ class PageController extends Controller
             abort(404);
         }
 
-        // Get reviews with user data
+        // Get reviews with user data (max 10 untuk tampilan detail)
         $reviews = $product->reviews()
             ->with('user')
             ->approved()
             ->latest()
+            ->take(10)
             ->get();
 
-        // Calculate review statistics
-        $totalReviews = $reviews->count();
+        // Total approved reviews untuk statistik
+        $totalReviews = $product->reviews()->approved()->count();
         $avgRating = $totalReviews > 0 ? round($reviews->avg('rating'), 1) : 0;
         
         // Rating breakdown
@@ -569,20 +609,6 @@ class PageController extends Controller
             $count = $reviews->where('rating', $i)->count();
             $ratingBreakdown[$i] = $totalReviews > 0 ? round(($count / $totalReviews) * 100) : 0;
         }
-
-        // Quality average (0-100 scale)
-        $avgQuality = $totalReviews > 0 ? round($reviews->avg('quality_rating')) : 0;
-        
-        // Sizing average (0-100 scale, 50 = true to size)
-        $avgSizing = $totalReviews > 0 ? round($reviews->avg('sizing_rating')) : 50;
-        
-        // Usual sizes distribution
-        $usualSizes = $reviews->whereNotNull('usual_size')
-            ->groupBy('usual_size')
-            ->map(function($group) {
-                return $group->count();
-            })
-            ->sortDesc();
 
         $relatedProducts = Product::active()
             ->inStock()
@@ -599,16 +625,13 @@ class PageController extends Controller
             ->get();
 
         return view('pages.product-detail', compact(
-            'product', 
-            'relatedProducts', 
+            'product',
+            'relatedProducts',
             'testimonials',
             'reviews',
             'totalReviews',
             'avgRating',
-            'ratingBreakdown',
-            'avgQuality',
-            'avgSizing',
-            'usualSizes'
+            'ratingBreakdown'
         ));
     }
 
@@ -730,5 +753,107 @@ class PageController extends Controller
         $products = $query->latest()->paginate(15)->withQueryString();
 
         return view('pages.shop-category', compact('products'));
+    }
+
+    /**
+     * Filter New Arrivals products via AJAX
+     */
+    public function filterNewArrivals(Request $request)
+    {
+        $query = Product::active()->inStock()->where('is_featured', false);
+
+        // Filter by brand
+        if ($request->filled('brand')) {
+            $query->where('brand', $request->brand);
+        }
+
+        // Filter by category
+        if ($request->filled('category')) {
+            $categoryMap = [
+                'racket' => Product::CATEGORY_ORIGINAL,
+                'shoes' => Product::CATEGORY_SHOES,
+                'apparel' => Product::CATEGORY_PEDAS,
+            ];
+
+            $category = $categoryMap[$request->category] ?? null;
+            if ($category) {
+                $query->where('category', $category);
+            }
+        }
+
+        // Sort by price
+        if ($request->filled('price')) {
+            if ($request->price === 'low') {
+                $query->orderBy('price', 'asc');
+            } elseif ($request->price === 'high') {
+                $query->orderBy('price', 'desc');
+            }
+        }
+
+        // Sort by popularity or latest
+        if ($request->filled('sort')) {
+            if ($request->sort === 'popular') {
+                $query->withCount('orderItems')->orderByDesc('order_items_count');
+            } elseif ($request->sort === 'latest') {
+                $query->latest();
+            }
+        } else {
+            $query->latest();
+        }
+
+        $products = $query->take(12)->get();
+
+        // Generate HTML for products
+        $html = '';
+        foreach ($products as $product) {
+            $soldCount = \App\Models\OrderItem::where('product_id', $product->id)
+                ->whereHas('order', function($q) {
+                    $q->whereIn('status', ['completed', 'delivered']);
+                })->sum('quantity');
+
+            $html .= '<div class="group snap-start shrink-0 basis-[85%] sm:basis-[48%] md:basis-[32%] lg:basis-[18%] overflow-hidden bg-white transition duration-300 hover:-translate-y-2">';
+            $html .= '<a href="' . route('produk.show', $product) . '" class="block">';
+            $html .= '<div class="relative aspect-square overflow-hidden">';
+            $html .= '<div class="h-full w-full overflow-hidden">';
+            $html .= '<img src="' . $product->image_url . '" alt="' . $product->name . '" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" onerror="this.onerror=null;this.src=\'/images/logo.png\';" loading="lazy">';
+            $html .= '</div>';
+            if ($product->hasActiveDiscount()) {
+                $html .= '<span class="absolute left-0 top-0 bg-rose-500 px-2.5 py-1 text-[11px] font-semibold text-white pointer-events-none">-' . $product->formatted_discount_percent . '</span>';
+            }
+            $html .= '<span class="absolute left-0 ' . ($product->hasActiveDiscount() ? 'top-9' : 'top-0') . ' bg-blue-500 px-2.5 py-1 text-[11px] font-semibold text-white pointer-events-none">Latest</span>';
+            if ($product->package_type === 'bundle') {
+                $html .= '<span class="absolute left-0 ' . ($product->hasActiveDiscount() ? 'top-[4.5rem]' : 'top-9') . ' bg-purple-500 px-2.5 py-1 text-[11px] font-semibold text-white pointer-events-none">Bundle</span>';
+            }
+            if ($product->isBestSeller()) {
+                $html .= '<span class="absolute right-0 top-0 bg-amber-500 px-2.5 py-1 text-[11px] font-semibold text-white pointer-events-none">Best Seller</span>';
+            }
+            $html .= '</div>';
+            $html .= '<div class="p-4">';
+            $html .= '<h3 class="line-clamp-1 text-base font-medium text-black">' . $product->name . '</h3>';
+            $html .= '<p class="mt-1 text-xs text-zinc-600">' . $product->category_label . '</p>';
+            if ($product->hasActiveDiscount()) {
+                $html .= '<p class="mt-2 text-lg font-semibold text-black">' . $product->formatted_discounted_price . '</p>';
+                $html .= '<p class="text-xs text-zinc-400 line-through">' . $product->formatted_price . '</p>';
+            } else {
+                $html .= '<p class="mt-2 text-lg font-semibold text-black">' . $product->formatted_price . '</p>';
+            }
+            $html .= '</div>';
+            $html .= '</a>';
+            $html .= '<div class="px-4 pb-4">';
+            $html .= '<div class="flex items-center gap-3">';
+            $html .= '<button onclick="addToCart(\'' . $product->slug . '\', event)" class="border border-zinc-300 bg-transparent px-3 py-1.5 text-[11px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950">Add to cart</button>';
+            $html .= '<button onclick="addToWishlist(\'' . $product->slug . '\', event)" class="text-zinc-400 transition duration-300 hover:text-rose-500">';
+            $html .= '<i class="fas fa-heart text-base"></i>';
+            $html .= '</button>';
+            $html .= '</div>';
+            $html .= '</div>';
+            $html .= '</div>';
+        }
+
+        return response()->json([
+            'success' => true,
+            'html' => $html,
+            'count' => $products->count()
+        ]);
     }
 }

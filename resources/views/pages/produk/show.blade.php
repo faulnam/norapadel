@@ -3,8 +3,10 @@
 @section('title', $product->name . ' - Nora Padel')
 
 @section('content')
-<section class="py-5">
-    <div class="container">
+<div class="bg-white text-black antialiased">
+    @include('components.luxury-navbar')
+    <section class="py-5 pt-24 md:pt-20">
+        <div class="container">
         <nav aria-label="breadcrumb" class="mb-4">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-decoration-none">Home</a></li>
@@ -190,6 +192,7 @@
         </div>
     </div>
 </section>
+    </div>
 @endif
 @endsection
 
