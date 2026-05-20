@@ -250,6 +250,13 @@
                         <i class="fas fa-search text-sm"></i>
                     </button>
 
+                    <!-- Dark Mode Toggle (Home Page) -->
+                    <button type="button" id="darkModeToggleHome"
+                            class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20"
+                            title="Toggle Dark/Light Mode" aria-label="Toggle dark mode">
+                        <i class="fas fa-moon text-sm" id="darkModeIconHome"></i>
+                    </button>
+
                     <!-- Hamburger Menu with combined elements -->
                     <div class="relative" id="hamburgerMenuWrapper">
                         <button type="button" id="hamburgerMenuBtn" class="inline-flex h-9 w-9 items-center justify-center rounded border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20 relative">
@@ -856,7 +863,6 @@
                         <i class="fas fa-search text-4xl text-zinc-300 mb-3"></i>
                         <p class="text-zinc-500">Tidak ada produk yang ditemukan</p>
                     </div>
-                   
                 </div>
             </section>
 
@@ -992,9 +998,179 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
+        .btn-more-products:hover {
+            background-color: #0071e3 !important;
+            border-color: #0071e3 !important;
+            color: #ffffff !important;
+            transform: scale(1.1) !important;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1) !important;
+        }
+        .btn-more-products:hover span,
+        .btn-more-products:hover i {
+            color: #ffffff !important;
+        }
+        .btn-more-products:hover i {
+            transform: translateX(4px);
+        }
+
         #mainNavbar,
         .mobile-bottom-nav {
             display: none !important;
+        }
+
+        /* ============================
+           HOME PAGE — DARK MODE
+        ============================ */
+        /* Dark mode toggle on home page (custom navbar) */
+        [data-theme="dark"] #mainHeader {
+            background: rgba(10,10,10,0.85) !important;
+            border-color: #2d2d2d !important;
+        }
+        /* Main wrapper */
+        [data-theme="dark"] .bg-white.text-black {
+            background-color: #111111 !important;
+            color: #e5e7eb !important;
+        }
+        /* Sections */
+        [data-theme="dark"] section.bg-white,
+        [data-theme="dark"] .np-fade-section.bg-white {
+            background-color: #111111 !important;
+        }
+        [data-theme="dark"] .bg-zinc-50 {
+            background-color: #1a1a1a !important;
+        }
+        [data-theme="dark"] .bg-\[#f5f5f5\] {
+            background-color: #1a1a1a !important;
+        }
+        /* Filters bar */
+        [data-theme="dark"] section.bg-zinc-50 {
+            background-color: #1a1a1a !important;
+        }
+        [data-theme="dark"] select,
+        [data-theme="dark"] #filterBrandBottom,
+        [data-theme="dark"] #filterCategoryBottom,
+        [data-theme="dark"] #filterPriceBottom,
+        [data-theme="dark"] #filterSortBottom {
+            background-color: #1c1c1c !important;
+            color: #e5e7eb !important;
+            border-color: #3d3d3d !important;
+        }
+        /* Product cards */
+        [data-theme="dark"] .product-item,
+        [data-theme="dark"] .product-item.group {
+            background-color: #1c1c1c !important;
+        }
+        [data-theme="dark"] .product-item h3,
+        [data-theme="dark"] .product-item .text-black {
+            color: #f9fafb !important;
+        }
+        [data-theme="dark"] .product-item .text-zinc-600 {
+            color: #9ca3af !important;
+        }
+        [data-theme="dark"] .product-item .text-zinc-400 {
+            color: #6b7280 !important;
+        }
+        [data-theme="dark"] .product-item .border-zinc-300 {
+            border-color: #3d3d3d !important;
+        }
+        [data-theme="dark"] .product-item button.border-zinc-300 {
+            color: #e5e7eb !important;
+        }
+        [data-theme="dark"] .product-item button.border-zinc-300:hover {
+            border-color: #6b7280 !important;
+            color: #ffffff !important;
+        }
+        /* New arrivals slider cards */
+        [data-theme="dark"] #newArrivalsContainer > div {
+            background-color: #1c1c1c !important;
+        }
+        [data-theme="dark"] #newArrivalsContainer h3,
+        [data-theme="dark"] #newArrivalsContainer .text-black {
+            color: #f9fafb !important;
+        }
+        [data-theme="dark"] #newArrivalsContainer .text-zinc-600,
+        [data-theme="dark"] #newArrivalsContainer .text-zinc-500 {
+            color: #9ca3af !important;
+        }
+        /* Category icons section */
+        [data-theme="dark"] section.np-fade-section.bg-white.py-4 h3 {
+            color: #f9fafb !important;
+        }
+        [data-theme="dark"] .far.fa-star {
+            color: #3d3d3d !important;
+        }
+        /* Voucher section */
+        [data-theme="dark"] .bg-gradient-to-r.from-white {
+            background: linear-gradient(to right, #1c1c1c, #252525) !important;
+            border-color: #2d2d2d !important;
+        }
+        [data-theme="dark"] .text-gray-700 {
+            color: #e5e7eb !important;
+        }
+        [data-theme="dark"] .text-gray-500,
+        [data-theme="dark"] .text-gray-400 {
+            color: #9ca3af !important;
+        }
+        [data-theme="dark"] .bg-gray-100 {
+            background-color: #2d2d2d !important;
+        }
+        [data-theme="dark"] .border-gray-200 {
+            border-color: #2d2d2d !important;
+        }
+        /* Marquee bar */
+        [data-theme="dark"] #marqueeBar {
+            background-color: #161616 !important;
+            border-color: #2d2d2d !important;
+        }
+        /* CTA / Level Up section */
+        [data-theme="dark"] .bg-linear-to-r.from-zinc-100,
+        [data-theme="dark"] .rounded-lg.bg-linear-to-r {
+            background: linear-gradient(to right, #1a1a1a, #111111) !important;
+        }
+        [data-theme="dark"] .text-zinc-600 {
+            color: #9ca3af !important;
+        }
+        [data-theme="dark"] .text-zinc-500 {
+            color: #6b7280 !important;
+        }
+        /* Hamburger dropdown dark */
+        [data-theme="dark"] #hamburgerMenuDropdown > div {
+            background-color: #1c1c1c !important;
+            border-color: #2d2d2d !important;
+        }
+        [data-theme="dark"] #hamburgerMenuDropdown a {
+            color: #e5e7eb !important;
+        }
+        [data-theme="dark"] #hamburgerMenuDropdown a:hover {
+            background-color: #2d2d2d !important;
+        }
+        [data-theme="dark"] #hamburgerMenuDropdown .border-b,
+        [data-theme="dark"] #hamburgerMenuDropdown .border-t,
+        [data-theme="dark"] #hamburgerMenuDropdown .border-zinc-100 {
+            border-color: #2d2d2d !important;
+        }
+        /* Search overlay */
+        [data-theme="dark"] #searchPanel > div {
+            background-color: #1c1c1c !important;
+        }
+        [data-theme="dark"] #searchInput {
+            background-color: transparent !important;
+            color: #f9fafb !important;
+        }
+        [data-theme="dark"] #searchResults a:hover {
+            background-color: #2d2d2d !important;
+        }
+        [data-theme="dark"] .text-zinc-900 {
+            color: #f9fafb !important;
+        }
+        [data-theme="dark"] .divide-zinc-100 > * {
+            border-color: #2d2d2d !important;
+        }
+        /* More Products btn in dark */
+        [data-theme="dark"] .btn-more-products {
+            background-color: #1c1c1c !important;
+            border-color: #3d3d3d !important;
+            color: #e5e7eb !important;
         }
 
         html {
@@ -1136,6 +1312,51 @@
 
 @push('scripts')
     <script>
+        // Dark Mode Toggle Home Page Custom Navbar
+        (function() {
+            const html = document.documentElement;
+            const btnHome = document.getElementById('darkModeToggleHome');
+            const iconHome = document.getElementById('darkModeIconHome');
+
+            function syncHomeIcon(theme) {
+                if (iconHome) {
+                    iconHome.className = theme === 'dark' ? 'fas fa-sun text-sm' : 'fas fa-moon text-sm';
+                }
+            }
+
+            // Sync on load
+            const currentTheme = html.getAttribute('data-theme') || localStorage.getItem('np_theme') || 'light';
+            syncHomeIcon(currentTheme);
+
+            if (btnHome) {
+                btnHome.addEventListener('click', function() {
+                    const current = html.getAttribute('data-theme');
+                    const next = current === 'dark' ? 'light' : 'dark';
+                    html.setAttribute('data-theme', next);
+                    localStorage.setItem('np_theme', next);
+                    
+                    syncHomeIcon(next);
+                    
+                    // Sync global toggle if present
+                    const iconGlobal = document.getElementById('darkModeIcon');
+                    if (iconGlobal) {
+                        iconGlobal.className = next === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+                    }
+                });
+            }
+
+            // Sync if global toggle is clicked
+            const btnGlobal = document.getElementById('darkModeToggle');
+            if (btnGlobal) {
+                btnGlobal.addEventListener('click', function() {
+                    setTimeout(() => {
+                        const newTheme = html.getAttribute('data-theme');
+                        syncHomeIcon(newTheme);
+                    }, 50);
+                });
+            }
+        })();
+
         // Animate badge function
         function animateBadge(badgeElement) {
             if (!badgeElement) return;
