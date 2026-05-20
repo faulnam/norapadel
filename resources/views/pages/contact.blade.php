@@ -410,7 +410,7 @@
         </div>
 
     <main class="pt-16">
-    <section class="bg-[#f8fafc] pt-8 pb-14 lg:pt-10 lg:pb-16">
+    <section class="bg-zinc-50 pt-8 pb-14 lg:pt-10 lg:pb-16">
             <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
                 <div class="mx-auto max-w-3xl text-center">
                     <p class="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">Support</p>
