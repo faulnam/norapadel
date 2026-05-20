@@ -10,12 +10,10 @@
         html, body { overflow-x: hidden; }
     </style>
     <div class="bg-white text-black antialiased">
-
         <header class="fixed left-0 top-0 z-[70] w-full border-b border-transparent bg-transparent backdrop-blur-none transition-all duration-300" id="mainHeader">
             <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-3 md:px-10 lg:px-12">
                 <a href="{{ route('home') }}" class="flex items-center gap-2">
-                    <img src="{{ asset('storage/logo.png') }}" alt="NoraPadel" class="h-7 w-7 object-contain" loading="lazy">
-                   
+                    <img src="{{ asset('storage/logo.webp') }}" alt="NoraPadel" class="h-7 w-7 object-contain" loading="lazy">
                 </a>
 
                 <nav class="hidden items-center gap-6 md:flex" id="navLinks">
@@ -222,12 +220,12 @@
 
                 <div class="flex items-center gap-2 md:gap-3 text-white/90" id="navIcons">
                     <!-- Inline Search (all screens) -->
-                    <div class="flex items-center relative" id="navSearchWrapper">
+                    <!-- <div class="flex items-center relative" id="navSearchWrapper">
                         <i class="fas fa-search absolute left-2 md:left-3 text-xs md:text-sm text-white/60 pointer-events-none transition-colors duration-300" id="navSearchIcon"></i>
                         <input type="text" id="navSearchInput" placeholder="Cari..."
                                class="bg-white/10 border border-white/20 rounded-full pl-7 md:pl-9 pr-2 md:pr-4 py-1 md:py-1.5 text-xs md:text-sm text-white placeholder-white/60 focus:outline-none focus:bg-white/20 focus:border-white/40 w-24 md:w-40 lg:w-48 transition-all duration-300"
                                autocomplete="off">
-                    </div>
+                    </div> -->
 
                     <!-- Login (desktop only) -->
                     @guest
@@ -439,17 +437,32 @@
             </div>
         </div>
 
-        <!-- Hero Banner - Full behind navbar -->
-        <section class="relative w-full h-[300px] overflow-hidden bg-zinc-900">
-            <img src="{{ asset('storage/fiks.jpeg') }}"
+        
+        <section class="relative w-full min-h-[380px] overflow-hidden bg-zinc-900 sm:min-h-[420px] md:min-h-[360px] lg:min-h-[400px]">
+            <img src="{{ asset('storage/banner.webp') }}"
                 alt="Padel Tennis"
                 class="absolute inset-0 h-full w-full object-cover"
                 loading="eager">
             <div class="absolute inset-0 bg-gradient-to-b from-black/20 via-black/50 to-black/80"></div>
-            <div class="relative mx-auto flex h-[300px] max-w-7xl items-center justify-center px-6 md:px-10 lg:px-12 pt-16">
-                <div class="max-w-2xl text-center text-white">
-                    <h1 class="text-lg font-semibold tracking-tight sm:text-2xl md:text-3xl lg:text-4xl drop-shadow-lg">NoraPadel</h1>
-                    <p class="mt-2 md:mt-4 text-[11px] md:text-sm text-zinc-100 leading-relaxed drop-shadow-md">Experience the ultimate in padel equipment. Premium quality rackets, shoes, and accessories for players who demand excellence.</p>
+            <div class="relative mx-auto flex min-h-[380px] sm:min-h-[420px] md:min-h-[360px] lg:min-h-[400px] max-w-7xl items-center justify-center px-6 md:px-10 lg:px-12 pt-28 md:pt-24">
+                <div class="flex flex-col items-center justify-center text-center -mt-12 md:-mt-20"> 
+
+                    <div class="mb-4 w-full max-w-md px-4">
+                        <div class="relative flex items-center" id="navSearchWrapper">
+                           <i class="fas fa-search absolute left-4 text-white text-sm pointer-events-none z-10"></i>
+                            
+                            <input type="text"  id="navSearchInput" placeholder="Cari raket, sepatu, atau aksesoris..."
+                                class="w-full bg-white/10 backdrop-blur-md text-white placeholder-white/50 pl-11 pr-4 py-2 rounded-full text-sm border border-white/20 shadow-sm focus:outline-none focus:bg-white/20 focus:border-white/40 focus:ring-1 focus:ring-white/30 transition-all cursor-pointer"
+                                readonly> </div>
+                    </div>
+                    <h1 class="text-4xl font-bold text-white mb-2">
+                        NoraPadel
+                    </h1>
+                    
+                    <p class="text-white/80 text-sm max-w-xl mx-auto mb-4">
+                        Experience the ultimate in padel equipment. Premium quality rackets, shoes, and accessories for players who demand excellence.
+                    </p>
+
                 </div>
             </div>
         </section>
