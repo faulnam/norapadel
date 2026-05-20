@@ -1,0 +1,24 @@
+{
+  "contact_page": {
+    "header": {
+      "support": { "id": "Bantuan", "en": "Support" },
+      "title": { "id": "Hubungi NoraPadel", "en": "Contact NoraPadel" },
+      "subtitle": {
+        "id": "Kirim pertanyaan Anda. Kami akan merespons sesegera mungkin selama jam kerja.",
+        "en": "Send your questions. We will respond as soon as possible during business hours."
+      }
+    },
+    "info_section": {
+      "title": { "id": "Informasi Kontak", "en": "Contact Information" },
+      "address_label": { "id": "Alamat", "en": "Address" },
+      "address_detail": { "id": "Citraland, Surabaya, Jawa Timur, Indonesia", "en": "Citraland, Surabaya, East Java, Indonesia" }
+    },
+    "form": {
+      "label_name": { "id": "Nama", "en": "Name" },
+      "label_email": { "id": "Email", "en": "Email" },
+      "label_subject": { "id": "Subjek", "en": "Subject" },
+      "label_message": { "id": "Pesan", "en": "Message" },
+      "btn_send": { "id": "Kirim Pesan", "en": "Send Message" }
+    }
+  }
+}
