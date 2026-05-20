@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->integer('points_used')->default(0)->after('shipping_discount');
+            $table->integer('points_used')->default(0)->after('shipping_cost');
             $table->decimal('points_discount', 10, 2)->default(0)->after('points_used');
         });
     }
