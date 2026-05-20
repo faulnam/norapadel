@@ -15,7 +15,7 @@
             <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-3 md:px-10 lg:px-12">
                 <a href="{{ route('home') }}" class="flex items-center gap-2">
                     <img src="{{ asset('storage/logo.png') }}" alt="NoraPadel" class="h-7 w-7 object-contain" loading="lazy">
-                    <span class="text-xl font-semibold tracking-tight text-white transition-colors duration-300" id="logoText">NoraPadel</span>
+                   
                 </a>
 
                 <nav class="hidden items-center gap-6 md:flex" id="navLinks">
@@ -450,9 +450,6 @@
                 <div class="max-w-2xl text-center text-white">
                     <h1 class="text-lg font-semibold tracking-tight sm:text-2xl md:text-3xl lg:text-4xl drop-shadow-lg">NoraPadel</h1>
                     <p class="mt-2 md:mt-4 text-[11px] md:text-sm text-zinc-100 leading-relaxed drop-shadow-md">Experience the ultimate in padel equipment. Premium quality rackets, shoes, and accessories for players who demand excellence.</p>
-                    <div class="mt-3 md:mt-6 flex flex-wrap justify-center gap-6">
-                        <a href="{{ route('shop') }}" class="inline-flex items-center gap-1 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 md:px-6 md:py-2.5 text-[10px] md:text-xs font-semibold text-white backdrop-blur transition duration-300 hover:bg-white/20 hover:scale-[1.02]">Shop Now</a>
-                    </div>
                 </div>
             </div>
         </section>
@@ -706,86 +703,82 @@
 
             <!-- New Arrivals -->
             <section class="np-fade-section bg-white py-2 lg:py-3 pb-0">
-                <div class="relative group">
-                        <!-- Left Arrow -->
-                        <button class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded w-10 h-10 flex items-center justify-center transition duration-300" onclick="scrollNewArrivals('left')">
-                            <i class="fas fa-chevron-left text-black text-sm"></i>
-                        </button>
-                        
-                        <!-- Right Arrow -->
-                        <button class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded w-10 h-10 flex items-center justify-center transition duration-300" onclick="scrollNewArrivals('right')">
-                            <i class="fas fa-chevron-right text-black text-sm"></i>
-                        </button>
-                        
-                        <div id="newArrivalsContainer" class="flex gap-6 overflow-x-auto pb-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x snap-mandatory scroll-smooth">
-                        @foreach($newArrivals as $product)
-                            @php
-                                $soldCount = \App\Models\OrderItem::where('product_id', $product->id)
-                                    ->whereHas('order', function($q) {
-                                        $q->whereIn('status', ['completed', 'delivered']);
-                                    })->sum('quantity');
-                            @endphp
-                            <div class="product-card group snap-start shrink-0 basis-[40%] sm:basis-[48%] md:basis-[32%] lg:basis-[18%] overflow-hidden bg-white transition duration-300 hover:-translate-y-2" data-category="{{ strtolower($product->type) }}" data-brand="{{ strtolower($product->brand ?? '') }}">
-                                <a href="{{ route('produk.show', $product) }}" class="block">
-                                    <div class="relative aspect-square overflow-hidden">
-                                        <div class="h-full w-full overflow-hidden">
-                                            <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" onerror="this.onerror=null;this.src='/images/logo.png';" loading="lazy">
-                                        </div>
-                                        @if($product->hasActiveDiscount())
-                                            <span class="absolute left-0 top-0 bg-rose-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">-{{ $product->formatted_discount_percent }}</span>
-                                        @endif
-                                        <!-- Latest Badge for New Arrivals -->
-                                        <span class="absolute left-0 {{ $product->hasActiveDiscount() ? 'top-7' : 'top-0' }} bg-blue-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Latest</span>
-                                        @if($product->package_type === 'bundle')
-                                            <span class="absolute left-0 {{ $product->hasActiveDiscount() ? 'top-14' : 'top-7' }} bg-purple-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Bundle</span>
-                                        @endif
-                                        @if($product->isBestSeller())
-                                            <span class="absolute right-0 top-0 bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Best Seller</span>
+                <div id="newArrivalsGrid" class="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5">
+                    @foreach($newArrivals->take(10) as $product)
+                        @php
+                            $soldCount = \App\Models\OrderItem::where('product_id', $product->id)
+                                ->whereHas('order', function($q) {
+                                    $q->whereIn('status', ['completed', 'delivered']);
+                                })->sum('quantity');
+                        @endphp
+                        <div class="product-item product-card group block overflow-hidden bg-white transition duration-300 hover:-translate-y-1"
+                                 data-name="{{ strtolower($product->name) }}"
+                                 data-price="{{ $product->hasActiveDiscount() ? $product->discounted_price : $product->price }}"
+                                 data-category="{{ strtolower($product->type) }}"
+                                 data-brand="{{ strtolower($product->brand ?? '') }}"
+                                 data-level="{{ $product->level ?? '' }}"
+                                 data-discount="{{ $product->hasActiveDiscount() ? 'yes' : 'no' }}"
+                                 data-bundle="{{ $product->package_type === 'bundle' ? 'yes' : 'no' }}"
+                                 data-sold="{{ $soldCount }}">
+                            <a href="{{ route('produk.show', $product) }}" class="block">
+                                <div class="relative aspect-square overflow-hidden">
+                                    <div class="h-full w-full overflow-hidden">
+                                        <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" onerror="this.onerror=null;this.src='/images/logo.png';" loading="lazy">
+                                    </div>
+                                    @if($product->hasActiveDiscount())
+                                        <span class="absolute left-0 top-0 bg-rose-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">-{{ $product->formatted_discount_percent }}</span>
+                                    @endif
+                                    <span class="absolute left-0 {{ $product->hasActiveDiscount() ? 'top-7' : 'top-0' }} bg-blue-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Latest</span>
+                                    @if($product->package_type === 'bundle')
+                                        <span class="absolute left-0 {{ $product->hasActiveDiscount() ? 'top-14' : 'top-7' }} bg-purple-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Bundle</span>
+                                    @endif
+                                    @if($product->isBestSeller())
+                                        <span class="absolute right-0 top-0 bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Popular</span>
+                                    @endif
+                                </div>
+                                <div class="p-3">
+                                    <h3 class="line-clamp-1 text-sm font-medium text-black">{{ $product->name }}</h3>
+                                    <p class="mt-1 text-xs text-zinc-600">{{ $product->category_label }}</p>
+                                    <div class="mt-1 flex items-center gap-1">
+                                        @php
+                                            $rating = $product->average_rating;
+                                        @endphp
+                                        <i class="fas fa-star text-black text-[10px]"></i>
+                                        <span class="text-[10px] text-zinc-600 ml-1">{{ number_format($rating, 1) }}</span>
+                                        @if($product->total_reviews > 0)
+                                            <span class="text-[10px] text-zinc-500">({{ $product->total_reviews }})</span>
                                         @endif
                                     </div>
-                                    <div class="p-2 md:p-4">
-                                        <h3 class="line-clamp-1 text-sm font-medium text-black">{{ $product->name }}</h3>
-                                        <p class="mt-1 text-xs text-zinc-600">{{ $product->category_label }}</p>
-                                        <div class="mt-1 flex items-center gap-1">
-                                            @php
-                                                $rating = $product->average_rating;
-                                            @endphp
-                                            <i class="fas fa-star text-black text-[10px]"></i>
-                                            <span class="text-[10px] text-zinc-600 ml-1">{{ number_format($rating, 1) }}</span>
-                                            @if($product->total_reviews > 0)
-                                                <span class="text-[10px] text-zinc-500">({{ $product->total_reviews }})</span>
-                                            @endif
-                                        </div>
-                                        @if($product->hasActiveDiscount())
-                                            <p class="mt-1 text-base font-semibold text-black">{{ $product->formatted_discounted_price }}</p>
-                                            <p class="text-xs text-zinc-400 line-through">{{ $product->formatted_price }}</p>
-                                        @else
-                                            <p class="mt-1 text-base font-semibold text-black">{{ $product->formatted_price }}</p>
-                                        @endif
-                                    </div>
-                                </a>
-                                <div class="px-2 pb-2 md:px-4 md:pb-4">
-                                    <div class="flex items-center gap-2">
-                                        <a href="{{ route('produk.show', $product) }}" class="border border-zinc-300 bg-transparent px-2 py-1 text-[10px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950">
-                                            Detail
-                                        </a>
-                                        <button onclick="addToCart('{{ $product->slug }}', event)" class="border border-zinc-300 bg-transparent px-2 py-1 text-[10px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950">
-                                            Add to cart
-                                        </button>
-                                        <button onclick="addToWishlist('{{ $product->slug }}', event)" class="text-zinc-400 transition duration-300 hover:text-rose-500">
-                                            <i class="fas fa-heart text-sm"></i>
-                                        </button>
-                                    </div>
+                                    @if($product->hasActiveDiscount())
+                                        <p class="mt-1 text-base font-semibold text-black">{{ $product->formatted_discounted_price }}</p>
+                                        <p class="text-xs text-zinc-400 line-through">{{ $product->formatted_price }}</p>
+                                    @else
+                                        <p class="mt-1 text-base font-semibold text-black">{{ $product->formatted_price }}</p>
+                                    @endif
+                                </div>
+                            </a>
+                            <div class="px-2 pb-2 md:px-3 md:pb-3">
+                                <div class="flex items-center gap-2">
+                                    <button onclick="addToCart('{{ $product->slug }}', event)" class="border border-zinc-300 bg-transparent px-2 py-1 text-[10px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950 truncate max-w-[80px] md:max-w-none">
+                                        Add to cart
+                                    </button>
+                                    <button onclick="addToWishlist('{{ $product->slug }}', event)" class="text-zinc-400 transition duration-300 hover:text-rose-500">
+                                        <i class="fas fa-heart text-xs md:text-sm"></i>
+                                    </button>
                                 </div>
                             </div>
-                        @endforeach
                         </div>
+                    @endforeach
                 </div>
             </section>
+                    </div>
+                </div>
+            </div>
 
-            <!-- Category Icons -->
+            <!-- Category Icons - Full Width -->
             <section class="np-fade-section bg-white py-4 pt-4">
-                <div class="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
+                <div class="mx-auto max-w-7xl px-4 md:px-6 lg:px-12">
+                    <div class="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
                         <a href="{{ route('racket') }}" class="flex flex-col items-center justify-center p-4 md:p-6 bg-white cursor-pointer transition hover:opacity-80">
                             <div class="w-36 h-36 md:w-48 md:h-48 mb-3 md:mb-4 flex items-center justify-center">
                                 <img src="{{ asset('storage/iconracket.jpg') }}" alt="Racket" class="w-full h-full object-contain">
@@ -810,28 +803,30 @@
                             </div>
                             <h3 class="text-sm md:text-base font-medium text-black">Grips</h3>
                         </a>
+                    </div>
                 </div>
             </section>
 
-            <!-- Shop -->
+            <!-- Shop - Full Width -->
             <section class="np-fade-section bg-white py-12 lg:py-14">
-                <div id="productGrid" class="grid grid-cols-2 gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
-                        @foreach($shopProducts->take(12) as $product)
+                <div class="mx-auto max-w-7xl px-4 md:px-6 lg:px-12">
+                    <div id="productGrid" class="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-6">
+                        @foreach($shopProducts as $product)
                             @php
                                 $soldCount = \App\Models\OrderItem::where('product_id', $product->id)
                                     ->whereHas('order', function($q) {
                                         $q->whereIn('status', ['completed', 'delivered']);
                                     })->sum('quantity');
                             @endphp
-                       <div class="product-item product-card group block overflow-hidden bg-white transition duration-300 hover:-translate-y-1"
-                                 data-name="{{ strtolower($product->name) }}"
-                                 data-price="{{ $product->hasActiveDiscount() ? $product->discounted_price : $product->price }}"
-                                 data-category="{{ strtolower($product->type) }}"
-                                 data-brand="{{ strtolower($product->brand ?? '') }}"
-                                 data-level="{{ $product->level ?? '' }}"
-                                 data-discount="{{ $product->hasActiveDiscount() ? 'yes' : 'no' }}"
-                                 data-bundle="{{ $product->package_type === 'bundle' ? 'yes' : 'no' }}"
-                                 data-sold="{{ $soldCount }}">
+                            <div class="product-item product-card group block overflow-hidden bg-white transition duration-300 hover:-translate-y-1"
+                                     data-name="{{ strtolower($product->name) }}"
+                                     data-price="{{ $product->hasActiveDiscount() ? $product->discounted_price : $product->price }}"
+                                     data-category="{{ strtolower($product->type) }}"
+                                     data-brand="{{ strtolower($product->brand ?? '') }}"
+                                     data-level="{{ $product->level ?? '' }}"
+                                     data-discount="{{ $product->hasActiveDiscount() ? 'yes' : 'no' }}"
+                                     data-bundle="{{ $product->package_type === 'bundle' ? 'yes' : 'no' }}"
+                                     data-sold="{{ $soldCount }}">
                                 <a href="{{ route('produk.show', $product) }}" class="block">
                                     <div class="relative aspect-square overflow-hidden">
                                         <div class="h-full w-full overflow-hidden">
@@ -873,9 +868,6 @@
                                 </a>
                                 <div class="px-2 pb-2 md:px-3 md:pb-3">
                                     <div class="flex items-center gap-2">
-                                        <a href="{{ route('produk.show', $product) }}" class="border border-zinc-300 bg-transparent px-2 py-1 text-[10px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950">
-                                            Detail
-                                        </a>
                                         <button onclick="addToCart('{{ $product->slug }}', event)" class="border border-zinc-300 bg-transparent px-2 py-1 text-[10px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950 truncate max-w-[80px] md:max-w-none">
                                             Add to cart
                                         </button>
@@ -892,10 +884,21 @@
                         <i class="fas fa-search text-4xl text-zinc-300 mb-3"></i>
                         <p class="text-zinc-500">Tidak ada produk yang ditemukan</p>
                     </div>
-            </section>
+
+                    <!-- Pagination -->
+                    <div class="flex items-center justify-center gap-0.5 mt-8">
+                        <button onclick="prevPage()" class="px-1.5 py-1 border border-zinc-300 rounded hover:bg-zinc-100 transition">
+                            <i class="fas fa-chevron-left text-[10px]"></i>
+                        </button>
+                        <div id="paginationNumbers" class="flex gap-0.5">
+                            <!-- Page numbers will be generated by JS -->
+                        </div>
+                        <button onclick="nextPage()" class="px-1.5 py-1 border border-zinc-300 rounded hover:bg-zinc-100 transition">
+                            <i class="fas fa-chevron-right text-[10px]"></i>
+                        </button>
                     </div>
                 </div>
-            </div>
+            </section>
 
         <!-- Testimonials Section - Full Width with Proper Margins -->
         <section id="testimonials" class="np-fade-section bg-white py-18 lg:py-22 mx-auto max-w-7xl px-4 md:px-6 lg:px-12" data-testimonial-showcase>
@@ -1358,7 +1361,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Build params from active category/brand filters
             const activeCategory = document.querySelector('.filter-chip[data-category].bg-black');
             const activeBrand = document.querySelector('.filter-chip[data-brand].bg-black');
-            
+
             const params = new URLSearchParams();
             if (activeCategory) {
                 params.append('category', activeCategory.dataset.category);
@@ -1376,14 +1379,10 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log('Applying filters with params:', params.toString());
 
             // Show loading state
-            const newArrivalsContainer = document.getElementById('newArrivalsContainer');
-            const productGrid = document.getElementById('productGrid');
-            
-            if (newArrivalsContainer) {
-                newArrivalsContainer.innerHTML = '<div class="flex items-center justify-center w-full py-8"><i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i></div>';
-            }
-            if (productGrid) {
-                productGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 col-span-full"><i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i></div>';
+            const newArrivalsGrid = document.getElementById('newArrivalsGrid');
+
+            if (newArrivalsGrid) {
+                newArrivalsGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 col-span-full"><i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i></div>';
             }
 
             // Fetch filtered products via AJAX
@@ -1395,28 +1394,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 .then(data => {
                     console.log('Response data:', data);
                     if (data.success && data.html) {
-                        if (newArrivalsContainer) {
-                            newArrivalsContainer.innerHTML = data.html;
-                        }
-                        if (productGrid) {
-                            productGrid.innerHTML = data.html;
+                        if (newArrivalsGrid) {
+                            newArrivalsGrid.innerHTML = data.html;
                         }
                     } else {
-                        if (newArrivalsContainer) {
-                            newArrivalsContainer.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500">No products found</div>';
-                        }
-                        if (productGrid) {
-                            productGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500 col-span-full">No products found</div>';
+                        if (newArrivalsGrid) {
+                            newArrivalsGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500 col-span-full">No products found</div>';
                         }
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    if (newArrivalsContainer) {
-                        newArrivalsContainer.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500">Error loading products</div>';
-                    }
-                    if (productGrid) {
-                        productGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500 col-span-full">Error loading products</div>';
+                    if (newArrivalsGrid) {
+                        newArrivalsGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500 col-span-full">Error loading products</div>';
                     }
                 });
         };
@@ -1424,39 +1414,49 @@ document.addEventListener('DOMContentLoaded', function () {
         // Apply single filter (for sidebar chips)
         window.applyFilter = function(filterType, value) {
             console.log('Applying filter:', filterType, value);
-            
+
             // Update chip styling
             const chips = document.querySelectorAll(`.filter-chip[data-${filterType}]`);
             chips.forEach(chip => {
                 chip.classList.remove('bg-black', 'text-white', 'border-black');
                 chip.classList.add('text-zinc-600', 'border-zinc-200');
             });
-            
+
             const activeChip = document.querySelector(`.filter-chip[data-${filterType}="${value}"]`);
             if (activeChip) {
                 activeChip.classList.add('bg-black', 'text-white', 'border-black');
                 activeChip.classList.remove('text-zinc-600', 'border-zinc-200');
             }
 
-            // Fetch filtered products via AJAX
+            // Also get price and sort filters
+            const price = document.querySelector('input[name="filterPrice"]:checked')?.value || '';
+            const sort = document.querySelector('input[name="filterSort"]:checked')?.value || '';
+
+            // Build params from all active filters
+            const activeCategory = document.querySelector('.filter-chip[data-category].bg-black');
+            const activeBrand = document.querySelector('.filter-chip[data-brand].bg-black');
+
             const params = new URLSearchParams();
-            if (filterType === 'category') {
-                params.append('category', value);
-            } else if (filterType === 'brand') {
-                params.append('brand', value);
+            if (activeCategory) {
+                params.append('category', activeCategory.dataset.category);
+            }
+            if (activeBrand) {
+                params.append('brand', activeBrand.dataset.brand);
+            }
+            if (price) {
+                params.append('price', price);
+            }
+            if (sort) {
+                params.append('sort', sort);
             }
 
             console.log('Fetching:', `/api/new-arrivals/filter?${params.toString()}`);
 
             // Show loading state
-            const newArrivalsContainer = document.getElementById('newArrivalsContainer');
-            const productGrid = document.getElementById('productGrid');
-            
-            if (newArrivalsContainer) {
-                newArrivalsContainer.innerHTML = '<div class="flex items-center justify-center w-full py-8"><i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i></div>';
-            }
-            if (productGrid) {
-                productGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 col-span-full"><i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i></div>';
+            const newArrivalsGrid = document.getElementById('newArrivalsGrid');
+
+            if (newArrivalsGrid) {
+                newArrivalsGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 col-span-full"><i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i></div>';
             }
 
             fetch(`/api/new-arrivals/filter?${params.toString()}`)
@@ -1467,29 +1467,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 .then(data => {
                     console.log('Response data:', data);
                     if (data.success && data.html) {
-                        // Update both containers with filtered products
-                        if (newArrivalsContainer) {
-                            newArrivalsContainer.innerHTML = data.html;
-                        }
-                        if (productGrid) {
-                            productGrid.innerHTML = data.html;
+                        if (newArrivalsGrid) {
+                            newArrivalsGrid.innerHTML = data.html;
                         }
                     } else {
-                        if (newArrivalsContainer) {
-                            newArrivalsContainer.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500">No products found</div>';
-                        }
-                        if (productGrid) {
-                            productGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500 col-span-full">No products found</div>';
+                        if (newArrivalsGrid) {
+                            newArrivalsGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500 col-span-full">No products found</div>';
                         }
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    if (newArrivalsContainer) {
-                        newArrivalsContainer.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500">Error loading products</div>';
-                    }
-                    if (productGrid) {
-                        productGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500 col-span-full">Error loading products</div>';
+                    if (newArrivalsGrid) {
+                        newArrivalsGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500 col-span-full">Error loading products</div>';
                     }
                 });
         };
@@ -1501,9 +1491,64 @@ document.addEventListener('DOMContentLoaded', function () {
                 chip.classList.remove('bg-black', 'text-white', 'border-black');
                 chip.classList.add('text-zinc-600', 'border-zinc-200');
             });
-            
-            // Reload page to reset all filters
-            window.location.reload();
+
+            // Reset radio buttons for price and sort when clearing category or brand
+            if (filterType === 'category' || filterType === 'brand') {
+                const priceRadios = document.querySelectorAll('input[name="filterPrice"]');
+                priceRadios.forEach(radio => radio.checked = false);
+                const sortRadios = document.querySelectorAll('input[name="filterSort"]');
+                sortRadios.forEach(radio => radio.checked = false);
+            }
+
+            // Fetch products without the cleared filter
+            const price = document.querySelector('input[name="filterPrice"]:checked')?.value || '';
+            const sort = document.querySelector('input[name="filterSort"]:checked')?.value || '';
+
+            const activeCategory = document.querySelector('.filter-chip[data-category].bg-black');
+            const activeBrand = document.querySelector('.filter-chip[data-brand].bg-black');
+
+            const params = new URLSearchParams();
+            if (activeCategory) {
+                params.append('category', activeCategory.dataset.category);
+            }
+            if (activeBrand) {
+                params.append('brand', activeBrand.dataset.brand);
+            }
+            if (price) {
+                params.append('price', price);
+            }
+            if (sort) {
+                params.append('sort', sort);
+            }
+
+            console.log('Clearing filter, fetching:', `/api/new-arrivals/filter?${params.toString()}`);
+
+            // Show loading state
+            const newArrivalsGrid = document.getElementById('newArrivalsGrid');
+
+            if (newArrivalsGrid) {
+                newArrivalsGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 col-span-full"><i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i></div>';
+            }
+
+            fetch(`/api/new-arrivals/filter?${params.toString()}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.html) {
+                        if (newArrivalsGrid) {
+                            newArrivalsGrid.innerHTML = data.html;
+                        }
+                    } else {
+                        if (newArrivalsGrid) {
+                            newArrivalsGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500 col-span-full">No products found</div>';
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    if (newArrivalsGrid) {
+                        newArrivalsGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500 col-span-full">Error loading products</div>';
+                    }
+                });
         };
 
         // Filter toggle functionality
@@ -2193,6 +2238,89 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
                 }
             });
+
+            // Pagination for Shop Section
+            let currentPage = 1;
+            const productsPerPage = 12;
+            let allProducts = [];
+
+            // Store all product data from the grid
+            document.addEventListener('DOMContentLoaded', function() {
+                const productGrid = document.getElementById('productGrid');
+                if (productGrid) {
+                    const productCards = productGrid.querySelectorAll('.product-item');
+                    productCards.forEach((card, index) => {
+                        allProducts.push({
+                            element: card,
+                            index: index
+                        });
+                    });
+                    loadProducts();
+                    updatePagination();
+                }
+            });
+
+            function prevPage() {
+                if (currentPage > 1) {
+                    currentPage--;
+                    loadProducts();
+                }
+            }
+
+            function nextPage() {
+                const totalPages = Math.ceil(allProducts.length / productsPerPage);
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    loadProducts();
+                }
+            }
+
+            function goToPage(page) {
+                currentPage = page;
+                loadProducts();
+            }
+
+            function loadProducts() {
+                const productGrid = document.getElementById('productGrid');
+                if (!productGrid) return;
+
+                const startIndex = (currentPage - 1) * productsPerPage;
+                const endIndex = startIndex + productsPerPage;
+
+                // Hide all products first
+                allProducts.forEach(product => {
+                    product.element.style.display = 'none';
+                });
+
+                // Show only products for current page
+                for (let i = startIndex; i < endIndex && i < allProducts.length; i++) {
+                    allProducts[i].element.style.display = 'block';
+                }
+
+                updatePagination();
+            }
+
+            function updatePagination() {
+                const paginationNumbers = document.getElementById('paginationNumbers');
+                if (!paginationNumbers) return;
+
+                const totalPages = Math.ceil(allProducts.length / productsPerPage);
+                paginationNumbers.innerHTML = '';
+
+                // Show pages in groups of 5 (1-5, 6-10, etc.)
+                const pagesPerGroup = 5;
+                const currentGroup = Math.ceil(currentPage / pagesPerGroup);
+                let startPage = (currentGroup - 1) * pagesPerGroup + 1;
+                let endPage = Math.min(totalPages, startPage + pagesPerGroup - 1);
+
+                for (let i = startPage; i <= endPage; i++) {
+                    const pageBtn = document.createElement('button');
+                    pageBtn.textContent = i;
+                    pageBtn.className = `px-1.5 py-1 border rounded text-xs transition ${i === currentPage ? 'bg-black text-white border-black' : 'border-zinc-300 hover:bg-zinc-100'}`;
+                    pageBtn.onclick = () => goToPage(i);
+                    paginationNumbers.appendChild(pageBtn);
+                }
+            }
         })();
     </script>
 @endpush

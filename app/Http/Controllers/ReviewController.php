@@ -62,7 +62,13 @@ class ReviewController extends Controller
         return response()->json([
             'success' => true,
             'message' => $autoApprove ? 'Review berhasil ditambahkan.' : 'Review berhasil ditambahkan dan menunggu persetujuan admin.',
-            'review' => $review
+            'review' => [
+                'id' => $review->id,
+                'user_name' => Auth::user()->name,
+                'is_verified' => $isVerified,
+                'rating' => $review->rating,
+                'comment' => $review->comment
+            ]
         ]);
     }
 

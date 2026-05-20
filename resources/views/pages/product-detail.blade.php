@@ -19,482 +19,211 @@
                     </ol>
                 </nav>
 
-                <div class="py-4 max-w-4xl mx-auto" x-data="{ activeImage: '{{ $product->image_url }}' }">
-    
-    <!-- Main Image - Full Width -->
-    <div class="relative w-full bg-zinc-50 overflow-hidden aspect-square">
-        <img :src="activeImage"
-             alt="{{ $product->name }}"
-             class="w-full h-full object-contain transition-all duration-500 ease-out">
-        @if($product->hasActiveDiscount())
-            <span class="absolute left-3 top-3 bg-rose-500 px-3 py-1.5 text-xs font-semibold text-white z-10 rounded">-{{ $product->formatted_discount_percent }}</span>
-        @endif
-        @if($product->package_type === 'bundle')
-            <span class="absolute left-3 {{ $product->hasActiveDiscount() ? 'top-12' : 'top-3' }} bg-purple-500 px-3 py-1.5 text-xs font-semibold text-white z-10 rounded">Bundle</span>
-        @endif
-        @if($product->isBestSeller())
-            <span class="absolute right-3 top-3 bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white z-10 rounded">Best Seller</span>
-        @endif
-    </div>
+                <div class="grid md:grid-cols-[auto_1fr] gap-5 lg:gap-6 py-4">
+                    <!-- Product Gallery -->
+                    <div class="flex flex-col gap-3 max-w-[600px]" x-data="{ activeImage: '{{ $product->image_url }}' }">
+                        <!-- Main Image -->
+                        <div class="relative">
+                            <div class="w-full max-w-[450px] mx-auto bg-zinc-50 overflow-hidden flex items-center justify-center relative aspect-square">
+                                <img :src="activeImage" 
+                                     alt="{{ $product->name }}" 
+                                     class="w-full h-full object-cover transition-all duration-500 ease-out">
+                                @if($product->hasActiveDiscount())
+                                    <span class="absolute left-3 top-3 bg-rose-500 px-3 py-1.5 text-xs font-semibold text-white z-10 rounded">-{{ $product->formatted_discount_percent }}</span>
+                                @endif
+                                @if($product->package_type === 'bundle')
+                                    <span class="absolute left-3 {{ $product->hasActiveDiscount() ? 'top-12' : 'top-3' }} bg-purple-500 px-3 py-1.5 text-xs font-semibold text-white z-10 rounded">Bundle</span>
+                                @endif
+                                @if($product->isBestSeller())
+                                    <span class="absolute right-3 top-3 bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white z-10 rounded">Best Seller</span>
+                                @endif
+                            </div>
+                        </div>
 
-    <!-- Thumbnails - Horizontal Row Below Main Image -->
-    @php $allImages = $product->all_images; @endphp
-    <div class="flex gap-2 mt-3 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        @foreach($allImages as $index => $imageUrl)
-            <button @click="activeImage = '{{ $imageUrl }}'"
-                    class="shrink-0 w-16 h-16 md:w-20 md:h-20 bg-zinc-50 transition-all duration-200 flex items-center justify-center p-1.5 overflow-hidden"
-                    :class="activeImage === '{{ $imageUrl }}' ? 'ring-2 ring-black ring-offset-1' : 'hover:bg-zinc-100 ring-1 ring-zinc-200'">
-                <img src="{{ $imageUrl }}" alt="{{ $product->name }} - {{ $index + 1 }}" class="w-full h-full object-cover">
-            </button>
-        @endforeach
-    </div>
+                        <!-- Thumbnails - di bawah gambar besar -->
+                        @php $allImages = $product->all_images; @endphp
+                        <div class="flex gap-2 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                            @foreach($allImages as $index => $imageUrl)
+                                <button @click="activeImage = '{{ $imageUrl }}'"
+                                        class="shrink-0 w-16 h-16 md:w-20 md:h-20 bg-zinc-50 transition-all duration-200 flex items-center justify-center p-1.5 overflow-hidden"
+                                        :class="activeImage === '{{ $imageUrl }}' ? 'ring-2 ring-black ring-offset-1' : 'ring-1 ring-zinc-200 hover:ring-zinc-400'">
+                                    <img src="{{ $imageUrl }}" alt="{{ $product->name }} - {{ $index + 1 }}" class="w-full h-full object-cover">
+                                </button>
+                            @endforeach
+                        </div>
+                    </div>
 
-    <!-- Product Info - Below Gallery -->
-    <div class="mt-6 space-y-4">
-        <!-- Category Badge -->
-        <div class="flex items-center gap-2 flex-wrap">
-            <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-zinc-100 text-zinc-700 border border-zinc-200">
-                {{ $product->category_label }}
-            </span>
-            @if($product->package_type === 'bundle')
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-700 border border-purple-200">
-                    <i class="fas fa-box-open text-[10px]"></i> Bundling
-                </span>
-            @endif
-            @if($product->hasActiveDiscount())
-                <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700 border border-red-200">
-                    Discount {{ $product->formatted_discount_percent }}
-                </span>
-            @endif
-            @if($product->stock <= 0)
-                <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-zinc-100 text-zinc-500 border border-zinc-200">
-                    Out of Stock
-                </span>
-            @endif
-        </div>
+                    <!-- Product Info - Lebih Compact -->
+                    <div class="space-y-4">
+                        <!-- Category Badge -->
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-zinc-100 text-zinc-700 border border-zinc-200">
+                                {{ $product->category_label }}
+                            </span>
+                            
+                            @if($product->package_type === 'bundle')
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-700 border border-purple-200">
+                                    <i class="fas fa-box-open text-[10px]"></i>
+                                    Bundling
+                                </span>
+                            @endif
+                            
+                            @if($product->hasActiveDiscount())
+                                <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700 border border-red-200">
+                                    Discount {{ $product->formatted_discount_percent }}
+                                </span>
+                            @endif
 
-        <!-- Product Name -->
-        <h1 class="text-2xl md:text-3xl font-semibold text-black tracking-tight leading-tight">{{ $product->name }}</h1>
+                            @if($product->stock <= 0)
+                                <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-zinc-100 text-zinc-500 border border-zinc-200">
+                                    Out of Stock
+                                </span>
+                            @endif
+                        </div>
 
-        <!-- Rating & Terjual -->
-        <div class="flex items-center gap-4 text-sm">
-            <div class="flex items-center gap-1">
-                @php
-                    $totalSold = \App\Models\OrderItem::where('product_id', $product->id)
-                        ->whereHas('order', function($q) {
-                            $q->whereIn('status', ['completed', 'delivered']);
-                        })->sum('quantity');
-                    $displayRating = $reviews->isNotEmpty() ? $reviews->avg('rating') : 5.0;
-                @endphp
-                @for($i = 1; $i <= 5; $i++)
-                    <i class="fas fa-star {{ $i <= floor($displayRating) ? 'text-black' : 'text-zinc-300' }} text-sm"></i>
-                @endfor
-                <span class="text-zinc-600 ml-1">{{ number_format($displayRating, 1) }}</span>
-            </div>
-            <span class="text-zinc-300">|</span>
-            <div class="text-zinc-600">
-                <i class="fas fa-box text-xs mr-1"></i>
-                <span class="font-semibold text-black">{{ $totalSold }}</span> Terjual
-            </div>
-        </div>
+                        <!-- Product Name -->
+                        <div>
+                            <h1 class="text-xl md:text-2xl font-semibold text-black tracking-tight leading-tight">{{ $product->name }}</h1>
+                        </div>
 
-        <!-- Price -->
-        <div class="space-y-1">
-            @if($product->hasActiveDiscount())
-                <div class="flex items-baseline gap-3">
-                    <span class="text-3xl font-bold text-black">{{ $product->formatted_discounted_price }}</span>
-                    <span class="text-lg text-zinc-400 line-through">{{ $product->formatted_price }}</span>
+                        <!-- Rating & Terjual -->
+                        <div class="flex items-center gap-4 text-sm">
+                            <div class="flex items-center gap-1">
+                                @php
+                                    $totalSold = \App\Models\OrderItem::where('product_id', $product->id)
+                                        ->whereHas('order', function($q) {
+                                            $q->whereIn('status', ['completed', 'delivered']);
+                                        })->sum('quantity');
+
+                                    $reviews = \App\Models\Review::where('product_id', $product->id)
+                                        ->where('is_approved', true)
+                                        ->get();
+                                    $displayRating = $reviews->isNotEmpty() ? $reviews->avg('rating') : 5.0;
+                                @endphp
+                                @for($i = 1; $i <= 5; $i++)
+                                    <i class="fas fa-star {{ $i <= floor($displayRating) ? 'text-black' : 'text-zinc-500' }} text-sm"></i>
+                                @endfor
+                                <span class="text-zinc-600 ml-1">{{ number_format($displayRating, 1) }}</span>
+                            </div>
+                            <span class="text-zinc-400">|</span>
+                            <div class="text-zinc-600">
+                                <i class="fas fa-box text-xs mr-1"></i>
+                                <span class="font-semibold text-black">{{ $totalSold }}</span> Terjual
+                            </div>
+                        </div>
+
+                        <!-- Price -->
+                        <div class="space-y-1">
+                            @if($product->hasActiveDiscount())
+                                <div class="flex items-baseline gap-3">
+                                    <span class="text-3xl font-bold text-black">{{ $product->formatted_discounted_price }}</span>
+                                    <span class="text-lg text-zinc-400 line-through">{{ $product->formatted_price }}</span>
+                                </div>
+                                <p class="text-sm text-green-600 font-medium">
+                                    <i class="fas fa-tag mr-1"></i>Save {{ $product->formatted_discount_amount }}
+                                </p>
+                            @else
+                                <span class="text-3xl font-bold text-black">{{ $product->formatted_price }}</span>
+                            @endif
+                        </div>
+
+                        <!-- Description -->
+                        <div class="border-t border-zinc-200 pt-4">
+                            <h3 class="text-xs font-semibold text-black uppercase tracking-wider mb-2">Product Description</h3>
+                            @php
+                                $rawDescription = trim((string) $product->description);
+
+                                // Split by new lines first, fallback to sentence split.
+                                $parts = preg_split("/\r\n|\r|\n/", $rawDescription) ?: [];
+                                $parts = array_values(array_filter(array_map('trim', $parts)));
+
+                                if (count($parts) === 0 && $rawDescription !== '') {
+                                    $sentences = preg_split('/(?<=[.!?])\s+/', $rawDescription) ?: [];
+                                    $sentences = array_values(array_filter(array_map('trim', $sentences)));
+
+                                    // Build up to 3 short paragraphs from sentences.
+                                    $parts = [];
+                                    $buffer = '';
+                                    foreach ($sentences as $sentence) {
+                                        $candidate = trim($buffer === '' ? $sentence : ($buffer . ' ' . $sentence));
+                                        if (mb_strlen($candidate) > 180 && $buffer !== '') {
+                                            $parts[] = $buffer;
+                                            $buffer = $sentence;
+                                            if (count($parts) >= 3) break;
+                                        } else {
+                                            $buffer = $candidate;
+                                        }
+                                    }
+                                    if (count($parts) < 3 && trim($buffer) !== '') {
+                                        $parts[] = trim($buffer);
+                                    }
+                                }
+
+                                $maxParagraphs = 2;
+                                $displayParts = array_slice($parts, 0, $maxParagraphs);
+
+                                // Clamp each paragraph length to keep it tidy.
+                                $displayParts = array_map(function ($p) {
+                                    $p = trim((string) $p);
+                                    if (mb_strlen($p) > 220) {
+                                        return rtrim(mb_substr($p, 0, 217)) . '...';
+                                    }
+                                    return $p;
+                                }, $displayParts);
+
+                                $hasMore = count($parts) > $maxParagraphs;
+                            @endphp
+
+                            <div class="space-y-2 text-sm text-zinc-600 leading-relaxed">
+                                @forelse($displayParts as $paragraph)
+                                    <p>{{ $paragraph }}</p>
+                                @empty
+                                    <p class="text-zinc-500">No description available.</p>
+                                @endforelse
+                                @if($hasMore)
+                                    <p class="text-zinc-500">...</p>
+                                @endif
+                            </div>
+                        </div>
+
+                        <!-- Product Details -->
+                        <div class="border-t border-zinc-200 pt-4">
+                            <h3 class="text-xs font-semibold text-black uppercase tracking-wider mb-2">Product Details</h3>
+                            <div class="grid grid-cols-2 gap-2 text-sm">
+                                <div class="flex items-center gap-2 text-zinc-600">
+                                    <i class="fas fa-weight-hanging w-4 text-xs"></i>
+                                    <span>Weight: <strong class="text-black">{{ $product->formatted_weight }}</strong></span>
+                                </div>
+                                <div class="flex items-center gap-2 text-zinc-600">
+                                    <i class="fas fa-boxes w-4 text-xs"></i>
+                                    <span>Stock: <strong class="text-black">{{ $product->stock }}</strong></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="border-t border-zinc-200 pt-4 space-y-2">
+                            @if($product->stock > 0)
+                                <form action="{{ route('customer.cart.add', $product) }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit" class="w-full border border-black bg-black px-3 py-3 text-sm font-semibold text-white transition duration-200 hover:bg-black/90 hover:border-black/90 flex items-center justify-center gap-2">
+                                        <i class="fas fa-shopping-cart text-sm"></i>
+                                        Add to Cart
+                                    </button>
+                                </form>
+                            @else
+                                <button disabled class="w-full bg-zinc-200 text-zinc-500 py-3 font-semibold text-sm cursor-not-allowed">
+                                    Out of Stock
+                                </button>
+                            @endif
+                        </div>
+                    </div>
                 </div>
-                <p class="text-sm text-green-600 font-medium">
-                    <i class="fas fa-tag mr-1"></i>Save {{ $product->formatted_discount_amount }}
-                </p>
-            @else
-                <span class="text-3xl font-bold text-black">{{ $product->formatted_price }}</span>
-            @endif
-        </div>
-
-        <!-- Description -->
-        <div class="border-t border-zinc-200 pt-4" x-data="{ openQuestion: null }">
-            <h3 class="text-xs font-semibold text-black uppercase tracking-wider mb-2">Product Description</h3>
-            <div class="text-sm text-zinc-600 leading-relaxed whitespace-pre-line mb-4">
-                {{ $product->description ?? 'No description available.' }}
-            </div>
-
-            <!-- Q&A Section - Based on Product Type -->
-            <h3 class="text-xs font-semibold text-black uppercase tracking-wider mb-3">Others Also Asked</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                @if($product->type === 'racket')
-                    <!-- Racket Questions - Left Column -->
-                    <div class="space-y-2">
-                        @for($i = 1; $i <= 10; $i++)
-                        <div class="border border-zinc-200 rounded overflow-hidden">
-                            <button @click="openQuestion = openQuestion === {{ $i }} ? null : {{ $i }}" class="w-full flex items-center justify-between p-2.5 text-left bg-white hover:bg-zinc-50 transition">
-                                @if($i == 1)
-                                <span class="text-xs font-medium text-black">What is the brand?</span>
-                                @elseif($i == 2)
-                                <span class="text-xs font-medium text-black">What is the series?</span>
-                                @elseif($i == 3)
-                                <span class="text-xs font-medium text-black">What is the shape?</span>
-                                @elseif($i == 4)
-                                <span class="text-xs font-medium text-black">What is the balance?</span>
-                                @elseif($i == 5)
-                                <span class="text-xs font-medium text-black">What is the weight?</span>
-                                @elseif($i == 6)
-                                <span class="text-xs font-medium text-black">What is the level?</span>
-                                @elseif($i == 7)
-                                <span class="text-xs font-medium text-black">What play style is suitable?</span>
-                                @elseif($i == 8)
-                                <span class="text-xs font-medium text-black">What player type?</span>
-                                @elseif($i == 9)
-                                <span class="text-xs font-medium text-black">What type of core?</span>
-                                @else
-                                <span class="text-xs font-medium text-black">How many faces?</span>
-                                @endif
-                                <i class="fas fa-chevron-down text-zinc-400 text-xs transition-transform" :class="openQuestion === {{ $i }} ? 'rotate-180' : ''"></i>
-                            </button>
-                            <div x-show="openQuestion === {{ $i }}" x-collapse class="px-2.5 pb-2.5 bg-zinc-50">
-                                @if($i == 1)
-                                <p class="text-xs text-zinc-600">This racket is from {{ $product->brand ?? 'premium' }} brand with premium quality.</p>
-                                @elseif($i == 2)
-                                <p class="text-xs text-zinc-600">This series is the latest collection with cutting-edge technology.</p>
-                                @elseif($i == 3)
-                                <p class="text-xs text-zinc-600">The racket shape is designed for optimal performance on court.</p>
-                                @elseif($i == 4)
-                                <p class="text-xs text-zinc-600">Balance is designed for a balanced combination of power and control.</p>
-                                @elseif($i == 5)
-                                <p class="text-xs text-zinc-600">Weight is ideal for quick maneuvers and good stamina.</p>
-                                @elseif($i == 6)
-                                <p class="text-xs text-zinc-600">@if($product->level === 'pro') Professional level for competition. @else {{ $product->level ?? 'Intermediate' }} level for skill development. @endif</p>
-                                @elseif($i == 7)
-                                <p class="text-xs text-zinc-600">Suitable for aggressive or defensive playing style as needed.</p>
-                                @elseif($i == 8)
-                                <p class="text-xs text-zinc-600">Designed for players who want to improve performance.</p>
-                                @elseif($i == 9)
-                                <p class="text-xs text-zinc-600">Uses EVA core for responsiveness and good power.</p>
-                                @else
-                                <p class="text-xs text-zinc-600">This racket has a large sweet spot for better accuracy.</p>
-                                @endif
-                            </div>
-                        </div>
-                        @endfor
-                    </div>
-                @elseif($product->type === 'shoes')
-                    <!-- Shoes Questions - Left Column -->
-                    <div class="space-y-2">
-                        @for($i = 1; $i <= 10; $i++)
-                        <div class="border border-zinc-200 rounded overflow-hidden">
-                            <button @click="openQuestion = openQuestion === {{ $i }} ? null : {{ $i }}" class="w-full flex items-center justify-between p-2.5 text-left bg-white hover:bg-zinc-50 transition">
-                                @if($i == 1)
-                                <span class="text-xs font-medium text-black">What is the brand?</span>
-                                @elseif($i == 2)
-                                <span class="text-xs font-medium text-black">What is the series?</span>
-                                @elseif($i == 3)
-                                <span class="text-xs font-medium text-black">What is the shape?</span>
-                                @elseif($i == 4)
-                                <span class="text-xs font-medium text-black">What is the balance?</span>
-                                @elseif($i == 5)
-                                <span class="text-xs font-medium text-black">What is the weight?</span>
-                                @elseif($i == 6)
-                                <span class="text-xs font-medium text-black">What is the level?</span>
-                                @elseif($i == 7)
-                                <span class="text-xs font-medium text-black">What play style is suitable?</span>
-                                @elseif($i == 8)
-                                <span class="text-xs font-medium text-black">What player type?</span>
-                                @elseif($i == 9)
-                                <span class="text-xs font-medium text-black">What type of sole?</span>
-                                @else
-                                <span class="text-xs font-medium text-black">How many faces?</span>
-                                @endif
-                                <i class="fas fa-chevron-down text-zinc-400 text-xs transition-transform" :class="openQuestion === {{ $i }} ? 'rotate-180' : ''"></i>
-                            </button>
-                            <div x-show="openQuestion === {{ $i }}" x-collapse class="px-2.5 pb-2.5 bg-zinc-50">
-                                @if($i == 1)
-                                <p class="text-xs text-zinc-600">These shoes are from {{ $product->brand ?? 'premium' }} brand with premium quality.</p>
-                                @elseif($i == 2)
-                                <p class="text-xs text-zinc-600">This series is the latest collection with cutting-edge technology.</p>
-                                @elseif($i == 3)
-                                <p class="text-xs text-zinc-600">The shoe shape is designed for maximum comfort.</p>
-                                @elseif($i == 4)
-                                <p class="text-xs text-zinc-600">Balance is designed for stability and quick movements.</p>
-                                @elseif($i == 5)
-                                <p class="text-xs text-zinc-600">Lightweight for optimal maneuvering on court.</p>
-                                @elseif($i == 6)
-                                <p class="text-xs text-zinc-600">@if($product->level === 'pro') Professional level for competition. @else {{ $product->level ?? 'Intermediate' }} level for skill development. @endif</p>
-                                @elseif($i == 7)
-                                <p class="text-xs text-zinc-600">Suitable for aggressive or defensive playing style.</p>
-                                @elseif($i == 8)
-                                <p class="text-xs text-zinc-600">Designed for players who want maximum performance.</p>
-                                @elseif($i == 9)
-                                <p class="text-xs text-zinc-600">Uses herringbone sole for maximum grip.</p>
-                                @else
-                                <p class="text-xs text-zinc-600">These shoes have multi-directional design for lateral movements.</p>
-                                @endif
-                            </div>
-                        </div>
-                        @endfor
-                    </div>
-                @else
-                    <!-- General/Accessories Questions - Left Column -->
-                    <div class="space-y-2">
-                        @for($i = 1; $i <= 10; $i++)
-                        <div class="border border-zinc-200 rounded overflow-hidden">
-                            <button @click="openQuestion = openQuestion === {{ $i }} ? null : {{ $i }}" class="w-full flex items-center justify-between p-2.5 text-left bg-white hover:bg-zinc-50 transition">
-                                @if($i == 1)
-                                <span class="text-xs font-medium text-black">What is the brand?</span>
-                                @elseif($i == 2)
-                                <span class="text-xs font-medium text-black">What is the series?</span>
-                                @elseif($i == 3)
-                                <span class="text-xs font-medium text-black">What is the shape?</span>
-                                @elseif($i == 4)
-                                <span class="text-xs font-medium text-black">What is the balance?</span>
-                                @elseif($i == 5)
-                                <span class="text-xs font-medium text-black">What is the weight?</span>
-                                @elseif($i == 6)
-                                <span class="text-xs font-medium text-black">What is the level?</span>
-                                @elseif($i == 7)
-                                <span class="text-xs font-medium text-black">What play style is suitable?</span>
-                                @elseif($i == 8)
-                                <span class="text-xs font-medium text-black">What player type?</span>
-                                @elseif($i == 9)
-                                <span class="text-xs font-medium text-black">What type of material?</span>
-                                @else
-                                <span class="text-xs font-medium text-black">How many faces?</span>
-                                @endif
-                                <i class="fas fa-chevron-down text-zinc-400 text-xs transition-transform" :class="openQuestion === {{ $i }} ? 'rotate-180' : ''"></i>
-                            </button>
-                            <div x-show="openQuestion === {{ $i }}" x-collapse class="px-2.5 pb-2.5 bg-zinc-50">
-                                @if($i == 1)
-                                <p class="text-xs text-zinc-600">This product is from {{ $product->brand ?? 'premium' }} brand with premium quality.</p>
-                                @elseif($i == 2)
-                                <p class="text-xs text-zinc-600">This series is the latest collection with cutting-edge technology.</p>
-                                @elseif($i == 3)
-                                <p class="text-xs text-zinc-600">The product shape is designed for maximum functionality.</p>
-                                @elseif($i == 4)
-                                <p class="text-xs text-zinc-600">Balance is designed for balanced usage.</p>
-                                @elseif($i == 5)
-                                <p class="text-xs text-zinc-600">Weight is ideal for portability and ease of use.</p>
-                                @elseif($i == 6)
-                                <p class="text-xs text-zinc-600">@if($product->level === 'pro') Professional level for competition. @else {{ $product->level ?? 'Intermediate' }} level for skill development. @endif</p>
-                                @elseif($i == 7)
-                                <p class="text-xs text-zinc-600">Suitable for various playing styles.</p>
-                                @elseif($i == 8)
-                                <p class="text-xs text-zinc-600">Designed for players who want optimal performance.</p>
-                                @elseif($i == 9)
-                                <p class="text-xs text-zinc-600">Uses high-quality material for durability.</p>
-                                @else
-                                <p class="text-xs text-zinc-600">This product has multi-function for different needs.</p>
-                                @endif
-                            </div>
-                        </div>
-                        @endfor
-                    </div>
-                @endif
-
-                <!-- Right Column -->
-                @if($product->type === 'racket')
-                    <div class="space-y-2">
-                        @for($i = 11; $i <= 20; $i++)
-                        <div class="border border-zinc-200 rounded overflow-hidden">
-                            <button @click="openQuestion = openQuestion === {{ $i }} ? null : {{ $i }}" class="w-full flex items-center justify-between p-2.5 text-left bg-white hover:bg-zinc-50 transition">
-                                @if($i == 11)
-                                <span class="text-xs font-medium text-black">What is the frame?</span>
-                                @elseif($i == 12)
-                                <span class="text-xs font-medium text-black">What is the feel?</span>
-                                @elseif($i == 13)
-                                <span class="text-xs font-medium text-black">How is the power?</span>
-                                @elseif($i == 14)
-                                <span class="text-xs font-medium text-black">How is the control?</span>
-                                @elseif($i == 15)
-                                <span class="text-xs font-medium text-black">What is the maneuverability?</span>
-                                @elseif($i == 16)
-                                <span class="text-xs font-medium text-black">What is the comfort?</span>
-                                @elseif($i == 17)
-                                <span class="text-xs font-medium text-black">What is the technology?</span>
-                                @elseif($i == 18)
-                                <span class="text-xs font-medium text-black">What are the benefits?</span>
-                                @elseif($i == 19)
-                                <span class="text-xs font-medium text-black">Suitable for who?</span>
-                                @else
-                                <span class="text-xs font-medium text-black">What is the collection?</span>
-                                @endif
-                                <i class="fas fa-chevron-down text-zinc-400 text-xs transition-transform" :class="openQuestion === {{ $i }} ? 'rotate-180' : ''"></i>
-                            </button>
-                            <div x-show="openQuestion === {{ $i }}" x-collapse class="px-2.5 pb-2.5 bg-zinc-50">
-                                @if($i == 11)
-                                <p class="text-xs text-zinc-600">Frame uses carbon fiber for strength and lightness.</p>
-                                @elseif($i == 12)
-                                <p class="text-xs text-zinc-600">Feel is solid and responsive for better control.</p>
-                                @elseif($i == 13)
-                                <p class="text-xs text-zinc-600">Maximum power for smash and finishing points.</p>
-                                @elseif($i == 14)
-                                <p class="text-xs text-zinc-600">Precise control for accurate placement shots.</p>
-                                @elseif($i == 15)
-                                <p class="text-xs text-zinc-600">High maneuverability for quick movements on court.</p>
-                                @elseif($i == 16)
-                                <p class="text-xs text-zinc-600">Maximum comfort with anti-vibration system.</p>
-                                @elseif($i == 17)
-                                <p class="text-xs text-zinc-600">Latest technology for better performance and spin.</p>
-                                @elseif($i == 18)
-                                <p class="text-xs text-zinc-600">Benefits include durability and optimal performance.</p>
-                                @elseif($i == 19)
-                                <p class="text-xs text-zinc-600">Suitable for players from {{ $product->level ?? 'intermediate' }} level and up.</p>
-                                @else
-                                <p class="text-xs text-zinc-600">Latest collection from {{ $product->brand ?? 'brand' }} for this season.</p>
-                                @endif
-                            </div>
-                        </div>
-                        @endfor
-                    </div>
-                @elseif($product->type === 'shoes')
-                    <div class="space-y-2">
-                        @for($i = 11; $i <= 20; $i++)
-                        <div class="border border-zinc-200 rounded overflow-hidden">
-                            <button @click="openQuestion = openQuestion === {{ $i }} ? null : {{ $i }}" class="w-full flex items-center justify-between p-2.5 text-left bg-white hover:bg-zinc-50 transition">
-                                @if($i == 11)
-                                <span class="text-xs font-medium text-black">What is the frame?</span>
-                                @elseif($i == 12)
-                                <span class="text-xs font-medium text-black">What is the feel?</span>
-                                @elseif($i == 13)
-                                <span class="text-xs font-medium text-black">How is the power?</span>
-                                @elseif($i == 14)
-                                <span class="text-xs font-medium text-black">How is the control?</span>
-                                @elseif($i == 15)
-                                <span class="text-xs font-medium text-black">What is the maneuverability?</span>
-                                @elseif($i == 16)
-                                <span class="text-xs font-medium text-black">What is the comfort?</span>
-                                @elseif($i == 17)
-                                <span class="text-xs font-medium text-black">What is the technology?</span>
-                                @elseif($i == 18)
-                                <span class="text-xs font-medium text-black">What are the benefits?</span>
-                                @elseif($i == 19)
-                                <span class="text-xs font-medium text-black">Suitable for who?</span>
-                                @else
-                                <span class="text-xs font-medium text-black">What is the collection?</span>
-                                @endif
-                                <i class="fas fa-chevron-down text-zinc-400 text-xs transition-transform" :class="openQuestion === {{ $i }} ? 'rotate-180' : ''"></i>
-                            </button>
-                            <div x-show="openQuestion === {{ $i }}" x-collapse class="px-2.5 pb-2.5 bg-zinc-50">
-                                @if($i == 11)
-                                <p class="text-xs text-zinc-600">Frame uses synthetic material for support and lightness.</p>
-                                @elseif($i == 12)
-                                <p class="text-xs text-zinc-600">Feel is comfortable and responsive for quick movements.</p>
-                                @elseif($i == 13)
-                                <p class="text-xs text-zinc-600">Maximum power for running and jumping on court.</p>
-                                @elseif($i == 14)
-                                <p class="text-xs text-zinc-600">Precise control for lateral movements and stopping.</p>
-                                @elseif($i == 15)
-                                <p class="text-xs text-zinc-600">High maneuverability for quick direction changes.</p>
-                                @elseif($i == 16)
-                                <p class="text-xs text-zinc-600">Maximum comfort with good cushioning.</p>
-                                @elseif($i == 17)
-                                <p class="text-xs text-zinc-600">Latest technology for grip and durability.</p>
-                                @elseif($i == 18)
-                                <p class="text-xs text-zinc-600">Benefits include comfort and optimal performance.</p>
-                                @elseif($i == 19)
-                                <p class="text-xs text-zinc-600">Suitable for players from {{ $product->level ?? 'intermediate' }} level and up.</p>
-                                @else
-                                <p class="text-xs text-zinc-600">Latest collection from {{ $product->brand ?? 'brand' }} for this season.</p>
-                                @endif
-                            </div>
-                        </div>
-                        @endfor
-                    </div>
-                @else
-                    <div class="space-y-2">
-                        @for($i = 11; $i <= 20; $i++)
-                        <div class="border border-zinc-200 rounded overflow-hidden">
-                            <button @click="openQuestion = openQuestion === {{ $i }} ? null : {{ $i }}" class="w-full flex items-center justify-between p-2.5 text-left bg-white hover:bg-zinc-50 transition">
-                                @if($i == 11)
-                                <span class="text-xs font-medium text-black">What is the frame?</span>
-                                @elseif($i == 12)
-                                <span class="text-xs font-medium text-black">What is the feel?</span>
-                                @elseif($i == 13)
-                                <span class="text-xs font-medium text-black">How is the power?</span>
-                                @elseif($i == 14)
-                                <span class="text-xs font-medium text-black">How is the control?</span>
-                                @elseif($i == 15)
-                                <span class="text-xs font-medium text-black">What is the maneuverability?</span>
-                                @elseif($i == 16)
-                                <span class="text-xs font-medium text-black">What is the comfort?</span>
-                                @elseif($i == 17)
-                                <span class="text-xs font-medium text-black">What is the technology?</span>
-                                @elseif($i == 18)
-                                <span class="text-xs font-medium text-black">What are the benefits?</span>
-                                @elseif($i == 19)
-                                <span class="text-xs font-medium text-black">Suitable for who?</span>
-                                @else
-                                <span class="text-xs font-medium text-black">What is the collection?</span>
-                                @endif
-                                <i class="fas fa-chevron-down text-zinc-400 text-xs transition-transform" :class="openQuestion === {{ $i }} ? 'rotate-180' : ''"></i>
-                            </button>
-                            <div x-show="openQuestion === {{ $i }}" x-collapse class="px-2.5 pb-2.5 bg-zinc-50">
-                                @if($i == 11)
-                                <p class="text-xs text-zinc-600">Frame uses quality material for durability.</p>
-                                @elseif($i == 12)
-                                <p class="text-xs text-zinc-600">Feel is comfortable and ergonomic for use.</p>
-                                @elseif($i == 13)
-                                <p class="text-xs text-zinc-600">Maximum performance for different needs.</p>
-                                @elseif($i == 14)
-                                <p class="text-xs text-zinc-600">Precise control for effective usage.</p>
-                                @elseif($i == 15)
-                                <p class="text-xs text-zinc-600">High maneuverability for ease of use.</p>
-                                @elseif($i == 16)
-                                <p class="text-xs text-zinc-600">Maximum comfort with ergonomic design.</p>
-                                @elseif($i == 17)
-                                <p class="text-xs text-zinc-600">Latest technology for optimal functionality.</p>
-                                @elseif($i == 18)
-                                <p class="text-xs text-zinc-600">Benefits include quality and optimal performance.</p>
-                                @elseif($i == 19)
-                                <p class="text-xs text-zinc-600">Suitable for users from {{ $product->level ?? 'intermediate' }} level and up.</p>
-                                @else
-                                <p class="text-xs text-zinc-600">Latest collection from {{ $product->brand ?? 'brand' }} for this season.</p>
-                                @endif
-                            </div>
-                        </div>
-                        @endfor
-                    </div>
-                @endif
-            </div>
-        </div>
-
-        <!-- Product Details -->
-        <div class="border-t border-zinc-200 pt-4">
-            <h3 class="text-xs font-semibold text-black uppercase tracking-wider mb-2">Product Details</h3>
-            <div class="grid grid-cols-2 gap-2 text-sm">
-                <div class="flex items-center gap-2 text-zinc-600">
-                    <i class="fas fa-weight-hanging w-4 text-xs"></i>
-                    <span>Weight: <strong class="text-black">{{ $product->formatted_weight }}</strong></span>
-                </div>
-                <div class="flex items-center gap-2 text-zinc-600">
-                    <i class="fas fa-boxes w-4 text-xs"></i>
-                    <span>Stock: <strong class="text-black">{{ $product->stock }}</strong></span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="border-t border-zinc-200 pt-4">
-            @if($product->stock > 0)
-                <form action="{{ route('customer.cart.add', $product) }}" method="POST">
-                    @csrf
-                    <input type="hidden" name="quantity" value="1">
-                    <button type="submit" class="w-full border border-black bg-black px-3 py-3.5 text-sm font-semibold text-white transition duration-200 hover:bg-black/90 flex items-center justify-center gap-2">
-                        <i class="fas fa-shopping-cart text-sm"></i>
-                        Add to Cart
-                    </button>
-                </form>
-            @else
-                <button disabled class="w-full bg-zinc-200 text-zinc-500 py-3.5 font-semibold text-sm cursor-not-allowed">
-                    Out of Stock
-                </button>
-            @endif
-        </div>
-    </div>
-</div>
 
                 <!-- Customer Reviews Section -->
-                <section class="mt-16 pt-12 border-t border-zinc-200">
-                    <div class="grid lg:grid-cols-[35%_65%] gap-12">
+                <section class="mt-16 pt-12 pb-16 border-t border-zinc-200">
+                    <div class="grid lg:grid-cols-[35%_65%] gap-8 lg:gap-12">
                         <!-- Left Column - Review Summary -->
                         <div class="space-y-8">
                             <div>
@@ -527,25 +256,25 @@
                         </div>
 
                         <!-- Right Column - Reviews List -->
-                        <div class="space-y-6">
+                        <div class="space-y-6 lg:pl-4">
                             <!-- Header -->
-                            <div class="flex items-center justify-between mb-6">
+                            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
                                 <h3 class="text-[11px] font-semibold tracking-[0.15em] text-black uppercase">Reviews {{ $totalReviews }}</h3>
                                 @auth
-                                    <button onclick="openReviewModal()" class="bg-black text-white px-6 py-2.5 text-[10px] font-semibold tracking-[0.1em] uppercase transition duration-200 hover:bg-white hover:text-black border border-black">
+                                    <button onclick="openReviewModal()" class="bg-black text-white px-4 py-2 text-[10px] font-semibold tracking-[0.1em] uppercase transition duration-200 hover:bg-white hover:text-black border border-black whitespace-nowrap">
                                         Write a Review
                                     </button>
                                 @else
-                                    <a href="{{ route('login') }}" class="bg-black text-white px-6 py-2.5 text-[10px] font-semibold tracking-[0.1em] uppercase transition duration-200 hover:bg-white hover:text-black border border-black">
+                                    <a href="{{ route('login') }}" class="bg-black text-white px-4 py-2 text-[10px] font-semibold tracking-[0.1em] uppercase transition duration-200 hover:bg-white hover:text-black border border-black whitespace-nowrap">
                                         Login to Review
                                     </a>
                                 @endauth
                             </div>
 
                             <!-- Search & Filter -->
-                            <div class="flex gap-3 mb-8">
+                            <div class="flex flex-col sm:flex-row gap-3 mb-8">
                                 <input type="text" id="reviewSearch" placeholder="Search reviews" class="flex-1 px-4 py-2.5 border border-zinc-200 text-sm focus:outline-none focus:border-zinc-400 transition">
-                                <select id="reviewRatingFilter" class="px-4 py-2.5 border border-zinc-200 text-sm focus:outline-none focus:border-zinc-400 transition bg-white">
+                                <select id="reviewRatingFilter" class="px-4 py-2.5 border border-zinc-200 text-sm focus:outline-none focus:border-zinc-400 transition bg-white min-w-[130px]">
                                     <option value="all">All ratings</option>
                                     <option value="5">5 stars</option>
                                     <option value="4">4 stars</option>
@@ -1049,27 +778,35 @@ document.getElementById('reviewForm')?.addEventListener('submit', function(e) {
     .then(data => {
         if (data.success) {
             closeReviewModal();
-            
+
             // Create new review HTML
             const reviewsList = document.getElementById('reviewsList');
+            if (!reviewsList) {
+                console.error('reviewsList not found');
+                return;
+            }
+
             const noReviewsDiv = reviewsList.querySelector('.py-12.text-center');
-            
             if (noReviewsDiv) {
                 noReviewsDiv.remove();
             }
-            
+
             const newReview = document.createElement('div');
             newReview.className = 'py-8 border-b border-zinc-100 last:border-0 review-item';
             newReview.setAttribute('data-rating', formData.get('rating'));
+
+            const userName = data.review?.user_name || data.review?.name || auth()->user()?.name || 'Anonymous';
+            const isVerified = data.review?.is_verified !== false;
+
             newReview.innerHTML = `
                 <div class="flex items-start justify-between mb-3">
                     <div>
                         <div class="flex items-center gap-2 mb-1">
-                            <h4 class="text-xs font-semibold tracking-[0.05em] text-black uppercase">${data.review.user_name}</h4>
-                            <span class="text-[9px] text-zinc-400 uppercase tracking-wider">· Verified Buyer</span>
+                            <h4 class="text-xs font-semibold tracking-[0.05em] text-black uppercase">${userName}</h4>
+                            ${isVerified ? '<span class="text-[9px] text-zinc-400 uppercase tracking-wider">· Verified Buyer</span>' : ''}
                         </div>
                         <div class="flex items-center gap-1">
-                            ${Array(5).fill(0).map((_, i) => 
+                            ${Array(5).fill(0).map((_, i) =>
                                 `<i class="fas fa-star ${i < parseInt(formData.get('rating')) ? 'text-black' : 'text-zinc-200'} text-xs"></i>`
                             ).join('')}
                         </div>
@@ -1078,9 +815,9 @@ document.getElementById('reviewForm')?.addEventListener('submit', function(e) {
                 </div>
                 ${formData.get('comment') ? `<p class="text-sm text-zinc-600 leading-relaxed mb-4 review-text">${formData.get('comment')}</p>` : ''}
             `;
-            
+
             reviewsList.insertBefore(newReview, reviewsList.firstChild);
-            
+
             // Keep only 10 reviews
             const reviewItems = reviewsList.querySelectorAll('.review-item');
             if (reviewItems.length > 10) {
@@ -1088,14 +825,14 @@ document.getElementById('reviewForm')?.addEventListener('submit', function(e) {
                     reviewItems[i].remove();
                 }
             }
-            
+
             // Update total reviews count
-            const totalReviewsEl = document.querySelector('.text-[\\[10px\\]]');
+            const totalReviewsEl = document.querySelector('.text-\\[11px\\]');
             if (totalReviewsEl) {
                 const currentCount = parseInt(totalReviewsEl.textContent.replace(/\D/g, '')) || 0;
-                totalReviewsEl.textContent = `(${currentCount + 1})`;
+                totalReviewsEl.textContent = `${currentCount + 1} ${currentCount + 1 === 1 ? 'Review' : 'Reviews'}`;
             }
-            
+
             // Reset form
             document.getElementById('reviewForm').reset();
             selectRating(0);

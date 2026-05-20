@@ -4,7 +4,7 @@
         <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-3 md:px-10 lg:px-12">
             <a href="{{ route('home') }}" class="flex items-center gap-2">
                 <img src="{{ asset('storage/logo.png') }}" alt="NoraPadel" class="h-7 w-7 object-contain" loading="lazy">
-                <span class="text-xl font-semibold tracking-tight text-black transition-colors duration-300" id="logoText">NoraPadel</span>
+               
             </a>
 
             <nav class="hidden items-center gap-8 md:flex relative z-50" id="navLinks">

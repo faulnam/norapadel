@@ -57,7 +57,7 @@ class PageController extends Controller
             $shopProductsQuery->where('level', $request->level);
         }
 
-        $shopProducts = $shopProductsQuery->latest()->take(12)->get();
+        $shopProducts = $shopProductsQuery->latest()->get();
         $brands = Product::active()->whereNotNull('brand')->distinct()->pluck('brand')->sort();
 
         // Fetch active vouchers for frontend
@@ -762,23 +762,23 @@ class PageController extends Controller
     {
         $query = Product::active()->inStock()->where('is_featured', false);
 
-        // Filter by brand
-        if ($request->filled('brand')) {
-            $query->where('brand', $request->brand);
-        }
-
-        // Filter by category (type field)
+        // Filter by category (using category field)
         if ($request->filled('category')) {
             $categoryMap = [
-                'racket' => 'racket',
-                'shoes' => 'shoes',
-                'apparel' => 'general',
+                'racket' => Product::CATEGORY_ORIGINAL,
+                'shoes' => Product::CATEGORY_SHOES,
+                'apparel' => Product::CATEGORY_PEDAS,
             ];
 
             $category = $categoryMap[$request->category] ?? null;
             if ($category) {
-                $query->where('type', $category);
+                $query->where('category', $category);
             }
+        }
+
+        // Filter by brand
+        if ($request->filled('brand')) {
+            $query->where('brand', $request->brand);
         }
 
         // Sort by price
@@ -801,10 +801,10 @@ class PageController extends Controller
             $query->latest();
         }
 
-        // Fetch all matching products (no limit)
-        $products = $query->get();
+        // Fetch all matching products (limit to 10)
+        $products = $query->take(10)->get();
 
-        // Generate HTML for products
+        // Generate HTML for products (matching New Arrivals structure)
         $html = '';
         foreach ($products as $product) {
             $soldCount = \App\Models\OrderItem::where('product_id', $product->id)
@@ -812,7 +812,15 @@ class PageController extends Controller
                     $q->whereIn('status', ['completed', 'delivered']);
                 })->sum('quantity');
 
-            $html .= '<div class="product-card group snap-start shrink-0 basis-[40%] sm:basis-[48%] md:basis-[32%] lg:basis-[18%] overflow-hidden bg-white transition duration-300 hover:-translate-y-2" data-category="' . strtolower($product->type) . '" data-brand="' . strtolower($product->brand ?? '') . '">';
+            $html .= '<div class="product-item product-card group block overflow-hidden bg-white transition duration-300 hover:-translate-y-1" ';
+            $html .= 'data-name="' . strtolower($product->name) . '" ';
+            $html .= 'data-price="' . ($product->hasActiveDiscount() ? $product->discounted_price : $product->price) . '" ';
+            $html .= 'data-category="' . strtolower($product->type) . '" ';
+            $html .= 'data-brand="' . strtolower($product->brand ?? '') . '" ';
+            $html .= 'data-level="' . ($product->level ?? '') . '" ';
+            $html .= 'data-discount="' . ($product->hasActiveDiscount() ? 'yes' : 'no') . '" ';
+            $html .= 'data-bundle="' . ($product->package_type === 'bundle' ? 'yes' : 'no') . '" ';
+            $html .= 'data-sold="' . $soldCount . '">';
             $html .= '<a href="' . route('produk.show', $product) . '" class="block">';
             $html .= '<div class="relative aspect-square overflow-hidden">';
             $html .= '<div class="h-full w-full overflow-hidden">';
@@ -823,13 +831,13 @@ class PageController extends Controller
             }
             $html .= '<span class="absolute left-0 ' . ($product->hasActiveDiscount() ? 'top-7' : 'top-0') . ' bg-blue-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Latest</span>';
             if ($product->package_type === 'bundle') {
-                $html .= '<span class="absolute left-0 ' . ($product->hasActiveDiscount() ? 'top-14' : ($product->hasActiveDiscount() || $product->category === 'arrivals' ? 'top-7' : 'top-0')) . ' bg-purple-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Bundle</span>';
+                $html .= '<span class="absolute left-0 ' . ($product->hasActiveDiscount() ? 'top-14' : 'top-7') . ' bg-purple-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Bundle</span>';
             }
             if ($product->isBestSeller()) {
-                $html .= '<span class="absolute right-0 top-0 bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Best Seller</span>';
+                $html .= '<span class="absolute right-0 top-0 bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Popular</span>';
             }
             $html .= '</div>';
-            $html .= '<div class="p-2 md:p-4">';
+            $html .= '<div class="p-3">';
             $html .= '<h3 class="line-clamp-1 text-sm font-medium text-black">' . $product->name . '</h3>';
             $html .= '<p class="mt-1 text-xs text-zinc-600">' . $product->category_label . '</p>';
             $html .= '<div class="mt-1 flex items-center gap-1">';
@@ -847,9 +855,12 @@ class PageController extends Controller
             }
             $html .= '</div>';
             $html .= '</a>';
-            $html .= '<div class="px-2 pb-2 md:px-4 md:pb-4">';
+            $html .= '<div class="px-2 pb-2 md:px-3 md:pb-3">';
             $html .= '<div class="flex items-center gap-2">';
-            $html .= '<a href="' . route('produk.show', $product) . '" class="border border-zinc-300 bg-transparent px-2 py-1 text-[10px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950">View</a>';
+            $html .= '<button onclick="addToCart(\'' . $product->slug . '\', event)" class="border border-zinc-300 bg-transparent px-2 py-1 text-[10px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950 truncate max-w-[80px] md:max-w-none">Add to cart</button>';
+            $html .= '<button onclick="addToWishlist(\'' . $product->slug . '\', event)" class="text-zinc-400 transition duration-300 hover:text-rose-500">';
+            $html .= '<i class="fas fa-heart text-xs md:text-sm"></i>';
+            $html .= '</button>';
             $html .= '</div>';
             $html .= '</div>';
             $html .= '</div>';
