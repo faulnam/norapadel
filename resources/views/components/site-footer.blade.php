@@ -106,7 +106,28 @@
             </details>
         </div>
 
-        <div class="mt-10 border-t border-black/10 pt-4 text-xs text-zinc-400">
+        <div class="mt-10 flex flex-wrap justify-center items-center gap-x-4 gap-y-3">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/a/a2/Logo_QRIS.svg" alt="QRIS" class="h-4 w-auto object-contain transition-all duration-200" loading="lazy">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5c/Bank_Central_Asia.svg" alt="BCA" class="h-4 w-auto object-contain transition-all duration-200" loading="lazy">
+            <img src="{{ asset('storage/seabank.png') }}" alt="SeaBank" class="h-14 w-14 object-contain transition-all duration-200" loading="lazy">
+            <img src="{{ asset('storage/danamon.png') }}" alt="Danamon" class="h-14 w-14 object-contain transition-all duration-200" loading="lazy">
+            <img src="{{ asset('storage/permata.jpg') }}" alt="Permata" class="h-14 w-14 object-contain transition-all duration-200" loading="lazy">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/a/ad/Bank_Mandiri_logo_2016.svg" alt="Mandiri" class="h-4 w-auto object-contain transition-all duration-200" loading="lazy">
+            <img src="{{ asset('storage/bri.png') }}" alt="BRI" class="h-8 w-8 object-contain transition-all duration-200" loading="lazy">
+            <img src="{{ asset('storage/bni.png') }}" alt="BNI" class="h-8 w-8 object-contain transition-all duration-200" loading="lazy">
+            <img src="{{ asset('storage/btn.jpeg') }}" alt="BTN" class="h-10 w-10 object-contain transition-all duration-200" loading="lazy">
+            <img src="{{ asset('storage/cimb.png') }}" alt="CIMB" class="h-10 w-10 object-contain transition-all duration-200" loading="lazy">
+            <img src="{{ asset('storage/ocbc.png') }}" alt="OCBC" class="h-10 w-10 object-contain transition-all duration-200" loading="lazy">
+            <img src="{{ asset('storage/mega.png') }}" alt="Bank Mega" class="h-10 w-10 object-contain transition-all duration-200" loading="lazy">
+            <img src="{{ asset('storage/dana.jpg') }}" alt="DANA" class="h-10 w-10 object-contain transition-all duration-200" loading="lazy">
+            <img src="{{ asset('storage/gopay.webp') }}" alt="GoPay" class="h-12 w-12 object-contain transition-all duration-200" loading="lazy">
+            <img src="{{ asset('storage/shopeepay.png') }}" alt="ShopeePay" class="h-14 w-14 object-contain transition-all duration-200" loading="lazy">
+            <img src="{{ asset('storage/ovo.png') }}" alt="OVO" class="h-10 w-10 object-contain transition-all duration-200" loading="lazy">
+            <img src="{{ asset('storage/linkaja.webp') }}" alt="LinkAja" class="h-16 w-16 object-contain transition-all duration-200" loading="lazy">
+            <img src="{{ asset('storage/nobu.png') }}" alt="Nobu Bank" class="h-10 w-10 object-contain transition-all duration-200" loading="lazy">
+        </div>
+
+        <div class="mt-6 border-t border-black/10 pt-4 text-center text-md text-zinc-500">
             © {{ now()->year }} NoraPadel. All rights reserved.
         </div>
     </div>

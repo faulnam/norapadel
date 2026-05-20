@@ -307,6 +307,13 @@
                         <i class="fas fa-search text-sm"></i>
                     </button>
 
+                    <!-- Dark Mode Toggle (Home Page) -->
+                    <button type="button" id="darkModeToggleHome"
+                            class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20"
+                            title="Toggle Dark/Light Mode" aria-label="Toggle dark mode">
+                        <i class="fas fa-moon text-sm" id="darkModeIconHome"></i>
+                    </button>
+
                     <!-- Hamburger Menu with combined elements -->
                     <div class="relative" id="hamburgerMenuWrapper">
                         <button type="button" id="hamburgerMenuBtn" class="inline-flex h-9 w-9 items-center justify-center rounded border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20 relative">
@@ -468,85 +475,48 @@
         </section>
 
         <!-- Marquee Bar -->
-        <div class="bg-white text-white py-2 overflow-hidden transition-all duration-300" id="marqueeBar">
+        <!-- 6 logos × 20vw = 120vw per set | 2 sets = 240vw | anim: -120vw = seamless loop -->
+        <div class="bg-white py-2 md:py-3 border-y border-zinc-100" style="overflow-x: hidden; overflow-y: visible;" id="marqueeBar">
             <div class="marquee-container">
                 <div class="marquee-content">
                     <!-- Set 1 -->
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/arronax logo.webp') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• ARRONAX •</span>
+                    <span class="marquee-item">
+                        <img src="{{ asset('storage/alpha.png') }}" alt="Alpha" loading="eager">
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/Babolat_logo.svg.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• BABOLAT •</span>
+                    <span class="marquee-item">
+                        <img src="{{ asset('storage/bullpadel2.png') }}" alt="Bullpadel" loading="eager">
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/logobullpadel2 (1).png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• BULLPADEL •</span>
+                    <span class="marquee-item">
+                        <img src="{{ asset('storage/arronax.png') }}" alt="Arronax" loading="eager">
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/logo_nox_1200x1200.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• NOX •</span>
+                    <span class="marquee-item">
+                        <img src="{{ asset('storage/babolat.png') }}" alt="Babolat" loading="eager">
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/alpha padel.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• ALPHA •</span>
+                    <span class="marquee-item">
+                        <img src="{{ asset('storage/head.png') }}" alt="Head" loading="eager">
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/head.jpeg') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• ZEPHYR •</span>
+                    <span class="marquee-item">
+                        <img src="{{ asset('storage/nox.png') }}" alt="Nox" loading="eager">
                     </span>
 
-                    <!-- Set 2 -->
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/arronax logo.webp') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• ARRONAX •</span>
+                    <!-- Set 2 (identical duplicate for seamless infinite loop) -->
+                    <span class="marquee-item">
+                        <img src="{{ asset('storage/alpha.png') }}" alt="Alpha" loading="eager">
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/Babolat_logo.svg.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• BABOLAT •</span>
+                    <span class="marquee-item">
+                        <img src="{{ asset('storage/bullpadel2.png') }}" alt="Bullpadel" loading="eager">
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/logobullpadel2 (1).png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• BULLPADEL •</span>
+                    <span class="marquee-item">
+                        <img src="{{ asset('storage/arronax.png') }}" alt="Arronax" loading="eager">
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/logo_nox_1200x1200.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• NOX •</span>
+                    <span class="marquee-item">
+                        <img src="{{ asset('storage/babolat.png') }}" alt="Babolat" loading="eager">
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/alpha padel.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• ALPHA •</span>
+                    <span class="marquee-item">
+                        <img src="{{ asset('storage/head.png') }}" alt="Head" loading="eager">
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/head.jpeg') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• ZEPHYR •</span>
-                    </span>
-
-                    <!-- Set 3 -->
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/arronax logo.webp') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• ARRONAX •</span>
-                    </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/Babolat_logo.svg.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• BABOLAT •</span>
-                    </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/logobullpadel2 (1).png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• BULLPADEL •</span>
-                    </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/logo_nox_1200x1200.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• NOX •</span>
-                    </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/alpha padel.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• ALPHA •</span>
-                    </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/head.jpeg') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• ZEPHYR •</span>
+                    <span class="marquee-item">
+                        <img src="{{ asset('storage/nox.png') }}" alt="Nox" loading="eager">
                     </span>
                 </div>
             </div>
@@ -897,6 +867,8 @@
                         <i class="fas fa-search text-4xl text-zinc-300 mb-3"></i>
                         <p class="text-zinc-500">Tidak ada produk yang ditemukan</p>
                     </div>
+                </div>
+            </section>
 
                     <!-- Pagination -->
                     <div class="flex items-center justify-center gap-0.5 mt-8">
@@ -1027,47 +999,261 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
+        .btn-more-products:hover {
+            background-color: #0071e3 !important;
+            border-color: #0071e3 !important;
+            color: #ffffff !important;
+            transform: scale(1.1) !important;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1) !important;
+        }
+        .btn-more-products:hover span,
+        .btn-more-products:hover i {
+            color: #ffffff !important;
+        }
+        .btn-more-products:hover i {
+            transform: translateX(4px);
+        }
+
         #mainNavbar,
         .mobile-bottom-nav {
             display: none !important;
+        }
+
+        /* ============================
+           HOME PAGE — DARK MODE
+        ============================ */
+        /* Dark mode toggle on home page (custom navbar) */
+        [data-theme="dark"] #mainHeader {
+            background: rgba(10,10,10,0.85) !important;
+            border-color: #2d2d2d !important;
+        }
+        /* Main wrapper */
+        [data-theme="dark"] .bg-white.text-black {
+            background-color: #111111 !important;
+            color: #e5e7eb !important;
+        }
+        /* Sections */
+        [data-theme="dark"] section.bg-white,
+        [data-theme="dark"] .np-fade-section.bg-white {
+            background-color: #111111 !important;
+        }
+        [data-theme="dark"] .bg-zinc-50 {
+            background-color: #1a1a1a !important;
+        }
+        [data-theme="dark"] .bg-\[#f5f5f5\] {
+            background-color: #1a1a1a !important;
+        }
+        /* Filters bar */
+        [data-theme="dark"] section.bg-zinc-50 {
+            background-color: #1a1a1a !important;
+        }
+        [data-theme="dark"] select,
+        [data-theme="dark"] #filterBrandBottom,
+        [data-theme="dark"] #filterCategoryBottom,
+        [data-theme="dark"] #filterPriceBottom,
+        [data-theme="dark"] #filterSortBottom {
+            background-color: #1c1c1c !important;
+            color: #e5e7eb !important;
+            border-color: #3d3d3d !important;
+        }
+        /* Product cards */
+        [data-theme="dark"] .product-item,
+        [data-theme="dark"] .product-item.group {
+            background-color: #1c1c1c !important;
+        }
+        [data-theme="dark"] .product-item h3,
+        [data-theme="dark"] .product-item .text-black {
+            color: #f9fafb !important;
+        }
+        [data-theme="dark"] .product-item .text-zinc-600 {
+            color: #9ca3af !important;
+        }
+        [data-theme="dark"] .product-item .text-zinc-400 {
+            color: #6b7280 !important;
+        }
+        [data-theme="dark"] .product-item .border-zinc-300 {
+            border-color: #3d3d3d !important;
+        }
+        [data-theme="dark"] .product-item button.border-zinc-300 {
+            color: #e5e7eb !important;
+        }
+        [data-theme="dark"] .product-item button.border-zinc-300:hover {
+            border-color: #6b7280 !important;
+            color: #ffffff !important;
+        }
+        /* New arrivals slider cards */
+        [data-theme="dark"] #newArrivalsContainer > div {
+            background-color: #1c1c1c !important;
+        }
+        [data-theme="dark"] #newArrivalsContainer h3,
+        [data-theme="dark"] #newArrivalsContainer .text-black {
+            color: #f9fafb !important;
+        }
+        [data-theme="dark"] #newArrivalsContainer .text-zinc-600,
+        [data-theme="dark"] #newArrivalsContainer .text-zinc-500 {
+            color: #9ca3af !important;
+        }
+        /* Category icons section */
+        [data-theme="dark"] section.np-fade-section.bg-white.py-4 h3 {
+            color: #f9fafb !important;
+        }
+        [data-theme="dark"] .far.fa-star {
+            color: #3d3d3d !important;
+        }
+        /* Voucher section */
+        [data-theme="dark"] .bg-gradient-to-r.from-white {
+            background: linear-gradient(to right, #1c1c1c, #252525) !important;
+            border-color: #2d2d2d !important;
+        }
+        [data-theme="dark"] .text-gray-700 {
+            color: #e5e7eb !important;
+        }
+        [data-theme="dark"] .text-gray-500,
+        [data-theme="dark"] .text-gray-400 {
+            color: #9ca3af !important;
+        }
+        [data-theme="dark"] .bg-gray-100 {
+            background-color: #2d2d2d !important;
+        }
+        [data-theme="dark"] .border-gray-200 {
+            border-color: #2d2d2d !important;
+        }
+        /* Marquee bar */
+        [data-theme="dark"] #marqueeBar {
+            background-color: #161616 !important;
+            border-color: #2d2d2d !important;
+        }
+        /* CTA / Level Up section */
+        [data-theme="dark"] .bg-linear-to-r.from-zinc-100,
+        [data-theme="dark"] .rounded-lg.bg-linear-to-r {
+            background: linear-gradient(to right, #1a1a1a, #111111) !important;
+        }
+        [data-theme="dark"] .text-zinc-600 {
+            color: #9ca3af !important;
+        }
+        [data-theme="dark"] .text-zinc-500 {
+            color: #6b7280 !important;
+        }
+        /* Hamburger dropdown dark */
+        [data-theme="dark"] #hamburgerMenuDropdown > div {
+            background-color: #1c1c1c !important;
+            border-color: #2d2d2d !important;
+        }
+        [data-theme="dark"] #hamburgerMenuDropdown a {
+            color: #e5e7eb !important;
+        }
+        [data-theme="dark"] #hamburgerMenuDropdown a:hover {
+            background-color: #2d2d2d !important;
+        }
+        [data-theme="dark"] #hamburgerMenuDropdown .border-b,
+        [data-theme="dark"] #hamburgerMenuDropdown .border-t,
+        [data-theme="dark"] #hamburgerMenuDropdown .border-zinc-100 {
+            border-color: #2d2d2d !important;
+        }
+        /* Search overlay */
+        [data-theme="dark"] #searchPanel > div {
+            background-color: #1c1c1c !important;
+        }
+        [data-theme="dark"] #searchInput {
+            background-color: transparent !important;
+            color: #f9fafb !important;
+        }
+        [data-theme="dark"] #searchResults a:hover {
+            background-color: #2d2d2d !important;
+        }
+        [data-theme="dark"] .text-zinc-900 {
+            color: #f9fafb !important;
+        }
+        [data-theme="dark"] .divide-zinc-100 > * {
+            border-color: #2d2d2d !important;
+        }
+        /* More Products btn in dark */
+        [data-theme="dark"] .btn-more-products {
+            background-color: #1c1c1c !important;
+            border-color: #3d3d3d !important;
+            color: #e5e7eb !important;
         }
 
         html {
             scroll-behavior: smooth;
         }
 
+        #marqueeBar {
+            position: relative;
+            z-index: 10;
+            margin-top: -20px;
+        }
+
+        @media (min-width: 768px) {
+            #marqueeBar {
+                margin-top: -32px;
+            }
+        }
+
         /* Marquee Animation */
         .marquee-container {
             display: flex;
-            overflow: hidden;
+            overflow: visible;
             user-select: none;
             width: 100%;
         }
 
         .marquee-content {
             display: flex;
-            animation: marquee 30s linear infinite;
-            white-space: nowrap;
+            align-items: center;
             will-change: transform;
+            /* Motion driven by JS requestAnimationFrame for 100% stutter-free scrolling */
         }
 
         .marquee-item {
-            display: inline-block;
-            padding: 0 2rem;
-            font-size: 0.75rem;
-            font-weight: 500;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
+            flex: 0 0 auto; /* Auto-width to allow perfect uniform padding gaps */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 1.2vw; /* Fluid mobile padding */
+            box-sizing: border-box;
+            overflow: visible;
         }
 
-        @keyframes marquee {
-            from {
-                transform: translateX(0);
+        .marquee-item img {
+            width: auto;
+            height: 5.6vw; /* Fluid height scaling on mobile */
+            object-fit: contain;
+            display: block;
+        }
+
+        /* Specific responsive height override for Head logo to match visual weight */
+        .marquee-item img[alt="Head"] {
+            height: 8.2vw; /* Mobile height */
+        }
+
+        @media (min-width: 768px) {
+            .marquee-item {
+                padding: 0 2.2vw; /* Fluid tablet padding */
             }
-            to {
-                transform: translateX(-50%);
+            .marquee-item img {
+                height: 4.8vw; /* Fluid height scaling on tablet */
+            }
+            .marquee-item img[alt="Head"] {
+                height: 7.2vw; /* Tablet height */
             }
         }
+
+        @media (min-width: 1024px) {
+            .marquee-item {
+                padding: 0 3.8vw; /* Fluid desktop padding */
+            }
+            .marquee-item img {
+                height: 3.8vw; /* Fluid height scaling on desktop */
+                max-height: 68px;
+            }
+            .marquee-item img[alt="Head"] {
+                height: 5.8vw; /* Desktop height */
+                max-height: 104px;
+            }
+        }
+
+        /* No CSS keyframes needed — RAF engine handles the transform directly */
 
         .np-fade-section {
             opacity: 0;
@@ -1129,28 +1315,49 @@
     <script>
         function toggleVoucherSection() {
     const content = document.getElementById('voucherContent');
-    if (!content) return;
+            const btnHome = document.getElementById('darkModeToggleHome');
+            const iconHome = document.getElementById('darkModeIconHome');
 
-    const isOpen = content.style.maxHeight !== '0px' && content.style.maxHeight !== '';
-    if (isOpen) {
-        content.style.maxHeight = '0px';
-        content.style.opacity = '0';
-    } else {
-        content.style.maxHeight = '400px';
-        content.style.opacity = '1';
-    }
-}
+            function syncHomeIcon(theme) {
+                if (iconHome) {
+                    iconHome.className = theme === 'dark' ? 'fas fa-sun text-sm' : 'fas fa-moon text-sm';
+                }
+            }
 
-document.addEventListener('DOMContentLoaded', function () {
-    const content = document.getElementById('voucherContent');
-    if (content) {
-        content.style.maxHeight = '0px';
-        content.style.opacity = '0';
-    }
-});
+            // Sync on load
+            const currentTheme = html.getAttribute('data-theme') || localStorage.getItem('np_theme') || 'light';
+            syncHomeIcon(currentTheme);
+
+            if (btnHome) {
+                btnHome.addEventListener('click', function() {
+                    const current = html.getAttribute('data-theme');
+                    const next = current === 'dark' ? 'light' : 'dark';
+                    html.setAttribute('data-theme', next);
+                    localStorage.setItem('np_theme', next);
+                    
+                    syncHomeIcon(next);
+                    
+                    // Sync global toggle if present
+                    const iconGlobal = document.getElementById('darkModeIcon');
+                    if (iconGlobal) {
+                        iconGlobal.className = next === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+                    }
+                });
+            }
+
+            // Sync if global toggle is clicked
+            const btnGlobal = document.getElementById('darkModeToggle');
+            if (btnGlobal) {
+                btnGlobal.addEventListener('click', function() {
+                    setTimeout(() => {
+                        const newTheme = html.getAttribute('data-theme');
+                        syncHomeIcon(newTheme);
+                    }, 50);
+                });
+            }
+        })();
 
         // Animate badge function
-        function animateBadge(badgeElement) {
             if (!badgeElement) return;
             
             // Add animation class
@@ -2334,6 +2541,72 @@ document.addEventListener('DOMContentLoaded', function () {
                     paginationNumbers.appendChild(pageBtn);
                 }
             }
+        })();
+
+        /* ============================================================
+         * Buttery-Smooth Marquee Engine (requestAnimationFrame)
+         * RAF syncs with the screen's actual refresh rate (60/120 fps)
+         * guaranteeing zero stutter, zero pause, and zero glitch at loop.
+         * ============================================================ */
+        (function initMarquee() {
+            const content = document.querySelector('.marquee-content');
+            if (!content) return;
+
+            const SPEED = 0.10; // vw per frame — slow & elegant, never pauses
+            let offset = 0;
+            let setWidth = 0; // width of one set of 6 logos in px
+            let rafId = null;
+
+            function getSetWidth() {
+                // Total children = 12 (2 sets of 6). One set = first half.
+                const items = content.children;
+                const half = Math.floor(items.length / 2);
+                let w = 0;
+                for (let i = 0; i < half; i++) {
+                    w += items[i].getBoundingClientRect().width;
+                }
+                return w;
+            }
+
+            function tick() {
+                const pxPerFrame = (SPEED / 100) * window.innerWidth;
+                offset += pxPerFrame;
+
+                // Re-measure on first frame or after resize
+                if (!setWidth) setWidth = getSetWidth();
+
+                // Seamless snap: when offset equals one full set, reset to 0
+                if (offset >= setWidth) {
+                    offset -= setWidth;
+                }
+
+                content.style.transform = `translateX(${-offset}px)`;
+                rafId = requestAnimationFrame(tick);
+            }
+
+            // Re-init on resize so setWidth stays accurate
+            let resizeTimer;
+            window.addEventListener('resize', function() {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function() {
+                    setWidth = getSetWidth();
+                }, 150);
+            });
+
+            // Pause on tab hidden, resume on visible (battery-friendly)
+            document.addEventListener('visibilitychange', function() {
+                if (document.hidden) {
+                    cancelAnimationFrame(rafId);
+                } else {
+                    rafId = requestAnimationFrame(tick);
+                }
+            });
+
+            // Start the engine after images have loaded
+            window.addEventListener('load', function() {
+                setWidth = getSetWidth();
+                rafId = requestAnimationFrame(tick);
+            });
         })();
     </script>
 @endpush
