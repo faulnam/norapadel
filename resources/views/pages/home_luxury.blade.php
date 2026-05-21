@@ -10,10 +10,12 @@
         html, body { overflow-x: hidden; }
     </style>
     <div class="bg-white text-black antialiased">
+
         <header class="fixed left-0 top-0 z-[70] w-full border-b border-transparent bg-transparent backdrop-blur-none transition-all duration-300" id="mainHeader">
             <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-3 md:px-10 lg:px-12">
                 <a href="{{ route('home') }}" class="flex items-center gap-2">
-                    <img src="{{ asset('storage/logo.webp') }}" alt="NoraPadel" class="h-7 w-7 object-contain" loading="lazy">
+                    <img src="{{ asset('storage/logo.png') }}" alt="NoraPadel" class="h-7 w-7 object-contain" loading="lazy">
+                    <span class="text-xl font-semibold tracking-tight text-white transition-colors duration-300" id="logoText">NoraPadel</span>
                 </a>
 
                 <nav class="hidden items-center gap-6 md:flex" id="navLinks">
@@ -220,12 +222,12 @@
 
                 <div class="flex items-center gap-2 md:gap-3 text-white/90" id="navIcons">
                     <!-- Inline Search (all screens) -->
-                    <!-- <div class="flex items-center relative" id="navSearchWrapper">
+                    <div class="flex items-center relative" id="navSearchWrapper">
                         <i class="fas fa-search absolute left-2 md:left-3 text-xs md:text-sm text-white/60 pointer-events-none transition-colors duration-300" id="navSearchIcon"></i>
                         <input type="text" id="navSearchInput" placeholder="Cari..."
                                class="bg-white/10 border border-white/20 rounded-full pl-7 md:pl-9 pr-2 md:pr-4 py-1 md:py-1.5 text-xs md:text-sm text-white placeholder-white/60 focus:outline-none focus:bg-white/20 focus:border-white/40 w-24 md:w-40 lg:w-48 transition-all duration-300"
                                autocomplete="off">
-                    </div> -->
+                    </div>
 
                     <!-- Login (desktop only) -->
                     @guest
@@ -305,13 +307,6 @@
                     <!-- Mobile Search Icon (hidden since inline search is now visible) -->
                     <button type="button" id="searchToggleBtn" class="hidden transition duration-300 hover:text-white" aria-label="Search" title="Cari Produk">
                         <i class="fas fa-search text-sm"></i>
-                    </button>
-
-                    <!-- Dark Mode Toggle (Home Page) -->
-                    <button type="button" id="darkModeToggleHome"
-                            class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20"
-                            title="Toggle Dark/Light Mode" aria-label="Toggle dark mode">
-                        <i class="fas fa-moon text-sm" id="darkModeIconHome"></i>
                     </button>
 
                     <!-- Hamburger Menu with combined elements -->
@@ -444,79 +439,104 @@
             </div>
         </div>
 
-        
-        <section class="relative w-full min-h-[380px] overflow-hidden bg-zinc-900 sm:min-h-[420px] md:min-h-[360px] lg:min-h-[400px]">
-            <img src="{{ asset('storage/banner.webp') }}"
+        <!-- Hero Banner - Full behind navbar -->
+        <section class="relative w-full h-[300px] overflow-hidden bg-zinc-900">
+            <img src="{{ asset('storage/fiks.jpeg') }}"
                 alt="Padel Tennis"
                 class="absolute inset-0 h-full w-full object-cover"
                 loading="eager">
             <div class="absolute inset-0 bg-gradient-to-b from-black/20 via-black/50 to-black/80"></div>
-            <div class="relative mx-auto flex min-h-[380px] sm:min-h-[420px] md:min-h-[360px] lg:min-h-[400px] max-w-7xl items-center justify-center px-6 md:px-10 lg:px-12 pt-28 md:pt-24">
-                <div class="flex flex-col items-center justify-center text-center -mt-12 md:-mt-20"> 
-
-                    <div class="mb-4 w-full max-w-md px-4">
-                        <div class="relative flex items-center" id="navSearchWrapper">
-                           <i class="fas fa-search absolute left-4 text-white text-sm pointer-events-none z-10"></i>
-                            
-                            <input type="text"  id="navSearchInput" placeholder="Cari raket, sepatu, atau aksesoris..."
-                                class="w-full bg-white/10 backdrop-blur-md text-white placeholder-white/50 pl-11 pr-4 py-2 rounded-full text-sm border border-white/20 shadow-sm focus:outline-none focus:bg-white/20 focus:border-white/40 focus:ring-1 focus:ring-white/30 transition-all cursor-pointer"
-                                readonly> </div>
+            <div class="relative mx-auto flex h-[300px] max-w-7xl items-center justify-center px-6 md:px-10 lg:px-12 pt-16">
+                <div class="max-w-2xl text-center text-white">
+                    <h1 class="text-lg font-semibold tracking-tight sm:text-2xl md:text-3xl lg:text-4xl drop-shadow-lg">NoraPadel</h1>
+                    <p class="mt-2 md:mt-4 text-[11px] md:text-sm text-zinc-100 leading-relaxed drop-shadow-md">Experience the ultimate in padel equipment. Premium quality rackets, shoes, and accessories for players who demand excellence.</p>
+                    <div class="mt-3 md:mt-6 flex flex-wrap justify-center gap-6">
+                        <a href="{{ route('shop') }}" class="inline-flex items-center gap-1 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 md:px-6 md:py-2.5 text-[10px] md:text-xs font-semibold text-white backdrop-blur transition duration-300 hover:bg-white/20 hover:scale-[1.02]">Shop Now</a>
                     </div>
-                    <h1 class="text-4xl font-bold text-white mb-2">
-                        NoraPadel
-                    </h1>
-                    
-                    <p class="text-white/80 text-sm max-w-xl mx-auto mb-4">
-                        Experience the ultimate in padel equipment. Premium quality rackets, shoes, and accessories for players who demand excellence.
-                    </p>
-
                 </div>
             </div>
         </section>
 
         <!-- Marquee Bar -->
-        <!-- 6 logos × 20vw = 120vw per set | 2 sets = 240vw | anim: -120vw = seamless loop -->
-        <div class="bg-white py-2 md:py-3 border-y border-zinc-100" style="overflow-x: hidden; overflow-y: visible;" id="marqueeBar">
+        <div class="bg-white text-white py-2 overflow-hidden transition-all duration-300" id="marqueeBar">
             <div class="marquee-container">
                 <div class="marquee-content">
                     <!-- Set 1 -->
-                    <span class="marquee-item">
-                        <img src="{{ asset('storage/alpha.png') }}" alt="Alpha" loading="eager">
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/arronax logo.webp') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
+                        <span>• ARRONAX •</span>
                     </span>
-                    <span class="marquee-item">
-                        <img src="{{ asset('storage/bullpadel2.png') }}" alt="Bullpadel" loading="eager">
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/Babolat_logo.svg.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
+                        <span>• BABOLAT •</span>
                     </span>
-                    <span class="marquee-item">
-                        <img src="{{ asset('storage/arronax.png') }}" alt="Arronax" loading="eager">
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/logobullpadel2 (1).png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
+                        <span>• BULLPADEL •</span>
                     </span>
-                    <span class="marquee-item">
-                        <img src="{{ asset('storage/babolat.png') }}" alt="Babolat" loading="eager">
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/logo_nox_1200x1200.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
+                        <span>• NOX •</span>
                     </span>
-                    <span class="marquee-item">
-                        <img src="{{ asset('storage/head.png') }}" alt="Head" loading="eager">
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/alpha padel.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
+                        <span>• ALPHA •</span>
                     </span>
-                    <span class="marquee-item">
-                        <img src="{{ asset('storage/nox.png') }}" alt="Nox" loading="eager">
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/head.jpeg') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
+                        <span>• ZEPHYR •</span>
                     </span>
 
-                    <!-- Set 2 (identical duplicate for seamless infinite loop) -->
-                    <span class="marquee-item">
-                        <img src="{{ asset('storage/alpha.png') }}" alt="Alpha" loading="eager">
+                    <!-- Set 2 -->
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/arronax logo.webp') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
+                        <span>• ARRONAX •</span>
                     </span>
-                    <span class="marquee-item">
-                        <img src="{{ asset('storage/bullpadel2.png') }}" alt="Bullpadel" loading="eager">
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/Babolat_logo.svg.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
+                        <span>• BABOLAT •</span>
                     </span>
-                    <span class="marquee-item">
-                        <img src="{{ asset('storage/arronax.png') }}" alt="Arronax" loading="eager">
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/logobullpadel2 (1).png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
+                        <span>• BULLPADEL •</span>
                     </span>
-                    <span class="marquee-item">
-                        <img src="{{ asset('storage/babolat.png') }}" alt="Babolat" loading="eager">
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/logo_nox_1200x1200.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
+                        <span>• NOX •</span>
                     </span>
-                    <span class="marquee-item">
-                        <img src="{{ asset('storage/head.png') }}" alt="Head" loading="eager">
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/alpha padel.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
+                        <span>• ALPHA •</span>
                     </span>
-                    <span class="marquee-item">
-                        <img src="{{ asset('storage/nox.png') }}" alt="Nox" loading="eager">
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/head.jpeg') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
+                        <span>• ZEPHYR •</span>
+                    </span>
+
+                    <!-- Set 3 -->
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/arronax logo.webp') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
+                        <span>• ARRONAX •</span>
+                    </span>
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/Babolat_logo.svg.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
+                        <span>• BABOLAT •</span>
+                    </span>
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/logobullpadel2 (1).png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
+                        <span>• BULLPADEL •</span>
+                    </span>
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/logo_nox_1200x1200.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
+                        <span>• NOX •</span>
+                    </span>
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/alpha padel.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
+                        <span>• ALPHA •</span>
+                    </span>
+                    <span class="marquee-item inline-flex items-center gap-10">
+                        <img src="{{ asset('storage/head.jpeg') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
+                        <span>• ZEPHYR •</span>
                     </span>
                 </div>
             </div>
@@ -686,82 +706,86 @@
 
             <!-- New Arrivals -->
             <section class="np-fade-section bg-white py-2 lg:py-3 pb-0">
-                <div id="newArrivalsGrid" class="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5">
-                    @foreach($newArrivals->take(10) as $product)
-                        @php
-                            $soldCount = \App\Models\OrderItem::where('product_id', $product->id)
-                                ->whereHas('order', function($q) {
-                                    $q->whereIn('status', ['completed', 'delivered']);
-                                })->sum('quantity');
-                        @endphp
-                        <div class="product-item product-card group block overflow-hidden bg-white transition duration-300 hover:-translate-y-1"
-                                 data-name="{{ strtolower($product->name) }}"
-                                 data-price="{{ $product->hasActiveDiscount() ? $product->discounted_price : $product->price }}"
-                                 data-category="{{ strtolower($product->type) }}"
-                                 data-brand="{{ strtolower($product->brand ?? '') }}"
-                                 data-level="{{ $product->level ?? '' }}"
-                                 data-discount="{{ $product->hasActiveDiscount() ? 'yes' : 'no' }}"
-                                 data-bundle="{{ $product->package_type === 'bundle' ? 'yes' : 'no' }}"
-                                 data-sold="{{ $soldCount }}">
-                            <a href="{{ route('produk.show', $product) }}" class="block">
-                                <div class="relative aspect-square overflow-hidden">
-                                    <div class="h-full w-full overflow-hidden">
-                                        <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" onerror="this.onerror=null;this.src='/images/logo.png';" loading="lazy">
-                                    </div>
-                                    @if($product->hasActiveDiscount())
-                                        <span class="absolute left-0 top-0 bg-rose-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">-{{ $product->formatted_discount_percent }}</span>
-                                    @endif
-                                    <span class="absolute left-0 {{ $product->hasActiveDiscount() ? 'top-7' : 'top-0' }} bg-blue-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Latest</span>
-                                    @if($product->package_type === 'bundle')
-                                        <span class="absolute left-0 {{ $product->hasActiveDiscount() ? 'top-14' : 'top-7' }} bg-purple-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Bundle</span>
-                                    @endif
-                                    @if($product->isBestSeller())
-                                        <span class="absolute right-0 top-0 bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Popular</span>
-                                    @endif
-                                </div>
-                                <div class="p-3">
-                                    <h3 class="line-clamp-1 text-sm font-medium text-black">{{ $product->name }}</h3>
-                                    <p class="mt-1 text-xs text-zinc-600">{{ $product->category_label }}</p>
-                                    <div class="mt-1 flex items-center gap-1">
-                                        @php
-                                            $rating = $product->average_rating;
-                                        @endphp
-                                        <i class="fas fa-star text-black text-[10px]"></i>
-                                        <span class="text-[10px] text-zinc-600 ml-1">{{ number_format($rating, 1) }}</span>
-                                        @if($product->total_reviews > 0)
-                                            <span class="text-[10px] text-zinc-500">({{ $product->total_reviews }})</span>
+                <div class="relative group">
+                        <!-- Left Arrow -->
+                        <button class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded w-10 h-10 flex items-center justify-center transition duration-300" onclick="scrollNewArrivals('left')">
+                            <i class="fas fa-chevron-left text-black text-sm"></i>
+                        </button>
+                        
+                        <!-- Right Arrow -->
+                        <button class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded w-10 h-10 flex items-center justify-center transition duration-300" onclick="scrollNewArrivals('right')">
+                            <i class="fas fa-chevron-right text-black text-sm"></i>
+                        </button>
+                        
+                        <div id="newArrivalsContainer" class="flex gap-6 overflow-x-auto pb-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x snap-mandatory scroll-smooth">
+                        @foreach($newArrivals as $product)
+                            @php
+                                $soldCount = \App\Models\OrderItem::where('product_id', $product->id)
+                                    ->whereHas('order', function($q) {
+                                        $q->whereIn('status', ['completed', 'delivered']);
+                                    })->sum('quantity');
+                            @endphp
+                            <div class="product-card group snap-start shrink-0 basis-[40%] sm:basis-[48%] md:basis-[32%] lg:basis-[18%] overflow-hidden bg-white transition duration-300 hover:-translate-y-2" data-category="{{ strtolower($product->type) }}" data-brand="{{ strtolower($product->brand ?? '') }}">
+                                <a href="{{ route('produk.show', $product) }}" class="block">
+                                    <div class="relative aspect-square overflow-hidden">
+                                        <div class="h-full w-full overflow-hidden">
+                                            <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" onerror="this.onerror=null;this.src='/images/logo.png';" loading="lazy">
+                                        </div>
+                                        @if($product->hasActiveDiscount())
+                                            <span class="absolute left-0 top-0 bg-rose-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">-{{ $product->formatted_discount_percent }}</span>
+                                        @endif
+                                        <!-- Latest Badge for New Arrivals -->
+                                        <span class="absolute left-0 {{ $product->hasActiveDiscount() ? 'top-7' : 'top-0' }} bg-blue-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Latest</span>
+                                        @if($product->package_type === 'bundle')
+                                            <span class="absolute left-0 {{ $product->hasActiveDiscount() ? 'top-14' : 'top-7' }} bg-purple-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Bundle</span>
+                                        @endif
+                                        @if($product->isBestSeller())
+                                            <span class="absolute right-0 top-0 bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Best Seller</span>
                                         @endif
                                     </div>
-                                    @if($product->hasActiveDiscount())
-                                        <p class="mt-1 text-base font-semibold text-black">{{ $product->formatted_discounted_price }}</p>
-                                        <p class="text-xs text-zinc-400 line-through">{{ $product->formatted_price }}</p>
-                                    @else
-                                        <p class="mt-1 text-base font-semibold text-black">{{ $product->formatted_price }}</p>
-                                    @endif
-                                </div>
-                            </a>
-                            <div class="px-2 pb-2 md:px-3 md:pb-3">
-                                <div class="flex items-center gap-2">
-                                    <button onclick="addToCart('{{ $product->slug }}', event)" class="border border-zinc-300 bg-transparent px-2 py-1 text-[10px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950 truncate max-w-[80px] md:max-w-none">
-                                        Add to cart
-                                    </button>
-                                    <button onclick="addToWishlist('{{ $product->slug }}', event)" class="text-zinc-400 transition duration-300 hover:text-rose-500">
-                                        <i class="fas fa-heart text-xs md:text-sm"></i>
-                                    </button>
+                                    <div class="p-2 md:p-4">
+                                        <h3 class="line-clamp-1 text-sm font-medium text-black">{{ $product->name }}</h3>
+                                        <p class="mt-1 text-xs text-zinc-600">{{ $product->category_label }}</p>
+                                        <div class="mt-1 flex items-center gap-1">
+                                            @php
+                                                $rating = $product->average_rating;
+                                            @endphp
+                                            <i class="fas fa-star text-black text-[10px]"></i>
+                                            <span class="text-[10px] text-zinc-600 ml-1">{{ number_format($rating, 1) }}</span>
+                                            @if($product->total_reviews > 0)
+                                                <span class="text-[10px] text-zinc-500">({{ $product->total_reviews }})</span>
+                                            @endif
+                                        </div>
+                                        @if($product->hasActiveDiscount())
+                                            <p class="mt-1 text-base font-semibold text-black">{{ $product->formatted_discounted_price }}</p>
+                                            <p class="text-xs text-zinc-400 line-through">{{ $product->formatted_price }}</p>
+                                        @else
+                                            <p class="mt-1 text-base font-semibold text-black">{{ $product->formatted_price }}</p>
+                                        @endif
+                                    </div>
+                                </a>
+                                <div class="px-2 pb-2 md:px-4 md:pb-4">
+                                    <div class="flex items-center gap-2">
+                                        <a href="{{ route('produk.show', $product) }}" class="border border-zinc-300 bg-transparent px-2 py-1 text-[10px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950">
+                                            Detail
+                                        </a>
+                                        <button onclick="addToCart('{{ $product->slug }}', event)" class="border border-zinc-300 bg-transparent px-2 py-1 text-[10px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950">
+                                            Add to cart
+                                        </button>
+                                        <button onclick="addToWishlist('{{ $product->slug }}', event)" class="text-zinc-400 transition duration-300 hover:text-rose-500">
+                                            <i class="fas fa-heart text-sm"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
+                        @endforeach
                         </div>
-                    @endforeach
                 </div>
             </section>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Category Icons - Full Width -->
+            <!-- Category Icons -->
             <section class="np-fade-section bg-white py-4 pt-4">
-                <div class="mx-auto max-w-7xl px-4 md:px-6 lg:px-12">
-                    <div class="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
+                <div class="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
                         <a href="{{ route('racket') }}" class="flex flex-col items-center justify-center p-4 md:p-6 bg-white cursor-pointer transition hover:opacity-80">
                             <div class="w-36 h-36 md:w-48 md:h-48 mb-3 md:mb-4 flex items-center justify-center">
                                 <img src="{{ asset('storage/iconracket.jpg') }}" alt="Racket" class="w-full h-full object-contain">
@@ -786,30 +810,28 @@
                             </div>
                             <h3 class="text-sm md:text-base font-medium text-black">Grips</h3>
                         </a>
-                    </div>
                 </div>
             </section>
 
-            <!-- Shop - Full Width -->
+            <!-- Shop -->
             <section class="np-fade-section bg-white py-12 lg:py-14">
-                <div class="mx-auto max-w-7xl px-4 md:px-6 lg:px-12">
-                    <div id="productGrid" class="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-6">
-                        @foreach($shopProducts as $product)
+                <div id="productGrid" class="grid grid-cols-2 gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
+                        @foreach($shopProducts->take(12) as $product)
                             @php
                                 $soldCount = \App\Models\OrderItem::where('product_id', $product->id)
                                     ->whereHas('order', function($q) {
                                         $q->whereIn('status', ['completed', 'delivered']);
                                     })->sum('quantity');
                             @endphp
-                            <div class="product-item product-card group block overflow-hidden bg-white transition duration-300 hover:-translate-y-1"
-                                     data-name="{{ strtolower($product->name) }}"
-                                     data-price="{{ $product->hasActiveDiscount() ? $product->discounted_price : $product->price }}"
-                                     data-category="{{ strtolower($product->type) }}"
-                                     data-brand="{{ strtolower($product->brand ?? '') }}"
-                                     data-level="{{ $product->level ?? '' }}"
-                                     data-discount="{{ $product->hasActiveDiscount() ? 'yes' : 'no' }}"
-                                     data-bundle="{{ $product->package_type === 'bundle' ? 'yes' : 'no' }}"
-                                     data-sold="{{ $soldCount }}">
+                       <div class="product-item product-card group block overflow-hidden bg-white transition duration-300 hover:-translate-y-1"
+                                 data-name="{{ strtolower($product->name) }}"
+                                 data-price="{{ $product->hasActiveDiscount() ? $product->discounted_price : $product->price }}"
+                                 data-category="{{ strtolower($product->type) }}"
+                                 data-brand="{{ strtolower($product->brand ?? '') }}"
+                                 data-level="{{ $product->level ?? '' }}"
+                                 data-discount="{{ $product->hasActiveDiscount() ? 'yes' : 'no' }}"
+                                 data-bundle="{{ $product->package_type === 'bundle' ? 'yes' : 'no' }}"
+                                 data-sold="{{ $soldCount }}">
                                 <a href="{{ route('produk.show', $product) }}" class="block">
                                     <div class="relative aspect-square overflow-hidden">
                                         <div class="h-full w-full overflow-hidden">
@@ -851,6 +873,9 @@
                                 </a>
                                 <div class="px-2 pb-2 md:px-3 md:pb-3">
                                     <div class="flex items-center gap-2">
+                                        <a href="{{ route('produk.show', $product) }}" class="border border-zinc-300 bg-transparent px-2 py-1 text-[10px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950">
+                                            Detail
+                                        </a>
                                         <button onclick="addToCart('{{ $product->slug }}', event)" class="border border-zinc-300 bg-transparent px-2 py-1 text-[10px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950 truncate max-w-[80px] md:max-w-none">
                                             Add to cart
                                         </button>
@@ -867,23 +892,10 @@
                         <i class="fas fa-search text-4xl text-zinc-300 mb-3"></i>
                         <p class="text-zinc-500">Tidak ada produk yang ditemukan</p>
                     </div>
-                </div>
             </section>
-
-                    <!-- Pagination -->
-                    <div class="flex items-center justify-center gap-0.5 mt-8">
-                        <button onclick="prevPage()" class="px-1.5 py-1 border border-zinc-300 rounded hover:bg-zinc-100 transition">
-                            <i class="fas fa-chevron-left text-[10px]"></i>
-                        </button>
-                        <div id="paginationNumbers" class="flex gap-0.5">
-                            <!-- Page numbers will be generated by JS -->
-                        </div>
-                        <button onclick="nextPage()" class="px-1.5 py-1 border border-zinc-300 rounded hover:bg-zinc-100 transition">
-                            <i class="fas fa-chevron-right text-[10px]"></i>
-                        </button>
                     </div>
                 </div>
-            </section>
+            </div>
 
         <!-- Testimonials Section - Full Width with Proper Margins -->
         <section id="testimonials" class="np-fade-section bg-white py-18 lg:py-22 mx-auto max-w-7xl px-4 md:px-6 lg:px-12" data-testimonial-showcase>
@@ -999,261 +1011,47 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-        .btn-more-products:hover {
-            background-color: #0071e3 !important;
-            border-color: #0071e3 !important;
-            color: #ffffff !important;
-            transform: scale(1.1) !important;
-            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1) !important;
-        }
-        .btn-more-products:hover span,
-        .btn-more-products:hover i {
-            color: #ffffff !important;
-        }
-        .btn-more-products:hover i {
-            transform: translateX(4px);
-        }
-
         #mainNavbar,
         .mobile-bottom-nav {
             display: none !important;
-        }
-
-        /* ============================
-           HOME PAGE — DARK MODE
-        ============================ */
-        /* Dark mode toggle on home page (custom navbar) */
-        [data-theme="dark"] #mainHeader {
-            background: rgba(10,10,10,0.85) !important;
-            border-color: #2d2d2d !important;
-        }
-        /* Main wrapper */
-        [data-theme="dark"] .bg-white.text-black {
-            background-color: #111111 !important;
-            color: #e5e7eb !important;
-        }
-        /* Sections */
-        [data-theme="dark"] section.bg-white,
-        [data-theme="dark"] .np-fade-section.bg-white {
-            background-color: #111111 !important;
-        }
-        [data-theme="dark"] .bg-zinc-50 {
-            background-color: #1a1a1a !important;
-        }
-        [data-theme="dark"] .bg-\[#f5f5f5\] {
-            background-color: #1a1a1a !important;
-        }
-        /* Filters bar */
-        [data-theme="dark"] section.bg-zinc-50 {
-            background-color: #1a1a1a !important;
-        }
-        [data-theme="dark"] select,
-        [data-theme="dark"] #filterBrandBottom,
-        [data-theme="dark"] #filterCategoryBottom,
-        [data-theme="dark"] #filterPriceBottom,
-        [data-theme="dark"] #filterSortBottom {
-            background-color: #1c1c1c !important;
-            color: #e5e7eb !important;
-            border-color: #3d3d3d !important;
-        }
-        /* Product cards */
-        [data-theme="dark"] .product-item,
-        [data-theme="dark"] .product-item.group {
-            background-color: #1c1c1c !important;
-        }
-        [data-theme="dark"] .product-item h3,
-        [data-theme="dark"] .product-item .text-black {
-            color: #f9fafb !important;
-        }
-        [data-theme="dark"] .product-item .text-zinc-600 {
-            color: #9ca3af !important;
-        }
-        [data-theme="dark"] .product-item .text-zinc-400 {
-            color: #6b7280 !important;
-        }
-        [data-theme="dark"] .product-item .border-zinc-300 {
-            border-color: #3d3d3d !important;
-        }
-        [data-theme="dark"] .product-item button.border-zinc-300 {
-            color: #e5e7eb !important;
-        }
-        [data-theme="dark"] .product-item button.border-zinc-300:hover {
-            border-color: #6b7280 !important;
-            color: #ffffff !important;
-        }
-        /* New arrivals slider cards */
-        [data-theme="dark"] #newArrivalsContainer > div {
-            background-color: #1c1c1c !important;
-        }
-        [data-theme="dark"] #newArrivalsContainer h3,
-        [data-theme="dark"] #newArrivalsContainer .text-black {
-            color: #f9fafb !important;
-        }
-        [data-theme="dark"] #newArrivalsContainer .text-zinc-600,
-        [data-theme="dark"] #newArrivalsContainer .text-zinc-500 {
-            color: #9ca3af !important;
-        }
-        /* Category icons section */
-        [data-theme="dark"] section.np-fade-section.bg-white.py-4 h3 {
-            color: #f9fafb !important;
-        }
-        [data-theme="dark"] .far.fa-star {
-            color: #3d3d3d !important;
-        }
-        /* Voucher section */
-        [data-theme="dark"] .bg-gradient-to-r.from-white {
-            background: linear-gradient(to right, #1c1c1c, #252525) !important;
-            border-color: #2d2d2d !important;
-        }
-        [data-theme="dark"] .text-gray-700 {
-            color: #e5e7eb !important;
-        }
-        [data-theme="dark"] .text-gray-500,
-        [data-theme="dark"] .text-gray-400 {
-            color: #9ca3af !important;
-        }
-        [data-theme="dark"] .bg-gray-100 {
-            background-color: #2d2d2d !important;
-        }
-        [data-theme="dark"] .border-gray-200 {
-            border-color: #2d2d2d !important;
-        }
-        /* Marquee bar */
-        [data-theme="dark"] #marqueeBar {
-            background-color: #161616 !important;
-            border-color: #2d2d2d !important;
-        }
-        /* CTA / Level Up section */
-        [data-theme="dark"] .bg-linear-to-r.from-zinc-100,
-        [data-theme="dark"] .rounded-lg.bg-linear-to-r {
-            background: linear-gradient(to right, #1a1a1a, #111111) !important;
-        }
-        [data-theme="dark"] .text-zinc-600 {
-            color: #9ca3af !important;
-        }
-        [data-theme="dark"] .text-zinc-500 {
-            color: #6b7280 !important;
-        }
-        /* Hamburger dropdown dark */
-        [data-theme="dark"] #hamburgerMenuDropdown > div {
-            background-color: #1c1c1c !important;
-            border-color: #2d2d2d !important;
-        }
-        [data-theme="dark"] #hamburgerMenuDropdown a {
-            color: #e5e7eb !important;
-        }
-        [data-theme="dark"] #hamburgerMenuDropdown a:hover {
-            background-color: #2d2d2d !important;
-        }
-        [data-theme="dark"] #hamburgerMenuDropdown .border-b,
-        [data-theme="dark"] #hamburgerMenuDropdown .border-t,
-        [data-theme="dark"] #hamburgerMenuDropdown .border-zinc-100 {
-            border-color: #2d2d2d !important;
-        }
-        /* Search overlay */
-        [data-theme="dark"] #searchPanel > div {
-            background-color: #1c1c1c !important;
-        }
-        [data-theme="dark"] #searchInput {
-            background-color: transparent !important;
-            color: #f9fafb !important;
-        }
-        [data-theme="dark"] #searchResults a:hover {
-            background-color: #2d2d2d !important;
-        }
-        [data-theme="dark"] .text-zinc-900 {
-            color: #f9fafb !important;
-        }
-        [data-theme="dark"] .divide-zinc-100 > * {
-            border-color: #2d2d2d !important;
-        }
-        /* More Products btn in dark */
-        [data-theme="dark"] .btn-more-products {
-            background-color: #1c1c1c !important;
-            border-color: #3d3d3d !important;
-            color: #e5e7eb !important;
         }
 
         html {
             scroll-behavior: smooth;
         }
 
-        #marqueeBar {
-            position: relative;
-            z-index: 10;
-            margin-top: -20px;
-        }
-
-        @media (min-width: 768px) {
-            #marqueeBar {
-                margin-top: -32px;
-            }
-        }
-
         /* Marquee Animation */
         .marquee-container {
             display: flex;
-            overflow: visible;
+            overflow: hidden;
             user-select: none;
             width: 100%;
         }
 
         .marquee-content {
             display: flex;
-            align-items: center;
+            animation: marquee 30s linear infinite;
+            white-space: nowrap;
             will-change: transform;
-            /* Motion driven by JS requestAnimationFrame for 100% stutter-free scrolling */
         }
 
         .marquee-item {
-            flex: 0 0 auto; /* Auto-width to allow perfect uniform padding gaps */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 1.2vw; /* Fluid mobile padding */
-            box-sizing: border-box;
-            overflow: visible;
+            display: inline-block;
+            padding: 0 2rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
         }
 
-        .marquee-item img {
-            width: auto;
-            height: 5.6vw; /* Fluid height scaling on mobile */
-            object-fit: contain;
-            display: block;
-        }
-
-        /* Specific responsive height override for Head logo to match visual weight */
-        .marquee-item img[alt="Head"] {
-            height: 8.2vw; /* Mobile height */
-        }
-
-        @media (min-width: 768px) {
-            .marquee-item {
-                padding: 0 2.2vw; /* Fluid tablet padding */
+        @keyframes marquee {
+            from {
+                transform: translateX(0);
             }
-            .marquee-item img {
-                height: 4.8vw; /* Fluid height scaling on tablet */
-            }
-            .marquee-item img[alt="Head"] {
-                height: 7.2vw; /* Tablet height */
+            to {
+                transform: translateX(-50%);
             }
         }
-
-        @media (min-width: 1024px) {
-            .marquee-item {
-                padding: 0 3.8vw; /* Fluid desktop padding */
-            }
-            .marquee-item img {
-                height: 3.8vw; /* Fluid height scaling on desktop */
-                max-height: 68px;
-            }
-            .marquee-item img[alt="Head"] {
-                height: 5.8vw; /* Desktop height */
-                max-height: 104px;
-            }
-        }
-
-        /* No CSS keyframes needed — RAF engine handles the transform directly */
 
         .np-fade-section {
             opacity: 0;
@@ -1315,49 +1113,28 @@
     <script>
         function toggleVoucherSection() {
     const content = document.getElementById('voucherContent');
-            const btnHome = document.getElementById('darkModeToggleHome');
-            const iconHome = document.getElementById('darkModeIconHome');
+    if (!content) return;
 
-            function syncHomeIcon(theme) {
-                if (iconHome) {
-                    iconHome.className = theme === 'dark' ? 'fas fa-sun text-sm' : 'fas fa-moon text-sm';
-                }
-            }
+    const isOpen = content.style.maxHeight !== '0px' && content.style.maxHeight !== '';
+    if (isOpen) {
+        content.style.maxHeight = '0px';
+        content.style.opacity = '0';
+    } else {
+        content.style.maxHeight = '400px';
+        content.style.opacity = '1';
+    }
+}
 
-            // Sync on load
-            const currentTheme = html.getAttribute('data-theme') || localStorage.getItem('np_theme') || 'light';
-            syncHomeIcon(currentTheme);
-
-            if (btnHome) {
-                btnHome.addEventListener('click', function() {
-                    const current = html.getAttribute('data-theme');
-                    const next = current === 'dark' ? 'light' : 'dark';
-                    html.setAttribute('data-theme', next);
-                    localStorage.setItem('np_theme', next);
-                    
-                    syncHomeIcon(next);
-                    
-                    // Sync global toggle if present
-                    const iconGlobal = document.getElementById('darkModeIcon');
-                    if (iconGlobal) {
-                        iconGlobal.className = next === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-                    }
-                });
-            }
-
-            // Sync if global toggle is clicked
-            const btnGlobal = document.getElementById('darkModeToggle');
-            if (btnGlobal) {
-                btnGlobal.addEventListener('click', function() {
-                    setTimeout(() => {
-                        const newTheme = html.getAttribute('data-theme');
-                        syncHomeIcon(newTheme);
-                    }, 50);
-                });
-            }
-        })();
+document.addEventListener('DOMContentLoaded', function () {
+    const content = document.getElementById('voucherContent');
+    if (content) {
+        content.style.maxHeight = '0px';
+        content.style.opacity = '0';
+    }
+});
 
         // Animate badge function
+        function animateBadge(badgeElement) {
             if (!badgeElement) return;
             
             // Add animation class
@@ -1581,7 +1358,7 @@
             // Build params from active category/brand filters
             const activeCategory = document.querySelector('.filter-chip[data-category].bg-black');
             const activeBrand = document.querySelector('.filter-chip[data-brand].bg-black');
-
+            
             const params = new URLSearchParams();
             if (activeCategory) {
                 params.append('category', activeCategory.dataset.category);
@@ -1599,10 +1376,14 @@
             console.log('Applying filters with params:', params.toString());
 
             // Show loading state
-            const newArrivalsGrid = document.getElementById('newArrivalsGrid');
-
-            if (newArrivalsGrid) {
-                newArrivalsGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 col-span-full"><i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i></div>';
+            const newArrivalsContainer = document.getElementById('newArrivalsContainer');
+            const productGrid = document.getElementById('productGrid');
+            
+            if (newArrivalsContainer) {
+                newArrivalsContainer.innerHTML = '<div class="flex items-center justify-center w-full py-8"><i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i></div>';
+            }
+            if (productGrid) {
+                productGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 col-span-full"><i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i></div>';
             }
 
             // Fetch filtered products via AJAX
@@ -1614,19 +1395,28 @@
                 .then(data => {
                     console.log('Response data:', data);
                     if (data.success && data.html) {
-                        if (newArrivalsGrid) {
-                            newArrivalsGrid.innerHTML = data.html;
+                        if (newArrivalsContainer) {
+                            newArrivalsContainer.innerHTML = data.html;
+                        }
+                        if (productGrid) {
+                            productGrid.innerHTML = data.html;
                         }
                     } else {
-                        if (newArrivalsGrid) {
-                            newArrivalsGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500 col-span-full">No products found</div>';
+                        if (newArrivalsContainer) {
+                            newArrivalsContainer.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500">No products found</div>';
+                        }
+                        if (productGrid) {
+                            productGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500 col-span-full">No products found</div>';
                         }
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    if (newArrivalsGrid) {
-                        newArrivalsGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500 col-span-full">Error loading products</div>';
+                    if (newArrivalsContainer) {
+                        newArrivalsContainer.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500">Error loading products</div>';
+                    }
+                    if (productGrid) {
+                        productGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500 col-span-full">Error loading products</div>';
                     }
                 });
         };
@@ -1634,49 +1424,39 @@
         // Apply single filter (for sidebar chips)
         window.applyFilter = function(filterType, value) {
             console.log('Applying filter:', filterType, value);
-
+            
             // Update chip styling
             const chips = document.querySelectorAll(`.filter-chip[data-${filterType}]`);
             chips.forEach(chip => {
                 chip.classList.remove('bg-black', 'text-white', 'border-black');
                 chip.classList.add('text-zinc-600', 'border-zinc-200');
             });
-
+            
             const activeChip = document.querySelector(`.filter-chip[data-${filterType}="${value}"]`);
             if (activeChip) {
                 activeChip.classList.add('bg-black', 'text-white', 'border-black');
                 activeChip.classList.remove('text-zinc-600', 'border-zinc-200');
             }
 
-            // Also get price and sort filters
-            const price = document.querySelector('input[name="filterPrice"]:checked')?.value || '';
-            const sort = document.querySelector('input[name="filterSort"]:checked')?.value || '';
-
-            // Build params from all active filters
-            const activeCategory = document.querySelector('.filter-chip[data-category].bg-black');
-            const activeBrand = document.querySelector('.filter-chip[data-brand].bg-black');
-
+            // Fetch filtered products via AJAX
             const params = new URLSearchParams();
-            if (activeCategory) {
-                params.append('category', activeCategory.dataset.category);
-            }
-            if (activeBrand) {
-                params.append('brand', activeBrand.dataset.brand);
-            }
-            if (price) {
-                params.append('price', price);
-            }
-            if (sort) {
-                params.append('sort', sort);
+            if (filterType === 'category') {
+                params.append('category', value);
+            } else if (filterType === 'brand') {
+                params.append('brand', value);
             }
 
             console.log('Fetching:', `/api/new-arrivals/filter?${params.toString()}`);
 
             // Show loading state
-            const newArrivalsGrid = document.getElementById('newArrivalsGrid');
-
-            if (newArrivalsGrid) {
-                newArrivalsGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 col-span-full"><i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i></div>';
+            const newArrivalsContainer = document.getElementById('newArrivalsContainer');
+            const productGrid = document.getElementById('productGrid');
+            
+            if (newArrivalsContainer) {
+                newArrivalsContainer.innerHTML = '<div class="flex items-center justify-center w-full py-8"><i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i></div>';
+            }
+            if (productGrid) {
+                productGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 col-span-full"><i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i></div>';
             }
 
             fetch(`/api/new-arrivals/filter?${params.toString()}`)
@@ -1687,19 +1467,29 @@
                 .then(data => {
                     console.log('Response data:', data);
                     if (data.success && data.html) {
-                        if (newArrivalsGrid) {
-                            newArrivalsGrid.innerHTML = data.html;
+                        // Update both containers with filtered products
+                        if (newArrivalsContainer) {
+                            newArrivalsContainer.innerHTML = data.html;
+                        }
+                        if (productGrid) {
+                            productGrid.innerHTML = data.html;
                         }
                     } else {
-                        if (newArrivalsGrid) {
-                            newArrivalsGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500 col-span-full">No products found</div>';
+                        if (newArrivalsContainer) {
+                            newArrivalsContainer.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500">No products found</div>';
+                        }
+                        if (productGrid) {
+                            productGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500 col-span-full">No products found</div>';
                         }
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    if (newArrivalsGrid) {
-                        newArrivalsGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500 col-span-full">Error loading products</div>';
+                    if (newArrivalsContainer) {
+                        newArrivalsContainer.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500">Error loading products</div>';
+                    }
+                    if (productGrid) {
+                        productGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500 col-span-full">Error loading products</div>';
                     }
                 });
         };
@@ -1711,64 +1501,9 @@
                 chip.classList.remove('bg-black', 'text-white', 'border-black');
                 chip.classList.add('text-zinc-600', 'border-zinc-200');
             });
-
-            // Reset radio buttons for price and sort when clearing category or brand
-            if (filterType === 'category' || filterType === 'brand') {
-                const priceRadios = document.querySelectorAll('input[name="filterPrice"]');
-                priceRadios.forEach(radio => radio.checked = false);
-                const sortRadios = document.querySelectorAll('input[name="filterSort"]');
-                sortRadios.forEach(radio => radio.checked = false);
-            }
-
-            // Fetch products without the cleared filter
-            const price = document.querySelector('input[name="filterPrice"]:checked')?.value || '';
-            const sort = document.querySelector('input[name="filterSort"]:checked')?.value || '';
-
-            const activeCategory = document.querySelector('.filter-chip[data-category].bg-black');
-            const activeBrand = document.querySelector('.filter-chip[data-brand].bg-black');
-
-            const params = new URLSearchParams();
-            if (activeCategory) {
-                params.append('category', activeCategory.dataset.category);
-            }
-            if (activeBrand) {
-                params.append('brand', activeBrand.dataset.brand);
-            }
-            if (price) {
-                params.append('price', price);
-            }
-            if (sort) {
-                params.append('sort', sort);
-            }
-
-            console.log('Clearing filter, fetching:', `/api/new-arrivals/filter?${params.toString()}`);
-
-            // Show loading state
-            const newArrivalsGrid = document.getElementById('newArrivalsGrid');
-
-            if (newArrivalsGrid) {
-                newArrivalsGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 col-span-full"><i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i></div>';
-            }
-
-            fetch(`/api/new-arrivals/filter?${params.toString()}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success && data.html) {
-                        if (newArrivalsGrid) {
-                            newArrivalsGrid.innerHTML = data.html;
-                        }
-                    } else {
-                        if (newArrivalsGrid) {
-                            newArrivalsGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500 col-span-full">No products found</div>';
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    if (newArrivalsGrid) {
-                        newArrivalsGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500 col-span-full">Error loading products</div>';
-                    }
-                });
+            
+            // Reload page to reset all filters
+            window.location.reload();
         };
 
         // Filter toggle functionality
@@ -2457,155 +2192,6 @@
                         }, 100);
                     });
                 }
-            });
-
-            // Pagination for Shop Section
-            let currentPage = 1;
-            const productsPerPage = 12;
-            let allProducts = [];
-
-            // Store all product data from the grid
-            document.addEventListener('DOMContentLoaded', function() {
-                const productGrid = document.getElementById('productGrid');
-                if (productGrid) {
-                    const productCards = productGrid.querySelectorAll('.product-item');
-                    productCards.forEach((card, index) => {
-                        allProducts.push({
-                            element: card,
-                            index: index
-                        });
-                    });
-                    loadProducts();
-                    updatePagination();
-                }
-            });
-
-            function prevPage() {
-                if (currentPage > 1) {
-                    currentPage--;
-                    loadProducts();
-                }
-            }
-
-            function nextPage() {
-                const totalPages = Math.ceil(allProducts.length / productsPerPage);
-                if (currentPage < totalPages) {
-                    currentPage++;
-                    loadProducts();
-                }
-            }
-
-            function goToPage(page) {
-                currentPage = page;
-                loadProducts();
-            }
-
-            function loadProducts() {
-                const productGrid = document.getElementById('productGrid');
-                if (!productGrid) return;
-
-                const startIndex = (currentPage - 1) * productsPerPage;
-                const endIndex = startIndex + productsPerPage;
-
-                // Hide all products first
-                allProducts.forEach(product => {
-                    product.element.style.display = 'none';
-                });
-
-                // Show only products for current page
-                for (let i = startIndex; i < endIndex && i < allProducts.length; i++) {
-                    allProducts[i].element.style.display = 'block';
-                }
-
-                updatePagination();
-            }
-
-            function updatePagination() {
-                const paginationNumbers = document.getElementById('paginationNumbers');
-                if (!paginationNumbers) return;
-
-                const totalPages = Math.ceil(allProducts.length / productsPerPage);
-                paginationNumbers.innerHTML = '';
-
-                // Show pages in groups of 5 (1-5, 6-10, etc.)
-                const pagesPerGroup = 5;
-                const currentGroup = Math.ceil(currentPage / pagesPerGroup);
-                let startPage = (currentGroup - 1) * pagesPerGroup + 1;
-                let endPage = Math.min(totalPages, startPage + pagesPerGroup - 1);
-
-                for (let i = startPage; i <= endPage; i++) {
-                    const pageBtn = document.createElement('button');
-                    pageBtn.textContent = i;
-                    pageBtn.className = `px-1.5 py-1 border rounded text-xs transition ${i === currentPage ? 'bg-black text-white border-black' : 'border-zinc-300 hover:bg-zinc-100'}`;
-                    pageBtn.onclick = () => goToPage(i);
-                    paginationNumbers.appendChild(pageBtn);
-                }
-            }
-        })();
-
-        /* ============================================================
-         * Buttery-Smooth Marquee Engine (requestAnimationFrame)
-         * RAF syncs with the screen's actual refresh rate (60/120 fps)
-         * guaranteeing zero stutter, zero pause, and zero glitch at loop.
-         * ============================================================ */
-        (function initMarquee() {
-            const content = document.querySelector('.marquee-content');
-            if (!content) return;
-
-            const SPEED = 0.10; // vw per frame — slow & elegant, never pauses
-            let offset = 0;
-            let setWidth = 0; // width of one set of 6 logos in px
-            let rafId = null;
-
-            function getSetWidth() {
-                // Total children = 12 (2 sets of 6). One set = first half.
-                const items = content.children;
-                const half = Math.floor(items.length / 2);
-                let w = 0;
-                for (let i = 0; i < half; i++) {
-                    w += items[i].getBoundingClientRect().width;
-                }
-                return w;
-            }
-
-            function tick() {
-                const pxPerFrame = (SPEED / 100) * window.innerWidth;
-                offset += pxPerFrame;
-
-                // Re-measure on first frame or after resize
-                if (!setWidth) setWidth = getSetWidth();
-
-                // Seamless snap: when offset equals one full set, reset to 0
-                if (offset >= setWidth) {
-                    offset -= setWidth;
-                }
-
-                content.style.transform = `translateX(${-offset}px)`;
-                rafId = requestAnimationFrame(tick);
-            }
-
-            // Re-init on resize so setWidth stays accurate
-            let resizeTimer;
-            window.addEventListener('resize', function() {
-                clearTimeout(resizeTimer);
-                resizeTimer = setTimeout(function() {
-                    setWidth = getSetWidth();
-                }, 150);
-            });
-
-            // Pause on tab hidden, resume on visible (battery-friendly)
-            document.addEventListener('visibilitychange', function() {
-                if (document.hidden) {
-                    cancelAnimationFrame(rafId);
-                } else {
-                    rafId = requestAnimationFrame(tick);
-                }
-            });
-
-            // Start the engine after images have loaded
-            window.addEventListener('load', function() {
-                setWidth = getSetWidth();
-                rafId = requestAnimationFrame(tick);
             });
         })();
     </script>
