@@ -21,30 +21,13 @@
 
                 <div class="grid md:grid-cols-[auto_1fr] gap-5 lg:gap-6 py-4">
                     <!-- Product Gallery -->
-                    <div class="flex gap-3 max-w-[600px]" x-data="{ activeImage: '{{ $product->image_url }}' }">
-                        <!-- Thumbnails -->
-                        <div class="flex flex-col gap-3">
-                            @php
-                                $allImages = $product->all_images;
-                            @endphp
-                            @foreach($allImages as $index => $imageUrl)
-                                <button @click="activeImage = '{{ $imageUrl }}'" 
-                                        class="w-16 h-16 md:w-20 md:h-20 bg-zinc-50 transition-all duration-200 flex items-center justify-center p-1.5 overflow-hidden"
-                                        :class="activeImage === '{{ $imageUrl }}' ? 'ring-2 ring-black ring-offset-2' : 'hover:bg-zinc-100'">
-                                    <img src="{{ $imageUrl }}" alt="{{ $product->name }} - Gambar {{ $index + 1 }}" class="w-full h-full object-cover">
-                                </button>
-                            @endforeach
-                        </div>
-
+                    <div class="flex flex-col gap-3 max-w-[600px]" x-data="{ activeImage: '{{ $product->image_url }}' }">
                         <!-- Main Image -->
-                        <div class="flex-1 relative group">
-                            <div class="w-full bg-zinc-50 overflow-hidden flex items-center justify-center relative aspect-square max-w-[500px]">
+                        <div class="relative">
+                            <div class="w-full max-w-[450px] mx-auto bg-zinc-50 overflow-hidden flex items-center justify-center relative aspect-square">
                                 <img :src="activeImage" 
                                      alt="{{ $product->name }}" 
-                                     class="w-full h-full object-cover transition-all duration-500 ease-out"
-                                     x-transition:enter="transition ease-out duration-300"
-                                     x-transition:enter-start="opacity-0"
-                                     x-transition:enter-end="opacity-100">
+                                     class="w-full h-full object-cover transition-all duration-500 ease-out">
                                 @if($product->hasActiveDiscount())
                                     <span class="absolute left-3 top-3 bg-rose-500 px-3 py-1.5 text-xs font-semibold text-white z-10 rounded">-{{ $product->formatted_discount_percent }}</span>
                                 @endif
@@ -55,6 +38,18 @@
                                     <span class="absolute right-3 top-3 bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white z-10 rounded">Best Seller</span>
                                 @endif
                             </div>
+                        </div>
+
+                        <!-- Thumbnails - di bawah gambar besar -->
+                        @php $allImages = $product->all_images; @endphp
+                        <div class="flex gap-2 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                            @foreach($allImages as $index => $imageUrl)
+                                <button @click="activeImage = '{{ $imageUrl }}'"
+                                        class="shrink-0 w-16 h-16 md:w-20 md:h-20 bg-zinc-50 transition-all duration-200 flex items-center justify-center p-1.5 overflow-hidden"
+                                        :class="activeImage === '{{ $imageUrl }}' ? 'ring-2 ring-black ring-offset-1' : 'ring-1 ring-zinc-200 hover:ring-zinc-400'">
+                                    <img src="{{ $imageUrl }}" alt="{{ $product->name }} - {{ $index + 1 }}" class="w-full h-full object-cover">
+                                </button>
+                            @endforeach
                         </div>
                     </div>
 
@@ -227,8 +222,8 @@
                 </div>
 
                 <!-- Customer Reviews Section -->
-                <section class="mt-16 pt-12 border-t border-zinc-200">
-                    <div class="grid lg:grid-cols-[35%_65%] gap-12">
+                <section class="mt-16 pt-12 pb-16 border-t border-zinc-200">
+                    <div class="grid lg:grid-cols-[35%_65%] gap-8 lg:gap-12">
                         <!-- Left Column - Review Summary -->
                         <div class="space-y-8">
                             <div>
@@ -261,25 +256,35 @@
                         </div>
 
                         <!-- Right Column - Reviews List -->
-                        <div class="space-y-6">
+                        <div class="space-y-6 lg:pl-4">
                             <!-- Header -->
-                            <div class="flex items-center justify-between mb-6">
+                            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
                                 <h3 class="text-[11px] font-semibold tracking-[0.15em] text-black uppercase">Reviews {{ $totalReviews }}</h3>
                                 @auth
-                                    <button onclick="openReviewModal()" class="bg-black text-white px-6 py-2.5 text-[10px] font-semibold tracking-[0.1em] uppercase transition duration-200 hover:bg-white hover:text-black border border-black">
+                                    <button onclick="openReviewModal()" class="w-full sm:w-auto bg-black text-white px-6 py-2.5 text-[10px] font-semibold tracking-[0.1em] uppercase transition duration-200 hover:bg-white hover:text-black border border-black whitespace-nowrap">
                                         Write a Review
                                     </button>
                                 @else
-                                    <a href="{{ route('login') }}" class="bg-black text-white px-6 py-2.5 text-[10px] font-semibold tracking-[0.1em] uppercase transition duration-200 hover:bg-white hover:text-black border border-black">
+                                    <a href="{{ route('login') }}" class="w-full sm:w-auto text-center bg-black text-white px-6 py-2.5 text-[10px] font-semibold tracking-[0.1em] uppercase transition duration-200 hover:bg-white hover:text-black border border-black whitespace-nowrap">
+                            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
+                                <h3 class="text-[11px] font-semibold tracking-[0.15em] text-black uppercase">Reviews {{ $totalReviews }}</h3>
+                                @auth
+                                    <button onclick="openReviewModal()" class="bg-black text-white px-4 py-2 text-[10px] font-semibold tracking-[0.1em] uppercase transition duration-200 hover:bg-white hover:text-black border border-black whitespace-nowrap">
+                                        Write a Review
+                                    </button>
+                                @else
+                                    <a href="{{ route('login') }}" class="bg-black text-white px-4 py-2 text-[10px] font-semibold tracking-[0.1em] uppercase transition duration-200 hover:bg-white hover:text-black border border-black whitespace-nowrap">
                                         Login to Review
                                     </a>
                                 @endauth
                             </div>
 
                             <!-- Search & Filter -->
-                            <div class="flex gap-3 mb-8">
+                            <div class="flex flex-col sm:flex-row gap-3 mb-8">
+                                <input type="text" id="reviewSearch" placeholder="Search reviews" class="w-full sm:flex-1 px-4 py-2.5 border border-zinc-200 text-sm focus:outline-none focus:border-zinc-400 transition">
+                                <select id="reviewRatingFilter" class="w-full sm:w-auto px-4 py-2.5 border border-zinc-200 text-sm focus:outline-none focus:border-zinc-400 transition bg-white min-w-[130px]">
                                 <input type="text" id="reviewSearch" placeholder="Search reviews" class="flex-1 px-4 py-2.5 border border-zinc-200 text-sm focus:outline-none focus:border-zinc-400 transition">
-                                <select id="reviewRatingFilter" class="px-4 py-2.5 border border-zinc-200 text-sm focus:outline-none focus:border-zinc-400 transition bg-white">
+                                <select id="reviewRatingFilter" class="px-4 py-2.5 border border-zinc-200 text-sm focus:outline-none focus:border-zinc-400 transition bg-white min-w-[130px]">
                                     <option value="all">All ratings</option>
                                     <option value="5">5 stars</option>
                                     <option value="4">4 stars</option>
@@ -294,9 +299,9 @@
                             <div class="space-y-0 max-h-[600px] overflow-y-auto pr-2" id="reviewsList">
                                 @foreach($reviews as $review)
                                 <div class="py-8 border-b border-zinc-100 last:border-0 review-item" data-rating="{{ $review->rating }}">
-                                    <div class="flex items-start justify-between mb-3">
+                                    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-3">
                                         <div>
-                                            <div class="flex items-center gap-2 mb-1">
+                                            <div class="flex flex-wrap items-center gap-2 mb-1">
                                                 <h4 class="text-xs font-semibold tracking-[0.05em] text-black uppercase">{{ $review->reviewer_name ?? $review->user->name }}</h4>
                                                 @if($review->is_verified)
                                                 <span class="text-[9px] text-zinc-400 uppercase tracking-wider">· Verified Buyer</span>
@@ -782,9 +787,65 @@ document.getElementById('reviewForm')?.addEventListener('submit', function(e) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            alert(data.message);
             closeReviewModal();
-            location.reload();
+
+            // Create new review HTML
+            const reviewsList = document.getElementById('reviewsList');
+            if (!reviewsList) {
+                console.error('reviewsList not found');
+                return;
+            }
+
+            const noReviewsDiv = reviewsList.querySelector('.py-12.text-center');
+            if (noReviewsDiv) {
+                noReviewsDiv.remove();
+            }
+
+            const newReview = document.createElement('div');
+            newReview.className = 'py-8 border-b border-zinc-100 last:border-0 review-item';
+            newReview.setAttribute('data-rating', formData.get('rating'));
+
+            const userName = data.review?.user_name || data.review?.name || auth()->user()?.name || 'Anonymous';
+            const isVerified = data.review?.is_verified !== false;
+
+            newReview.innerHTML = `
+                <div class="flex items-start justify-between mb-3">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <h4 class="text-xs font-semibold tracking-[0.05em] text-black uppercase">${userName}</h4>
+                            ${isVerified ? '<span class="text-[9px] text-zinc-400 uppercase tracking-wider">· Verified Buyer</span>' : ''}
+                        </div>
+                        <div class="flex items-center gap-1">
+                            ${Array(5).fill(0).map((_, i) =>
+                                `<i class="fas fa-star ${i < parseInt(formData.get('rating')) ? 'text-black' : 'text-zinc-200'} text-xs"></i>`
+                            ).join('')}
+                        </div>
+                    </div>
+                    <span class="text-[10px] text-zinc-400">Just now</span>
+                </div>
+                ${formData.get('comment') ? `<p class="text-sm text-zinc-600 leading-relaxed mb-4 review-text">${formData.get('comment')}</p>` : ''}
+            `;
+
+            reviewsList.insertBefore(newReview, reviewsList.firstChild);
+
+            // Keep only 10 reviews
+            const reviewItems = reviewsList.querySelectorAll('.review-item');
+            if (reviewItems.length > 10) {
+                for (let i = 10; i < reviewItems.length; i++) {
+                    reviewItems[i].remove();
+                }
+            }
+
+            // Update total reviews count
+            const totalReviewsEl = document.querySelector('.text-\\[11px\\]');
+            if (totalReviewsEl) {
+                const currentCount = parseInt(totalReviewsEl.textContent.replace(/\D/g, '')) || 0;
+                totalReviewsEl.textContent = `${currentCount + 1} ${currentCount + 1 === 1 ? 'Review' : 'Reviews'}`;
+            }
+
+            // Reset form
+            document.getElementById('reviewForm').reset();
+            selectRating(0);
         } else {
             alert(data.message || 'Failed to submit review');
         }

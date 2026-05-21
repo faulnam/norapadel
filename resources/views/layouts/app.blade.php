@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="{{ $lang }}" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -35,6 +35,412 @@
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s ease;
+            /* Light/Dark Mode Tokens */
+            --bg-main: #fafafa;
+            --bg-card: #ffffff;
+            --bg-nav: #ffffff;
+            --bg-section-alt: #f3f4f6;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --text-heading: #111827;
+            --border-color: #e5e7eb;
+        }
+
+        /* ============================
+           DARK MODE VARIABLES
+        ============================ */
+        [data-theme="dark"] {
+            --bg-main: #111111;
+            --bg-card: #1c1c1c;
+            --bg-nav: #161616;
+            --bg-section-alt: #1a1a1a;
+            --text-main: #e5e7eb;
+            --text-muted: #9ca3af;
+            --text-heading: #f9fafb;
+            --border-color: #2d2d2d;
+            --off-white: #111111;
+            --white: #1c1c1c;
+            --gray-light: #1a1a1a;
+            --dark: #f9fafb;
+            --gray: #9ca3af;
+        }
+
+        /* Global dark mode element overrides */
+        [data-theme="dark"] body {
+            background-color: #111111 !important;
+            color: #e5e7eb !important;
+        }
+        [data-theme="dark"] .navbar {
+            background: #161616 !important;
+            border-color: #2d2d2d !important;
+        }
+        [data-theme="dark"] .navbar-brand,
+        [data-theme="dark"] .nav-link {
+            color: #e5e7eb !important;
+        }
+        [data-theme="dark"] .nav-link:hover {
+            color: #ffffff !important;
+        }
+        [data-theme="dark"] .navbar-collapse {
+            background: #1c1c1c !important;
+            border-color: #2d2d2d !important;
+        }
+        [data-theme="dark"] .card {
+            background: #1c1c1c !important;
+            border-color: #2d2d2d !important;
+            color: #e5e7eb !important;
+        }
+        [data-theme="dark"] .dropdown-menu {
+            background: #1c1c1c !important;
+            border-color: #2d2d2d !important;
+        }
+        [data-theme="dark"] .dropdown-item {
+            color: #e5e7eb !important;
+        }
+        [data-theme="dark"] .dropdown-item:hover {
+            background: #2d2d2d !important;
+            color: #ffffff !important;
+        }
+        [data-theme="dark"] .footer {
+            background: #0a0a0a !important;
+        }
+        [data-theme="dark"] .mobile-bottom-nav {
+            background: #161616 !important;
+            border-color: #2d2d2d !important;
+        }
+        [data-theme="dark"] .mobile-nav-item {
+            color: #9ca3af !important;
+        }
+        [data-theme="dark"] .mobile-nav-item:hover,
+        [data-theme="dark"] .mobile-nav-item.active {
+            color: #ffffff !important;
+        }
+        [data-theme="dark"] .alert-success {
+            background: #14532d !important;
+            color: #bbf7d0 !important;
+        }
+        [data-theme="dark"] .alert-danger {
+            background: #450a0a !important;
+            color: #fca5a5 !important;
+        }
+        [data-theme="dark"] input,
+        [data-theme="dark"] select,
+        [data-theme="dark"] textarea {
+            background: #1c1c1c !important;
+            color: #e5e7eb !important;
+            border-color: #2d2d2d !important;
+        }
+        [data-theme="dark"] .form-control,
+        [data-theme="dark"] .form-select {
+            background: #1c1c1c !important;
+            color: #e5e7eb !important;
+            border-color: #2d2d2d !important;
+        }
+        [data-theme="dark"] .form-control::placeholder {
+            color: #6b7280 !important;
+        }
+        [data-theme="dark"] table {
+            color: #e5e7eb !important;
+        }
+        [data-theme="dark"] .table {
+            --bs-table-bg: #1c1c1c;
+            --bs-table-border-color: #2d2d2d;
+            color: #e5e7eb !important;
+        }
+        [data-theme="dark"] .bg-white {
+            background-color: #1c1c1c !important;
+        }
+        [data-theme="dark"] .bg-light {
+            background-color: #1a1a1a !important;
+        }
+        [data-theme="dark"] .text-dark {
+            color: #f9fafb !important;
+        }
+        [data-theme="dark"] .text-muted {
+            color: #9ca3af !important;
+        }
+        [data-theme="dark"] .border,
+        [data-theme="dark"] .border-bottom,
+        [data-theme="dark"] .border-top {
+            border-color: #2d2d2d !important;
+        }
+        [data-theme="dark"] hr {
+            border-color: #2d2d2d;
+        }
+
+        /* ============================
+           GLOBAL TAILWIND DARK MODE OVERRIDES
+        ============================ */
+        [data-theme="dark"] .bg-white {
+            background-color: #111111 !important;
+        }
+        [data-theme="dark"] .bg-zinc-50,
+        [data-theme="dark"] .bg-gray-50 {
+            background-color: #161616 !important;
+        }
+        [data-theme="dark"] .bg-zinc-100,
+        [data-theme="dark"] .bg-gray-100 {
+            background-color: #1c1c1c !important;
+        }
+        [data-theme="dark"] .product-item,
+        [data-theme="dark"] .filter-chip {
+            background-color: #1c1c1c !important;
+            border-color: #2d2d2d !important;
+        }
+        [data-theme="dark"] .filter-chip:hover {
+            border-color: #4b5563 !important;
+        }
+        [data-theme="dark"] .filter-chip.active,
+        [data-theme="dark"] .filter-chip.bg-black {
+            background-color: var(--primary) !important;
+            color: #ffffff !important;
+            border-color: var(--primary) !important;
+        }
+        [data-theme="dark"] .text-black,
+        [data-theme="dark"] .text-zinc-900,
+        [data-theme="dark"] .text-gray-900 {
+            color: #f9fafb !important;
+        }
+        [data-theme="dark"] .text-zinc-800,
+        [data-theme="dark"] .text-gray-800 {
+            color: #e5e7eb !important;
+        }
+        [data-theme="dark"] .text-zinc-700,
+        [data-theme="dark"] .text-gray-700 {
+            color: #d1d5db !important;
+        }
+        [data-theme="dark"] .text-zinc-600,
+        [data-theme="dark"] .text-gray-600 {
+            color: #9ca3af !important;
+        }
+        [data-theme="dark"] .text-zinc-500,
+        [data-theme="dark"] .text-gray-500 {
+            color: #9ca3af !important;
+        }
+        [data-theme="dark"] .text-zinc-400,
+        [data-theme="dark"] .text-gray-400 {
+            color: #6b7280 !important;
+        }
+        [data-theme="dark"] .border-zinc-100,
+        [data-theme="dark"] .border-gray-100,
+        [data-theme="dark"] .border-zinc-200,
+        [data-theme="dark"] .border-gray-200,
+        [data-theme="dark"] .border-zinc-300,
+        [data-theme="dark"] .border-gray-300 {
+            border-color: #2d2d2d !important;
+        }
+        [data-theme="dark"] .divide-zinc-100 > *,
+        [data-theme="dark"] .divide-gray-100 > * {
+            border-color: #2d2d2d !important;
+        }
+        [data-theme="dark"] .aside,
+        [data-theme="dark"] aside {
+            border-color: #2d2d2d !important;
+        }
+        [data-theme="dark"] button.border-zinc-300,
+        [data-theme="dark"] button.border-gray-300 {
+            color: #e5e7eb !important;
+            border-color: #2d2d2d !important;
+        }
+        [data-theme="dark"] button.border-zinc-300:hover,
+        [data-theme="dark"] button.border-gray-300:hover {
+            border-color: #4b5563 !important;
+            background-color: #252525 !important;
+        }
+        [data-theme="dark"] .pagination a {
+            border-color: #2d2d2d !important;
+            color: #d1d5db !important;
+        }
+        [data-theme="dark"] .pagination a:hover {
+            border-color: #4b5563 !important;
+            color: #ffffff !important;
+        }
+        [data-theme="dark"] .pagination span {
+            background-color: var(--primary) !important;
+            border-color: var(--primary) !important;
+        }
+
+        /* ============================
+           LUXURY NAVBAR & SIDEBAR FILTERS IN DARK MODE
+        ============================ */
+        [data-theme="dark"] #mainHeader {
+            background-color: rgba(22, 22, 22, 0.8) !important;
+            border-color: #2d2d2d !important;
+            backdrop-filter: blur(20px) !important;
+        }
+        [data-theme="dark"] #logoText {
+            color: #f9fafb !important;
+        }
+        [data-theme="dark"] #navLinks a {
+            color: rgba(249, 250, 251, 0.8) !important;
+        }
+        [data-theme="dark"] #navLinks a:hover {
+            color: #ffffff !important;
+            border-color: rgba(255, 255, 255, 0.3) !important;
+        }
+        [data-theme="dark"] #navLinks .group:hover > a {
+            color: #ffffff !important;
+        }
+        [data-theme="dark"] #navLinks .absolute {
+            background-color: rgba(28, 28, 28, 0.98) !important;
+            border-color: #2d2d2d !important;
+        }
+        [data-theme="dark"] #navLinks .absolute a {
+            background-color: #1c1c1c !important;
+            border-color: #2d2d2d !important;
+            color: #e5e7eb !important;
+        }
+        [data-theme="dark"] #navLinks .absolute a:hover {
+            background-color: var(--primary) !important;
+            color: #ffffff !important;
+            border-color: var(--primary) !important;
+        }
+        [data-theme="dark"] #navLinks h4 {
+            color: #f9fafb !important;
+        }
+        [data-theme="dark"] #navLinks .bg-zinc-50\/50,
+        [data-theme="dark"] #navLinks .bg-zinc-50 {
+            background-color: #161616 !important;
+        }
+
+        /* Search input & icons in Navbar */
+        [data-theme="dark"] #navSearchInput {
+            background-color: rgba(255, 255, 255, 0.08) !important;
+            border-color: rgba(255, 255, 255, 0.15) !important;
+            color: #ffffff !important;
+        }
+        [data-theme="dark"] #navSearchInput::placeholder {
+            color: rgba(255, 255, 255, 0.4) !important;
+        }
+        [data-theme="dark"] #navSearchIcon {
+            color: rgba(255, 255, 255, 0.5) !important;
+        }
+        [data-theme="dark"] #navIcons a i {
+            color: #e5e7eb !important;
+        }
+        [data-theme="dark"] #hamburgerMenuBtn {
+            border-color: rgba(255, 255, 255, 0.15) !important;
+            color: #ffffff !important;
+            background-color: rgba(255, 255, 255, 0.08) !important;
+        }
+        [data-theme="dark"] #hamburgerMenuBtn:hover {
+            background-color: rgba(255, 255, 255, 0.15) !important;
+        }
+        [data-theme="dark"] #hamburgerMenuDropdown .bg-white {
+            background-color: #1c1c1c !important;
+            border-color: #2d2d2d !important;
+        }
+        [data-theme="dark"] #hamburgerMenuDropdown a {
+            border-color: #2d2d2d !important;
+        }
+        [data-theme="dark"] #hamburgerMenuDropdown a:hover {
+            background-color: #252525 !important;
+        }
+        [data-theme="dark"] #hamburgerMenuDropdown span {
+            color: #d1d5db !important;
+        }
+        [data-theme="dark"] #hamburgerMenuDropdown i {
+            color: #9ca3af !important;
+        }
+
+        /* Search overlay popup */
+        [data-theme="dark"] #searchOverlay .bg-white {
+            background-color: #1c1c1c !important;
+        }
+        [data-theme="dark"] #searchOverlay input {
+            color: #ffffff !important;
+        }
+        [data-theme="dark"] #searchOverlay #searchResultsArea div,
+        [data-theme="dark"] #searchOverlay #searchResults div {
+            border-color: #2d2d2d !important;
+            background-color: transparent !important;
+        }
+        [data-theme="dark"] #searchOverlay #searchInitial,
+        [data-theme="dark"] #searchOverlay #searchEmpty {
+            color: #9ca3af !important;
+            background-color: transparent !important;
+        }
+        [data-theme="dark"] #searchOverlay #searchInitial .bg-zinc-100 {
+            background-color: #252525 !important;
+        }
+
+        /* Sidebar & Filters inputs formatting */
+        [data-theme="dark"] input[type="radio"],
+        [data-theme="dark"] input[type="checkbox"] {
+            background-color: #1c1c1c !important;
+            border-color: #3d3d3d !important;
+            color: var(--primary) !important;
+        }
+        [data-theme="dark"] input[type="radio"]:focus,
+        [data-theme="dark"] input[type="checkbox"]:focus {
+            --tw-ring-color: var(--primary) !important;
+            ring-color: var(--primary) !important;
+        }
+        [data-theme="dark"] input[type="radio"]:checked,
+        [data-theme="dark"] input[type="checkbox"]:checked {
+            background-color: var(--primary) !important;
+            border-color: var(--primary) !important;
+        }
+
+        /* Product buttons override */
+        [data-theme="dark"] .product-item button,
+        [data-theme="dark"] .product-item a button {
+            color: #e5e7eb !important;
+            border-color: #3d3d3d !important;
+            background-color: transparent !important;
+        }
+        [data-theme="dark"] .product-item button:hover,
+        [data-theme="dark"] .product-item a button:hover {
+            color: #ffffff !important;
+            border-color: #6b7280 !important;
+            background-color: rgba(255, 255, 255, 0.05) !important;
+        }
+        [data-theme="dark"] .bg-black {
+            background-color: #ffffff !important;
+            color: #111111 !important;
+        }
+        [data-theme="dark"] .bg-black.text-white {
+            background-color: #ffffff !important;
+            color: #111111 !important;
+        }
+        [data-theme="dark"] .bg-black.text-white * {
+            color: #111111 !important;
+        }
+        [data-theme="dark"] select {
+            background-color: #1c1c1c !important;
+            color: #ffffff !important;
+            border-color: #2d2d2d !important;
+        }
+        [data-theme="dark"] select option {
+            background-color: #1c1c1c !important;
+            color: #ffffff !important;
+        }
+
+        /* Dark mode toggle button */
+        .dark-mode-toggle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+            background: transparent;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        .dark-mode-toggle:hover {
+            background: var(--gray-light);
+            transform: rotate(15deg);
+        }
+        [data-theme="dark"] .dark-mode-toggle {
+            border-color: #2d2d2d;
+            color: #f9d71c;
+        }
+        [data-theme="dark"] .dark-mode-toggle:hover {
+            background: #2d2d2d;
         }
         
         * {
@@ -877,6 +1283,13 @@
                         </ul>
                     </li>
 
+                    <!-- Dark Mode Toggle -->
+                    <li class="nav-item ms-lg-1 d-flex align-items-center">
+                        <button class="dark-mode-toggle" id="darkModeToggle" title="Toggle Dark/Light Mode" aria-label="Toggle dark mode">
+                            <i class="fas fa-moon" id="darkModeIcon"></i>
+                        </button>
+                    </li>
+
                     <!-- Hamburger Menu with combined elements -->
                     <li class="nav-item ms-lg-2">
                         <div class="position-relative" id="hamburgerMenuWrapper" style="position:relative;">
@@ -1107,13 +1520,7 @@
         @yield('content')
     </main>
 
-    <!-- Welcome Bonus Popup -->
-    @guest
-        @if (request()->routeIs('home', 'new-arrivals', 'racket', 'shoes', 'apparel', 'accessories'))
-            <x-welcome-bonus-popup />
-        @endif
-    @endguest
-
+    
     <div class="modal fade np-product-modal" id="npProductModal" tabindex="-1" aria-labelledby="npProductModalTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
@@ -1336,6 +1743,36 @@
                     closeMenu();
                 }
             });
+        })();
+    </script>
+
+    <script>
+        /* ============================
+           DARK MODE TOGGLE ENGINE
+        ============================ */
+        (function () {
+            const html = document.documentElement;
+            const btn = document.getElementById('darkModeToggle');
+            const icon = document.getElementById('darkModeIcon');
+
+            // Apply saved theme on load (before paint)
+            const savedTheme = localStorage.getItem('np_theme') || 'light';
+            html.setAttribute('data-theme', savedTheme);
+            if (icon) {
+                icon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            }
+
+            if (btn) {
+                btn.addEventListener('click', function () {
+                    const current = html.getAttribute('data-theme');
+                    const next = current === 'dark' ? 'light' : 'dark';
+                    html.setAttribute('data-theme', next);
+                    localStorage.setItem('np_theme', next);
+                    if (icon) {
+                        icon.className = next === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+                    }
+                });
+            }
         })();
     </script>
 

@@ -4,7 +4,7 @@
         <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-3 md:px-10 lg:px-12">
             <a href="{{ route('home') }}" class="flex items-center gap-2">
                 <img src="{{ asset('storage/logo.png') }}" alt="NoraPadel" class="h-7 w-7 object-contain" loading="lazy">
-                <span class="text-xl font-semibold tracking-tight text-black transition-colors duration-300" id="logoText">NoraPadel</span>
+               
             </a>
 
             <nav class="hidden items-center gap-8 md:flex relative z-50" id="navLinks">
@@ -210,8 +210,38 @@
                            autocomplete="off">
                 </div>
 
+                <!-- Login (desktop only) -->
+                @guest
+                    <a href="{{ route('login') }}" id="loginBtn" class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 bg-zinc-50 border border-zinc-200 rounded-full text-xs font-semibold text-black transition duration-300 hover:bg-zinc-100 hover:border-zinc-300">
+                        <i class="fas fa-sign-in-alt text-sm"></i>
+                        <span>Login</span>
+                    </a>
+                @endauth
+
+                <!-- Cart (desktop only) -->
+                <a href="{{ route('customer.cart.index') }}" class="hidden md:relative transition duration-300 hover:text-black">
+                    <i class="fas fa-shopping-bag text-sm"></i>
+                    @auth
+                        @if (auth()->user()->role === 'customer')
+                            @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
+                            @if ($cartCount > 0)
+                                <span class="cart-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
+                            @endif
+                        @endif
+                    @endauth
+                    @guest
+                        @php 
+                            $guestCart = session()->get('guest_cart', []);
+                            $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
+                        @endphp
+                        @if($guestCartCount > 0)
+                            <span class="cart-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $guestCartCount > 9 ? '9+' : $guestCartCount }}</span>
+                        @endif
+                    @endguest
+                </a>
+
                 <!-- Wishlist (mobile only) -->
-                <a href="{{ route('customer.wishlist.index') }}" class="relative md:hidden">
+                <a href="{{ route('customer.wishlist.index') }}" class="relative md:hidden transition duration-300 hover:text-black">
                     <i class="fas fa-heart text-black/80 text-sm"></i>
                     @php
                         if (auth()->check() && auth()->user()->role === 'customer') {
@@ -226,46 +256,39 @@
                     @endif
                 </a>
 
+                <!-- Cart (mobile only) -->
+                <a href="{{ route('customer.cart.index') }}" class="relative md:hidden transition duration-300 hover:text-black">
+                    <i class="fas fa-shopping-bag text-black/80 text-sm"></i>
+                    @auth
+                        @if (auth()->user()->role === 'customer')
+                            @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
+                            @if ($cartCount > 0)
+                                <span class="cart-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
+                            @endif
+                        @endif
+                    @endauth
+                    @guest
+                        @php 
+                            $guestCart = session()->get('guest_cart', []);
+                            $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
+                        @endphp
+                        @if($guestCartCount > 0)
+                            <span class="cart-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $guestCartCount > 9 ? '9+' : $guestCartCount }}</span>
+                        @endif
+                    @endguest
+                </a>
+
+                <!-- Login (mobile only) -->
+                @guest
+                    <a href="{{ route('login') }}" class="md:hidden transition duration-300 hover:text-black">
+                        <i class="fas fa-sign-in-alt text-black/80 text-sm"></i>
+                    </a>
+                @endauth
+
                 <!-- Hamburger Menu with combined elements -->
                 <div class="relative" id="hamburgerMenuWrapper">
                     <button type="button" id="hamburgerMenuBtn" class="inline-flex h-9 w-9 items-center justify-center rounded border border-black/15 bg-transparent text-black backdrop-blur transition duration-300 hover:border-black/30 relative">
                         <i class="fas fa-bars text-sm"></i>
-                        <!-- Cart Badge -->
-                        @auth
-                            @if (auth()->user()->role === 'customer')
-                                @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
-                                @if ($cartCount > 0)
-                                    <span class="hamburger-cart-badge absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
-                                @endif
-                            @endif
-                        @endauth
-                        @guest
-                            @php
-                                $guestCart = session()->get('guest_cart', []);
-                                $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
-                            @endphp
-                            @if($guestCartCount > 0)
-                                <span class="hamburger-cart-badge absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $guestCartCount > 9 ? '9+' : $guestCartCount }}</span>
-                            @endif
-                        @endguest
-                        <!-- Wishlist Badge -->
-                        @auth
-                            @if (auth()->user()->role === 'customer')
-                                @php $wishlistCount = auth()->user()->wishlistItems()->count(); @endphp
-                                @if ($wishlistCount > 0)
-                                    <span class="hamburger-wishlist-badge absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
-                                @endif
-                            @endif
-                        @endauth
-                        @guest
-                            @php
-                                $guestWishlist = session()->get('guest_wishlist', []);
-                                $guestWishlistCount = count($guestWishlist);
-                            @endphp
-                            @if($guestWishlistCount > 0)
-                                <span class="hamburger-wishlist-badge absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">{{ $guestWishlistCount > 9 ? '9+' : $guestWishlistCount }}</span>
-                            @endif
-                        @endguest
                     </button>
                     <div id="hamburgerMenuDropdown" class="absolute right-0 mt-2 w-48 z-50 hidden">
                         <div class="bg-white rounded-lg shadow-lg border border-zinc-100 overflow-hidden">
@@ -293,14 +316,6 @@
                                 </a>
                             </div>
 
-                            <!-- Login -->
-                            @guest
-                                <a href="{{ route('login') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
-                                    <i class="fas fa-sign-in-alt text-zinc-500 text-sm"></i>
-                                    <span class="text-sm text-zinc-700">Login</span>
-                                </a>
-                            @endguest
-
                             <!-- Language Switcher -->
                             <div class="border-b border-zinc-100">
                                 <div class="px-3 py-2 bg-zinc-50">
@@ -314,50 +329,6 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Cart -->
-                            <a href="{{ route('customer.cart.index') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
-                                <div class="relative">
-                                    <i class="fas fa-shopping-bag text-zinc-500 text-sm"></i>
-                                    @auth
-                                        @if (auth()->user()->role === 'customer')
-                                            @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
-                                            @if ($cartCount > 0)
-                                                <span class="cart-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
-                                            @endif
-                                        @endif
-                                    @endauth
-                                    @guest
-                                        @php
-                                            $guestCart = session()->get('guest_cart', []);
-                                            $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
-                                        @endphp
-                                        @if($guestCartCount > 0)
-                                            <span class="cart-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $guestCartCount > 9 ? '9+' : $guestCartCount }}</span>
-                                        @endif
-                                    @endguest
-                                </div>
-                                <span class="text-sm text-zinc-700">Cart</span>
-                            </a>
-
-                            <!-- Wishlist -->
-                            <a href="{{ route('customer.wishlist.index') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
-                                <div class="relative">
-                                    <i class="fas fa-heart text-zinc-500 text-sm"></i>
-                                    @php
-                                        if (auth()->check() && auth()->user()->role === 'customer') {
-                                            $wishlistCount = auth()->user()->wishlistItems()->count();
-                                        } else {
-                                            $guestWishlist = session()->get('guest_wishlist', []);
-                                            $wishlistCount = count($guestWishlist);
-                                        }
-                                    @endphp
-                                    @if($wishlistCount > 0)
-                                        <span class="wishlist-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
-                                    @endif
-                                </div>
-                                <span class="text-sm text-zinc-700">Wishlist</span>
-                            </a>
 
                             <!-- Auth Section for logged-in users -->
                             @auth
