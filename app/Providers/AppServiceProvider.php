@@ -23,5 +23,8 @@ class AppServiceProvider extends ServiceProvider
     {
         // Register Order Observer for push notifications
         Order::observe(OrderObserver::class);
+
+        // Share $lang variable with all views
+        view()->share('lang', app()->getLocale() ?? 'en');
     }
 }
