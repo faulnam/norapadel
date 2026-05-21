@@ -450,98 +450,58 @@
                 <div class="max-w-2xl text-center text-white">
                     <h1 class="text-lg font-semibold tracking-tight sm:text-2xl md:text-3xl lg:text-4xl drop-shadow-lg">NoraPadel</h1>
                     <p class="mt-2 md:mt-4 text-[11px] md:text-sm text-zinc-100 leading-relaxed drop-shadow-md">Experience the ultimate in padel equipment. Premium quality rackets, shoes, and accessories for players who demand excellence.</p>
-                    <div class="mt-3 md:mt-6 flex flex-wrap justify-center gap-6">
-                        <a href="{{ route('shop') }}" class="inline-flex items-center gap-1 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 md:px-6 md:py-2.5 text-[10px] md:text-xs font-semibold text-white backdrop-blur transition duration-300 hover:bg-white/20 hover:scale-[1.02]">Shop Now</a>
-                    </div>
                 </div>
             </div>
         </section>
 
+        
         <!-- Marquee Bar -->
-        <div class="bg-white text-white py-2 overflow-hidden transition-all duration-300" id="marqueeBar">
+        <!-- 6 logos × 20vw = 120vw per set | 2 sets = 240vw | anim: -120vw = seamless loop -->
+        <div class="bg-white py-2 md:py-3 border-y border-zinc-100" style="overflow-x: hidden; overflow-y: visible;" id="marqueeBar">
             <div class="marquee-container">
                 <div class="marquee-content">
                     <!-- Set 1 -->
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/arronax logo.webp') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• ARRONAX •</span>
+                    <span class="marquee-item">
+                        <img src="{{ asset('storage/alpha.jpeg') }}" alt="Alpha" loading="eager">
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/Babolat_logo.svg.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• BABOLAT •</span>
+                    <span class="marquee-item">
+                        <img src="{{ asset('storage/bullpadel.jpeg') }}" alt="Bullpadel" loading="eager">
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/logobullpadel2 (1).png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• BULLPADEL •</span>
+                    <span class="marquee-item">
+                        <img src="{{ asset('storage/arronax.jpeg') }}" alt="Arronax" loading="eager">
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/logo_nox_1200x1200.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• NOX •</span>
+                    <span class="marquee-item">
+                        <img src="{{ asset('storage/babolat.jpeg') }}" alt="Babolat" loading="eager">
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/alpha padel.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• ALPHA •</span>
+                    <span class="marquee-item">
+                        <img src="{{ asset('storage/head.jpeg') }}" alt="Head" loading="eager">
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/head.jpeg') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• ZEPHYR •</span>
+                    <span class="marquee-item">
+                        <img src="{{ asset('storage/nox.jpeg') }}" alt="Nox" loading="eager">
                     </span>
 
-                    <!-- Set 2 -->
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/arronax logo.webp') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• ARRONAX •</span>
+                    <!-- Set 2 (identical duplicate for seamless infinite loop) -->
+                    <span class="marquee-item">
+                        <img src="{{ asset('storage/alpha.jpeg') }}" alt="Alpha" loading="eager">
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/Babolat_logo.svg.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• BABOLAT •</span>
+                    <span class="marquee-item">
+                        <img src="{{ asset('storage/bullpadel.jpeg') }}" alt="Bullpadel" loading="eager">
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/logobullpadel2 (1).png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• BULLPADEL •</span>
+                    <span class="marquee-item">
+                        <img src="{{ asset('storage/arronax.jpeg') }}" alt="Arronax" loading="eager">
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/logo_nox_1200x1200.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• NOX •</span>
+                    <span class="marquee-item">
+                        <img src="{{ asset('storage/babolat.jpeg') }}" alt="Babolat" loading="eager">
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/alpha padel.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• ALPHA •</span>
+                    <span class="marquee-item">
+                        <img src="{{ asset('storage/head.jpeg') }}" alt="Head" loading="eager">
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/head.jpeg') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• ZEPHYR •</span>
-                    </span>
-
-                    <!-- Set 3 -->
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/arronax logo.webp') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• ARRONAX •</span>
-                    </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/Babolat_logo.svg.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• BABOLAT •</span>
-                    </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/logobullpadel2 (1).png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• BULLPADEL •</span>
-                    </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/logo_nox_1200x1200.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• NOX •</span>
-                    </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/alpha padel.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• ALPHA •</span>
-                    </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/head.jpeg') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• ZEPHYR •</span>
+                    <span class="marquee-item">
+                        <img src="{{ asset('storage/nox.jpeg') }}" alt="Nox" loading="eager">
                     </span>
                 </div>
             </div>
         </div>
-
         
 
         <main class="relative z-0">
@@ -704,28 +664,17 @@
         </div>
         @endif
 
-            <!-- New Arrivals -->
-            <section class="np-fade-section bg-white py-2 lg:py-3 pb-0">
-                <div class="relative group">
-                        <!-- Left Arrow -->
-                        <button class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded w-10 h-10 flex items-center justify-center transition duration-300" onclick="scrollNewArrivals('left')">
-                            <i class="fas fa-chevron-left text-black text-sm"></i>
-                        </button>
-                        
-                        <!-- Right Arrow -->
-                        <button class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded w-10 h-10 flex items-center justify-center transition duration-300" onclick="scrollNewArrivals('right')">
-                            <i class="fas fa-chevron-right text-black text-sm"></i>
-                        </button>
-                        
-                        <div id="newArrivalsContainer" class="flex gap-6 overflow-x-auto pb-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x snap-mandatory scroll-smooth">
-                        @foreach($newArrivals as $product)
+            <!-- New Arrivals Grid (2 rows x 5 cols = 10 products) -->
+            <section class="np-fade-section bg-white py-6 lg:py-8">
+                <div id="newArrivalsGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4">
+                @foreach($newArrivals->take(10) as $product)
                             @php
                                 $soldCount = \App\Models\OrderItem::where('product_id', $product->id)
                                     ->whereHas('order', function($q) {
                                         $q->whereIn('status', ['completed', 'delivered']);
                                     })->sum('quantity');
                             @endphp
-                            <div class="product-card group snap-start shrink-0 basis-[40%] sm:basis-[48%] md:basis-[32%] lg:basis-[18%] overflow-hidden bg-white transition duration-300 hover:-translate-y-2" data-category="{{ strtolower($product->type) }}" data-brand="{{ strtolower($product->brand ?? '') }}">
+                            <div class="product-card group overflow-hidden bg-white transition duration-300 hover:-translate-y-1" data-category="{{ strtolower($product->type) }}" data-brand="{{ strtolower($product->brand ?? '') }}">
                                 <a href="{{ route('produk.show', $product) }}" class="block">
                                     <div class="relative aspect-square overflow-hidden">
                                         <div class="h-full w-full overflow-hidden">
@@ -766,9 +715,6 @@
                                 </a>
                                 <div class="px-2 pb-2 md:px-4 md:pb-4">
                                     <div class="flex items-center gap-2">
-                                        <a href="{{ route('produk.show', $product) }}" class="border border-zinc-300 bg-transparent px-2 py-1 text-[10px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950">
-                                            Detail
-                                        </a>
                                         <button onclick="addToCart('{{ $product->slug }}', event)" class="border border-zinc-300 bg-transparent px-2 py-1 text-[10px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950">
                                             Add to cart
                                         </button>
@@ -779,12 +725,16 @@
                                 </div>
                             </div>
                         @endforeach
-                        </div>
                 </div>
             </section>
+                    </div>
+                </div>
+            </div>
+        </main>
 
-            <!-- Category Icons -->
-            <section class="np-fade-section bg-white py-4 pt-4">
+        <!-- Category Icons Section (Outside Main) -->
+        <section class="np-fade-section bg-white py-8 lg:py-10">
+            <div class="mx-auto max-w-7xl px-6 md:px-10 lg:px-12">
                 <div class="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
                         <a href="{{ route('racket') }}" class="flex flex-col items-center justify-center p-4 md:p-6 bg-white cursor-pointer transition hover:opacity-80">
                             <div class="w-36 h-36 md:w-48 md:h-48 mb-3 md:mb-4 flex items-center justify-center">
@@ -811,11 +761,13 @@
                             <h3 class="text-sm md:text-base font-medium text-black">Grips</h3>
                         </a>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <!-- Shop -->
-            <section class="np-fade-section bg-white py-12 lg:py-14">
-                <div id="productGrid" class="grid grid-cols-2 gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
+        <!-- Shop Section (Outside Main, 12 products, 2 rows x 6 cols) -->
+        <section class="np-fade-section bg-white py-8 lg:py-10">
+            <div class="mx-auto max-w-7xl px-6 md:px-10 lg:px-12">
+                <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
                         @foreach($shopProducts->take(12) as $product)
                             @php
                                 $soldCount = \App\Models\OrderItem::where('product_id', $product->id)
@@ -873,9 +825,6 @@
                                 </a>
                                 <div class="px-2 pb-2 md:px-3 md:pb-3">
                                     <div class="flex items-center gap-2">
-                                        <a href="{{ route('produk.show', $product) }}" class="border border-zinc-300 bg-transparent px-2 py-1 text-[10px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950">
-                                            Detail
-                                        </a>
                                         <button onclick="addToCart('{{ $product->slug }}', event)" class="border border-zinc-300 bg-transparent px-2 py-1 text-[10px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950 truncate max-w-[80px] md:max-w-none">
                                             Add to cart
                                         </button>
@@ -892,10 +841,15 @@
                         <i class="fas fa-search text-4xl text-zinc-300 mb-3"></i>
                         <p class="text-zinc-500">Tidak ada produk yang ditemukan</p>
                     </div>
-            </section>
+
+                    <!-- Pagination -->
+                    @if($shopProductsPaginated->hasPages())
+                    <div class="mt-8 flex justify-center">
+                        {{ $shopProductsPaginated->links('pagination::tailwind') }}
                     </div>
+                    @endif
                 </div>
-            </div>
+            </section>
 
         <!-- Testimonials Section - Full Width with Proper Margins -->
         <section id="testimonials" class="np-fade-section bg-white py-18 lg:py-22 mx-auto max-w-7xl px-4 md:px-6 lg:px-12" data-testimonial-showcase>
@@ -1019,37 +973,78 @@
         html {
             scroll-behavior: smooth;
         }
+#marqueeBar {
+            position: relative;
+            z-index: 10;
+            margin-top: -20px;
+        }
+
+        @media (min-width: 768px) {
+            #marqueeBar {
+                margin-top: -32px;
+            }
+        }
 
         /* Marquee Animation */
         .marquee-container {
             display: flex;
-            overflow: hidden;
+            overflow: visible;
             user-select: none;
             width: 100%;
         }
 
         .marquee-content {
             display: flex;
-            animation: marquee 30s linear infinite;
-            white-space: nowrap;
+            align-items: center;
             will-change: transform;
+            /* Motion driven by JS requestAnimationFrame for 100% stutter-free scrolling */
         }
 
         .marquee-item {
-            display: inline-block;
-            padding: 0 2rem;
-            font-size: 0.75rem;
-            font-weight: 500;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
+            flex: 0 0 auto; /* Auto-width to allow perfect uniform padding gaps */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 1.2vw; /* Fluid mobile padding */
+            box-sizing: border-box;
+            overflow: visible;
         }
 
-        @keyframes marquee {
-            from {
-                transform: translateX(0);
+        .marquee-item img {
+            width: auto;
+            height: 5.6vw; /* Fluid height scaling on mobile */
+            object-fit: contain;
+            display: block;
+        }
+
+        /* Specific responsive height override for Head logo to match visual weight */
+        .marquee-item img[alt="Head"] {
+            height: 8.2vw; /* Mobile height */
+        }
+
+        @media (min-width: 768px) {
+            .marquee-item {
+                padding: 0 2.2vw; /* Fluid tablet padding */
             }
-            to {
-                transform: translateX(-50%);
+            .marquee-item img {
+                height: 4.8vw; /* Fluid height scaling on tablet */
+            }
+            .marquee-item img[alt="Head"] {
+                height: 7.2vw; /* Tablet height */
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .marquee-item {
+                padding: 0 3.8vw; /* Fluid desktop padding */
+            }
+            .marquee-item img {
+                height: 3.8vw; /* Fluid height scaling on desktop */
+                max-height: 68px;
+            }
+            .marquee-item img[alt="Head"] {
+                height: 5.8vw; /* Desktop height */
+                max-height: 104px;
             }
         }
 

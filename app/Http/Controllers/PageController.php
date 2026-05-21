@@ -25,7 +25,7 @@ class PageController extends Controller
             ->inStock()
             ->where('is_featured', false)
             ->latest()
-            ->take(6)
+            ->take(16)
             ->get();
 
         $testimonials = Testimonial::approved()
@@ -44,9 +44,7 @@ class PageController extends Controller
 
         $sections = $this->getShopSections();
 
-        $newArrivals = Product::active()->inStock()->where('is_featured', false)->latest()->take(12)->get();
-
-        // Shop products with server-side filtering
+        // Shop products with server-side filtering and pagination
         $shopProductsQuery = Product::active()->inStock()->where('is_featured', false);
 
         if ($request->filled('brand')) {
@@ -57,8 +55,49 @@ class PageController extends Controller
             $shopProductsQuery->where('level', $request->level);
         }
 
-        $shopProducts = $shopProductsQuery->latest()->get();
+        // Apply filters from sidebar
+        if ($request->filled('filter_category')) {
+            $categoryMap = [
+                'racket' => Product::CATEGORY_ORIGINAL,
+                'shoes' => Product::CATEGORY_SHOES,
+                'apparel' => Product::CATEGORY_PEDAS,
+            ];
+            $category = $categoryMap[$request->filter_category] ?? null;
+            if ($category) {
+                $shopProductsQuery->where('category', $category);
+            }
+        }
+
+        if ($request->filled('filter_brand')) {
+            $shopProductsQuery->where('brand', $request->filter_brand);
+        }
+
+        // Sort by price
+        if ($request->filled('filter_price')) {
+            if ($request->filter_price === 'low') {
+                $shopProductsQuery->orderBy('price', 'asc');
+            } elseif ($request->filter_price === 'high') {
+                $shopProductsQuery->orderBy('price', 'desc');
+            }
+        }
+
+        // Sort by popularity or latest
+        if ($request->filled('filter_sort')) {
+            if ($request->filter_sort === 'popular') {
+                $shopProductsQuery->withCount('orderItems')->orderByDesc('order_items_count');
+            } elseif ($request->filter_sort === 'latest') {
+                $shopProductsQuery->latest();
+            }
+        } else {
+            $shopProductsQuery->latest();
+        }
+
+        $shopProducts = $shopProductsQuery->paginate(22)->withQueryString();
         $brands = Product::active()->whereNotNull('brand')->distinct()->pluck('brand')->sort();
+
+        // Get first 10 for New Arrivals section, rest for Shop section
+        $newArrivals = $shopProducts->take(10);
+        $shopProductsBottom = $shopProducts->slice(10, 12);
 
         // Fetch active vouchers for frontend
         $voucherRepository = new VoucherRepository();
@@ -77,7 +116,8 @@ class PageController extends Controller
             'stats' => $stats,
             'sections' => $sections,
             'newArrivals' => $newArrivals,
-            'shopProducts' => $shopProducts,
+            'shopProducts' => $shopProductsBottom,
+            'shopProductsPaginated' => $shopProducts,
             'brands' => $brands,
             'selectedBrand' => $request->brand,
             'selectedLevel' => $request->level,
