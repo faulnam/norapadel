@@ -258,6 +258,14 @@
                         <!-- Right Column - Reviews List -->
                         <div class="space-y-6 lg:pl-4">
                             <!-- Header -->
+                            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+                                <h3 class="text-[11px] font-semibold tracking-[0.15em] text-black uppercase">Reviews {{ $totalReviews }}</h3>
+                                @auth
+                                    <button onclick="openReviewModal()" class="w-full sm:w-auto bg-black text-white px-6 py-2.5 text-[10px] font-semibold tracking-[0.1em] uppercase transition duration-200 hover:bg-white hover:text-black border border-black whitespace-nowrap">
+                                        Write a Review
+                                    </button>
+                                @else
+                                    <a href="{{ route('login') }}" class="w-full sm:w-auto text-center bg-black text-white px-6 py-2.5 text-[10px] font-semibold tracking-[0.1em] uppercase transition duration-200 hover:bg-white hover:text-black border border-black whitespace-nowrap">
                             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
                                 <h3 class="text-[11px] font-semibold tracking-[0.15em] text-black uppercase">Reviews {{ $totalReviews }}</h3>
                                 @auth
@@ -273,6 +281,8 @@
 
                             <!-- Search & Filter -->
                             <div class="flex flex-col sm:flex-row gap-3 mb-8">
+                                <input type="text" id="reviewSearch" placeholder="Search reviews" class="w-full sm:flex-1 px-4 py-2.5 border border-zinc-200 text-sm focus:outline-none focus:border-zinc-400 transition">
+                                <select id="reviewRatingFilter" class="w-full sm:w-auto px-4 py-2.5 border border-zinc-200 text-sm focus:outline-none focus:border-zinc-400 transition bg-white min-w-[130px]">
                                 <input type="text" id="reviewSearch" placeholder="Search reviews" class="flex-1 px-4 py-2.5 border border-zinc-200 text-sm focus:outline-none focus:border-zinc-400 transition">
                                 <select id="reviewRatingFilter" class="px-4 py-2.5 border border-zinc-200 text-sm focus:outline-none focus:border-zinc-400 transition bg-white min-w-[130px]">
                                     <option value="all">All ratings</option>
@@ -289,9 +299,9 @@
                             <div class="space-y-0 max-h-[600px] overflow-y-auto pr-2" id="reviewsList">
                                 @foreach($reviews as $review)
                                 <div class="py-8 border-b border-zinc-100 last:border-0 review-item" data-rating="{{ $review->rating }}">
-                                    <div class="flex items-start justify-between mb-3">
+                                    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-3">
                                         <div>
-                                            <div class="flex items-center gap-2 mb-1">
+                                            <div class="flex flex-wrap items-center gap-2 mb-1">
                                                 <h4 class="text-xs font-semibold tracking-[0.05em] text-black uppercase">{{ $review->reviewer_name ?? $review->user->name }}</h4>
                                                 @if($review->is_verified)
                                                 <span class="text-[9px] text-zinc-400 uppercase tracking-wider">· Verified Buyer</span>
