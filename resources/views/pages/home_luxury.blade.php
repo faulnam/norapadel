@@ -10,10 +10,12 @@
         html, body { overflow-x: hidden; }
     </style>
     <div class="bg-white text-black antialiased">
+
         <header class="fixed left-0 top-0 z-[70] w-full border-b border-transparent bg-transparent backdrop-blur-none transition-all duration-300" id="mainHeader">
             <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-3 md:px-10 lg:px-12">
                 <a href="{{ route('home') }}" class="flex items-center gap-2">
-                    <img src="{{ asset('storage/logo.webp') }}" alt="NoraPadel" class="h-7 w-7 object-contain" loading="lazy">
+                    <img src="{{ asset('storage/logo.png') }}" alt="NoraPadel" class="h-7 w-7 object-contain" loading="lazy">
+                    <span class="text-xl font-semibold tracking-tight text-white transition-colors duration-300" id="logoText">NoraPadel</span>
                 </a>
 
                 <nav class="hidden items-center gap-6 md:flex" id="navLinks">
@@ -227,36 +229,6 @@
                                autocomplete="off">
                     </div> -->
 
-                    <!-- Login (desktop only) -->
-                    @guest
-                        <a href="{{ route('login') }}" id="loginBtn" class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 border border-white/20 rounded-full text-xs font-semibold text-white backdrop-blur transition duration-300 hover:bg-white/20 hover:border-white/30">
-                            <i class="fas fa-sign-in-alt text-sm"></i>
-                            <span>Login</span>
-                        </a>
-                    @endauth
-
-                    <!-- Cart (desktop only) -->
-                    <a href="{{ route('customer.cart.index') }}" class="hidden md:relative transition duration-300 hover:text-white">
-                        <i class="fas fa-shopping-bag text-sm"></i>
-                        @auth
-                            @if (auth()->user()->role === 'customer')
-                                @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
-                                @if ($cartCount > 0)
-                                    <span class="cart-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
-                                @endif
-                            @endif
-                        @endauth
-                        @guest
-                            @php 
-                                $guestCart = session()->get('guest_cart', []);
-                                $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
-                            @endphp
-                            @if($guestCartCount > 0)
-                                <span class="cart-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $guestCartCount > 9 ? '9+' : $guestCartCount }}</span>
-                            @endif
-                        @endguest
-                    </a>
-
                     <!-- Wishlist (mobile only) -->
                     <a href="{{ route('customer.wishlist.index') }}" class="relative md:hidden transition duration-300 hover:text-white">
                         <i class="fas fa-heart text-sm"></i>
@@ -272,35 +244,6 @@
                             <span class="wishlist-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
                         @endif
                     </a>
-
-                    <!-- Cart (mobile only) -->
-                    <a href="{{ route('customer.cart.index') }}" class="relative md:hidden transition duration-300 hover:text-white">
-                        <i class="fas fa-shopping-bag text-sm"></i>
-                        @auth
-                            @if (auth()->user()->role === 'customer')
-                                @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
-                                @if ($cartCount > 0)
-                                    <span class="cart-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
-                                @endif
-                            @endif
-                        @endauth
-                        @guest
-                            @php 
-                                $guestCart = session()->get('guest_cart', []);
-                                $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
-                            @endphp
-                            @if($guestCartCount > 0)
-                                <span class="cart-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $guestCartCount > 9 ? '9+' : $guestCartCount }}</span>
-                            @endif
-                        @endguest
-                    </a>
-
-                    <!-- Login (mobile only) -->
-                    @guest
-                        <a href="{{ route('login') }}" class="md:hidden transition duration-300 hover:text-white">
-                            <i class="fas fa-sign-in-alt text-sm"></i>
-                        </a>
-                    @endauth
 
                     <!-- Mobile Search Icon (hidden since inline search is now visible) -->
                     <button type="button" id="searchToggleBtn" class="hidden transition duration-300 hover:text-white" aria-label="Search" title="Cari Produk">
@@ -318,6 +261,42 @@
                     <div class="relative" id="hamburgerMenuWrapper">
                         <button type="button" id="hamburgerMenuBtn" class="inline-flex h-9 w-9 items-center justify-center rounded border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20 relative">
                             <i class="fas fa-bars text-sm"></i>
+                            <!-- Cart Badge -->
+                            @auth
+                                @if (auth()->user()->role === 'customer')
+                                    @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
+                                    @if ($cartCount > 0)
+                                        <span class="hamburger-cart-badge absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
+                                    @endif
+                                @endif
+                            @endauth
+                            @guest
+                                @php
+                                    $guestCart = session()->get('guest_cart', []);
+                                    $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
+                                @endphp
+                                @if($guestCartCount > 0)
+                                    <span class="hamburger-cart-badge absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $guestCartCount > 9 ? '9+' : $guestCartCount }}</span>
+                                @endif
+                            @endguest
+                            <!-- Wishlist Badge -->
+                            @auth
+                                @if (auth()->user()->role === 'customer')
+                                    @php $wishlistCount = auth()->user()->wishlistItems()->count(); @endphp
+                                    @if ($wishlistCount > 0)
+                                        <span class="hamburger-wishlist-badge absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
+                                    @endif
+                                @endif
+                            @endauth
+                            @guest
+                                @php
+                                    $guestWishlist = session()->get('guest_wishlist', []);
+                                    $guestWishlistCount = count($guestWishlist);
+                                @endphp
+                                @if($guestWishlistCount > 0)
+                                    <span class="hamburger-wishlist-badge absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">{{ $guestWishlistCount > 9 ? '9+' : $guestWishlistCount }}</span>
+                                @endif
+                            @endguest
                         </button>
                         <div id="hamburgerMenuDropdown" class="absolute right-0 mt-2 w-48 z-[100] hidden">
                             <div class="bg-white rounded-lg shadow-lg border border-zinc-100 overflow-hidden">
@@ -345,6 +324,14 @@
                                     </a>
                                 </div>
 
+                                <!-- Login -->
+                                @guest
+                                    <a href="{{ route('login') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
+                                        <i class="fas fa-sign-in-alt text-zinc-500 text-sm"></i>
+                                        <span class="text-sm text-zinc-700">Login</span>
+                                    </a>
+                                @endauth
+                                
                                 <!-- Language Switcher -->
                                 <div class="border-b border-zinc-100">
                                     <div class="px-3 py-2 bg-zinc-50">
@@ -358,6 +345,50 @@
                                         </div>
                                     </div>
                                 </div>
+                                
+                                <!-- Cart -->
+                                <a href="{{ route('customer.cart.index') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
+                                    <div class="relative">
+                                        <i class="fas fa-shopping-bag text-zinc-500 text-sm"></i>
+                                        @auth
+                                            @if (auth()->user()->role === 'customer')
+                                                @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
+                                                @if ($cartCount > 0)
+                                                    <span class="cart-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
+                                                @endif
+                                            @endif
+                                        @endauth
+                                        @guest
+                                            @php 
+                                                $guestCart = session()->get('guest_cart', []);
+                                                $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
+                                            @endphp
+                                            @if($guestCartCount > 0)
+                                                <span class="cart-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $guestCartCount > 9 ? '9+' : $guestCartCount }}</span>
+                                            @endif
+                                        @endguest
+                                    </div>
+                                    <span class="text-sm text-zinc-700">Cart</span>
+                                </a>
+                                
+                                <!-- Wishlist -->
+                                <a href="{{ route('customer.wishlist.index') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
+                                    <div class="relative">
+                                        <i class="fas fa-heart text-zinc-500 text-sm"></i>
+                                        @php
+                                            if (auth()->check() && auth()->user()->role === 'customer') {
+                                                $wishlistCount = auth()->user()->wishlistItems()->count();
+                                            } else {
+                                                $guestWishlist = session()->get('guest_wishlist', []);
+                                                $wishlistCount = count($guestWishlist);
+                                            }
+                                        @endphp
+                                        @if($wishlistCount > 0)
+                                            <span class="wishlist-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
+                                        @endif
+                                    </div>
+                                    <span class="text-sm text-zinc-700">Wishlist</span>
+                                </a>
                                 
                                 <!-- Auth Section for logged-in users -->
                                 @auth
@@ -444,7 +475,7 @@
             </div>
         </div>
 
-        
+        <!-- Hero Banner - Full behind navbar -->
         <section class="relative w-full min-h-[380px] overflow-hidden bg-zinc-900 sm:min-h-[420px] md:min-h-[360px] lg:min-h-[400px]">
             <img src="{{ asset('storage/banner.webp') }}"
                 alt="Padel Tennis"
@@ -453,23 +484,17 @@
             <div class="absolute inset-0 bg-gradient-to-b from-black/20 via-black/50 to-black/80"></div>
             <div class="relative mx-auto flex min-h-[380px] sm:min-h-[420px] md:min-h-[360px] lg:min-h-[400px] max-w-7xl items-center justify-center px-6 md:px-10 lg:px-12 pt-28 md:pt-24">
                 <div class="flex flex-col items-center justify-center text-center -mt-12 md:-mt-20"> 
-
                     <div class="mb-4 w-full max-w-md px-4">
                         <div class="relative flex items-center" id="navSearchWrapper">
                            <i class="fas fa-search absolute left-4 text-white text-sm pointer-events-none z-10"></i>
-                            
-                            <input type="text"  id="navSearchInput" placeholder="Cari raket, sepatu, atau aksesoris..."
-                                class="w-full bg-white/10 backdrop-blur-md text-white placeholder-white/50 pl-11 pr-4 py-2 rounded-full text-sm border border-white/20 shadow-sm focus:outline-none focus:bg-white/20 focus:border-white/40 focus:ring-1 focus:ring-white/30 transition-all cursor-pointer"
-                                readonly> </div>
+                            <input type="text" id="navSearchInput" placeholder="Cari raket, sepatu, atau aksesoris..."
+                                class="w-full bg-white/10 backdrop-blur-md text-white placeholder-white/50 pl-11 pr-4 py-2 rounded-full text-sm border border-white/20 shadow-sm focus:outline-none focus:bg-white/20 focus:border-white/40 focus:ring-1 focus:ring-white/30 transition-all cursor-pointer" readonly> </div>
                     </div>
-                    <h1 class="text-4xl font-bold text-white mb-2">
-                        NoraPadel
-                    </h1>
-                    
-                    <p class="text-white/80 text-sm max-w-xl mx-auto mb-4">
-                        Experience the ultimate in padel equipment. Premium quality rackets, shoes, and accessories for players who demand excellence.
-                    </p>
-
+                    <h1 class="text-4xl font-bold text-white mb-2">NoraPadel</h1>
+                    <p class="mt-2 md:mt-4 text-[11px] md:text-sm text-zinc-100 leading-relaxed drop-shadow-md">Experience the ultimate in padel equipment. Premium quality rackets, shoes, and accessories for players who demand excellence.</p>
+                    <div class="mt-3 md:mt-6 flex flex-wrap justify-center gap-6">
+                        <a href="{{ route('shop') }}" class="inline-flex items-center gap-1 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 md:px-6 md:py-2.5 text-[10px] md:text-xs font-semibold text-white backdrop-blur transition duration-300 hover:bg-white/20 hover:scale-[1.02]">Shop Now</a>
+                    </div>
                 </div>
             </div>
         </section>
@@ -522,245 +547,134 @@
             </div>
         </div>
 
-        
-
         <main class="relative z-0">
-            <!-- Main Layout: Sidebar + Content -->
-            <div class="mx-auto max-w-7xl px-6 pb-8 md:px-10 lg:px-12 pt-6">
-                <div class="flex flex-col gap-8 lg:flex-row">
-                    
-                    <!-- Sidebar Filters -->
-                    <aside class="hidden lg:block w-[240px] flex-shrink-0">
-                        <div class="space-y-6 sticky top-24">
-                            <!-- Category -->
-                            <div>
-                                <button type="button" class="filter-toggle flex w-full items-center justify-between text-left">
-                                    <h3 class="text-sm font-semibold text-black">Category</h3>
-                                    <i class="fas fa-chevron-down text-xs text-zinc-400 transition-transform duration-200"></i>
-                                </button>
-                                <div class="filter-content mt-3 flex flex-wrap gap-2">
-                                    <a href="javascript:void(0)" onclick="applyFilter('category', 'racket')" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black" data-category="racket">Racket</a>
-                                    <a href="javascript:void(0)" onclick="applyFilter('category', 'shoes')" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black" data-category="shoes">Shoes</a>
-                                    <a href="javascript:void(0)" onclick="applyFilter('category', 'apparel')" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black" data-category="apparel">Accessories</a>
-                                    <a href="javascript:void(0)" onclick="clearFilter('category')" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-rose-600 transition hover:border-rose-600 hover:text-rose-600">Clear</a>
-                                </div>
-                            </div>
 
-                            <!-- Brand -->
-                            <div class="border-t border-zinc-100 pt-6">
-                                <button type="button" class="filter-toggle flex w-full items-center justify-between text-left">
-                                    <h3 class="text-sm font-semibold text-black">Brand</h3>
-                                    <i class="fas fa-chevron-down text-xs text-zinc-400 transition-transform duration-200"></i>
-                                </button>
-                                <div class="filter-content mt-3 flex flex-wrap gap-2">
-                                    <a href="javascript:void(0)" onclick="applyFilter('brand', 'Bullpadel')" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black" data-brand="Bullpadel">Bullpadel</a>
-                                    <a href="javascript:void(0)" onclick="applyFilter('brand', 'Babolat')" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black" data-brand="Babolat">Babolat</a>
-                                    <a href="javascript:void(0)" onclick="applyFilter('brand', 'Nox')" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black" data-brand="Nox">Nox</a>
-                                    <a href="javascript:void(0)" onclick="applyFilter('brand', 'Alpha')" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black" data-brand="Alpha">Alpha</a>
-                                    <a href="javascript:void(0)" onclick="applyFilter('brand', 'Zephyr')" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black" data-brand="Zephyr">Zephyr</a>
-                                    <a href="javascript:void(0)" onclick="applyFilter('brand', 'Arronax')" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black" data-brand="Arronax">Arronax</a>
-                                    <a href="javascript:void(0)" onclick="clearFilter('brand')" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-rose-600 transition hover:border-rose-600 hover:text-rose-600">Clear</a>
-                                </div>
-                            </div>
-
-                            <!-- Price -->
-                            <div class="border-t border-zinc-100 pt-6">
-                                <button type="button" class="filter-toggle flex w-full items-center justify-between text-left">
-                                    <h3 class="text-sm font-semibold text-black">Price</h3>
-                                    <i class="fas fa-chevron-down text-xs text-zinc-400 transition-transform duration-200"></i>
-                                </button>
-                                <div class="filter-content mt-3 flex flex-col gap-2">
-                                    <label class="flex cursor-pointer items-center gap-2">
-                                        <input type="radio" name="filterPrice" class="border-zinc-300 text-black focus:ring-black" value="" onchange="applyFilters()">
-                                        <span class="text-sm text-zinc-600">All Prices</span>
-                                    </label>
-                                    <label class="flex cursor-pointer items-center gap-2">
-                                        <input type="radio" name="filterPrice" class="border-zinc-300 text-black focus:ring-black" value="low" onchange="applyFilters()">
-                                        <span class="text-sm text-zinc-600">Low to High</span>
-                                    </label>
-                                    <label class="flex cursor-pointer items-center gap-2">
-                                        <input type="radio" name="filterPrice" class="border-zinc-300 text-black focus:ring-black" value="high" onchange="applyFilters()">
-                                        <span class="text-sm text-zinc-600">High to Low</span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <!-- Sort -->
-                            <div class="border-t border-zinc-100 pt-6">
-                                <button type="button" class="filter-toggle flex w-full items-center justify-between text-left">
-                                    <h3 class="text-sm font-semibold text-black">Sort</h3>
-                                    <i class="fas fa-chevron-down text-xs text-zinc-400 transition-transform duration-200"></i>
-                                </button>
-                                <div class="filter-content mt-3 flex flex-col gap-2">
-                                    <label class="flex cursor-pointer items-center gap-2">
-                                        <input type="radio" name="filterSort" class="border-zinc-300 text-black focus:ring-black" value="" onchange="applyFilters()">
-                                        <span class="text-sm text-zinc-600">Default</span>
-                                    </label>
-                                    <label class="flex cursor-pointer items-center gap-2">
-                                        <input type="radio" name="filterSort" class="border-zinc-300 text-black focus:ring-black" value="popular" onchange="applyFilters()">
-                                        <span class="text-sm text-zinc-600">Popular</span>
-                                    </label>
-                                    <label class="flex cursor-pointer items-center gap-2">
-                                        <input type="radio" name="filterSort" class="border-zinc-300 text-black focus:ring-black" value="latest" onchange="applyFilters()">
-                                        <span class="text-sm text-zinc-600">Latest</span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </aside>
-
-                    <!-- Main Content -->
-                    <div class="flex-1 min-w-0">
-
-            <!-- Voucher Section -->
-        @if($vouchers->isNotEmpty())
-        <div class="relative">
-            <!-- Toggle Button — floating, tidak makan ruang vertikal -->
-            <div class="flex items-center gap-2 mb-1">
-                <button onclick="toggleVoucherSection()" class="flex items-center gap-1.5 hover:scale-105 transition-all duration-200">
-                    <div class="relative">
-                        <span class="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center">
-                            <i class="fas fa-ticket-alt text-white text-lg"></i>
-                        </span>
-                        <span class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center border border-white">{{ $vouchers->count() }}</span>
-                    </div>
-                    <span class="text-xs text-zinc-500">Voucher tersedia</span>
-                </button>
-            </div>
-
-            <!-- Voucher Content (collapsible) -->
-            <div id="voucherContent"
-                 class="overflow-hidden transition-all duration-500 ease-in-out"
-                 style="max-height: 0px; opacity: 0;">
-                <div class="pb-2 flex flex-nowrap overflow-x-auto gap-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                    @foreach($vouchers as $voucher)
-                    @php
-                        $hasClaimed = auth()->check() && $voucher->isClaimedByUser(auth()->id());
-                        $isUsed = auth()->check() && $voucher->isUsedByUser(auth()->id());
-                        $isExpired = $voucher->is_expired;
-                        $isQuotaFinished = $voucher->is_quota_finished;
-                        $isNotStarted = $voucher->is_not_started;
-                    @endphp
-                    <div class="relative shrink-0 basis-[280px] bg-gradient-to-r from-white to-gray-50 rounded border border-gray-200 shadow-sm overflow-hidden hover:shadow-md transition-all duration-300 {{ $isUsed ? 'opacity-60' : '' }}">
-                        <div class="flex items-center">
-                            <div class="flex-1 p-3 relative">
-                                <div class="absolute left-0 top-1/2 -translate-y-1/2 w-2 h-2 bg-white rounded-full -ml-1"></div>
-                                <div class="font-bold text-gray-700 text-sm mb-0.5">
-                                    @if($voucher->type === 'fixed')
-                                        Diskon Rp{{ number_format($voucher->discount_value, 0, ',', '.') }}
-                                    @elseif($voucher->type === 'percent')
-                                        Diskon {{ $voucher->discount_value }}%
-                                    @else
-                                        Cashback {{ $voucher->cashback_coin }} Coin
-                                    @endif
-                                </div>
-                                <div class="text-[10px] text-gray-500 mb-1">Min. Blj Rp{{ number_format($voucher->minimum_purchase, 0, ',', '.') }}</div>
-                                <div class="w-full h-1 bg-gray-100 rounded-full overflow-hidden mb-0.5">
-                                    <div class="h-full bg-gradient-to-r {{ $voucher->quota_percentage > 80 ? 'from-red-400 to-red-300' : 'from-gray-400 to-gray-300' }} rounded-full" style="width: {{ $voucher->quota_percentage }}%"></div>
-                                </div>
-                                <div class="text-[10px] text-gray-400">
-                                    Sisa: {{ $voucher->remaining_quota }}/{{ $voucher->quota }} • Hingga: {{ $voucher->end_date->format('d.m.Y') }}
-                                </div>
-                            </div>
-                            <div class="w-px h-10 border-l-2 border-dashed border-gray-200"></div>
-                            <div class="px-2 py-3 flex items-center">
-                                @if($isUsed)
-                                    <button class="px-3 py-1.5 bg-rose-100 text-rose-600 font-bold text-[10px] rounded cursor-not-allowed" disabled>Digunakan</button>
-                                @elseif($hasClaimed)
-                                    <button class="px-3 py-1.5 bg-emerald-100 text-emerald-600 font-bold text-[10px] rounded cursor-not-allowed" disabled>Diklaim</button>
-                                @elseif($isExpired || $isQuotaFinished || $isNotStarted)
-                                    <button class="px-3 py-1.5 bg-gray-300 text-gray-500 font-bold text-[10px] rounded cursor-not-allowed" disabled>
-                                        @if($isExpired) Expired @elseif($isQuotaFinished) Habis @else Segera @endif
-                                    </button>
-                                @else
-                                    <button onclick="claimVoucher({{ $voucher->id }}, this)" class="claim-btn px-3 py-1.5 bg-gray-600 text-white font-bold text-[10px] rounded hover:bg-gray-700 transition-all duration-300">Klaim</button>
-                                @endif
-                            </div>
+            <!-- Product Filters (Below Hero) -->
+            <section class="bg-zinc-50 py-3 border-b border-zinc-200">
+                <div class="mx-auto w-full max-w-7xl px-3 md:px-10 lg:px-12">
+                    <div class="flex flex-col md:flex-row gap-3 items-center justify-between">
+                        <div class="flex gap-2 flex-nowrap overflow-x-auto pb-1 flex-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                            <select id="filterBrandBottom" class="px-2 py-1.5 border border-zinc-300 rounded-lg text-xs md:text-sm focus:outline-none focus:border-blue-500 transition bg-white shrink-0" onchange="applyFilters()">
+                                <option value="">Brand</option>
+                                <option value="Bullpadel">Bullpadel</option>
+                                <option value="Babolat">Babolat</option>
+                                <option value="Nox">Nox</option>
+                                <option value="Alpha">Alpha</option>
+                                <option value="Zephyr">Zephyr</option>
+                                <option value="Arronax">Arronax</option>
+                            </select>
+                            <select id="filterCategoryBottom" class="px-2 py-1.5 border border-zinc-300 rounded-lg text-xs md:text-sm focus:outline-none focus:border-blue-500 transition bg-white shrink-0" onchange="applyFilters()">
+                                <option value="">Category</option>
+                                <option value="racket">Racket</option>
+                                <option value="shoes">Shoes</option>
+                                <option value="apparel">Accessories</option>
+                            </select>
+                            <select id="filterPriceBottom" class="px-2 py-1.5 border border-zinc-300 rounded-lg text-xs md:text-sm focus:outline-none focus:border-blue-500 transition bg-white shrink-0" onchange="applyFilters()">
+                                <option value="">Price</option>
+                                <option value="low">Low to High</option>
+                                <option value="high">High to Low</option>
+                            </select>
+                            <select id="filterSortBottom" class="px-2 py-1.5 border border-zinc-300 rounded-lg text-xs md:text-sm focus:outline-none focus:border-blue-500 transition bg-white shrink-0" onchange="applyFilters()">
+                                <option value="">Sort</option>
+                                <option value="popular">Popular</option>
+                                <option value="latest">Latest</option>
+                            </select>
                         </div>
                     </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-        @endif
-
-            <!-- New Arrivals -->
-            <section class="np-fade-section bg-white py-2 lg:py-3 pb-0">
-                <div id="newArrivalsGrid" class="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5">
-                    @foreach($newArrivals->take(10) as $product)
-                        @php
-                            $soldCount = \App\Models\OrderItem::where('product_id', $product->id)
-                                ->whereHas('order', function($q) {
-                                    $q->whereIn('status', ['completed', 'delivered']);
-                                })->sum('quantity');
-                        @endphp
-                        <div class="product-item product-card group block overflow-hidden bg-white transition duration-300 hover:-translate-y-1"
-                                 data-name="{{ strtolower($product->name) }}"
-                                 data-price="{{ $product->hasActiveDiscount() ? $product->discounted_price : $product->price }}"
-                                 data-category="{{ strtolower($product->type) }}"
-                                 data-brand="{{ strtolower($product->brand ?? '') }}"
-                                 data-level="{{ $product->level ?? '' }}"
-                                 data-discount="{{ $product->hasActiveDiscount() ? 'yes' : 'no' }}"
-                                 data-bundle="{{ $product->package_type === 'bundle' ? 'yes' : 'no' }}"
-                                 data-sold="{{ $soldCount }}">
-                            <a href="{{ route('produk.show', $product) }}" class="block">
-                                <div class="relative aspect-square overflow-hidden">
-                                    <div class="h-full w-full overflow-hidden">
-                                        <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" onerror="this.onerror=null;this.src='/images/logo.png';" loading="lazy">
-                                    </div>
-                                    @if($product->hasActiveDiscount())
-                                        <span class="absolute left-0 top-0 bg-rose-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">-{{ $product->formatted_discount_percent }}</span>
-                                    @endif
-                                    <span class="absolute left-0 {{ $product->hasActiveDiscount() ? 'top-7' : 'top-0' }} bg-blue-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Latest</span>
-                                    @if($product->package_type === 'bundle')
-                                        <span class="absolute left-0 {{ $product->hasActiveDiscount() ? 'top-14' : 'top-7' }} bg-purple-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Bundle</span>
-                                    @endif
-                                    @if($product->isBestSeller())
-                                        <span class="absolute right-0 top-0 bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Popular</span>
-                                    @endif
-                                </div>
-                                <div class="p-3">
-                                    <h3 class="line-clamp-1 text-sm font-medium text-black">{{ $product->name }}</h3>
-                                    <p class="mt-1 text-xs text-zinc-600">{{ $product->category_label }}</p>
-                                    <div class="mt-1 flex items-center gap-1">
-                                        @php
-                                            $rating = $product->average_rating;
-                                        @endphp
-                                        <i class="fas fa-star text-black text-[10px]"></i>
-                                        <span class="text-[10px] text-zinc-600 ml-1">{{ number_format($rating, 1) }}</span>
-                                        @if($product->total_reviews > 0)
-                                            <span class="text-[10px] text-zinc-500">({{ $product->total_reviews }})</span>
-                                        @endif
-                                    </div>
-                                    @if($product->hasActiveDiscount())
-                                        <p class="mt-1 text-base font-semibold text-black">{{ $product->formatted_discounted_price }}</p>
-                                        <p class="text-xs text-zinc-400 line-through">{{ $product->formatted_price }}</p>
-                                    @else
-                                        <p class="mt-1 text-base font-semibold text-black">{{ $product->formatted_price }}</p>
-                                    @endif
-                                </div>
-                            </a>
-                            <div class="px-2 pb-2 md:px-3 md:pb-3">
-                                <div class="flex items-center gap-2">
-                                    <button onclick="addToCart('{{ $product->slug }}', event)" class="border border-zinc-300 bg-transparent px-2 py-1 text-[10px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950 truncate max-w-[80px] md:max-w-none">
-                                        Add to cart
-                                    </button>
-                                    <button onclick="addToWishlist('{{ $product->slug }}', event)" class="text-zinc-400 transition duration-300 hover:text-rose-500">
-                                        <i class="fas fa-heart text-xs md:text-sm"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
                 </div>
             </section>
+
+            <!-- New Arrivals -->
+            <section class="np-fade-section bg-white py-8 lg:py-10 pb-0">
+                <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
+                    
+                    <div class="relative group">
+                        <!-- Left Arrow -->
+                        <button class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded w-10 h-10 flex items-center justify-center transition duration-300" onclick="scrollNewArrivals('left')">
+                            <i class="fas fa-chevron-left text-black text-sm"></i>
+                        </button>
+                        
+                        <!-- Right Arrow -->
+                        <button class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded w-10 h-10 flex items-center justify-center transition duration-300" onclick="scrollNewArrivals('right')">
+                            <i class="fas fa-chevron-right text-black text-sm"></i>
+                        </button>
+                        
+                        <div id="newArrivalsContainer" class="flex gap-6 overflow-x-auto pb-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x snap-mandatory scroll-smooth">
+                        @foreach($newArrivals as $product)
+                            @php
+                                $soldCount = \App\Models\OrderItem::where('product_id', $product->id)
+                                    ->whereHas('order', function($q) {
+                                        $q->whereIn('status', ['completed', 'delivered']);
+                                    })->sum('quantity');
+                            @endphp
+                            <div class="group snap-start shrink-0 basis-[40%] sm:basis-[48%] md:basis-[32%] lg:basis-[18%] overflow-hidden bg-white transition duration-300 hover:-translate-y-2">
+                                <a href="{{ route('produk.show', $product) }}" class="block">
+                                    <div class="relative aspect-square overflow-hidden">
+                                        <div class="h-full w-full overflow-hidden">
+                                            <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" onerror="this.onerror=null;this.src='/images/logo.png';" loading="lazy">
+                                        </div>
+                                        @if($product->hasActiveDiscount())
+                                            <span class="absolute left-0 top-0 bg-rose-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">-{{ $product->formatted_discount_percent }}</span>
+                                        @endif
+                                        <!-- Latest Badge for New Arrivals -->
+                                        <span class="absolute left-0 {{ $product->hasActiveDiscount() ? 'top-7' : 'top-0' }} bg-blue-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Latest</span>
+                                        @if($product->package_type === 'bundle')
+                                            <span class="absolute left-0 {{ $product->hasActiveDiscount() ? 'top-14' : 'top-7' }} bg-purple-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Bundle</span>
+                                        @endif
+                                        @if($product->isBestSeller())
+                                            <span class="absolute right-0 top-0 bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Best Seller</span>
+                                        @endif
+                                    </div>
+                                    <div class="p-2 md:p-4">
+                                        <h3 class="line-clamp-1 text-sm font-medium text-black">{{ $product->name }}</h3>
+                                        <p class="mt-1 text-xs text-zinc-600">{{ $product->category_label }}</p>
+                                        <div class="mt-1 flex items-center gap-1">
+                                            @php
+                                                $rating = $product->average_rating;
+                                                $fullStars = floor($rating);
+                                                $hasHalfStar = ($rating - $fullStars) >= 0.5;
+                                            @endphp
+                                            @for($i = 1; $i <= 5; $i++)
+                                                @if($i <= $fullStars)
+                                                    <i class="fas fa-star text-black text-[10px]"></i>
+                                                @elseif($i == $fullStars + 1 && $hasHalfStar)
+                                                    <i class="fas fa-star-half-alt text-black text-[10px]"></i>
+                                                @else
+                                                    <i class="far fa-star text-zinc-200 text-[10px]"></i>
+                                                @endif
+                                            @endfor
+                                            @if($product->total_reviews > 0)
+                                                <span class="text-[10px] text-zinc-500">({{ $product->total_reviews }})</span>
+                                            @endif
+                                        </div>
+                                        @if($product->hasActiveDiscount())
+                                            <p class="mt-1 text-base font-semibold text-black">{{ $product->formatted_discounted_price }}</p>
+                                            <p class="text-xs text-zinc-400 line-through">{{ $product->formatted_price }}</p>
+                                        @else
+                                            <p class="mt-1 text-base font-semibold text-black">{{ $product->formatted_price }}</p>
+                                        @endif
+                                    </div>
+                                </a>
+                                <div class="px-2 pb-2 md:px-4 md:pb-4">
+                                    <div class="flex items-center gap-2">
+                                        <button onclick="addToCart('{{ $product->slug }}', event)" class="border border-zinc-300 bg-transparent px-2 py-1 text-[10px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950">
+                                            Add to cart
+                                        </button>
+                                        <button onclick="addToWishlist('{{ $product->slug }}', event)" class="text-zinc-400 transition duration-300 hover:text-rose-500">
+                                            <i class="fas fa-heart text-sm"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                        </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <!-- Category Icons - Full Width -->
+            <!-- Category Icons -->
             <section class="np-fade-section bg-white py-4 pt-4">
-                <div class="mx-auto max-w-7xl px-4 md:px-6 lg:px-12">
+                <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
                     <div class="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
                         <a href="{{ route('racket') }}" class="flex flex-col items-center justify-center p-4 md:p-6 bg-white cursor-pointer transition hover:opacity-80">
                             <div class="w-36 h-36 md:w-48 md:h-48 mb-3 md:mb-4 flex items-center justify-center">
@@ -790,26 +704,105 @@
                 </div>
             </section>
 
-            <!-- Shop - Full Width -->
+            <!-- Voucher Section -->
+            @if($vouchers->isNotEmpty())
+            <section class="np-fade-section bg-[#f5f5f5] py-4">
+                <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
+                    <!-- Dynamic Vouchers -->
+                    <div class="flex flex-nowrap overflow-x-auto gap-3 pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-2 lg:grid-cols-4 md:overflow-visible md:pb-0 md:gap-6">
+                        @foreach($vouchers as $voucher)
+                        @php
+                            $hasClaimed = auth()->check() && $voucher->isClaimedByUser(auth()->id());
+                            $isUsed = auth()->check() && $voucher->isUsedByUser(auth()->id());
+                            $isExpired = $voucher->is_expired;
+                            $isQuotaFinished = $voucher->is_quota_finished;
+                            $isNotStarted = $voucher->is_not_started;
+                        @endphp
+                        <div class="relative shrink-0 basis-[85%] md:basis-auto bg-gradient-to-r from-white to-gray-50 rounded-12px border border-gray-200 shadow-sm overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 {{ $isUsed ? 'opacity-60' : '' }}">
+                            <div class="flex items-center">
+                                <!-- Left: Voucher Info -->
+                                <div class="flex-1 p-4 relative">
+                                    <!-- Ticket Notch Effect -->
+                                    <div class="absolute left-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-[#f5f5f5] rounded-full"></div>
+
+                                    <div class="font-bold text-gray-700 text-base mb-1">
+                                        @if($voucher->type === 'fixed')
+                                            Diskon Rp{{ number_format($voucher->discount_value, 0, ',', '.') }}
+                                        @elseif($voucher->type === 'percent')
+                                            Diskon {{ $voucher->discount_value }}%
+                                        @else
+                                            Cashback {{ $voucher->cashback_coin }} Coin
+                                        @endif
+                                    </div>
+                                    <div class="text-xs text-gray-500 mb-2">Min. Blj Rp{{ number_format($voucher->minimum_purchase, 0, ',', '.') }}</div>
+
+                                    <!-- Progress Bar -->
+                                    <div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden mb-1">
+                                        <div class="h-full bg-gradient-to-r {{ $voucher->quota_percentage > 80 ? 'from-red-400 to-red-300' : 'from-gray-400 to-gray-300' }} rounded-full" style="width: {{ $voucher->quota_percentage }}%"></div>
+                                    </div>
+                                    <div class="text-xs text-gray-400">
+                                        Sisa: {{ $voucher->remaining_quota }}/{{ $voucher->quota }} • Hingga: {{ $voucher->end_date->format('d.m.Y') }}
+                                    </div>
+                                </div>
+
+                                <!-- Dashed Separator -->
+                                <div class="w-px h-14 border-l-2 border-dashed border-gray-200"></div>
+
+                                <!-- Right: Claim Button -->
+                                <div class="px-3 py-4 flex items-center">
+                                    @if($isUsed)
+                                        <button class="px-4 py-2 bg-rose-100 text-rose-600 font-bold text-xs rounded-8px cursor-not-allowed" disabled>
+                                            Digunakan
+                                        </button>
+                                    @elseif($hasClaimed)
+                                        <button class="px-4 py-2 bg-emerald-100 text-emerald-600 font-bold text-xs rounded-8px cursor-not-allowed" disabled>
+                                            Diklaim
+                                        </button>
+                                    @elseif($isExpired || $isQuotaFinished || $isNotStarted)
+                                        <button class="px-4 py-2 bg-gray-300 text-gray-500 font-bold text-xs rounded-8px cursor-not-allowed" disabled>
+                                            @if($isExpired)
+                                                Expired
+                                            @elseif($isQuotaFinished)
+                                                Habis
+                                            @else
+                                                Segera
+                                            @endif
+                                        </button>
+                                    @else
+                                        <button onclick="claimVoucher({{ $voucher->id }}, this)" class="claim-btn px-4 py-2 bg-gray-600 text-white font-bold text-xs rounded-8px hover:bg-gray-700 hover:shadow-lg hover:scale-105 transition-all duration-300">
+                                            Klaim
+                                        </button>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+            </section>
+            @endif
+
+            
+            <!-- Shop -->
             <section class="np-fade-section bg-white py-12 lg:py-14">
-                <div class="mx-auto max-w-7xl px-4 md:px-6 lg:px-12">
-                    <div id="productGrid" class="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-6">
-                        @foreach($shopProducts as $product)
+                <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
+                    
+                    <div id="productGrid" class="grid grid-cols-3 gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                        @foreach($shopProducts->take(9) as $product)
                             @php
                                 $soldCount = \App\Models\OrderItem::where('product_id', $product->id)
                                     ->whereHas('order', function($q) {
                                         $q->whereIn('status', ['completed', 'delivered']);
                                     })->sum('quantity');
                             @endphp
-                            <div class="product-item product-card group block overflow-hidden bg-white transition duration-300 hover:-translate-y-1"
-                                     data-name="{{ strtolower($product->name) }}"
-                                     data-price="{{ $product->hasActiveDiscount() ? $product->discounted_price : $product->price }}"
-                                     data-category="{{ strtolower($product->type) }}"
-                                     data-brand="{{ strtolower($product->brand ?? '') }}"
-                                     data-level="{{ $product->level ?? '' }}"
-                                     data-discount="{{ $product->hasActiveDiscount() ? 'yes' : 'no' }}"
-                                     data-bundle="{{ $product->package_type === 'bundle' ? 'yes' : 'no' }}"
-                                     data-sold="{{ $soldCount }}">
+                       <div class="product-item group block overflow-hidden bg-white transition duration-300 hover:-translate-y-1"
+                                 data-name="{{ strtolower($product->name) }}"
+                                 data-price="{{ $product->hasActiveDiscount() ? $product->discounted_price : $product->price }}"
+                                 data-brand="{{ strtolower($product->brand ?? '') }}"
+                                 data-level="{{ $product->level ?? '' }}"
+                                 data-discount="{{ $product->hasActiveDiscount() ? 'yes' : 'no' }}"
+                                 data-bundle="{{ $product->package_type === 'bundle' ? 'yes' : 'no' }}"
+                                 data-sold="{{ $soldCount }}">
                                 <a href="{{ route('produk.show', $product) }}" class="block">
                                     <div class="relative aspect-square overflow-hidden">
                                         <div class="h-full w-full overflow-hidden">
@@ -834,9 +827,18 @@
                                         <div class="mt-1 flex items-center gap-1">
                                             @php
                                                 $rating = $product->average_rating;
+                                                $fullStars = floor($rating);
+                                                $hasHalfStar = ($rating - $fullStars) >= 0.5;
                                             @endphp
-                                            <i class="fas fa-star text-black text-[10px]"></i>
-                                            <span class="text-[10px] text-zinc-600 ml-1">{{ number_format($rating, 1) }}</span>
+                                            @for($i = 1; $i <= 5; $i++)
+                                                @if($i <= $fullStars)
+                                                    <i class="fas fa-star text-black text-[10px]"></i>
+                                                @elseif($i == $fullStars + 1 && $hasHalfStar)
+                                                    <i class="fas fa-star-half-alt text-black text-[10px]"></i>
+                                                @else
+                                                    <i class="far fa-star text-zinc-200 text-[10px]"></i>
+                                                @endif
+                                            @endfor
                                             @if($product->total_reviews > 0)
                                                 <span class="text-[10px] text-zinc-500">({{ $product->total_reviews }})</span>
                                             @endif
@@ -870,60 +872,67 @@
                 </div>
             </section>
 
-                    <!-- Pagination -->
-                    <div class="flex items-center justify-center gap-0.5 mt-8">
-                        <button onclick="prevPage()" class="px-1.5 py-1 border border-zinc-300 rounded hover:bg-zinc-100 transition">
-                            <i class="fas fa-chevron-left text-[10px]"></i>
-                        </button>
-                        <div id="paginationNumbers" class="flex gap-0.5">
-                            <!-- Page numbers will be generated by JS -->
+            <section id="testimonials" class="np-fade-section bg-white py-18 lg:py-22" data-testimonial-showcase>
+                <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
+                    @php
+                        $testimonialItems = $testimonials->take(3);
+                    @endphp
+
+                    @if ($testimonialItems->count() > 0)
+                        <div class="relative overflow-hidden rounded-lg bg-zinc-50/40 px-2 py-2 md:px-4 md:py-4"
+                            data-testimonial-hero>
+                            <div class="np-testimonial-hero-track" data-testimonial-track>
+                                @foreach ($testimonialItems as $index => $testimonial)
+                                    <article class="np-testimonial-hero-slide">
+                                        <div class="relative aspect-video overflow-hidden rounded-2xl">
+                                            <img src="{{ $testimonial->image_url ?? '/images/logo.png' }}"
+                                                alt="Testimoni" class="h-full w-full object-cover" loading="lazy">
+                                            <div
+                                                class="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent">
+                                            </div>
+
+                                        </div>
+                                    </article>
+                                @endforeach
+                            </div>
+
+                            <div class="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded bg-black/35 px-3 py-2 backdrop-blur"
+                                data-testimonial-dots>
+                                @foreach ($testimonialItems as $index => $testimonial)
+                                    <button type="button"
+                                        class="np-testimonial-dot h-2.5 w-2.5 rounded-full bg-white/45 transition duration-300"
+                                        data-slide-to="{{ $index }}"
+                                        aria-label="Slide {{ $index + 1 }}"></button>
+                                @endforeach
+                            </div>
                         </div>
-                        <button onclick="nextPage()" class="px-1.5 py-1 border border-zinc-300 rounded hover:bg-zinc-100 transition">
-                            <i class="fas fa-chevron-right text-[10px]"></i>
-                        </button>
-                    </div>
+                    @else
+                        <div
+                            class="rounded-2xl border border-dashed border-zinc-300 bg-white p-10 text-center text-zinc-500">
+                            Belum ada testimoni.</div>
+                    @endif
                 </div>
             </section>
 
-        <!-- Testimonials Section - Full Width with Proper Margins -->
-        <section id="testimonials" class="np-fade-section bg-white py-18 lg:py-22 mx-auto max-w-7xl px-4 md:px-6 lg:px-12" data-testimonial-showcase>
-            @php
-                $testimonialItems = $testimonials->take(3);
-            @endphp
 
-            @if ($testimonialItems->count() > 0)
-                <div class="relative overflow-hidden rounded-lg bg-zinc-50/40 px-2 py-2 md:px-4 md:py-4"
-                    data-testimonial-hero>
-                    <div class="np-testimonial-hero-track" data-testimonial-track>
-                        @foreach ($testimonialItems as $index => $testimonial)
-                            <article class="np-testimonial-hero-slide">
-                                <div class="relative aspect-video overflow-hidden rounded-2xl">
-                                    <img src="{{ $testimonial->image_url ?? '/images/logo.png' }}"
-                                        alt="Testimoni" class="h-full w-full object-cover" loading="lazy">
-                                    <div
-                                        class="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent">
-                                    </div>
-                                </div>
-                            </article>
-                        @endforeach
-                    </div>
 
-                    <div class="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded bg-black/35 px-3 py-2 backdrop-blur"
-                        data-testimonial-dots>
-                        @foreach ($testimonialItems as $index => $testimonial)
-                            <button type="button"
-                                class="np-testimonial-dot h-2.5 w-2.5 rounded-full bg-white/45 transition duration-300"
-                                data-slide-to="{{ $index }}"
-                                aria-label="Slide {{ $index + 1 }}"></button>
-                        @endforeach
+            <section class="np-fade-section bg-white py-16 lg:py-20">
+                <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
+                    <div
+                        class="rounded-lg bg-linear-to-r from-zinc-100 to-white px-8 py-14 text-center lg:px-12">
+                        <h2 class="text-3xl font-medium tracking-tight text-black sm:text-4xl lg:text-5xl">Level up your
+                            game
+                            with NoraPadel</h2>
+                        <p class="mx-auto mt-4 max-w-2xl text-sm text-zinc-600">Designed for players who expect precision
+                            craftsmanship
+                            and world-class performance in every detail.</p>
+                        <a href="{{ route('shop') }}"
+                            class="mt-8 inline-flex rounded bg-[#0071e3] px-8 py-3 text-sm font-medium text-white transition duration-300 hover:scale-[1.02] hover:bg-[#0077ED]">
+                            Shop Collection
+                        </a>
                     </div>
                 </div>
-            @else
-                <div class="rounded-2xl border border-dashed border-zinc-300 bg-white p-10 text-center text-zinc-500">
-                    Belum ada testimoni.
-                </div>
-            @endif
-        </section>
+            </section>
 
         </main>
 
@@ -989,10 +998,6 @@
     </div>
 
     <x-search-modal />
-
-    @guest
-        <x-welcome-bonus-popup />
-    @endguest
 @endsection
 
 @push('styles')
@@ -1313,8 +1318,9 @@
 
 @push('scripts')
     <script>
-        function toggleVoucherSection() {
-    const content = document.getElementById('voucherContent');
+        // Dark Mode Toggle Home Page Custom Navbar
+        (function() {
+            const html = document.documentElement;
             const btnHome = document.getElementById('darkModeToggleHome');
             const iconHome = document.getElementById('darkModeIconHome');
 
@@ -1358,6 +1364,7 @@
         })();
 
         // Animate badge function
+        function animateBadge(badgeElement) {
             if (!badgeElement) return;
             
             // Add animation class
@@ -1573,214 +1580,32 @@
             });
         }
 
-        // Apply Filters Function (for price and sort)
+        // Apply Filters Function
         window.applyFilters = function() {
-            const price = document.querySelector('input[name="filterPrice"]:checked')?.value || '';
-            const sort = document.querySelector('input[name="filterSort"]:checked')?.value || '';
-
-            // Build params from active category/brand filters
-            const activeCategory = document.querySelector('.filter-chip[data-category].bg-black');
-            const activeBrand = document.querySelector('.filter-chip[data-brand].bg-black');
-
-            const params = new URLSearchParams();
-            if (activeCategory) {
-                params.append('category', activeCategory.dataset.category);
-            }
-            if (activeBrand) {
-                params.append('brand', activeBrand.dataset.brand);
-            }
-            if (price) {
-                params.append('price', price);
-            }
-            if (sort) {
-                params.append('sort', sort);
-            }
-
-            console.log('Applying filters with params:', params.toString());
+            const brand = document.getElementById('filterBrandBottom').value;
+            const category = document.getElementById('filterCategoryBottom').value;
+            const price = document.getElementById('filterPriceBottom').value;
+            const sort = document.getElementById('filterSortBottom').value;
 
             // Show loading state
-            const newArrivalsGrid = document.getElementById('newArrivalsGrid');
-
-            if (newArrivalsGrid) {
-                newArrivalsGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 col-span-full"><i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i></div>';
-            }
+            const container = document.getElementById('newArrivalsContainer');
+            container.innerHTML = '<div class="flex items-center justify-center w-full py-8"><i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i></div>';
 
             // Fetch filtered products via AJAX
-            fetch(`/api/new-arrivals/filter?${params.toString()}`)
-                .then(response => {
-                    console.log('Response status:', response.status);
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Response data:', data);
-                    if (data.success && data.html) {
-                        if (newArrivalsGrid) {
-                            newArrivalsGrid.innerHTML = data.html;
-                        }
-                    } else {
-                        if (newArrivalsGrid) {
-                            newArrivalsGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500 col-span-full">No products found</div>';
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    if (newArrivalsGrid) {
-                        newArrivalsGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500 col-span-full">Error loading products</div>';
-                    }
-                });
-        };
-
-        // Apply single filter (for sidebar chips)
-        window.applyFilter = function(filterType, value) {
-            console.log('Applying filter:', filterType, value);
-
-            // Update chip styling
-            const chips = document.querySelectorAll(`.filter-chip[data-${filterType}]`);
-            chips.forEach(chip => {
-                chip.classList.remove('bg-black', 'text-white', 'border-black');
-                chip.classList.add('text-zinc-600', 'border-zinc-200');
-            });
-
-            const activeChip = document.querySelector(`.filter-chip[data-${filterType}="${value}"]`);
-            if (activeChip) {
-                activeChip.classList.add('bg-black', 'text-white', 'border-black');
-                activeChip.classList.remove('text-zinc-600', 'border-zinc-200');
-            }
-
-            // Also get price and sort filters
-            const price = document.querySelector('input[name="filterPrice"]:checked')?.value || '';
-            const sort = document.querySelector('input[name="filterSort"]:checked')?.value || '';
-
-            // Build params from all active filters
-            const activeCategory = document.querySelector('.filter-chip[data-category].bg-black');
-            const activeBrand = document.querySelector('.filter-chip[data-brand].bg-black');
-
-            const params = new URLSearchParams();
-            if (activeCategory) {
-                params.append('category', activeCategory.dataset.category);
-            }
-            if (activeBrand) {
-                params.append('brand', activeBrand.dataset.brand);
-            }
-            if (price) {
-                params.append('price', price);
-            }
-            if (sort) {
-                params.append('sort', sort);
-            }
-
-            console.log('Fetching:', `/api/new-arrivals/filter?${params.toString()}`);
-
-            // Show loading state
-            const newArrivalsGrid = document.getElementById('newArrivalsGrid');
-
-            if (newArrivalsGrid) {
-                newArrivalsGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 col-span-full"><i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i></div>';
-            }
-
-            fetch(`/api/new-arrivals/filter?${params.toString()}`)
-                .then(response => {
-                    console.log('Response status:', response.status);
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Response data:', data);
-                    if (data.success && data.html) {
-                        if (newArrivalsGrid) {
-                            newArrivalsGrid.innerHTML = data.html;
-                        }
-                    } else {
-                        if (newArrivalsGrid) {
-                            newArrivalsGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500 col-span-full">No products found</div>';
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    if (newArrivalsGrid) {
-                        newArrivalsGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500 col-span-full">Error loading products</div>';
-                    }
-                });
-        };
-
-        // Clear filter
-        window.clearFilter = function(filterType) {
-            const chips = document.querySelectorAll(`.filter-chip[data-${filterType}]`);
-            chips.forEach(chip => {
-                chip.classList.remove('bg-black', 'text-white', 'border-black');
-                chip.classList.add('text-zinc-600', 'border-zinc-200');
-            });
-
-            // Reset radio buttons for price and sort when clearing category or brand
-            if (filterType === 'category' || filterType === 'brand') {
-                const priceRadios = document.querySelectorAll('input[name="filterPrice"]');
-                priceRadios.forEach(radio => radio.checked = false);
-                const sortRadios = document.querySelectorAll('input[name="filterSort"]');
-                sortRadios.forEach(radio => radio.checked = false);
-            }
-
-            // Fetch products without the cleared filter
-            const price = document.querySelector('input[name="filterPrice"]:checked')?.value || '';
-            const sort = document.querySelector('input[name="filterSort"]:checked')?.value || '';
-
-            const activeCategory = document.querySelector('.filter-chip[data-category].bg-black');
-            const activeBrand = document.querySelector('.filter-chip[data-brand].bg-black');
-
-            const params = new URLSearchParams();
-            if (activeCategory) {
-                params.append('category', activeCategory.dataset.category);
-            }
-            if (activeBrand) {
-                params.append('brand', activeBrand.dataset.brand);
-            }
-            if (price) {
-                params.append('price', price);
-            }
-            if (sort) {
-                params.append('sort', sort);
-            }
-
-            console.log('Clearing filter, fetching:', `/api/new-arrivals/filter?${params.toString()}`);
-
-            // Show loading state
-            const newArrivalsGrid = document.getElementById('newArrivalsGrid');
-
-            if (newArrivalsGrid) {
-                newArrivalsGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 col-span-full"><i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i></div>';
-            }
-
-            fetch(`/api/new-arrivals/filter?${params.toString()}`)
+            fetch(`/api/new-arrivals/filter?brand=${brand}&category=${category}&price=${price}&sort=${sort}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success && data.html) {
-                        if (newArrivalsGrid) {
-                            newArrivalsGrid.innerHTML = data.html;
-                        }
+                        container.innerHTML = data.html;
                     } else {
-                        if (newArrivalsGrid) {
-                            newArrivalsGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500 col-span-full">No products found</div>';
-                        }
+                        container.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500">No products found</div>';
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    if (newArrivalsGrid) {
-                        newArrivalsGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500 col-span-full">Error loading products</div>';
-                    }
+                    container.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500">Error loading products</div>';
                 });
         };
-
-        // Filter toggle functionality
-        document.querySelectorAll('.filter-toggle').forEach(toggle => {
-            toggle.addEventListener('click', function() {
-                const content = this.nextElementSibling;
-                const icon = this.querySelector('i');
-                
-                content.classList.toggle('hidden');
-                icon.classList.toggle('rotate-180');
-            });
-        });
 
         // Hamburger Menu Toggle
         (function() {
@@ -2048,12 +1873,6 @@
                         el.classList.remove('hover:text-white');
                         el.classList.add('hover:text-black');
                     });
-
-                    const loginBtn = document.getElementById('loginBtn');
-                    if (loginBtn) {
-                        loginBtn.classList.remove('text-white');
-                        loginBtn.classList.add('text-black');
-                    }
                 } else {
                     header.classList.remove('bg-white/80', 'backdrop-blur-xl', 'border-black/6');
                     header.classList.add('bg-transparent', 'backdrop-blur-none', 'border-transparent');
@@ -2088,12 +1907,6 @@
                         el.classList.add('hover:text-white');
                         el.classList.remove('hover:text-black');
                     });
-
-                    const loginBtn = document.getElementById('loginBtn');
-                    if (loginBtn) {
-                        loginBtn.classList.add('text-white');
-                        loginBtn.classList.remove('text-black');
-                    }
                 }
             }, { passive: true });
 
@@ -2458,89 +2271,6 @@
                     });
                 }
             });
-
-            // Pagination for Shop Section
-            let currentPage = 1;
-            const productsPerPage = 12;
-            let allProducts = [];
-
-            // Store all product data from the grid
-            document.addEventListener('DOMContentLoaded', function() {
-                const productGrid = document.getElementById('productGrid');
-                if (productGrid) {
-                    const productCards = productGrid.querySelectorAll('.product-item');
-                    productCards.forEach((card, index) => {
-                        allProducts.push({
-                            element: card,
-                            index: index
-                        });
-                    });
-                    loadProducts();
-                    updatePagination();
-                }
-            });
-
-            function prevPage() {
-                if (currentPage > 1) {
-                    currentPage--;
-                    loadProducts();
-                }
-            }
-
-            function nextPage() {
-                const totalPages = Math.ceil(allProducts.length / productsPerPage);
-                if (currentPage < totalPages) {
-                    currentPage++;
-                    loadProducts();
-                }
-            }
-
-            function goToPage(page) {
-                currentPage = page;
-                loadProducts();
-            }
-
-            function loadProducts() {
-                const productGrid = document.getElementById('productGrid');
-                if (!productGrid) return;
-
-                const startIndex = (currentPage - 1) * productsPerPage;
-                const endIndex = startIndex + productsPerPage;
-
-                // Hide all products first
-                allProducts.forEach(product => {
-                    product.element.style.display = 'none';
-                });
-
-                // Show only products for current page
-                for (let i = startIndex; i < endIndex && i < allProducts.length; i++) {
-                    allProducts[i].element.style.display = 'block';
-                }
-
-                updatePagination();
-            }
-
-            function updatePagination() {
-                const paginationNumbers = document.getElementById('paginationNumbers');
-                if (!paginationNumbers) return;
-
-                const totalPages = Math.ceil(allProducts.length / productsPerPage);
-                paginationNumbers.innerHTML = '';
-
-                // Show pages in groups of 5 (1-5, 6-10, etc.)
-                const pagesPerGroup = 5;
-                const currentGroup = Math.ceil(currentPage / pagesPerGroup);
-                let startPage = (currentGroup - 1) * pagesPerGroup + 1;
-                let endPage = Math.min(totalPages, startPage + pagesPerGroup - 1);
-
-                for (let i = startPage; i <= endPage; i++) {
-                    const pageBtn = document.createElement('button');
-                    pageBtn.textContent = i;
-                    pageBtn.className = `px-1.5 py-1 border rounded text-xs transition ${i === currentPage ? 'bg-black text-white border-black' : 'border-zinc-300 hover:bg-zinc-100'}`;
-                    pageBtn.onclick = () => goToPage(i);
-                    paginationNumbers.appendChild(pageBtn);
-                }
-            }
         })();
 
         /* ============================================================
