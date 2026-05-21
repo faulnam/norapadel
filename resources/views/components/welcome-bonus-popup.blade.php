@@ -1,15 +1,19 @@
-<div x-data="{ 
-    show: @js(!auth()->check()) && !sessionStorage.getItem('welcomeBonusShown'),
+@guest
+<div x-data="{
+    show: false,
     closePopup() {
         this.show = false;
-        sessionStorage.setItem('welcomeBonusShown', 'true');
+        window._welcomeShown = true;
     }
-}" 
-     x-show="show" 
+}"
+     x-show="show"
      x-cloak
-     x-init="if (show) sessionStorage.setItem('welcomeBonusShown', 'true')"
-     class="fixed bottom-4 left-4 z-[100]"
-     style="display: none;">
+     x-init="
+        if (!window._welcomeShown) {
+            setTimeout(() => { show = true; window._welcomeShown = true; }, 800);
+        }
+     "
+     class="fixed bottom-4 left-4 z-[100]">
     
     <div x-show="show"
          x-transition:enter="transition ease-out duration-300"
@@ -33,7 +37,6 @@
             <p class="text-[8px] md:text-[10px] font-semibold tracking-[0.15em] uppercase text-black/40 mb-0.5 md:mb-1">Member Benefits</p>
             <h3 class="text-[11px] md:text-sm font-bold text-black tracking-tight mb-2 md:mb-3">Join Today & Receive</h3>
 
-            <!-- Benefits -->
             <div class="flex flex-row gap-2 md:space-y-2 md:flex-col mb-2 md:mb-3">
                 <div class="flex items-center gap-1.5 md:gap-2">
                     <div class="flex h-5 w-5 md:h-7 md:w-7 shrink-0 items-center justify-center rounded-full bg-black text-white">
@@ -60,7 +63,6 @@
                 </div>
             </div>
 
-            <!-- CTA -->
             <a href="{{ route('register') }}"
                class="inline-flex h-8 md:h-9 w-full items-center justify-center rounded-full bg-black px-3 md:px-4 text-[10px] md:text-xs font-semibold text-white transition-all duration-300 hover:bg-black/90">
                 Join Now
@@ -75,3 +77,4 @@
 <style>
     [x-cloak] { display: none !important; }
 </style>
+@endguest

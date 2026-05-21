@@ -57,7 +57,7 @@ class PageController extends Controller
             $shopProductsQuery->where('level', $request->level);
         }
 
-        $shopProducts = $shopProductsQuery->latest()->take(10)->get();
+        $shopProducts = $shopProductsQuery->latest()->get();
         $brands = Product::active()->whereNotNull('brand')->distinct()->pluck('brand')->sort();
 
         // Fetch active vouchers for frontend
@@ -762,12 +762,7 @@ class PageController extends Controller
     {
         $query = Product::active()->inStock()->where('is_featured', false);
 
-        // Filter by brand
-        if ($request->filled('brand')) {
-            $query->where('brand', $request->brand);
-        }
-
-        // Filter by category
+        // Filter by category (using category field)
         if ($request->filled('category')) {
             $categoryMap = [
                 'racket' => Product::CATEGORY_ORIGINAL,
@@ -779,6 +774,11 @@ class PageController extends Controller
             if ($category) {
                 $query->where('category', $category);
             }
+        }
+
+        // Filter by brand
+        if ($request->filled('brand')) {
+            $query->where('brand', $request->brand);
         }
 
         // Sort by price
@@ -801,9 +801,10 @@ class PageController extends Controller
             $query->latest();
         }
 
-        $products = $query->take(12)->get();
+        // Fetch all matching products (limit to 10)
+        $products = $query->take(10)->get();
 
-        // Generate HTML for products
+        // Generate HTML for products (matching New Arrivals structure)
         $html = '';
         foreach ($products as $product) {
             $soldCount = \App\Models\OrderItem::where('product_id', $product->id)
@@ -811,39 +812,54 @@ class PageController extends Controller
                     $q->whereIn('status', ['completed', 'delivered']);
                 })->sum('quantity');
 
-            $html .= '<div class="group snap-start shrink-0 basis-[85%] sm:basis-[48%] md:basis-[32%] lg:basis-[18%] overflow-hidden bg-white transition duration-300 hover:-translate-y-2">';
+            $html .= '<div class="product-item product-card group block overflow-hidden bg-white transition duration-300 hover:-translate-y-1" ';
+            $html .= 'data-name="' . strtolower($product->name) . '" ';
+            $html .= 'data-price="' . ($product->hasActiveDiscount() ? $product->discounted_price : $product->price) . '" ';
+            $html .= 'data-category="' . strtolower($product->type) . '" ';
+            $html .= 'data-brand="' . strtolower($product->brand ?? '') . '" ';
+            $html .= 'data-level="' . ($product->level ?? '') . '" ';
+            $html .= 'data-discount="' . ($product->hasActiveDiscount() ? 'yes' : 'no') . '" ';
+            $html .= 'data-bundle="' . ($product->package_type === 'bundle' ? 'yes' : 'no') . '" ';
+            $html .= 'data-sold="' . $soldCount . '">';
             $html .= '<a href="' . route('produk.show', $product) . '" class="block">';
             $html .= '<div class="relative aspect-square overflow-hidden">';
             $html .= '<div class="h-full w-full overflow-hidden">';
             $html .= '<img src="' . $product->image_url . '" alt="' . $product->name . '" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" onerror="this.onerror=null;this.src=\'/images/logo.png\';" loading="lazy">';
             $html .= '</div>';
             if ($product->hasActiveDiscount()) {
-                $html .= '<span class="absolute left-0 top-0 bg-rose-500 px-2.5 py-1 text-[11px] font-semibold text-white pointer-events-none">-' . $product->formatted_discount_percent . '</span>';
+                $html .= '<span class="absolute left-0 top-0 bg-rose-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">-' . $product->formatted_discount_percent . '</span>';
             }
-            $html .= '<span class="absolute left-0 ' . ($product->hasActiveDiscount() ? 'top-9' : 'top-0') . ' bg-blue-500 px-2.5 py-1 text-[11px] font-semibold text-white pointer-events-none">Latest</span>';
+            $html .= '<span class="absolute left-0 ' . ($product->hasActiveDiscount() ? 'top-7' : 'top-0') . ' bg-blue-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Latest</span>';
             if ($product->package_type === 'bundle') {
-                $html .= '<span class="absolute left-0 ' . ($product->hasActiveDiscount() ? 'top-[4.5rem]' : 'top-9') . ' bg-purple-500 px-2.5 py-1 text-[11px] font-semibold text-white pointer-events-none">Bundle</span>';
+                $html .= '<span class="absolute left-0 ' . ($product->hasActiveDiscount() ? 'top-14' : 'top-7') . ' bg-purple-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Bundle</span>';
             }
             if ($product->isBestSeller()) {
-                $html .= '<span class="absolute right-0 top-0 bg-amber-500 px-2.5 py-1 text-[11px] font-semibold text-white pointer-events-none">Best Seller</span>';
+                $html .= '<span class="absolute right-0 top-0 bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Popular</span>';
             }
             $html .= '</div>';
-            $html .= '<div class="p-4">';
-            $html .= '<h3 class="line-clamp-1 text-base font-medium text-black">' . $product->name . '</h3>';
+            $html .= '<div class="p-3">';
+            $html .= '<h3 class="line-clamp-1 text-sm font-medium text-black">' . $product->name . '</h3>';
             $html .= '<p class="mt-1 text-xs text-zinc-600">' . $product->category_label . '</p>';
+            $html .= '<div class="mt-1 flex items-center gap-1">';
+            $html .= '<i class="fas fa-star text-black text-[10px]"></i>';
+            $html .= '<span class="text-[10px] text-zinc-600 ml-1">' . number_format($product->average_rating, 1) . '</span>';
+            if ($product->total_reviews > 0) {
+                $html .= '<span class="text-[10px] text-zinc-500">(' . $product->total_reviews . ')</span>';
+            }
+            $html .= '</div>';
             if ($product->hasActiveDiscount()) {
-                $html .= '<p class="mt-2 text-lg font-semibold text-black">' . $product->formatted_discounted_price . '</p>';
+                $html .= '<p class="mt-1 text-base font-semibold text-black">' . $product->formatted_discounted_price . '</p>';
                 $html .= '<p class="text-xs text-zinc-400 line-through">' . $product->formatted_price . '</p>';
             } else {
-                $html .= '<p class="mt-2 text-lg font-semibold text-black">' . $product->formatted_price . '</p>';
+                $html .= '<p class="mt-1 text-base font-semibold text-black">' . $product->formatted_price . '</p>';
             }
             $html .= '</div>';
             $html .= '</a>';
-            $html .= '<div class="px-4 pb-4">';
-            $html .= '<div class="flex items-center gap-3">';
-            $html .= '<button onclick="addToCart(\'' . $product->slug . '\', event)" class="border border-zinc-300 bg-transparent px-3 py-1.5 text-[11px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950">Add to cart</button>';
+            $html .= '<div class="px-2 pb-2 md:px-3 md:pb-3">';
+            $html .= '<div class="flex items-center gap-2">';
+            $html .= '<button onclick="addToCart(\'' . $product->slug . '\', event)" class="border border-zinc-300 bg-transparent px-2 py-1 text-[10px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950 truncate max-w-[80px] md:max-w-none">Add to cart</button>';
             $html .= '<button onclick="addToWishlist(\'' . $product->slug . '\', event)" class="text-zinc-400 transition duration-300 hover:text-rose-500">';
-            $html .= '<i class="fas fa-heart text-base"></i>';
+            $html .= '<i class="fas fa-heart text-xs md:text-sm"></i>';
             $html .= '</button>';
             $html .= '</div>';
             $html .= '</div>';
@@ -852,8 +868,7 @@ class PageController extends Controller
 
         return response()->json([
             'success' => true,
-            'html' => $html,
-            'count' => $products->count()
+            'html' => $html
         ]);
     }
 }
