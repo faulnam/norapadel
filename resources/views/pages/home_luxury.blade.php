@@ -18,7 +18,7 @@
             <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-3 md:px-10 lg:px-12">
                 <a href="{{ route('home') }}" class="flex items-center gap-2">
                     <img src="{{ asset('storage/logo.png') }}" alt="NoraPadel" class="h-7 w-7 object-contain" loading="lazy">
-                    <span class="text-xl font-semibold tracking-tight text-white transition-colors duration-300" id="logoText">NoraPadel</span>
+                    <!-- <span class="text-xl font-semibold tracking-tight text-white transition-colors duration-300" id="logoText">NoraPadel</span> -->
                 </a>
                 <nav class="hidden items-center gap-6 md:flex" id="navLinks">
                     <!-- Home Menu -->
@@ -259,9 +259,9 @@
                                class="bg-white/10 border border-white/20 rounded-full pl-7 md:pl-9 pr-2 md:pr-4 py-1 md:py-1.5 text-xs md:text-sm text-white placeholder-white/60 focus:outline-none focus:bg-white/20 focus:border-white/40 w-24 md:w-40 lg:w-48 transition-all duration-300"
                                autocomplete="off">
                     </div> -->
-
+                    
                     <!-- Wishlist (mobile only) -->
-                    <a href="{{ route('customer.wishlist.index') }}" class="relative md:hidden transition duration-300 hover:text-white">
+                    <!-- <a href="{{ route('customer.wishlist.index') }}" class="relative md:hidden transition duration-300 hover:text-white">
                         <i class="fas fa-heart text-sm"></i>
                         @php
                             if (auth()->check() && auth()->user()->role === 'customer') {
@@ -275,173 +275,260 @@
                             <span class="wishlist-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
                         @endif
                     </a>
-
+ -->
                     <!-- Mobile Search Icon (hidden since inline search is now visible) -->
                     <button type="button" id="searchToggleBtn" class="hidden transition duration-300 hover:text-white" aria-label="Search" title="Cari Produk">
                         <i class="fas fa-search text-sm"></i>
                     </button>
 
+                    @guest
+                        <a href="{{ route('login') }}" 
+                        class="inline-flex h-9 w-9 md:hidden items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20"
+                        title="Login">
+                            <i class="fas fa-user text-sm"></i>
+                        </a>
+                    @endguest
+
+                    @auth
+                        @if(auth()->user()->role === 'admin')
+                            <a href="{{ route('admin.dashboard') }}" 
+                            class="inline-flex h-9 w-9 md:hidden items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20" 
+                            title="Dashboard">
+                                <i class="fas fa-user-shield text-sm"></i>
+                            </a>
+                        @elseif(auth()->user()->role === 'customer')
+                            <a href="{{ route('customer.profile.index') }}" 
+                            class="inline-flex h-9 w-9 md:hidden items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20" 
+                            title="Profile">
+                                <i class="fas fa-user-circle text-sm"></i>
+                            </a>
+                        @endif
+                    @endauth
+
+                    <a href="{{ route('customer.cart.index') }}" 
+                    class="relative inline-flex h-9 w-9 md:hidden items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20"
+                    title="Cart">
+                        <i class="fas fa-shopping-bag text-sm"></i>
+                        @php
+                            if (auth()->check() && auth()->user()->role === 'customer') {
+                                $mobileCartCount = auth()->user()->cartItems()->sum('quantity');
+                            } else {
+                                $guestCart = session()->get('guest_cart', []);
+                                $mobileCartCount = array_sum(array_column($guestCart, 'quantity'));
+                            }
+                        @endphp
+                        @if($mobileCartCount > 0)
+                            <span class="cart-badge absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">
+                                {{ $mobileCartCount > 9 ? '9+' : $mobileCartCount }}
+                            </span>
+                        @endif
+                    </a>
+                    
+                    <a href="{{ route('customer.wishlist.index') }}" 
+                    class="relative inline-flex h-9 w-9 md:hidden items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20"
+                    title="Wishlist">
+                        <i class="fas fa-heart text-sm"></i>
+                        @php
+                            if (auth()->check() && auth()->user()->role === 'customer') {
+                                $wishlistCount = auth()->user()->wishlistItems()->count();
+                            } else {
+                                $guestWishlist = session()->get('guest_wishlist', []);
+                                $wishlistCount = count($guestWishlist);
+                            }
+                        @endphp
+                        @if($wishlistCount > 0)
+                            <span class="wishlist-badge absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">
+                                {{ $wishlistCount > 9 ? '9+' : $wishlistCount }}
+                            </span>
+                        @endif
+                    </a>
+
                     <!-- Dark Mode Toggle (Home Page) -->
                     <button type="button" id="darkModeToggleHome"
-                            class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20"
+                            class="hidden md:inline-flex inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20"
                             title="Toggle Dark/Light Mode" aria-label="Toggle dark mode">
                         <i class="fas fa-moon text-sm" id="darkModeIconHome"></i>
                     </button>
 
-                    <!-- Hamburger Menu with combined elements -->
-                    <div class="relative" id="hamburgerMenuWrapper">
-                        <button type="button" id="hamburgerMenuBtn" class="inline-flex h-9 w-9 items-center justify-center rounded border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20 relative">
-                            <i class="fas fa-bars text-sm"></i>
-                            <!-- Cart Badge -->
-                            @auth
-                                @if (auth()->user()->role === 'customer')
-                                    @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
-                                    @if ($cartCount > 0)
-                                        <span class="hamburger-cart-badge absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
-                                    @endif
-                                @endif
-                            @endauth
-                            @guest
-                                @php
-                                    $guestCart = session()->get('guest_cart', []);
-                                    $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
-                                @endphp
-                                @if($guestCartCount > 0)
-                                    <span class="hamburger-cart-badge absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $guestCartCount > 9 ? '9+' : $guestCartCount }}</span>
-                                @endif
-                            @endguest
-                            <!-- Wishlist Badge -->
-                            @auth
-                                @if (auth()->user()->role === 'customer')
-                                    @php $wishlistCount = auth()->user()->wishlistItems()->count(); @endphp
-                                    @if ($wishlistCount > 0)
-                                        <span class="hamburger-wishlist-badge absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
-                                    @endif
-                                @endif
-                            @endauth
-                            @guest
-                                @php
-                                    $guestWishlist = session()->get('guest_wishlist', []);
-                                    $guestWishlistCount = count($guestWishlist);
-                                @endphp
-                                @if($guestWishlistCount > 0)
-                                    <span class="hamburger-wishlist-badge absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">{{ $guestWishlistCount > 9 ? '9+' : $guestWishlistCount }}</span>
-                                @endif
-                            @endguest
-                        </button>
-                        <div id="hamburgerMenuDropdown" class="absolute right-0 mt-2 w-48 z-[100] hidden">
-                            <div class="bg-white rounded-lg shadow-lg border border-zinc-100 overflow-hidden">
-                                <!-- Navigation (mobile only) -->
-                                <div class="md:hidden">
-                                    <a href="{{ route('home') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
-                                        <i class="fas fa-home text-zinc-500 text-sm"></i>
-                                        <span class="text-sm text-zinc-700">{{ $common['navbar']['home'][$lang] ?? 'Home' }}</span>
-                                    </a>
-                                    <a href="{{ route('new-arrivals') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
-                                        <i class="fas fa-star text-zinc-500 text-sm"></i>
-                                        <span class="text-sm text-zinc-700">{{ $common['navbar']['new_arrivals'][$lang] ?? 'New Arrivals' }}</span>
-                                    </a>
-                                    <a href="{{ route('racket') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
-                                        <i class="fas fa-table-tennis text-zinc-500 text-sm"></i>
-                                        <span class="text-sm text-zinc-700">{{ $common['navbar']['racket'][$lang] ?? 'Rackets' }}</span>
-                                    </a>
-                                    <a href="{{ route('shoes') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
-                                        <i class="fas fa-shoe-prints text-zinc-500 text-sm"></i>
-                                        <span class="text-sm text-zinc-700">{{ $common['navbar']['shoes'][$lang] ?? 'Shoes' }}</span>
-                                    </a>
-                                    <a href="{{ route('apparel') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
-                                        <i class="fas fa-tshirt text-zinc-500 text-sm"></i>
-                                        <span class="text-sm text-zinc-700">{{ $common['navbar']['accessories'][$lang] ?? 'Accessories' }}</span>
-                                    </a>
-                                </div>
+                    <!-- ==========================================
+                DESKTOP ONLY UTILITIES (Hidden on Mobile)
+                ========================================== -->
+            <div class="hidden md:flex items-center gap-4 text-white/90">
+                <!-- Language Switcher (Desktop) -->
+                <div class="flex gap-2 bg-white/10 backdrop-blur p-1 rounded border border-white/20">
+                    <a href="{{ request()->fullUrlWithQuery(['locale' => 'en']) }}" class="px-2 py-1 text-xs text-white rounded transition {{ session('locale', 'en') === 'en' ? 'bg-white/20 font-semibold' : 'opacity-60 hover:opacity-100' }}">
+                        EN
+                    </a>
+                    <a href="{{ request()->fullUrlWithQuery(['locale' => 'id']) }}" class="px-2 py-1 text-xs text-white rounded transition {{ session('locale', 'en') === 'id' ? 'bg-white/20 font-semibold' : 'opacity-60 hover:opacity-100' }}">
+                        ID
+                    </a>
+                </div>
 
-                                <!-- Login -->
-                                @guest
-                                    <a href="{{ route('login') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
-                                        <i class="fas fa-sign-in-alt text-zinc-500 text-sm"></i>
-                                        <span class="text-sm text-zinc-700">{{ $common['navbar']['login'][$lang] ?? 'Login' }}</span>
-                                    </a>
-                                @endauth
-                                
-                                <!-- Language Switcher -->
-                                <div class="border-b border-zinc-100">
-                                    <div class="px-3 py-2 bg-zinc-50">
-                                        <div class="flex gap-2">
-                                            <a href="{{ request()->fullUrlWithQuery(['locale' => 'en']) }}" class="flex-1 px-2 py-1.5 text-xs text-zinc-700 hover:bg-white rounded transition {{ session('locale', 'en') === 'en' ? 'bg-white font-semibold' : 'bg-white/50' }}">
-                                                EN
-                                            </a>
-                                            <a href="{{ request()->fullUrlWithQuery(['locale' => 'id']) }}" class="flex-1 px-2 py-1.5 text-xs text-zinc-700 hover:bg-white rounded transition {{ session('locale', 'en') === 'id' ? 'bg-white font-semibold' : 'bg-white/50' }}">
-                                                ID
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Cart -->
-                                <a href="{{ route('customer.cart.index') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
-                                    <div class="relative">
-                                        <i class="fas fa-shopping-bag text-zinc-500 text-sm"></i>
-                                        @auth
-                                            @if (auth()->user()->role === 'customer')
-                                                @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
-                                                @if ($cartCount > 0)
-                                                    <span class="cart-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
-                                                @endif
-                                            @endif
-                                        @endauth
-                                        @guest
-                                            @php 
-                                                $guestCart = session()->get('guest_cart', []);
-                                                $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
-                                            @endphp
-                                            @if($guestCartCount > 0)
-                                                <span class="cart-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $guestCartCount > 9 ? '9+' : $guestCartCount }}</span>
-                                            @endif
-                                        @endguest
-                                    </div>
-                                    <span class="text-sm text-zinc-700">{{ $common['navbar']['cart'][$lang] ?? 'Cart' }}</span>
+                <!-- Login / Account Dashboard (Desktop) -->
+                @guest
+                    <a href="{{ route('login') }}" class="text-sm font-medium hover:text-white transition duration-300">
+                        {{ $common['navbar']['login'][$lang] ?? 'Login' }}
+                    </a>
+                @endguest
+
+                @auth
+                    @if (auth()->user()->role === 'admin')
+                        <a href="{{ route('admin.dashboard') }}" class="text-sm font-medium hover:text-white transition duration-300 flex items-center gap-1.5">
+                            <i class="fas fa-arrow-left text-xs"></i> Dashboard
+                        </a>
+                    @elseif(auth()->user()->role === 'customer')
+                        <a href="{{ route('customer.profile.index') }}" class="text-sm font-medium hover:text-white transition duration-300 flex items-center gap-1.5" title="Profile">
+                            <i class="fas fa-user text-xs"></i>
+                            <span class="max-w-[80px] truncate">{{ auth()->user()->name }}</span>
+                        </a>
+                        <a href="{{ route('customer.orders.index') }}" class="text-sm font-medium hover:text-white transition duration-300" title="Orders">
+                            <i class="fas fa-history text-xs"></i>
+                        </a>
+                    @endif
+                @endauth
+
+                <!-- Wishlist (Desktop) -->
+                <a href="{{ route('customer.wishlist.index') }}" class="relative transition duration-300 hover:text-white p-1" title="Wishlist">
+                    <i class="fas fa-heart text-base"></i>
+                    @php
+                        if (auth()->check() && auth()->user()->role === 'customer') {
+                            $wishlistCount = auth()->user()->wishlistItems()->count();
+                        } else {
+                            $guestWishlist = session()->get('guest_wishlist', []);
+                            $wishlistCount = count($guestWishlist);
+                        }
+                    @endphp
+                    @if($wishlistCount > 0)
+                        <span class="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
+                    @endif
+                </a>
+
+                <!-- Cart (Desktop) -->
+                <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-white p-1" title="Cart">
+                    <i class="fas fa-shopping-bag text-base"></i>
+                    @auth
+                        @if (auth()->user()->role === 'customer')
+                            @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
+                            @if ($cartCount > 0)
+                                <span class="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
+                            @endif
+                        @endif
+                    @endauth
+                    @guest
+                        @php
+                            $guestCart = session()->get('guest_cart', []);
+                            $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
+                        @endphp
+                        @if($guestCartCount > 0)
+                            <span class="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $guestCartCount > 9 ? '9+' : $guestCartCount }}</span>
+                        @endif
+                    @endguest
+                </a>
+            </div>
+
+
+            <!-- ==========================================
+                MOBILE ONLY HAMBURGER (Hidden on Desktop)
+                ========================================== -->
+            
+                <div class="md:hidden relative" id="hamburgerMenuWrapper">
+                <button type="button" id="hamburgerMenuBtn" class="inline-flex h-9 w-9 items-center justify-center rounded border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20 relative">
+                    <i class="fas fa-bars text-sm"></i>
+                    
+                    <!-- Cart Badge (Mobile Indicator) -->
+                    @auth
+                        @if (auth()->user()->role === 'customer')
+                            @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
+                            @if ($cartCount > 0)
+                                <span class="hamburger-cart-badge absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
+                            @endif
+                        @endif
+                    @endauth
+                    @guest
+                        @php
+                            $guestCart = session()->get('guest_cart', []);
+                            $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
+                        @endphp
+                        @if($guestCartCount > 0)
+                            <span class="hamburger-cart-badge absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $guestCartCount > 9 ? '9+' : $guestCartCount }}</span>
+                        @endif
+                    @endguest
+
+                    <!-- Wishlist Badge (Mobile Indicator) -->
+                    @auth
+                        @if (auth()->user()->role === 'customer')
+                            @php $wishlistCount = auth()->user()->wishlistItems()->count(); @endphp
+                            @if ($wishlistCount > 0)
+                                <span class="hamburger-wishlist-badge absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
+                            @endif
+                        @endif
+                    @endauth
+                    @guest
+                        @php
+                            $guestWishlist = session()->get('guest_wishlist', []);
+                            $guestWishlistCount = count($guestWishlist);
+                        @endphp
+                        @if($guestWishlistCount > 0)
+                            <span class="hamburger-wishlist-badge absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">{{ $guestWishlistCount > 9 ? '9+' : $guestWishlistCount }}</span>
+                        @endif
+                    @endguest
+                </button>
+
+                <!-- Dropdown Menu Panel (Mobile Drawer) -->
+                <div id="hamburgerMenuDropdown" class="absolute right-0 mt-2 w-56 z-[100] hidden">
+                    <div class="bg-white rounded-lg shadow-lg border border-zinc-100 overflow-hidden">
+                        <!-- Navigation Links -->
+                        <div class="flex flex-col">
+                            <a href="{{ route('home') }}" class="flex items-center gap-3 px-4 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
+                                <i class="fas fa-home text-zinc-400 text-sm w-4"></i>
+                                <span class="text-sm text-zinc-700">{{ $common['navbar']['home'][$lang] ?? 'Home' }}</span>
+                            </a>
+                            <a href="{{ route('new-arrivals') }}" class="flex items-center gap-3 px-4 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
+                                <i class="fas fa-star text-zinc-400 text-sm w-4"></i>
+                                <span class="text-sm text-zinc-700">{{ $common['navbar']['new_arrivals'][$lang] ?? 'New Arrivals' }}</span>
+                            </a>
+                            <a href="{{ route('racket') }}" class="flex items-center gap-3 px-4 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
+                                <i class="fas fa-table-tennis text-zinc-400 text-sm w-4"></i>
+                                <span class="text-sm text-zinc-700">{{ $common['navbar']['racket'][$lang] ?? 'Rackets' }}</span>
+                            </a>
+                            <a href="{{ route('shoes') }}" class="flex items-center gap-3 px-4 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
+                                <i class="fas fa-shoe-prints text-zinc-400 text-sm w-4"></i>
+                                <span class="text-sm text-zinc-700">{{ $common['navbar']['shoes'][$lang] ?? 'Shoes' }}</span>
+                            </a>
+                            <a href="{{ route('apparel') }}" class="flex items-center gap-3 px-4 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
+                                <i class="fas fa-tshirt text-zinc-400 text-sm w-4"></i>
+                                <span class="text-sm text-zinc-700">{{ $common['navbar']['accessories'][$lang] ?? 'Accessories' }}</span>
+                            </a>
+                        </div>
+
+                        <!-- Language Switcher & Dark mode mobile Zone -->
+                        <div class="border-b border-zinc-100 p-2.5 bg-zinc-50">
+                            <div class="flex gap-2 mb-2">
+                                <a href="{{ request()->fullUrlWithQuery(['locale' => 'en']) }}" class="flex-1 text-center py-1.5 text-xs text-zinc-700 hover:bg-white rounded border border-transparent shadow-sm transition {{ session('locale', 'en') === 'en' ? 'bg-white font-semibold border-zinc-200' : 'bg-white/50' }}">
+                                    EN
                                 </a>
-                                
-                                <!-- Wishlist -->
-                                <a href="{{ route('customer.wishlist.index') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
-                                    <div class="relative">
-                                        <i class="fas fa-heart text-zinc-500 text-sm"></i>
-                                        @php
-                                            if (auth()->check() && auth()->user()->role === 'customer') {
-                                                $wishlistCount = auth()->user()->wishlistItems()->count();
-                                            } else {
-                                                $guestWishlist = session()->get('guest_wishlist', []);
-                                                $wishlistCount = count($guestWishlist);
-                                            }
-                                        @endphp
-                                        @if($wishlistCount > 0)
-                                            <span class="wishlist-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
-                                        @endif
-                                    </div>
-                                    <span class="text-sm text-zinc-700">{{ $common['navbar']['wishlist'][$lang] ?? 'Wishlist' }}</span>
+                                <a href="{{ request()->fullUrlWithQuery(['locale' => 'id']) }}" class="flex-1 text-center py-1.5 text-xs text-zinc-700 hover:bg-white rounded border border-transparent shadow-sm transition {{ session('locale', 'en') === 'id' ? 'bg-white font-semibold border-zinc-200' : 'bg-white/50' }}">
+                                    ID
                                 </a>
-                                
-                                <!-- Auth Section for logged-in users -->
-                                @auth
-                                    @if (auth()->user()->role === 'admin')
-                                        <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-t border-zinc-100">
-                                            <i class="fas fa-arrow-left text-zinc-500 text-sm"></i>
-                                            <span class="text-sm text-zinc-700">Dashboard</span>
-                                        </a>
-                                    @elseif(auth()->user()->role === 'customer')
-                                        <a href="{{ route('customer.orders.index') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-t border-zinc-100">
-                                            <i class="fas fa-history text-zinc-500 text-sm"></i>
-                                            <span class="text-sm text-zinc-700">{{ $common['footer']['sections']['account'][$lang] ?? 'Orders' }}</span>
-                                        </a>
-                                        <a href="{{ route('customer.profile.index') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-t border-zinc-100">
-                                            <i class="fas fa-user text-zinc-500 text-sm"></i>
-                                            <span class="text-sm text-zinc-700">{{ $common['footer']['sections']['account'][$lang] ?? 'Profile' }}</span>
-                                        </a>
-                                    @endif
-                                @endauth
+                            </div>
+
+                            <div class="flex gap-2">
+                                <button type="button" id="mobileLightModeBtn" 
+                                        class="flex-1 flex items-center justify-center py-1.5 rounded border border-transparent shadow-sm transition dark:bg-white/50 dark:border-transparent bg-white font-semibold border-zinc-200 dark:font-normal">
+                                    <i class="fas fa-sun text-sm transition-colors duration-200" id="iconMobileLight"></i>
+                                </button>
+
+                                <button type="button" id="mobileDarkModeBtn" 
+                                        class="flex-1 flex items-center justify-center py-1.5 rounded border border-transparent shadow-sm transition bg-white/50 dark:bg-white dark:font-semibold dark:border-zinc-200">
+                                    <i class="fas fa-moon text-sm transition-colors duration-200" id="iconMobileDark"></i>
+                                </button>
                             </div>
                         </div>
+
+                        
                     </div>
+                </div>
+            </div>
                 </div>
             </div>
         </header>
@@ -524,7 +611,7 @@
                     <h1 class="text-4xl font-bold text-white mb-2">NoraPadel</h1>
                     <p class="mt-2 md:mt-4 text-[11px] md:text-sm text-zinc-100 leading-relaxed drop-shadow-md max-w-[280px] md:max-w-xl">{{ $home['hero']['subtitle'][$lang] ?? '' }}</p>
                     <div class="mt-3 md:mt-6 flex flex-wrap justify-center gap-6">
-                        <a href="{{ route('shop') }}" class="inline-flex items-center gap-1 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 md:px-6 md:py-2.5 text-[10px] md:text-xs font-semibold text-white backdrop-blur transition duration-300 hover:bg-white/20 hover:scale-[1.02]">{{ $home['hero']['cta_button'][$lang] ?? '' }}</a>
+                        <!-- <a href="{{ route('shop') }}" class="inline-flex items-center gap-1 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 md:px-6 md:py-2.5 text-[10px] md:text-xs font-semibold text-white backdrop-blur transition duration-300 hover:bg-white/20 hover:scale-[1.02]">{{ $home['hero']['cta_button'][$lang] ?? '' }}</a> -->
                     </div>
                 </div>
             </div>
@@ -1348,6 +1435,60 @@
 @endpush
 
 @push('scripts')
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const desktopBtn = document.getElementById('darkModeToggleHome');
+        const mobileLightBtn = document.getElementById('mobileLightModeBtn');
+        const mobileDarkBtn = document.getElementById('mobileDarkModeBtn');
+        
+        // Ambil elemen icon di dalam button untuk ganti warna
+        const iconLight = mobileLightBtn ? mobileLightBtn.querySelector('i') : null;
+        const iconDark = mobileDarkBtn ? mobileDarkBtn.querySelector('i') : null;
+
+        // Fungsi pembantu untuk setel warna icon secara instan
+        function setMobileIconColor(isDarkActive) {
+            if (!iconLight || !iconDark) return;
+            
+            if (isDarkActive) {
+                // Mode Gelap Aktif: Bulan terang (zinc-400), Matahari redup (zinc-300)
+                iconLight.classList.remove('text-zinc-400');
+                iconLight.classList.add('text-zinc-300');
+                
+                iconDark.classList.remove('text-zinc-300');
+                iconDark.classList.add('text-zinc-400');
+            } else {
+                // Mode Terang Aktif: Matahari terang (zinc-400), Bulan redup (zinc-300)
+                iconLight.classList.remove('text-zinc-300');
+                iconLight.classList.add('text-zinc-400');
+                
+                iconDark.classList.remove('text-zinc-400');
+                iconDark.classList.add('text-zinc-300');
+            }
+        }
+
+        // Cek status awal saat halaman selesai dimuat (kasih delay dikit biar script temanmu kelar execute)
+        setTimeout(() => {
+            const isDarkNow = document.documentElement.classList.contains('dark');
+            setMobileIconColor(isDarkNow);
+        }, 50);
+
+        // Klik Matahari di mobile -> Langsung paksa trigger klik desktop & setel warna matahari aktif
+        if (mobileLightBtn && desktopBtn) {
+            mobileLightBtn.addEventListener('click', () => {
+                desktopBtn.click();
+                setMobileIconColor(false); // Matahari aktif
+            });
+        }
+        
+        // Klik Bulan di mobile -> Langsung paksa trigger klik desktop & setel warna bulan aktif
+        if (mobileDarkBtn && desktopBtn) {
+            mobileDarkBtn.addEventListener('click', () => {
+                desktopBtn.click();
+                setMobileIconColor(true); // Bulan aktif
+            });
+        }
+    });
+</script>
     <script>
         // Dark Mode Toggle Home Page Custom Navbar
         (function() {

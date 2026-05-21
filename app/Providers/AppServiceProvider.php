@@ -24,8 +24,8 @@ class AppServiceProvider extends ServiceProvider
     {
         // Menyuntikkan variabel secara global ke SEMUA halaman Blade sebelum di-render
         View::composer('*', function ($view) {
-            // 1. Ambil bahasa dari URL, jika kosong ambil dari session, jika kosong default 'id'
-            $lang = request()->query('locale') ?? session('locale') ?? 'id';
+            // 1. Ambil bahasa dari URL, jika kosong ambil dari session
+            $lang = request()->query('locale') ?? session('locale') ?? 'en';
             
             // 2. Simpan ke session agar halaman lain ingat
             session(['locale' => $lang]);
