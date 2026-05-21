@@ -32,7 +32,7 @@
       "high_to_low": { "id": "Termahal ke Termurah", "en": "High to Low" }
     },
     "sort_options": {
-      "default": { "id": "Bawaan", "en": "Default" },
+      "relevance": { "id": "Relevan", "en": "Relevance" },
       "popular": { "id": "Populer", "en": "Popular" },
       "latest": { "id": "Terbaru", "en": "Latest" }
     },

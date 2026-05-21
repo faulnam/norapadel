@@ -25,7 +25,7 @@ class PageController extends Controller
             ->inStock()
             ->where('is_featured', false)
             ->latest()
-            ->take(6)
+            ->take(16)
             ->get();
 
         $testimonials = Testimonial::approved()

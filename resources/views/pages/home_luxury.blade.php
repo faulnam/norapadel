@@ -609,7 +609,9 @@
                                 class="w-full bg-white/10 backdrop-blur-md text-white placeholder-white/50 pl-11 pr-4 py-2 rounded-full text-sm border border-white/20 shadow-sm focus:outline-none focus:bg-white/20 focus:border-white/40 focus:ring-1 focus:ring-white/30 transition-all cursor-pointer" readonly> </div>
                     </div>
                     <h1 class="text-4xl font-bold text-white mb-2">NoraPadel</h1>
-                    <p class="mt-2 md:mt-4 text-[11px] md:text-sm text-zinc-100 leading-relaxed drop-shadow-md max-w-[280px] md:max-w-xl">{{ $home['hero']['subtitle'][$lang] ?? '' }}</p>
+                    <p class="mt-2 md:mt-4 text-[11px] md:text-sm text-zinc-100 leading-relaxed drop-shadow-md max-w-[390px] md:max-w-xl">
+                        {{ $home['hero']['subtitle'][$lang] ?? '' }}
+                    </p>
                     <div class="mt-3 md:mt-6 flex flex-wrap justify-center gap-6">
                         <!-- <a href="{{ route('shop') }}" class="inline-flex items-center gap-1 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 md:px-6 md:py-2.5 text-[10px] md:text-xs font-semibold text-white backdrop-blur transition duration-300 hover:bg-white/20 hover:scale-[1.02]">{{ $home['hero']['cta_button'][$lang] ?? '' }}</a> -->
                     </div>
@@ -668,64 +670,277 @@
         <main class="relative z-0">
 
             <!-- Product Filters (Below Hero) -->
-            <section class="bg-zinc-50 py-3 border-b border-zinc-200">
-                <div class="mx-auto w-full max-w-7xl px-3 md:px-10 lg:px-12">
-                    <div class="flex flex-col md:flex-row gap-3 items-center justify-between">
-                        <div class="flex gap-2 flex-nowrap overflow-x-auto pb-1 flex-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                            <select id="filterBrandBottom" class="px-2 py-1.5 border border-zinc-300 rounded-lg text-xs md:text-sm focus:outline-none focus:border-blue-500 transition bg-white shrink-0" onchange="applyFilters()">
-                                <option value="">{{ $home['product_section']['filter_titles']['brand'][$lang] ?? 'Brand' }}</option>
-                                <option value="Bullpadel">Bullpadel</option>
-                                <option value="Babolat">Babolat</option>
-                                <option value="Nox">Nox</option>
-                                <option value="Alpha">Alpha</option>
-                                <option value="Zephyr">Zephyr</option>
-                                <option value="Arronax">Arronax</option>
+            <!-- Main Layout: Sidebar + Grid -->
+        <div class="mx-auto max-w-7xl px-6 pb-16 md:px-10 lg:px-12">
+            <div class="flex flex-col gap-8 md:flex-row">
+                
+                <!-- Sidebar Filters -->
+                <aside class="w-full md:w-64 shrink-0">
+                    <div class="space-y-6">
+                        
+                        <div class="border-t border-zinc-100 pt-6">
+                            <button type="button" class="filter-toggle flex w-full items-center justify-between text-left">
+                                <h3 class="text-sm font-semibold text-black">
+                                    {{ $home['product_section']['filter_titles']['brand'][$lang] ?? 'Brand' }}
+                                </h3>
+                                <i class="fas fa-chevron-down text-xs text-zinc-400 transition-transform duration-200"></i>
+                            </button>
+                            <div class="filter-content mt-3 flex flex-wrap gap-2">
+                                <a href="{{ request()->fullUrlWithQuery(['brand' => 'Bullpadel']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ $selectedBrand === 'Bullpadel' ? 'bg-black text-white border-black' : '' }}">Bullpadel</a>
+                                <a href="{{ request()->fullUrlWithQuery(['brand' => 'Babolat']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ $selectedBrand === 'Babolat' ? 'bg-black text-white border-black' : '' }}">Babolat</a>
+                                <a href="{{ request()->fullUrlWithQuery(['brand' => 'Nox']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ $selectedBrand === 'Nox' ? 'bg-black text-white border-black' : '' }}">Nox</a>
+                                <a href="{{ request()->fullUrlWithQuery(['brand' => 'Alpha']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ $selectedBrand === 'Alpha' ? 'bg-black text-white border-black' : '' }}">Alpha</a>
+                                <a href="{{ request()->fullUrlWithQuery(['brand' => 'Zephyr']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ $selectedBrand === 'Zephyr' ? 'bg-black text-white border-black' : '' }}">Zephyr</a>
+                                <a href="{{ request()->fullUrlWithQuery(['brand' => 'Arronax']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ $selectedBrand === 'Arronax' ? 'bg-black text-white border-black' : '' }}">Arronax</a>
+                                @if($selectedBrand)
+                                    <a href="{{ request()->fullUrlWithQuery(['brand' => null]) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-rose-600 transition hover:border-rose-600 hover:text-rose-600">Clear</a>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="border-t border-zinc-100 pt-6">
+                            <button type="button" class="filter-toggle flex w-full items-center justify-between text-left">
+                                <h3 class="text-sm font-semibold text-black">
+                                    {{ $home['product_section']['filter_titles']['category'][$lang] ?? 'Category' }}
+                                </h3>
+                                <i class="fas fa-chevron-down text-xs text-zinc-400 transition-transform duration-200"></i>
+                            </button>
+                            
+                            <div class="filter-content mt-3 flex flex-col gap-2">
+                                <label class="flex cursor-pointer items-center gap-2">
+                                    <input type="radio" name="filterCategoryVisual" class="border-zinc-300 text-black focus:ring-black" value="" {{ !request()->get('category') ? 'checked' : '' }} 
+                                        onchange="updateUrlParam('category', this.value)">
+                                    <span class="text-sm text-zinc-600">
+                                        {{ $lang === 'id' ? 'Semua Kategori' : 'All Categories' }}
+                                    </span>
+                                </label>
+
+                                <label class="flex cursor-pointer items-center gap-2">
+                                    <input type="radio" name="filterCategoryVisual" class="border-zinc-300 text-black focus:ring-black" value="racket" {{ request()->get('category') === 'racket' ? 'checked' : '' }} 
+                                        onchange="updateUrlParam('category', this.value)">
+                                    <span class="text-sm text-zinc-600">
+                                        {{ $common['navbar']['racket'][$lang] ?? 'Rackets' }}
+                                    </span>
+                                </label>
+
+                                <label class="flex cursor-pointer items-center gap-2">
+                                    <input type="radio" name="filterCategoryVisual" class="border-zinc-300 text-black focus:ring-black" value="shoes" {{ request()->get('category') === 'shoes' ? 'checked' : '' }} 
+                                        onchange="updateUrlParam('category', this.value)">
+                                    <span class="text-sm text-zinc-600">
+                                        {{ $common['navbar']['shoes'][$lang] ?? 'Shoes' }}
+                                    </span>
+                                </label>
+
+                                <label class="flex cursor-pointer items-center gap-2">
+                                    <input type="radio" name="filterCategoryVisual" class="border-zinc-300 text-black focus:ring-black" value="apparel" {{ request()->get('category') === 'apparel' ? 'checked' : '' }} 
+                                        onchange="updateUrlParam('category', this.value)">
+                                    <span class="text-sm text-zinc-600">
+                                        {{ $common['navbar']['accessories'][$lang] ?? 'Accessories' }}
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-zinc-100 pt-6">
+                            <button type="button" class="filter-toggle flex w-full items-center justify-between text-left">
+                                <h3 class="text-sm font-semibold text-black">
+                                    {{ $home['product_section']['filter_titles']['price'][$lang] ?? 'Price' }}
+                                </h3>
+                                <i class="fas fa-chevron-down text-xs text-zinc-400 transition-transform duration-200"></i>
+                            </button>
+                            <div class="filter-content mt-3 flex flex-col gap-2">
+                                <label class="flex cursor-pointer items-center gap-2">
+                                    <input type="radio" name="filterPriceVisual" class="border-zinc-300 text-black focus:ring-black" value="" {{ !request()->get('price') ? 'checked' : '' }}
+                                        onchange="updateUrlParam('price', this.value)">
+                                    <span class="text-sm text-zinc-600">
+                                        {{ $home['product_section']['price_options']['all'][$lang] ?? 'All Prices' }} 
+                                    </span>
+                                </label>
+                                <label class="flex cursor-pointer items-center gap-2">
+                                    <input type="radio" name="filterPriceVisual" class="border-zinc-300 text-black focus:ring-black" value="low" {{ request()->get('price') === 'low' ? 'checked' : '' }} 
+                                        onchange="updateUrlParam('price', this.value)">
+                                    <span class="text-sm text-zinc-600">
+                                        {{ $home['product_section']['price_options']['low_to_high'][$lang] ?? 'Low to High' }} 
+                                    </span>
+                                </label>
+                                <label class="flex cursor-pointer items-center gap-2">
+                                    <input type="radio" name="filterPriceVisual" class="border-zinc-300 text-black focus:ring-black" value="high" {{ request()->get('price') === 'high' ? 'checked' : '' }} 
+                                        onchange="updateUrlParam('price', this.value)">
+                                    <span class="text-sm text-zinc-600">
+                                        {{ $home['product_section']['price_options']['high_to_low'][$lang] ?? 'High to Low' }} 
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-zinc-100 pt-6">
+                            <button type="button" class="filter-toggle flex w-full items-center justify-between text-left">
+                                <h3 class="text-sm font-semibold text-black">
+                                    {{ $home['product_section']['filter_titles']['sort'][$lang] ?? 'Sort' }}
+                                </h3>
+                                <i class="fas fa-chevron-down text-xs text-zinc-400 transition-transform duration-200"></i>
+                            </button>
+                            <div class="filter-content mt-3 flex flex-col gap-2">
+                                <label class="flex cursor-pointer items-center gap-2">
+                                    <input type="radio" name="filterSortVisual" class="border-zinc-300 text-black focus:ring-black" value="" {{ !request()->get('sort') ? 'checked' : '' }}
+                                        onchange="updateUrlParam('sort', this.value)">
+                                    <span class="text-sm text-zinc-600">
+                                        {{ $home['product_section']['sort_options']['relevance'][$lang] ?? 'Relevance' }}
+                                    </span>
+                                </label>
+                                <label class="flex cursor-pointer items-center gap-2">
+                                    <input type="radio" name="filterSortVisual" class="border-zinc-300 text-black focus:ring-black" value="popular" {{ request()->get('sort') === 'popular' ? 'checked' : '' }} 
+                                        onchange="updateUrlParam('sort', this.value)">
+                                    <span class="text-sm text-zinc-600">
+                                        {{ $home['product_section']['sort_options']['popular'][$lang] ?? 'Popular' }}
+                                    </span>
+                                </label>
+                                <label class="flex cursor-pointer items-center gap-2">
+                                    <input type="radio" name="filterSortVisual" class="border-zinc-300 text-black focus:ring-black" value="latest" {{ request()->get('sort') === 'latest' ? 'checked' : '' }} 
+                                        onchange="updateUrlParam('sort', this.value)">
+                                    <span class="text-sm text-zinc-600">
+                                        {{ $home['product_section']['sort_options']['latest'][$lang] ?? 'Latest' }}
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="border-t border-zinc-100 pt-6">
+                            <button type="button" class="filter-toggle flex w-full items-center justify-between text-left">
+                                <h3 class="text-sm font-semibold text-black">
+                                    {{ $lang === 'id' ? 'Tahun Raket' : 'Year of Racket' }}
+                                </h3>
+                                <i class="fas fa-chevron-down text-xs text-zinc-400 transition-transform duration-200"></i>
+                            </button>
+                            <div class="filter-content mt-3 flex flex-wrap gap-2">
+                                <a href="{{ request()->fullUrlWithQuery(['year' => null]) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs transition hover:border-black hover:text-black {{ !request()->get('year') ? 'bg-black text-white border-black' : 'text-zinc-600' }}">
+                                    {{ $lang === 'id' ? 'Semua' : 'All' }}
+                                </a>
+                                <a href="{{ request()->fullUrlWithQuery(['year' => '2024']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ request()->get('year') === '2024' ? 'bg-black text-white border-black' : '' }}">2024</a>
+                                <a href="{{ request()->fullUrlWithQuery(['year' => '2025']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ request()->get('year') === '2025' ? 'bg-black text-white border-black' : '' }}">2025</a>
+                                <a href="{{ request()->fullUrlWithQuery(['year' => '2026']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ request()->get('year') === '2026' ? 'bg-black text-white border-black' : '' }}">2026</a>
+                                
+                                @if(request()->get('year'))
+                                    <a href="{{ request()->fullUrlWithQuery(['year' => null]) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-rose-600 transition hover:border-rose-600 hover:text-rose-600">Clear</a>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="border-t border-zinc-100 pt-6 mt-4">
+                            <span class="text-xs font-bold uppercase tracking-wider text-zinc-600">
+                                {{ $lang === 'id' ? 'Filter Lanjutan' : 'Advanced Filters' }}
+                            </span>
+                        </div>
+
+                        <div class="border-t border-zinc-100 pt-4">
+                            <button type="button" class="filter-toggle flex w-full items-center justify-between text-left">
+                                <h3 class="text-sm font-semibold text-black">Shape</h3>
+                                <i class="fas fa-chevron-down text-xs text-zinc-400 transition-transform duration-200"></i>
+                            </button>
+                            <div class="filter-content mt-3 flex flex-wrap gap-2">
+                                <a href="{{ request()->fullUrlWithQuery(['shape' => null]) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs transition hover:border-black hover:text-black {{ !request()->get('shape') ? 'bg-black text-white border-black' : 'text-zinc-600' }}">All</a>
+                                <a href="{{ request()->fullUrlWithQuery(['shape' => 'diamond']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ request()->get('shape') === 'diamond' ? 'bg-black text-white border-black' : '' }}">Diamond</a>
+                                <a href="{{ request()->fullUrlWithQuery(['shape' => 'tear drop']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ request()->get('shape') === 'tear drop' ? 'bg-black text-white border-black' : '' }}">Tear Drop</a>
+                                <a href="{{ request()->fullUrlWithQuery(['shape' => 'round']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ request()->get('shape') === 'round' ? 'bg-black text-white border-black' : '' }}">Round</a>
+                                <a href="{{ request()->fullUrlWithQuery(['shape' => 'geometric']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ request()->get('shape') === 'geometric' ? 'bg-black text-white border-black' : '' }}">Geometric</a>
+                                <a href="{{ request()->fullUrlWithQuery(['shape' => null]) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-rose-600 transition hover:border-rose-600 hover:text-rose-600">Clear</a>
+                                <!-- @if(request()->get('shape'))
+                                    
+                                @endif -->
+                            </div>
+                        </div>
+
+                        <div class="border-t border-zinc-100 pt-6">
+                            <button type="button" class="filter-toggle flex w-full items-center justify-between text-left">
+                                <h3 class="text-sm font-semibold text-black">Hardness</h3>
+                                <i class="fas fa-chevron-down text-xs text-zinc-400 transition-transform duration-200"></i>
+                            </button>
+                            <div class="filter-content mt-3 flex flex-wrap gap-2">
+                                <a href="{{ request()->fullUrlWithQuery(['hardness' => null]) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs transition hover:border-black hover:text-black {{ !request()->get('hardness') ? 'bg-black text-white border-black' : 'text-zinc-600' }}">All</a>
+                                <a href="{{ request()->fullUrlWithQuery(['hardness' => 'soft']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ request()->get('hardness') === 'soft' ? 'bg-black text-white border-black' : '' }}">Soft</a>
+                                <a href="{{ request()->fullUrlWithQuery(['hardness' => 'medium']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ request()->get('hardness') === 'medium' ? 'bg-black text-white border-black' : '' }}">Medium</a>
+                                <a href="{{ request()->fullUrlWithQuery(['hardness' => 'hard']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ request()->get('hardness') === 'hard' ? 'bg-black text-white border-black' : '' }}">Hard</a>
+                                <a href="{{ request()->fullUrlWithQuery(['hardness' => null]) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-rose-600 transition hover:border-rose-600 hover:text-rose-600">Clear</a>
+                                <!-- @if(request()->get('hardness')) -->
+                                    
+                                <!-- @endif -->
+                            </div>
+                        </div>
+
+                        <div class="border-t border-zinc-100 pt-6">
+                            <button type="button" class="filter-toggle flex w-full items-center justify-between text-left">
+                                <h3 class="text-sm font-semibold text-black">Carbon Type</h3>
+                                <i class="fas fa-chevron-down text-xs text-zinc-400 transition-transform duration-200"></i>
+                            </button>
+                            <div class="filter-content mt-3 flex flex-wrap gap-2">
+                                <a href="{{ request()->fullUrlWithQuery(['carbon_type' => null]) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs transition hover:border-black hover:text-black {{ !request()->get('carbon_type') ? 'bg-black text-white border-black' : 'text-zinc-600' }}">All</a>
+                                <a href="{{ request()->fullUrlWithQuery(['carbon_type' => 'glass fiber']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ request()->get('carbon_type') === 'glass fiber' ? 'bg-black text-white border-black' : '' }}">Glass Fiber</a>
+                                <a href="{{ request()->fullUrlWithQuery(['carbon_type' => '3k']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ request()->get('carbon_type') === '3k' ? 'bg-black text-white border-black' : '' }}">3K</a>
+                                <a href="{{ request()->fullUrlWithQuery(['carbon_type' => '12k']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ request()->get('carbon_type') === '12k' ? 'bg-black text-white border-black' : '' }}">12K</a>
+                                <a href="{{ request()->fullUrlWithQuery(['carbon_type' => '18k']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ request()->get('carbon_type') === '18k' ? 'bg-black text-white border-black' : '' }}">18K</a>
+                                <a href="{{ request()->fullUrlWithQuery(['carbon_type' => '24k']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ request()->get('carbon_type') === '24k' ? 'bg-black text-white border-black' : '' }}">24K</a>
+                                <a href="{{ request()->fullUrlWithQuery(['carbon_type' => 'mix']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ request()->get('carbon_type') === 'mix' ? 'bg-black text-white border-black' : '' }}">Mix</a>
+                                <a href="{{ request()->fullUrlWithQuery(['carbon_type' => null]) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-rose-600 transition hover:border-rose-600 hover:text-rose-600">Clear</a>
+                                <!-- @if(request()->get('carbon_type')) -->
+                                   
+                                <!-- @endif -->
+                            </div>
+                        </div>
+                </aside>
+                <!-- Product Grid Area -->
+                <div class="flex-1">
+                    <!-- Mobile Filter Dropdown -->
+                    <div class="lg:hidden mb-4">
+                        <div class="mb-3">
+                            <label class="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-700">Filter</label>
+                        </div>
+                        <div class="flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                            <select id="filterBrand" class="px-2 py-1.5 border border-zinc-300 rounded-lg text-xs focus:outline-none focus:border-blue-500 transition bg-white shrink-0 min-w-[100px]" 
+                                    onchange="updateUrlParam('brand', this.value)">
+                                <option value="">Brand</option>
+                                <option value="Bullpadel" {{ $selectedBrand === 'Bullpadel' ? 'selected' : '' }}>Bullpadel</option>
+                                <option value="Babolat" {{ $selectedBrand === 'Babolat' ? 'selected' : '' }}>Babolat</option>
+                                <option value="Nox" {{ $selectedBrand === 'Nox' ? 'selected' : '' }}>Nox</option>
+                                <option value="Alpha" {{ $selectedBrand === 'Alpha' ? 'selected' : '' }}>Alpha</option>
+                                <option value="Zephyr" {{ $selectedBrand === 'Zephyr' ? 'selected' : '' }}>Zephyr</option>
+                                <option value="Arronax" {{ $selectedBrand === 'Arronax' ? 'selected' : '' }}>Arronax</option>
                             </select>
-                            <select id="filterCategoryBottom" class="px-2 py-1.5 border border-zinc-300 rounded-lg text-xs md:text-sm focus:outline-none focus:border-blue-500 transition bg-white shrink-0" onchange="applyFilters()">
-                                <option value="">{{ $home['product_section']['filter_titles']['category'][$lang] ?? 'Category' }}</option>
-                                <option value="racket">{{ $home['product_section']['bottom_categories']['racket'][$lang] ?? 'Rackets' }}</option>
-                                <option value="shoes">{{ $home['product_section']['bottom_categories']['shoes'][$lang] ?? 'Shoes' }}</option>
-                                <option value="apparel">{{ $home['product_section']['bottom_categories']['bags'][$lang] ?? 'Accessories' }}</option>
+                            <select id="filterCategoryBottom" class="hidden">
+                                <option value="" {{ !request()->get('category') ? 'selected' : '' }}></option>
+                                <option value="racket" {{ request()->get('category') === 'racket' ? 'selected' : '' }}></option>
+                                <option value="shoes" {{ request()->get('category') === 'shoes' ? 'selected' : '' }}></option>
+                                <option value="apparel" {{ request()->get('category') === 'apparel' ? 'selected' : '' }}></option>
                             </select>
-                            <select id="filterPriceBottom" class="px-2 py-1.5 border border-zinc-300 rounded-lg text-xs md:text-sm focus:outline-none focus:border-blue-500 transition bg-white shrink-0" onchange="applyFilters()">
-                                <option value="">{{ $home['product_section']['filter_titles']['price'][$lang] ?? 'Price' }}</option>
-                                <option value="low">{{ $home['product_section']['price_options']['low_to_high'][$lang] ?? 'Low to High' }}</option>
-                                <option value="high">{{ $home['product_section']['price_options']['high_to_low'][$lang] ?? 'High to Low' }}</option>
+
+                            <select id="filterPriceBottom" class="hidden">
+                                <option value="" {{ !request()->get('price') ? 'selected' : '' }}></option>
+                                <option value="low" {{ request()->get('price') === 'low' ? 'selected' : '' }}></option>
+                                <option value="high" {{ request()->get('price') === 'high' ? 'selected' : '' }}></option>
                             </select>
-                            <select id="filterSortBottom" class="px-2 py-1.5 border border-zinc-300 rounded-lg text-xs md:text-sm focus:outline-none focus:border-blue-500 transition bg-white shrink-0" onchange="applyFilters()">
-                                <option value="">{{ $home['product_section']['filter_titles']['sort'][$lang] ?? 'Sort' }}</option>
-                                <option value="popular">{{ $home['product_section']['sort_options']['popular'][$lang] ?? 'Popular' }}</option>
-                                <option value="latest">{{ $home['product_section']['sort_options']['latest'][$lang] ?? 'Latest' }}</option>
+
+                            <select id="filterSortBottom" class="hidden">
+                                <option value="" {{ !request()->get('sort') ? 'selected' : '' }}></option>
+                                <option value="popular" {{ request()->get('sort') === 'popular' ? 'selected' : '' }}></option>
+                                <option value="latest" {{ request()->get('sort') === 'latest' ? 'selected' : '' }}></option>
                             </select>
                         </div>
                     </div>
-                </div>
-            </section>
 
-            <!-- New Arrivals -->
-            <section class="np-fade-section bg-white py-8 lg:py-10 pb-0">
-                <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
-                    
-                    <div class="relative group">
-                        <!-- Left Arrow -->
-                        <button class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded w-10 h-10 flex items-center justify-center transition duration-300" onclick="scrollNewArrivals('left')">
-                            <i class="fas fa-chevron-left text-black text-sm"></i>
-                        </button>
-                        
-                        <!-- Right Arrow -->
-                        <button class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded w-10 h-10 flex items-center justify-center transition duration-300" onclick="scrollNewArrivals('right')">
-                            <i class="fas fa-chevron-right text-black text-sm"></i>
-                        </button>
-                        
-                        <div id="newArrivalsContainer" class="flex gap-6 overflow-x-auto pb-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x snap-mandatory scroll-smooth">
-                        @foreach($newArrivals as $product)
+                    <!-- Grid -->
+                    <div id="productGrid" class="grid grid-cols-3 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                        @forelse($products as $product)
                             @php
                                 $soldCount = \App\Models\OrderItem::where('product_id', $product->id)
                                     ->whereHas('order', function($q) {
                                         $q->whereIn('status', ['completed', 'delivered']);
                                     })->sum('quantity');
                             @endphp
-                            <div class="group snap-start shrink-0 basis-[40%] sm:basis-[48%] md:basis-[32%] lg:basis-[18%] overflow-hidden bg-white transition duration-300 hover:-translate-y-2">
+                            <div class="product-item group block overflow-hidden bg-white transition duration-300 hover:-translate-y-1"
+                               data-name="{{ strtolower($product->name) }}"
+                               data-price="{{ $product->hasActiveDiscount() ? $product->discounted_price : $product->price }}"
+                               data-brand="{{ strtolower($product->brand ?? '') }}"
+                               data-level="{{ $product->level ?? '' }}"
+                               data-category="{{ strtolower($product->category ?? '') }}"
+                               data-stock="{{ $product->stock ?? 0 }}">
                                 <a href="{{ route('produk.show', $product) }}" class="block">
                                     <div class="relative aspect-square overflow-hidden">
                                         <div class="h-full w-full overflow-hidden">
@@ -734,37 +949,19 @@
                                         @if($product->hasActiveDiscount())
                                             <span class="absolute left-0 top-0 bg-rose-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">-{{ $product->formatted_discount_percent }}</span>
                                         @endif
-                                        <!-- Latest Badge for New Arrivals -->
-                                        <span class="absolute left-0 {{ $product->hasActiveDiscount() ? 'top-7' : 'top-0' }} bg-blue-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">{{ $home['product_section']['sort_options']['latest'][$lang] ?? 'Latest' }}</span>
-                                        @if($product->package_type === 'bundle')
-                                            <span class="absolute left-0 {{ $product->hasActiveDiscount() ? 'top-14' : 'top-7' }} bg-purple-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">{{ $home['product_section']['promo_texts']['racket_desc'][$lang] ?? 'Bundle' }}</span>
+                                        @if($product->category === 'arrivals')
+                                            <span class="absolute left-0 {{ $product->hasActiveDiscount() ? 'top-7' : 'top-0' }} bg-blue-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Latest</span>
                                         @endif
-                                        @if($product->isBestSeller())
-                                            <span class="absolute right-0 top-0 bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">{{ $home['product_section']['sort_options']['popular'][$lang] ?? 'Best Seller' }}</span>
+                                        @if($product->package_type === 'bundle')
+                                            <span class="absolute left-0 {{ $product->hasActiveDiscount() && $product->category === 'arrivals' ? 'top-14' : ($product->hasActiveDiscount() || $product->category === 'arrivals' ? 'top-7' : 'top-0') }} bg-purple-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Bundle</span>
+                                        @endif
+                                        @if($soldCount >= 5 || $product->package_type === 'bestseller')
+                                            <span class="absolute right-0 top-0 bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Popular</span>
                                         @endif
                                     </div>
-                                    <div class="p-2 md:p-4">
+                                    <div class="p-3">
                                         <h3 class="line-clamp-1 text-sm font-medium text-black">{{ $product->name }}</h3>
                                         <p class="mt-1 text-xs text-zinc-600">{{ $product->category_label }}</p>
-                                        <div class="mt-1 flex items-center gap-1">
-                                            @php
-                                                $rating = $product->average_rating;
-                                                $fullStars = floor($rating);
-                                                $hasHalfStar = ($rating - $fullStars) >= 0.5;
-                                            @endphp
-                                            @for($i = 1; $i <= 5; $i++)
-                                                @if($i <= $fullStars)
-                                                    <i class="fas fa-star text-black text-[10px]"></i>
-                                                @elseif($i == $fullStars + 1 && $hasHalfStar)
-                                                    <i class="fas fa-star-half-alt text-black text-[10px]"></i>
-                                                @else
-                                                    <i class="far fa-star text-zinc-200 text-[10px]"></i>
-                                                @endif
-                                            @endfor
-                                            @if($product->total_reviews > 0)
-                                                <span class="text-[10px] text-zinc-500">({{ $product->total_reviews }})</span>
-                                            @endif
-                                        </div>
                                         @if($product->hasActiveDiscount())
                                             <p class="mt-1 text-base font-semibold text-black">{{ $product->formatted_discounted_price }}</p>
                                             <p class="text-xs text-zinc-400 line-through">{{ $product->formatted_price }}</p>
@@ -773,22 +970,25 @@
                                         @endif
                                     </div>
                                 </a>
-                                <div class="px-2 pb-2 md:px-4 md:pb-4">
+                                <div class="px-2 pb-2">
                                     <div class="flex items-center gap-2">
-                                        <button onclick="addToCart('{{ $product->slug }}', event)" class="border border-zinc-300 bg-transparent px-2 py-1 text-[10px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950">
+                                        <button onclick="addToCart('{{ $product->slug }}', event)" class="flex-1 border border-zinc-300 bg-transparent px-2 py-1 text-[10px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950 text-center">
                                             {{$home['product_section']['product_card']['btn_add_to_cart'][$lang] ?? 'Add to cart'}}
                                         </button>
-                                        <button onclick="addToWishlist('{{ $product->slug }}', event)" class="text-zinc-400 transition duration-300 hover:text-rose-500">
-                                            <i class="fas fa-heart text-sm"></i>
+                                        <button onclick="addToWishlist('{{ $product->slug }}', event)" class="p-1 text-zinc-400 transition duration-300 hover:text-rose-500 shrink-0">
+                                            <i class="fas fa-heart text-xs"></i>
                                         </button>
                                     </div>
                                 </div>
                             </div>
-                        @endforeach
-                        </div>
-                    </div>
-                </div>
-            </section>
+                        @empty
+                            <div class="col-span-full rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 p-12 text-center">
+                                <i class="fas fa-box-open text-3xl text-zinc-400"></i>
+                                <p class="mt-3 font-medium text-zinc-500">No products yet</p>
+                            </div>
+                        @endforelse
+                    </div></div> </div> </div> </main>
+
 
             <!-- Category Icons -->
             <section class="np-fade-section bg-white py-4 pt-4">
@@ -906,7 +1106,7 @@
                 <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
                     
                     <div id="productGrid" class="grid grid-cols-3 gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-                        @foreach($shopProducts->take(9) as $product)
+                        @foreach($shopProducts->take(10) as $product)
                             @php
                                 $soldCount = \App\Models\OrderItem::where('product_id', $product->id)
                                     ->whereHas('order', function($q) {
@@ -988,6 +1188,8 @@
                         <p class="text-zinc-500">Tidak ada produk yang ditemukan</p>
                     </div>
                 </div>
+
+                
             </section>
 
             <section id="testimonials" class="np-fade-section bg-white py-18 lg:py-22" data-testimonial-showcase>
@@ -1034,7 +1236,7 @@
 
 
 
-            <section class="np-fade-section bg-white py-16 lg:py-20">
+            <!-- <section class="np-fade-section bg-white py-16 lg:py-20">
                 <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
                     <div
                         class="rounded-lg bg-linear-to-r from-zinc-100 to-white px-8 py-14 text-center lg:px-12">
@@ -1050,7 +1252,7 @@
                         </a>
                     </div>
                 </div>
-            </section>
+            </section> -->
 
         </main>
 
@@ -2511,4 +2713,5 @@
             });
         })();
     </script>
+    
 @endpush
