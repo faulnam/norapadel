@@ -263,14 +263,14 @@
                         <!-- Right Column - Reviews List -->
                         <div class="space-y-6">
                             <!-- Header -->
-                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
                                 <h3 class="text-[11px] font-semibold tracking-[0.15em] text-black uppercase">Reviews {{ $totalReviews }}</h3>
                                 @auth
-                                    <button onclick="openReviewModal()" class="w-full sm:w-auto bg-black text-white px-6 py-2.5 text-[10px] font-semibold tracking-[0.1em] uppercase transition duration-200 hover:bg-white hover:text-black border border-black">
+                                    <button onclick="openReviewModal()" class="w-full sm:w-auto bg-black text-white px-6 py-2.5 text-[10px] font-semibold tracking-[0.1em] uppercase transition duration-200 hover:bg-white hover:text-black border border-black whitespace-nowrap">
                                         Write a Review
                                     </button>
                                 @else
-                                    <a href="{{ route('login') }}" class="w-full sm:w-auto text-center bg-black text-white px-6 py-2.5 text-[10px] font-semibold tracking-[0.1em] uppercase transition duration-200 hover:bg-white hover:text-black border border-black">
+                                    <a href="{{ route('login') }}" class="w-full sm:w-auto text-center bg-black text-white px-6 py-2.5 text-[10px] font-semibold tracking-[0.1em] uppercase transition duration-200 hover:bg-white hover:text-black border border-black whitespace-nowrap">
                                         Login to Review
                                     </a>
                                 @endauth
@@ -279,7 +279,7 @@
                             <!-- Search & Filter -->
                             <div class="flex flex-col sm:flex-row gap-3 mb-8">
                                 <input type="text" id="reviewSearch" placeholder="Search reviews" class="w-full sm:flex-1 px-4 py-2.5 border border-zinc-200 text-sm focus:outline-none focus:border-zinc-400 transition">
-                                <select id="reviewRatingFilter" class="w-full sm:w-auto px-4 py-2.5 border border-zinc-200 text-sm focus:outline-none focus:border-zinc-400 transition bg-white">
+                                <select id="reviewRatingFilter" class="w-full sm:w-auto px-4 py-2.5 border border-zinc-200 text-sm focus:outline-none focus:border-zinc-400 transition bg-white min-w-[130px]">
                                     <option value="all">All ratings</option>
                                     <option value="5">5 stars</option>
                                     <option value="4">4 stars</option>
