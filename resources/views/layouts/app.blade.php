@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id" data-theme="light">
+<html lang="{{ $lang }}" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1520,13 +1520,7 @@
         @yield('content')
     </main>
 
-    <!-- Welcome Bonus Popup -->
-    @guest
-        @if (request()->routeIs('home', 'new-arrivals', 'racket', 'shoes', 'apparel', 'accessories'))
-            <x-welcome-bonus-popup />
-        @endif
-    @endguest
-
+    
     <div class="modal fade np-product-modal" id="npProductModal" tabindex="-1" aria-labelledby="npProductModalTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">

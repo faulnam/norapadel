@@ -3,6 +3,9 @@
 @section('title', 'NoraPadel — Precision. Power. Performance.')
 
 @section('content')
+@php
+    $home = json_decode(@file_get_contents(public_path('translation/home.json')), true) ?? [];
+@endphp
     <style>
         @media (max-width: 991.98px) {
             body { padding-top: 0 !important; }
@@ -15,29 +18,37 @@
             <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-3 md:px-10 lg:px-12">
                 <a href="{{ route('home') }}" class="flex items-center gap-2">
                     <img src="{{ asset('storage/logo.png') }}" alt="NoraPadel" class="h-7 w-7 object-contain" loading="lazy">
-                    <span class="text-xl font-semibold tracking-tight text-white transition-colors duration-300" id="logoText">NoraPadel</span>
+                    <!-- <span class="text-xl font-semibold tracking-tight text-white transition-colors duration-300" id="logoText">NoraPadel</span> -->
                 </a>
-
                 <nav class="hidden items-center gap-6 md:flex" id="navLinks">
+                    <!-- Home Menu -->
                     <a href="{{ route('home') }}"
-                        class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">Home</a>
+                    class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">
+                        {{ $common['navbar']['home'][$lang] ?? 'Home' }}
+                    </a>
 
                     <!-- New Arrivals Mega Dropdown -->
                     <div class="relative group" data-dropdown="new-arrivals">
                         <a href="{{ route('new-arrivals') }}"
-                            class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white flex items-center gap-1">
-                            New Arrivals
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-300 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white flex items-center gap-1">
+                            {{ $common['navbar']['new_arrivals'][$lang] ?? 'New Arrivals' }}
+                            <svg class="h-4 w-4 fill-none stroke-current" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
                         </a>
+                        
+                        <!-- Mega Dropdown Content Container -->
                         <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[700px] opacity-0 invisible translate-y-[-10px] transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-[100]">
                             <div class="bg-white/95 backdrop-blur-md rounded-xl shadow-2xl border border-zinc-100 p-0 overflow-hidden aspect-video">
                                 <div class="grid grid-cols-[1fr_1fr] h-full">
-                                    <!-- Left: Brand & Level (Centered) -->
+                                    
+                                    <!-- Left Column: Brand & Level (Centered) -->
                                     <div class="flex flex-col justify-center items-center bg-zinc-50/50 p-8 space-y-6">
+                                        <!-- Brand Section -->
                                         <div class="w-full text-center">
-                                            <h4 class="text-sm font-bold text-black mb-4 tracking-wide">BRAND</h4>
+                                            <h4 class="text-sm font-bold text-black mb-4 tracking-wide">
+                                                {{ $common['navbar']['headers']['brand'][$lang] ?? 'BRAND' }}
+                                            </h4>
                                             <div class="flex flex-wrap justify-center gap-2">
                                                 <a href="{{ route('new-arrivals', ['brand' => 'Bullpadel']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Bullpadel</a>
                                                 <a href="{{ route('new-arrivals', ['brand' => 'Babolat']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Babolat</a>
@@ -47,26 +58,46 @@
                                                 <a href="{{ route('new-arrivals', ['brand' => 'Arronax']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Arronax</a>
                                             </div>
                                         </div>
+                                        
+                                        <!-- Level Section -->
                                         <div class="w-full text-center">
-                                            <h4 class="text-sm font-bold text-black mb-4 tracking-wide">LEVEL</h4>
+                                            <h4 class="text-sm font-bold text-black mb-4 tracking-wide">
+                                                {{ $common['navbar']['headers']['level'][$lang] ?? 'LEVEL' }}
+                                            </h4>
                                             <div class="flex flex-wrap justify-center gap-2">
-                                                <a href="{{ route('new-arrivals', ['level' => 'beginner']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Beginner</a>
-                                                <a href="{{ route('new-arrivals', ['level' => 'intermediate']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Intermediate</a>
-                                                <a href="{{ route('new-arrivals', ['level' => 'pro']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Pro</a>
+                                                <a href="{{ route('new-arrivals', ['level' => 'beginner']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">
+                                                    {{ $common['navbar']['levels']['beginner'][$lang] ?? 'Beginner' }}
+                                                </a>
+                                                <a href="{{ route('new-arrivals', ['level' => 'intermediate']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">
+                                                    {{ $common['navbar']['levels']['intermediate'][$lang] ?? 'Intermediate' }}
+                                                </a>
+                                                <a href="{{ route('new-arrivals', ['level' => 'pro']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">
+                                                    {{ $common['navbar']['levels']['pro'][$lang] ?? 'Pro' }}
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- Right: Category (Centered) -->
+                                    
+                                    <!-- Right Column: Category (Centered) -->
                                     <div class="flex flex-col justify-center items-center bg-zinc-50/50 p-8">
                                         <div class="w-full text-center">
-                                            <h4 class="text-sm font-bold text-black mb-4 tracking-wide">CATEGORY</h4>
+                                            <h4 class="text-sm font-bold text-black mb-4 tracking-wide">
+                                                {{ $common['navbar']['headers']['category'][$lang] ?? 'CATEGORY' }}
+                                            </h4>
                                             <div class="flex flex-wrap justify-center gap-2">
-                                                <a href="{{ route('racket') }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Racket</a>
-                                                <a href="{{ route('shoes') }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Shoes</a>
-                                                <a href="{{ route('apparel') }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Accessories</a>
+                                                <a href="{{ route('racket') }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">
+                                                    {{ $common['navbar']['racket'][$lang] ?? 'Rackets' }}
+                                                </a>
+                                                <a href="{{ route('shoes') }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">
+                                                    {{ $common['navbar']['shoes'][$lang] ?? 'Shoes' }}
+                                                </a>
+                                                <a href="{{ route('apparel') }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">
+                                                    {{ $common['navbar']['accessories'][$lang] ?? 'Accessories' }}
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -76,7 +107,7 @@
                     <div class="relative group" data-dropdown="racket">
                         <a href="{{ route('racket') }}"
                             class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white flex items-center gap-1">
-                            Racket
+                            {{ $common['navbar']['racket'][$lang] ?? 'Rackets' }}
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-300 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
@@ -87,7 +118,7 @@
                                     <!-- Left: Categories (Centered) -->
                                     <div class="flex flex-col justify-center items-center bg-zinc-50/50 p-8 space-y-6">
                                         <div class="w-full text-center">
-                                            <h4 class="text-sm font-bold text-black mb-4 tracking-wide">BRAND</h4>
+                                            <h4 class="text-sm font-bold text-black mb-4 tracking-wide">{{ $common['navbar']['headers']['brand'][$lang] ?? 'BRAND' }}</h4>
                                             <div class="flex flex-wrap justify-center gap-2">
                                                 <a href="{{ route('racket', ['brand' => 'Bullpadel']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Bullpadel</a>
                                                 <a href="{{ route('racket', ['brand' => 'Babolat']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Babolat</a>
@@ -98,11 +129,11 @@
                                             </div>
                                         </div>
                                         <div class="w-full text-center">
-                                            <h4 class="text-sm font-bold text-black mb-4 tracking-wide">LEVEL</h4>
+                                            <h4 class="text-sm font-bold text-black mb-4 tracking-wide">{{ $common['navbar']['headers']['level'][$lang] ?? 'LEVEL' }}</h4>
                                             <div class="flex flex-wrap justify-center gap-2">
-                                                <a href="{{ route('racket', ['level' => 'beginner']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Beginner</a>
-                                                <a href="{{ route('racket', ['level' => 'intermediate']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Intermediate</a>
-                                                <a href="{{ route('racket', ['level' => 'pro']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Pro</a>
+                                                <a href="{{ route('racket', ['level' => 'beginner']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">{{ $common['navbar']['levels']['beginner'][$lang] ?? 'Beginner' }}</a>
+                                                <a href="{{ route('racket', ['level' => 'intermediate']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">{{ $common['navbar']['levels']['intermediate'][$lang] ?? 'Intermediate' }}</a>
+                                                <a href="{{ route('racket', ['level' => 'pro']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">{{ $common['navbar']['levels']['pro'][$lang] ?? 'Pro' }}</a>
                                             </div>
                                         </div>
                                     </div>
@@ -111,8 +142,8 @@
                                         <img src="{{ asset('storage/iconracket.jpg') }}" alt="Racket Collection" class="w-full h-full object-cover">
                                         <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
                                         <div class="absolute bottom-6 left-6 right-6">
-                                            <h5 class="text-white font-bold text-2xl mb-1">Premium Rackets</h5>
-                                            <p class="text-white/90 text-sm font-medium">Precision & Power</p>
+                                            <h5 class="text-white font-bold text-2xl mb-1">{{ $common['navbar']['promo_texts']['racket_title'][$lang] ?? 'Premium Rackets' }}</h5>
+                                            <p class="text-white/90 text-sm font-medium">{{ $common['navbar']['promo_texts']['racket_desc'][$lang] ?? 'Precision & Power' }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -124,7 +155,7 @@
                     <div class="relative group" data-dropdown="shoes">
                         <a href="{{ route('shoes') }}"
                             class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white flex items-center gap-1">
-                            Shoes
+                            {{ $common['navbar']['shoes'][$lang] ?? 'Shoes' }}
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-300 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
@@ -135,7 +166,7 @@
                                     <!-- Left: Categories (Centered) -->
                                     <div class="flex flex-col justify-center items-center bg-zinc-50/50 p-8 space-y-6">
                                         <div class="w-full text-center">
-                                            <h4 class="text-sm font-bold text-black mb-4 tracking-wide">BRAND</h4>
+                                            <h4 class="text-sm font-bold text-black mb-4 tracking-wide">{{ $common['navbar']['headers']['brand'][$lang] ?? 'BRAND' }}</h4>
                                             <div class="flex flex-wrap justify-center gap-2">
                                                 <a href="{{ route('shoes', ['brand' => 'Bullpadel']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Bullpadel</a>
                                                 <a href="{{ route('shoes', ['brand' => 'Babolat']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Babolat</a>
@@ -146,11 +177,11 @@
                                             </div>
                                         </div>
                                         <div class="w-full text-center">
-                                            <h4 class="text-sm font-bold text-black mb-4 tracking-wide">LEVEL</h4>
+                                            <h4 class="text-sm font-bold text-black mb-4 tracking-wide">{{ $common['navbar']['headers']['level'][$lang] ?? 'LEVEL' }}</h4>
                                             <div class="flex flex-wrap justify-center gap-2">
-                                                <a href="{{ route('shoes', ['level' => 'beginner']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Beginner</a>
-                                                <a href="{{ route('shoes', ['level' => 'intermediate']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Intermediate</a>
-                                                <a href="{{ route('shoes', ['level' => 'pro']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Pro</a>
+                                                <a href="{{ route('shoes', ['level' => 'beginner']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">{{ $common['navbar']['levels']['beginner'][$lang] ?? 'Beginner' }}</a>
+                                                <a href="{{ route('shoes', ['level' => 'intermediate']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">{{ $common['navbar']['levels']['intermediate'][$lang] ?? 'Intermediate' }}</a>
+                                                <a href="{{ route('shoes', ['level' => 'pro']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">{{ $common['navbar']['levels']['pro'][$lang] ?? 'Pro' }}</a>
                                             </div>
                                         </div>
                                     </div>
@@ -159,8 +190,8 @@
                                         <img src="{{ asset('storage/iconsepatu.png') }}" alt="Shoes Collection" class="w-full h-full object-cover">
                                         <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
                                         <div class="absolute bottom-6 left-6 right-6">
-                                            <h5 class="text-white font-bold text-2xl mb-1">Premium Shoes</h5>
-                                            <p class="text-white/90 text-sm font-medium">Move Faster, Play Smarter</p>
+                                            <h5 class="text-white font-bold text-2xl mb-1">{{ $common['navbar']['promo_texts']['shoes_title'][$lang] ?? 'Premium Shoes' }}</h5>
+                                            <p class="text-white/90 text-sm font-medium">{{ $common['navbar']['promo_texts']['shoes_desc'][$lang] ?? 'Move Faster, Play Smarter' }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -172,7 +203,7 @@
                     <div class="relative group" data-dropdown="accessories">
                         <a href="{{ route('apparel') }}"
                             class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white flex items-center gap-1">
-                            Accessories
+                            {{ $common['navbar']['accessories'][$lang] ?? 'Accessories' }}
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-300 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
@@ -183,7 +214,7 @@
                                     <!-- Left: Categories (Centered) -->
                                     <div class="flex flex-col justify-center items-center bg-zinc-50/50 p-8 space-y-6">
                                         <div class="w-full text-center">
-                                            <h4 class="text-sm font-bold text-black mb-4 tracking-wide">BRAND</h4>
+                                            <h4 class="text-sm font-bold text-black mb-4 tracking-wide">{{ $common['navbar']['headers']['brand'][$lang] ?? 'BRAND' }}</h4>
                                             <div class="flex flex-wrap justify-center gap-2">
                                                 <a href="{{ route('apparel', ['brand' => 'Bullpadel']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Bullpadel</a>
                                                 <a href="{{ route('apparel', ['brand' => 'Babolat']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Babolat</a>
@@ -194,11 +225,11 @@
                                             </div>
                                         </div>
                                         <div class="w-full text-center">
-                                            <h4 class="text-sm font-bold text-black mb-4 tracking-wide">LEVEL</h4>
+                                            <h4 class="text-sm font-bold text-black mb-4 tracking-wide">{{ $common['navbar']['headers']['level'][$lang] ?? 'LEVEL' }}</h4>
                                             <div class="flex flex-wrap justify-center gap-2">
-                                                <a href="{{ route('apparel', ['level' => 'beginner']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Beginner</a>
-                                                <a href="{{ route('apparel', ['level' => 'intermediate']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Intermediate</a>
-                                                <a href="{{ route('apparel', ['level' => 'pro']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Pro</a>
+                                                <a href="{{ route('apparel', ['level' => 'beginner']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">{{ $common['navbar']['levels']['beginner'][$lang] ?? 'Beginner' }}</a>
+                                                <a href="{{ route('apparel', ['level' => 'intermediate']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">{{ $common['navbar']['levels']['intermediate'][$lang] ?? 'Intermediate' }}</a>
+                                                <a href="{{ route('apparel', ['level' => 'pro']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">{{ $common['navbar']['levels']['pro'][$lang] ?? 'Pro' }}</a>
                                             </div>
                                         </div>
                                     </div>
@@ -207,8 +238,8 @@
                                         <img src="{{ asset('storage/icontas.jpg') }}" alt="Accessories Collection" class="w-full h-full object-cover">
                                         <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
                                         <div class="absolute bottom-6 left-6 right-6">
-                                            <h5 class="text-white font-bold text-2xl mb-1">Premium Accessories</h5>
-                                            <p class="text-white/90 text-sm font-medium">Comfort Meets Performance</p>
+                                            <h5 class="text-white font-bold text-2xl mb-1">{{ $common['navbar']['promo_texts']['acc_title'][$lang] ?? 'Premium Accessories' }}</h5>
+                                            <p class="text-white/90 text-sm font-medium">{{ $common['navbar']['promo_texts']['acc_desc'][$lang] ?? 'Comfort Meets Performance' }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -217,20 +248,20 @@
                     </div>
 
                     <a href="{{ route('contact') }}"
-                        class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">Contact</a>
+                        class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">{{ $common['navbar']['contact'][$lang] ?? 'Contact' }}</a>
                 </nav>
 
                 <div class="flex items-center gap-2 md:gap-3 text-white/90" id="navIcons">
                     <!-- Inline Search (all screens) -->
-                    <div class="flex items-center relative" id="navSearchWrapper">
+                    <!-- <div class="flex items-center relative" id="navSearchWrapper">
                         <i class="fas fa-search absolute left-2 md:left-3 text-xs md:text-sm text-white/60 pointer-events-none transition-colors duration-300" id="navSearchIcon"></i>
                         <input type="text" id="navSearchInput" placeholder="Cari..."
                                class="bg-white/10 border border-white/20 rounded-full pl-7 md:pl-9 pr-2 md:pr-4 py-1 md:py-1.5 text-xs md:text-sm text-white placeholder-white/60 focus:outline-none focus:bg-white/20 focus:border-white/40 w-24 md:w-40 lg:w-48 transition-all duration-300"
                                autocomplete="off">
-                    </div>
-
+                    </div> -->
+                    
                     <!-- Wishlist (mobile only) -->
-                    <a href="{{ route('customer.wishlist.index') }}" class="relative md:hidden transition duration-300 hover:text-white">
+                    <!-- <a href="{{ route('customer.wishlist.index') }}" class="relative md:hidden transition duration-300 hover:text-white">
                         <i class="fas fa-heart text-sm"></i>
                         @php
                             if (auth()->check() && auth()->user()->role === 'customer') {
@@ -244,173 +275,260 @@
                             <span class="wishlist-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
                         @endif
                     </a>
-
+ -->
                     <!-- Mobile Search Icon (hidden since inline search is now visible) -->
                     <button type="button" id="searchToggleBtn" class="hidden transition duration-300 hover:text-white" aria-label="Search" title="Cari Produk">
                         <i class="fas fa-search text-sm"></i>
                     </button>
 
+                    @guest
+                        <a href="{{ route('login') }}" 
+                        class="inline-flex h-9 w-9 md:hidden items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20"
+                        title="Login">
+                            <i class="fas fa-user text-sm"></i>
+                        </a>
+                    @endguest
+
+                    @auth
+                        @if(auth()->user()->role === 'admin')
+                            <a href="{{ route('admin.dashboard') }}" 
+                            class="inline-flex h-9 w-9 md:hidden items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20" 
+                            title="Dashboard">
+                                <i class="fas fa-user-shield text-sm"></i>
+                            </a>
+                        @elseif(auth()->user()->role === 'customer')
+                            <a href="{{ route('customer.profile.index') }}" 
+                            class="inline-flex h-9 w-9 md:hidden items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20" 
+                            title="Profile">
+                                <i class="fas fa-user-circle text-sm"></i>
+                            </a>
+                        @endif
+                    @endauth
+
+                    <a href="{{ route('customer.cart.index') }}" 
+                    class="relative inline-flex h-9 w-9 md:hidden items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20"
+                    title="Cart">
+                        <i class="fas fa-shopping-bag text-sm"></i>
+                        @php
+                            if (auth()->check() && auth()->user()->role === 'customer') {
+                                $mobileCartCount = auth()->user()->cartItems()->sum('quantity');
+                            } else {
+                                $guestCart = session()->get('guest_cart', []);
+                                $mobileCartCount = array_sum(array_column($guestCart, 'quantity'));
+                            }
+                        @endphp
+                        @if($mobileCartCount > 0)
+                            <span class="cart-badge absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">
+                                {{ $mobileCartCount > 9 ? '9+' : $mobileCartCount }}
+                            </span>
+                        @endif
+                    </a>
+                    
+                    <a href="{{ route('customer.wishlist.index') }}" 
+                    class="relative inline-flex h-9 w-9 md:hidden items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20"
+                    title="Wishlist">
+                        <i class="fas fa-heart text-sm"></i>
+                        @php
+                            if (auth()->check() && auth()->user()->role === 'customer') {
+                                $wishlistCount = auth()->user()->wishlistItems()->count();
+                            } else {
+                                $guestWishlist = session()->get('guest_wishlist', []);
+                                $wishlistCount = count($guestWishlist);
+                            }
+                        @endphp
+                        @if($wishlistCount > 0)
+                            <span class="wishlist-badge absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">
+                                {{ $wishlistCount > 9 ? '9+' : $wishlistCount }}
+                            </span>
+                        @endif
+                    </a>
+
                     <!-- Dark Mode Toggle (Home Page) -->
                     <button type="button" id="darkModeToggleHome"
-                            class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20"
+                            class="hidden md:inline-flex inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20"
                             title="Toggle Dark/Light Mode" aria-label="Toggle dark mode">
                         <i class="fas fa-moon text-sm" id="darkModeIconHome"></i>
                     </button>
 
-                    <!-- Hamburger Menu with combined elements -->
-                    <div class="relative" id="hamburgerMenuWrapper">
-                        <button type="button" id="hamburgerMenuBtn" class="inline-flex h-9 w-9 items-center justify-center rounded border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20 relative">
-                            <i class="fas fa-bars text-sm"></i>
-                            <!-- Cart Badge -->
-                            @auth
-                                @if (auth()->user()->role === 'customer')
-                                    @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
-                                    @if ($cartCount > 0)
-                                        <span class="hamburger-cart-badge absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
-                                    @endif
-                                @endif
-                            @endauth
-                            @guest
-                                @php
-                                    $guestCart = session()->get('guest_cart', []);
-                                    $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
-                                @endphp
-                                @if($guestCartCount > 0)
-                                    <span class="hamburger-cart-badge absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $guestCartCount > 9 ? '9+' : $guestCartCount }}</span>
-                                @endif
-                            @endguest
-                            <!-- Wishlist Badge -->
-                            @auth
-                                @if (auth()->user()->role === 'customer')
-                                    @php $wishlistCount = auth()->user()->wishlistItems()->count(); @endphp
-                                    @if ($wishlistCount > 0)
-                                        <span class="hamburger-wishlist-badge absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
-                                    @endif
-                                @endif
-                            @endauth
-                            @guest
-                                @php
-                                    $guestWishlist = session()->get('guest_wishlist', []);
-                                    $guestWishlistCount = count($guestWishlist);
-                                @endphp
-                                @if($guestWishlistCount > 0)
-                                    <span class="hamburger-wishlist-badge absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">{{ $guestWishlistCount > 9 ? '9+' : $guestWishlistCount }}</span>
-                                @endif
-                            @endguest
-                        </button>
-                        <div id="hamburgerMenuDropdown" class="absolute right-0 mt-2 w-48 z-[100] hidden">
-                            <div class="bg-white rounded-lg shadow-lg border border-zinc-100 overflow-hidden">
-                                <!-- Navigation (mobile only) -->
-                                <div class="md:hidden">
-                                    <a href="{{ route('home') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
-                                        <i class="fas fa-home text-zinc-500 text-sm"></i>
-                                        <span class="text-sm text-zinc-700">Home</span>
-                                    </a>
-                                    <a href="{{ route('new-arrivals') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
-                                        <i class="fas fa-star text-zinc-500 text-sm"></i>
-                                        <span class="text-sm text-zinc-700">New Arrivals</span>
-                                    </a>
-                                    <a href="{{ route('racket') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
-                                        <i class="fas fa-table-tennis text-zinc-500 text-sm"></i>
-                                        <span class="text-sm text-zinc-700">Racket</span>
-                                    </a>
-                                    <a href="{{ route('shoes') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
-                                        <i class="fas fa-shoe-prints text-zinc-500 text-sm"></i>
-                                        <span class="text-sm text-zinc-700">Shoes</span>
-                                    </a>
-                                    <a href="{{ route('apparel') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
-                                        <i class="fas fa-tshirt text-zinc-500 text-sm"></i>
-                                        <span class="text-sm text-zinc-700">Accessories</span>
-                                    </a>
-                                </div>
+                    <!-- ==========================================
+                DESKTOP ONLY UTILITIES (Hidden on Mobile)
+                ========================================== -->
+            <div class="hidden md:flex items-center gap-4 text-white/90">
+                <!-- Language Switcher (Desktop) -->
+                <div class="flex gap-2 bg-white/10 backdrop-blur p-1 rounded border border-white/20">
+                    <a href="{{ request()->fullUrlWithQuery(['locale' => 'en']) }}" class="px-2 py-1 text-xs text-white rounded transition {{ session('locale', 'en') === 'en' ? 'bg-white/20 font-semibold' : 'opacity-60 hover:opacity-100' }}">
+                        EN
+                    </a>
+                    <a href="{{ request()->fullUrlWithQuery(['locale' => 'id']) }}" class="px-2 py-1 text-xs text-white rounded transition {{ session('locale', 'en') === 'id' ? 'bg-white/20 font-semibold' : 'opacity-60 hover:opacity-100' }}">
+                        ID
+                    </a>
+                </div>
 
-                                <!-- Login -->
-                                @guest
-                                    <a href="{{ route('login') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
-                                        <i class="fas fa-sign-in-alt text-zinc-500 text-sm"></i>
-                                        <span class="text-sm text-zinc-700">Login</span>
-                                    </a>
-                                @endauth
-                                
-                                <!-- Language Switcher -->
-                                <div class="border-b border-zinc-100">
-                                    <div class="px-3 py-2 bg-zinc-50">
-                                        <div class="flex gap-2">
-                                            <a href="{{ request()->fullUrlWithQuery(['locale' => 'en']) }}" class="flex-1 px-2 py-1.5 text-xs text-zinc-700 hover:bg-white rounded transition {{ session('locale', 'en') === 'en' ? 'bg-white font-semibold' : 'bg-white/50' }}">
-                                                EN
-                                            </a>
-                                            <a href="{{ request()->fullUrlWithQuery(['locale' => 'id']) }}" class="flex-1 px-2 py-1.5 text-xs text-zinc-700 hover:bg-white rounded transition {{ session('locale', 'en') === 'id' ? 'bg-white font-semibold' : 'bg-white/50' }}">
-                                                ID
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Cart -->
-                                <a href="{{ route('customer.cart.index') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
-                                    <div class="relative">
-                                        <i class="fas fa-shopping-bag text-zinc-500 text-sm"></i>
-                                        @auth
-                                            @if (auth()->user()->role === 'customer')
-                                                @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
-                                                @if ($cartCount > 0)
-                                                    <span class="cart-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
-                                                @endif
-                                            @endif
-                                        @endauth
-                                        @guest
-                                            @php 
-                                                $guestCart = session()->get('guest_cart', []);
-                                                $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
-                                            @endphp
-                                            @if($guestCartCount > 0)
-                                                <span class="cart-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $guestCartCount > 9 ? '9+' : $guestCartCount }}</span>
-                                            @endif
-                                        @endguest
-                                    </div>
-                                    <span class="text-sm text-zinc-700">Cart</span>
+                <!-- Login / Account Dashboard (Desktop) -->
+                @guest
+                    <a href="{{ route('login') }}" class="text-sm font-medium hover:text-white transition duration-300">
+                        {{ $common['navbar']['login'][$lang] ?? 'Login' }}
+                    </a>
+                @endguest
+
+                @auth
+                    @if (auth()->user()->role === 'admin')
+                        <a href="{{ route('admin.dashboard') }}" class="text-sm font-medium hover:text-white transition duration-300 flex items-center gap-1.5">
+                            <i class="fas fa-arrow-left text-xs"></i> Dashboard
+                        </a>
+                    @elseif(auth()->user()->role === 'customer')
+                        <a href="{{ route('customer.profile.index') }}" class="text-sm font-medium hover:text-white transition duration-300 flex items-center gap-1.5" title="Profile">
+                            <i class="fas fa-user text-xs"></i>
+                            <span class="max-w-[80px] truncate">{{ auth()->user()->name }}</span>
+                        </a>
+                        <a href="{{ route('customer.orders.index') }}" class="text-sm font-medium hover:text-white transition duration-300" title="Orders">
+                            <i class="fas fa-history text-xs"></i>
+                        </a>
+                    @endif
+                @endauth
+
+                <!-- Wishlist (Desktop) -->
+                <a href="{{ route('customer.wishlist.index') }}" class="relative transition duration-300 hover:text-white p-1" title="Wishlist">
+                    <i class="fas fa-heart text-base"></i>
+                    @php
+                        if (auth()->check() && auth()->user()->role === 'customer') {
+                            $wishlistCount = auth()->user()->wishlistItems()->count();
+                        } else {
+                            $guestWishlist = session()->get('guest_wishlist', []);
+                            $wishlistCount = count($guestWishlist);
+                        }
+                    @endphp
+                    @if($wishlistCount > 0)
+                        <span class="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
+                    @endif
+                </a>
+
+                <!-- Cart (Desktop) -->
+                <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-white p-1" title="Cart">
+                    <i class="fas fa-shopping-bag text-base"></i>
+                    @auth
+                        @if (auth()->user()->role === 'customer')
+                            @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
+                            @if ($cartCount > 0)
+                                <span class="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
+                            @endif
+                        @endif
+                    @endauth
+                    @guest
+                        @php
+                            $guestCart = session()->get('guest_cart', []);
+                            $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
+                        @endphp
+                        @if($guestCartCount > 0)
+                            <span class="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $guestCartCount > 9 ? '9+' : $guestCartCount }}</span>
+                        @endif
+                    @endguest
+                </a>
+            </div>
+
+
+            <!-- ==========================================
+                MOBILE ONLY HAMBURGER (Hidden on Desktop)
+                ========================================== -->
+            
+                <div class="md:hidden relative" id="hamburgerMenuWrapper">
+                <button type="button" id="hamburgerMenuBtn" class="inline-flex h-9 w-9 items-center justify-center rounded border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20 relative">
+                    <i class="fas fa-bars text-sm"></i>
+                    
+                    <!-- Cart Badge (Mobile Indicator) -->
+                    @auth
+                        @if (auth()->user()->role === 'customer')
+                            @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
+                            @if ($cartCount > 0)
+                                <span class="hamburger-cart-badge absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
+                            @endif
+                        @endif
+                    @endauth
+                    @guest
+                        @php
+                            $guestCart = session()->get('guest_cart', []);
+                            $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
+                        @endphp
+                        @if($guestCartCount > 0)
+                            <span class="hamburger-cart-badge absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $guestCartCount > 9 ? '9+' : $guestCartCount }}</span>
+                        @endif
+                    @endguest
+
+                    <!-- Wishlist Badge (Mobile Indicator) -->
+                    @auth
+                        @if (auth()->user()->role === 'customer')
+                            @php $wishlistCount = auth()->user()->wishlistItems()->count(); @endphp
+                            @if ($wishlistCount > 0)
+                                <span class="hamburger-wishlist-badge absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
+                            @endif
+                        @endif
+                    @endauth
+                    @guest
+                        @php
+                            $guestWishlist = session()->get('guest_wishlist', []);
+                            $guestWishlistCount = count($guestWishlist);
+                        @endphp
+                        @if($guestWishlistCount > 0)
+                            <span class="hamburger-wishlist-badge absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">{{ $guestWishlistCount > 9 ? '9+' : $guestWishlistCount }}</span>
+                        @endif
+                    @endguest
+                </button>
+
+                <!-- Dropdown Menu Panel (Mobile Drawer) -->
+                <div id="hamburgerMenuDropdown" class="absolute right-0 mt-2 w-56 z-[100] hidden">
+                    <div class="bg-white rounded-lg shadow-lg border border-zinc-100 overflow-hidden">
+                        <!-- Navigation Links -->
+                        <div class="flex flex-col">
+                            <a href="{{ route('home') }}" class="flex items-center gap-3 px-4 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
+                                <i class="fas fa-home text-zinc-400 text-sm w-4"></i>
+                                <span class="text-sm text-zinc-700">{{ $common['navbar']['home'][$lang] ?? 'Home' }}</span>
+                            </a>
+                            <a href="{{ route('new-arrivals') }}" class="flex items-center gap-3 px-4 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
+                                <i class="fas fa-star text-zinc-400 text-sm w-4"></i>
+                                <span class="text-sm text-zinc-700">{{ $common['navbar']['new_arrivals'][$lang] ?? 'New Arrivals' }}</span>
+                            </a>
+                            <a href="{{ route('racket') }}" class="flex items-center gap-3 px-4 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
+                                <i class="fas fa-table-tennis text-zinc-400 text-sm w-4"></i>
+                                <span class="text-sm text-zinc-700">{{ $common['navbar']['racket'][$lang] ?? 'Rackets' }}</span>
+                            </a>
+                            <a href="{{ route('shoes') }}" class="flex items-center gap-3 px-4 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
+                                <i class="fas fa-shoe-prints text-zinc-400 text-sm w-4"></i>
+                                <span class="text-sm text-zinc-700">{{ $common['navbar']['shoes'][$lang] ?? 'Shoes' }}</span>
+                            </a>
+                            <a href="{{ route('apparel') }}" class="flex items-center gap-3 px-4 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
+                                <i class="fas fa-tshirt text-zinc-400 text-sm w-4"></i>
+                                <span class="text-sm text-zinc-700">{{ $common['navbar']['accessories'][$lang] ?? 'Accessories' }}</span>
+                            </a>
+                        </div>
+
+                        <!-- Language Switcher & Dark mode mobile Zone -->
+                        <div class="border-b border-zinc-100 p-2.5 bg-zinc-50">
+                            <div class="flex gap-2 mb-2">
+                                <a href="{{ request()->fullUrlWithQuery(['locale' => 'en']) }}" class="flex-1 text-center py-1.5 text-xs text-zinc-700 hover:bg-white rounded border border-transparent shadow-sm transition {{ session('locale', 'en') === 'en' ? 'bg-white font-semibold border-zinc-200' : 'bg-white/50' }}">
+                                    EN
                                 </a>
-                                
-                                <!-- Wishlist -->
-                                <a href="{{ route('customer.wishlist.index') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
-                                    <div class="relative">
-                                        <i class="fas fa-heart text-zinc-500 text-sm"></i>
-                                        @php
-                                            if (auth()->check() && auth()->user()->role === 'customer') {
-                                                $wishlistCount = auth()->user()->wishlistItems()->count();
-                                            } else {
-                                                $guestWishlist = session()->get('guest_wishlist', []);
-                                                $wishlistCount = count($guestWishlist);
-                                            }
-                                        @endphp
-                                        @if($wishlistCount > 0)
-                                            <span class="wishlist-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
-                                        @endif
-                                    </div>
-                                    <span class="text-sm text-zinc-700">Wishlist</span>
+                                <a href="{{ request()->fullUrlWithQuery(['locale' => 'id']) }}" class="flex-1 text-center py-1.5 text-xs text-zinc-700 hover:bg-white rounded border border-transparent shadow-sm transition {{ session('locale', 'en') === 'id' ? 'bg-white font-semibold border-zinc-200' : 'bg-white/50' }}">
+                                    ID
                                 </a>
-                                
-                                <!-- Auth Section for logged-in users -->
-                                @auth
-                                    @if (auth()->user()->role === 'admin')
-                                        <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-t border-zinc-100">
-                                            <i class="fas fa-arrow-left text-zinc-500 text-sm"></i>
-                                            <span class="text-sm text-zinc-700">Dashboard</span>
-                                        </a>
-                                    @elseif(auth()->user()->role === 'customer')
-                                        <a href="{{ route('customer.orders.index') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-t border-zinc-100">
-                                            <i class="fas fa-history text-zinc-500 text-sm"></i>
-                                            <span class="text-sm text-zinc-700">Orders</span>
-                                        </a>
-                                        <a href="{{ route('customer.profile.index') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-t border-zinc-100">
-                                            <i class="fas fa-user text-zinc-500 text-sm"></i>
-                                            <span class="text-sm text-zinc-700">Profile</span>
-                                        </a>
-                                    @endif
-                                @endauth
+                            </div>
+
+                            <div class="flex gap-2">
+                                <button type="button" id="mobileLightModeBtn" 
+                                        class="flex-1 flex items-center justify-center py-1.5 rounded border border-transparent shadow-sm transition dark:bg-white/50 dark:border-transparent bg-white font-semibold border-zinc-200 dark:font-normal">
+                                    <i class="fas fa-sun text-sm transition-colors duration-200" id="iconMobileLight"></i>
+                                </button>
+
+                                <button type="button" id="mobileDarkModeBtn" 
+                                        class="flex-1 flex items-center justify-center py-1.5 rounded border border-transparent shadow-sm transition bg-white/50 dark:bg-white dark:font-semibold dark:border-zinc-200">
+                                    <i class="fas fa-moon text-sm transition-colors duration-200" id="iconMobileDark"></i>
+                                </button>
                             </div>
                         </div>
+
+                        
                     </div>
+                </div>
+            </div>
                 </div>
             </div>
         </header>
@@ -455,8 +573,8 @@
                             <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-zinc-100">
                                 <i class="fas fa-search text-zinc-400"></i>
                             </div>
-                            <p class="text-sm text-zinc-500">Mulai mengetik untuk mencari produk</p>
-                            <p class="mt-1 text-xs text-zinc-400">Cari berdasarkan nama, brand, atau kategori</p>
+                            <p class="text-sm text-zinc-500">{{ $home['search']['overlay']['initial_state_1'][$lang] ?? '' }}</p>
+                            <p class="mt-1 text-xs text-zinc-400">{{ $home['search']['overlay']['initial_state_2'][$lang] ?? '' }}</p>
                         </div>
 
                         <!-- Empty State -->
@@ -464,8 +582,8 @@
                             <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-zinc-100">
                                 <i class="fas fa-box-open text-zinc-400"></i>
                             </div>
-                            <p class="text-sm font-medium text-zinc-700">No products found</p>
-                            <p class="mt-1 text-xs text-zinc-400">Coba kata kunci lain</p>
+                            <p class="text-sm font-medium text-zinc-700">{{ $home['search']['overlay']['empty_title'][$lang] ?? '' }}</p>
+                            <p class="mt-1 text-xs text-zinc-400">{{ $home['search']['overlay']['empty_hint'][$lang] ?? '' }}</p>
                         </div>
 
                         <!-- Results List -->
@@ -477,17 +595,23 @@
 
         <!-- Hero Banner - Full behind navbar -->
         <section class="relative w-full min-h-[380px] overflow-hidden bg-zinc-900 sm:min-h-[420px] md:min-h-[360px] lg:min-h-[400px]">
-            <img src="{{ asset('storage/fiks.jpeg') }}"
+            <img src="{{ asset('storage/banner.webp') }}"
                 alt="Padel Tennis"
                 class="absolute inset-0 h-full w-full object-cover"
                 loading="eager">
             <div class="absolute inset-0 bg-gradient-to-b from-black/20 via-black/50 to-black/80"></div>
             <div class="relative mx-auto flex min-h-[380px] sm:min-h-[420px] md:min-h-[360px] lg:min-h-[400px] max-w-7xl items-center justify-center px-6 md:px-10 lg:px-12 pt-28 md:pt-24">
-                <div class="max-w-2xl text-center text-white">
-                    <h1 class="text-lg font-semibold tracking-tight sm:text-2xl md:text-3xl lg:text-4xl drop-shadow-lg">NoraPadel</h1>
-                    <p class="mt-2 md:mt-4 text-[11px] md:text-sm text-zinc-100 leading-relaxed drop-shadow-md">Experience the ultimate in padel equipment. Premium quality rackets, shoes, and accessories for players who demand excellence.</p>
+                <div class="flex flex-col items-center justify-center text-center -mt-12 md:-mt-20"> 
+                    <div class="mb-4 w-full max-w-md px-4">
+                        <div class="relative flex items-center" id="navSearchWrapper">
+                           <i class="fas fa-search absolute left-4 text-white text-sm pointer-events-none z-10"></i>
+                            <input type="text" id="navSearchInput" placeholder="{{$home['hero']['search_placeholder'][$lang] ?? ''}}"
+                                class="w-full bg-white/10 backdrop-blur-md text-white placeholder-white/50 pl-11 pr-4 py-2 rounded-full text-sm border border-white/20 shadow-sm focus:outline-none focus:bg-white/20 focus:border-white/40 focus:ring-1 focus:ring-white/30 transition-all cursor-pointer" readonly> </div>
+                    </div>
+                    <h1 class="text-4xl font-bold text-white mb-2">NoraPadel</h1>
+                    <p class="mt-2 md:mt-4 text-[11px] md:text-sm text-zinc-100 leading-relaxed drop-shadow-md max-w-[280px] md:max-w-xl">{{ $home['hero']['subtitle'][$lang] ?? '' }}</p>
                     <div class="mt-3 md:mt-6 flex flex-wrap justify-center gap-6">
-                        <a href="{{ route('shop') }}" class="inline-flex items-center gap-1 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 md:px-6 md:py-2.5 text-[10px] md:text-xs font-semibold text-white backdrop-blur transition duration-300 hover:bg-white/20 hover:scale-[1.02]">Shop Now</a>
+                        <!-- <a href="{{ route('shop') }}" class="inline-flex items-center gap-1 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 md:px-6 md:py-2.5 text-[10px] md:text-xs font-semibold text-white backdrop-blur transition duration-300 hover:bg-white/20 hover:scale-[1.02]">{{ $home['hero']['cta_button'][$lang] ?? '' }}</a> -->
                     </div>
                 </div>
             </div>
@@ -549,7 +673,7 @@
                     <div class="flex flex-col md:flex-row gap-3 items-center justify-between">
                         <div class="flex gap-2 flex-nowrap overflow-x-auto pb-1 flex-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                             <select id="filterBrandBottom" class="px-2 py-1.5 border border-zinc-300 rounded-lg text-xs md:text-sm focus:outline-none focus:border-blue-500 transition bg-white shrink-0" onchange="applyFilters()">
-                                <option value="">Brand</option>
+                                <option value="">{{ $home['product_section']['filter_titles']['brand'][$lang] ?? 'Brand' }}</option>
                                 <option value="Bullpadel">Bullpadel</option>
                                 <option value="Babolat">Babolat</option>
                                 <option value="Nox">Nox</option>
@@ -558,20 +682,20 @@
                                 <option value="Arronax">Arronax</option>
                             </select>
                             <select id="filterCategoryBottom" class="px-2 py-1.5 border border-zinc-300 rounded-lg text-xs md:text-sm focus:outline-none focus:border-blue-500 transition bg-white shrink-0" onchange="applyFilters()">
-                                <option value="">Category</option>
-                                <option value="racket">Racket</option>
-                                <option value="shoes">Shoes</option>
-                                <option value="apparel">Accessories</option>
+                                <option value="">{{ $home['product_section']['filter_titles']['category'][$lang] ?? 'Category' }}</option>
+                                <option value="racket">{{ $home['product_section']['bottom_categories']['racket'][$lang] ?? 'Rackets' }}</option>
+                                <option value="shoes">{{ $home['product_section']['bottom_categories']['shoes'][$lang] ?? 'Shoes' }}</option>
+                                <option value="apparel">{{ $home['product_section']['bottom_categories']['bags'][$lang] ?? 'Accessories' }}</option>
                             </select>
                             <select id="filterPriceBottom" class="px-2 py-1.5 border border-zinc-300 rounded-lg text-xs md:text-sm focus:outline-none focus:border-blue-500 transition bg-white shrink-0" onchange="applyFilters()">
-                                <option value="">Price</option>
-                                <option value="low">Low to High</option>
-                                <option value="high">High to Low</option>
+                                <option value="">{{ $home['product_section']['filter_titles']['price'][$lang] ?? 'Price' }}</option>
+                                <option value="low">{{ $home['product_section']['price_options']['low_to_high'][$lang] ?? 'Low to High' }}</option>
+                                <option value="high">{{ $home['product_section']['price_options']['high_to_low'][$lang] ?? 'High to Low' }}</option>
                             </select>
                             <select id="filterSortBottom" class="px-2 py-1.5 border border-zinc-300 rounded-lg text-xs md:text-sm focus:outline-none focus:border-blue-500 transition bg-white shrink-0" onchange="applyFilters()">
-                                <option value="">Sort</option>
-                                <option value="popular">Popular</option>
-                                <option value="latest">Latest</option>
+                                <option value="">{{ $home['product_section']['filter_titles']['sort'][$lang] ?? 'Sort' }}</option>
+                                <option value="popular">{{ $home['product_section']['sort_options']['popular'][$lang] ?? 'Popular' }}</option>
+                                <option value="latest">{{ $home['product_section']['sort_options']['latest'][$lang] ?? 'Latest' }}</option>
                             </select>
                         </div>
                     </div>
@@ -611,12 +735,12 @@
                                             <span class="absolute left-0 top-0 bg-rose-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">-{{ $product->formatted_discount_percent }}</span>
                                         @endif
                                         <!-- Latest Badge for New Arrivals -->
-                                        <span class="absolute left-0 {{ $product->hasActiveDiscount() ? 'top-7' : 'top-0' }} bg-blue-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Latest</span>
+                                        <span class="absolute left-0 {{ $product->hasActiveDiscount() ? 'top-7' : 'top-0' }} bg-blue-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">{{ $home['product_section']['sort_options']['latest'][$lang] ?? 'Latest' }}</span>
                                         @if($product->package_type === 'bundle')
-                                            <span class="absolute left-0 {{ $product->hasActiveDiscount() ? 'top-14' : 'top-7' }} bg-purple-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Bundle</span>
+                                            <span class="absolute left-0 {{ $product->hasActiveDiscount() ? 'top-14' : 'top-7' }} bg-purple-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">{{ $home['product_section']['promo_texts']['racket_desc'][$lang] ?? 'Bundle' }}</span>
                                         @endif
                                         @if($product->isBestSeller())
-                                            <span class="absolute right-0 top-0 bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Best Seller</span>
+                                            <span class="absolute right-0 top-0 bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">{{ $home['product_section']['sort_options']['popular'][$lang] ?? 'Best Seller' }}</span>
                                         @endif
                                     </div>
                                     <div class="p-2 md:p-4">
@@ -652,7 +776,7 @@
                                 <div class="px-2 pb-2 md:px-4 md:pb-4">
                                     <div class="flex items-center gap-2">
                                         <button onclick="addToCart('{{ $product->slug }}', event)" class="border border-zinc-300 bg-transparent px-2 py-1 text-[10px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950">
-                                            Add to cart
+                                            {{$home['product_section']['product_card']['btn_add_to_cart'][$lang] ?? 'Add to cart'}}
                                         </button>
                                         <button onclick="addToWishlist('{{ $product->slug }}', event)" class="text-zinc-400 transition duration-300 hover:text-rose-500">
                                             <i class="fas fa-heart text-sm"></i>
@@ -806,13 +930,13 @@
                                             <span class="absolute left-0 top-0 bg-rose-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">-{{ $product->formatted_discount_percent }}</span>
                                         @endif
                                         @if($product->category === 'arrivals')
-                                            <span class="absolute left-0 {{ $product->hasActiveDiscount() ? 'top-7' : 'top-0' }} bg-blue-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Latest</span>
+                                            <span class="absolute left-0 {{ $product->hasActiveDiscount() ? 'top-7' : 'top-0' }} bg-blue-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">{{ $home['product_section']['sort_options']['latest'][$lang] ?? 'Latest' }}</span>
                                         @endif
                                         @if($product->package_type === 'bundle')
-                                            <span class="absolute left-0 {{ $product->hasActiveDiscount() && $product->category === 'arrivals' ? 'top-14' : ($product->hasActiveDiscount() || $product->category === 'arrivals' ? 'top-7' : 'top-0') }} bg-purple-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Bundle</span>
+                                            <span class="absolute left-0 {{ $product->hasActiveDiscount() && $product->category === 'arrivals' ? 'top-14' : ($product->hasActiveDiscount() || $product->category === 'arrivals' ? 'top-7' : 'top-0') }} bg-purple-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">{{ $home['product_section']['promo_texts']['racket_desc'][$lang] ?? 'Bundle' }}</span>
                                         @endif
                                         @if($product->isBestSeller())
-                                            <span class="absolute right-0 top-0 bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Popular</span>
+                                            <span class="absolute right-0 top-0 bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">{{ $home['product_section']['sort_options']['popular'][$lang] ?? 'Popular' }}</span>
                                         @endif
                                     </div>
                                     <div class="p-3">
@@ -848,7 +972,7 @@
                                 <div class="px-2 pb-2 md:px-3 md:pb-3">
                                     <div class="flex items-center gap-2">
                                         <button onclick="addToCart('{{ $product->slug }}', event)" class="border border-zinc-300 bg-transparent px-2 py-1 text-[10px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950 truncate max-w-[80px] md:max-w-none">
-                                            Add to cart
+                                            {{$home['product_section']['product_card']['btn_add_to_cart'][$lang] ?? 'Add to cart'}}
                                         </button>
                                         <button onclick="addToWishlist('{{ $product->slug }}', event)" class="text-zinc-400 transition duration-300 hover:text-rose-500">
                                             <i class="fas fa-heart text-xs md:text-sm"></i>
@@ -943,8 +1067,8 @@
                             <div class="mb-4">
                                 <i class="fas fa-gift text-6xl"></i>
                             </div>
-                            <h2 class="mb-2 text-3xl font-bold">Welcome!</h2>
-                            <p class="text-lg opacity-90">Special Bonus For You</p>
+                            <h2 class="mb-2 text-3xl font-bold">{{ $home['welcome_bonus']['title'][$lang] ?? 'Welcome!' }}</h2>
+                            <p class="text-lg opacity-90">{{ $home['welcome_bonus']['subtitle'][$lang] ?? 'Special Bonus For You' }}</p>
                         </div>
                         
                         <div class="px-8 py-8 text-center">
@@ -1312,6 +1436,60 @@
 
 @push('scripts')
     <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const desktopBtn = document.getElementById('darkModeToggleHome');
+        const mobileLightBtn = document.getElementById('mobileLightModeBtn');
+        const mobileDarkBtn = document.getElementById('mobileDarkModeBtn');
+        
+        // Ambil elemen icon di dalam button untuk ganti warna
+        const iconLight = mobileLightBtn ? mobileLightBtn.querySelector('i') : null;
+        const iconDark = mobileDarkBtn ? mobileDarkBtn.querySelector('i') : null;
+
+        // Fungsi pembantu untuk setel warna icon secara instan
+        function setMobileIconColor(isDarkActive) {
+            if (!iconLight || !iconDark) return;
+            
+            if (isDarkActive) {
+                // Mode Gelap Aktif: Bulan terang (zinc-400), Matahari redup (zinc-300)
+                iconLight.classList.remove('text-zinc-400');
+                iconLight.classList.add('text-zinc-300');
+                
+                iconDark.classList.remove('text-zinc-300');
+                iconDark.classList.add('text-zinc-400');
+            } else {
+                // Mode Terang Aktif: Matahari terang (zinc-400), Bulan redup (zinc-300)
+                iconLight.classList.remove('text-zinc-300');
+                iconLight.classList.add('text-zinc-400');
+                
+                iconDark.classList.remove('text-zinc-400');
+                iconDark.classList.add('text-zinc-300');
+            }
+        }
+
+        // Cek status awal saat halaman selesai dimuat (kasih delay dikit biar script temanmu kelar execute)
+        setTimeout(() => {
+            const isDarkNow = document.documentElement.classList.contains('dark');
+            setMobileIconColor(isDarkNow);
+        }, 50);
+
+        // Klik Matahari di mobile -> Langsung paksa trigger klik desktop & setel warna matahari aktif
+        if (mobileLightBtn && desktopBtn) {
+            mobileLightBtn.addEventListener('click', () => {
+                desktopBtn.click();
+                setMobileIconColor(false); // Matahari aktif
+            });
+        }
+        
+        // Klik Bulan di mobile -> Langsung paksa trigger klik desktop & setel warna bulan aktif
+        if (mobileDarkBtn && desktopBtn) {
+            mobileDarkBtn.addEventListener('click', () => {
+                desktopBtn.click();
+                setMobileIconColor(true); // Bulan aktif
+            });
+        }
+    });
+</script>
+    <script>
         // Dark Mode Toggle Home Page Custom Navbar
         (function() {
             const html = document.documentElement;
@@ -1592,7 +1770,7 @@
                     if (data.success && data.html) {
                         container.innerHTML = data.html;
                     } else {
-                        container.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500">No products found</div>';
+                        container.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500">{{$home['search']['overlay']['empty_title'][$lang] ?? 'No products found'}}</div>';
                     }
                 })
                 .catch(error => {
