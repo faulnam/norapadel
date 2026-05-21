@@ -3,6 +3,9 @@
 @section('title', 'NoraPadel — Precision. Power. Performance.')
 
 @section('content')
+@php
+    $home = json_decode(@file_get_contents(public_path('translation/home.json')), true) ?? [];
+@endphp
     <style>
         @media (max-width: 991.98px) {
             body { padding-top: 0 !important; }
@@ -14,30 +17,38 @@
         <header class="fixed left-0 top-0 z-[70] w-full border-b border-transparent bg-transparent backdrop-blur-none transition-all duration-300" id="mainHeader">
             <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-3 md:px-10 lg:px-12">
                 <a href="{{ route('home') }}" class="flex items-center gap-2">
-                    <img src="{{ asset('storage/logo.webp') }}" alt="NoraPadel" class="h-7 w-7 object-contain" loading="lazy">
-                    <span class="text-xl font-semibold tracking-tight text-white transition-colors duration-300" id="logoText">NoraPadel</span>
+                    <img src="{{ asset('storage/logo.png') }}" alt="NoraPadel" class="h-7 w-7 object-contain" loading="lazy">
+                    <!-- <span class="text-xl font-semibold tracking-tight text-white transition-colors duration-300" id="logoText">NoraPadel</span> -->
                 </a>
-
                 <nav class="hidden items-center gap-6 md:flex" id="navLinks">
+                    <!-- Home Menu -->
                     <a href="{{ route('home') }}"
-                        class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">Home</a>
+                    class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">
+                        {{ $common['navbar']['home'][$lang] ?? 'Home' }}
+                    </a>
 
                     <!-- New Arrivals Mega Dropdown -->
                     <div class="relative group" data-dropdown="new-arrivals">
                         <a href="{{ route('new-arrivals') }}"
-                            class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white flex items-center gap-1">
-                            New Arrivals
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-300 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white flex items-center gap-1">
+                            {{ $common['navbar']['new_arrivals'][$lang] ?? 'New Arrivals' }}
+                            <svg class="h-4 w-4 fill-none stroke-current" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
                         </a>
+                        
+                        <!-- Mega Dropdown Content Container -->
                         <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[700px] opacity-0 invisible translate-y-[-10px] transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-[100]">
                             <div class="bg-white/95 backdrop-blur-md rounded-xl shadow-2xl border border-zinc-100 p-0 overflow-hidden aspect-video">
                                 <div class="grid grid-cols-[1fr_1fr] h-full">
-                                    <!-- Left: Brand & Level (Centered) -->
+                                    
+                                    <!-- Left Column: Brand & Level (Centered) -->
                                     <div class="flex flex-col justify-center items-center bg-zinc-50/50 p-8 space-y-6">
+                                        <!-- Brand Section -->
                                         <div class="w-full text-center">
-                                            <h4 class="text-sm font-bold text-black mb-4 tracking-wide">BRAND</h4>
+                                            <h4 class="text-sm font-bold text-black mb-4 tracking-wide">
+                                                {{ $common['navbar']['headers']['brand'][$lang] ?? 'BRAND' }}
+                                            </h4>
                                             <div class="flex flex-wrap justify-center gap-2">
                                                 <a href="{{ route('new-arrivals', ['brand' => 'Bullpadel']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Bullpadel</a>
                                                 <a href="{{ route('new-arrivals', ['brand' => 'Babolat']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Babolat</a>
@@ -47,26 +58,46 @@
                                                 <a href="{{ route('new-arrivals', ['brand' => 'Arronax']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Arronax</a>
                                             </div>
                                         </div>
+                                        
+                                        <!-- Level Section -->
                                         <div class="w-full text-center">
-                                            <h4 class="text-sm font-bold text-black mb-4 tracking-wide">LEVEL</h4>
+                                            <h4 class="text-sm font-bold text-black mb-4 tracking-wide">
+                                                {{ $common['navbar']['headers']['level'][$lang] ?? 'LEVEL' }}
+                                            </h4>
                                             <div class="flex flex-wrap justify-center gap-2">
-                                                <a href="{{ route('new-arrivals', ['level' => 'beginner']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Beginner</a>
-                                                <a href="{{ route('new-arrivals', ['level' => 'intermediate']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Intermediate</a>
-                                                <a href="{{ route('new-arrivals', ['level' => 'pro']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Pro</a>
+                                                <a href="{{ route('new-arrivals', ['level' => 'beginner']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">
+                                                    {{ $common['navbar']['levels']['beginner'][$lang] ?? 'Beginner' }}
+                                                </a>
+                                                <a href="{{ route('new-arrivals', ['level' => 'intermediate']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">
+                                                    {{ $common['navbar']['levels']['intermediate'][$lang] ?? 'Intermediate' }}
+                                                </a>
+                                                <a href="{{ route('new-arrivals', ['level' => 'pro']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">
+                                                    {{ $common['navbar']['levels']['pro'][$lang] ?? 'Pro' }}
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- Right: Category (Centered) -->
+                                    
+                                    <!-- Right Column: Category (Centered) -->
                                     <div class="flex flex-col justify-center items-center bg-zinc-50/50 p-8">
                                         <div class="w-full text-center">
-                                            <h4 class="text-sm font-bold text-black mb-4 tracking-wide">CATEGORY</h4>
+                                            <h4 class="text-sm font-bold text-black mb-4 tracking-wide">
+                                                {{ $common['navbar']['headers']['category'][$lang] ?? 'CATEGORY' }}
+                                            </h4>
                                             <div class="flex flex-wrap justify-center gap-2">
-                                                <a href="{{ route('racket') }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Racket</a>
-                                                <a href="{{ route('shoes') }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Shoes</a>
-                                                <a href="{{ route('apparel') }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Accessories</a>
+                                                <a href="{{ route('racket') }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">
+                                                    {{ $common['navbar']['racket'][$lang] ?? 'Rackets' }}
+                                                </a>
+                                                <a href="{{ route('shoes') }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">
+                                                    {{ $common['navbar']['shoes'][$lang] ?? 'Shoes' }}
+                                                </a>
+                                                <a href="{{ route('apparel') }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">
+                                                    {{ $common['navbar']['accessories'][$lang] ?? 'Accessories' }}
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -76,7 +107,7 @@
                     <div class="relative group" data-dropdown="racket">
                         <a href="{{ route('racket') }}"
                             class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white flex items-center gap-1">
-                            Racket
+                            {{ $common['navbar']['racket'][$lang] ?? 'Rackets' }}
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-300 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
@@ -87,7 +118,7 @@
                                     <!-- Left: Categories (Centered) -->
                                     <div class="flex flex-col justify-center items-center bg-zinc-50/50 p-8 space-y-6">
                                         <div class="w-full text-center">
-                                            <h4 class="text-sm font-bold text-black mb-4 tracking-wide">BRAND</h4>
+                                            <h4 class="text-sm font-bold text-black mb-4 tracking-wide">{{ $common['navbar']['headers']['brand'][$lang] ?? 'BRAND' }}</h4>
                                             <div class="flex flex-wrap justify-center gap-2">
                                                 <a href="{{ route('racket', ['brand' => 'Bullpadel']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Bullpadel</a>
                                                 <a href="{{ route('racket', ['brand' => 'Babolat']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Babolat</a>
@@ -98,11 +129,11 @@
                                             </div>
                                         </div>
                                         <div class="w-full text-center">
-                                            <h4 class="text-sm font-bold text-black mb-4 tracking-wide">LEVEL</h4>
+                                            <h4 class="text-sm font-bold text-black mb-4 tracking-wide">{{ $common['navbar']['headers']['level'][$lang] ?? 'LEVEL' }}</h4>
                                             <div class="flex flex-wrap justify-center gap-2">
-                                                <a href="{{ route('racket', ['level' => 'beginner']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Beginner</a>
-                                                <a href="{{ route('racket', ['level' => 'intermediate']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Intermediate</a>
-                                                <a href="{{ route('racket', ['level' => 'pro']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Pro</a>
+                                                <a href="{{ route('racket', ['level' => 'beginner']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">{{ $common['navbar']['levels']['beginner'][$lang] ?? 'Beginner' }}</a>
+                                                <a href="{{ route('racket', ['level' => 'intermediate']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">{{ $common['navbar']['levels']['intermediate'][$lang] ?? 'Intermediate' }}</a>
+                                                <a href="{{ route('racket', ['level' => 'pro']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">{{ $common['navbar']['levels']['pro'][$lang] ?? 'Pro' }}</a>
                                             </div>
                                         </div>
                                     </div>
@@ -111,8 +142,8 @@
                                         <img src="{{ asset('storage/iconracket.jpg') }}" alt="Racket Collection" class="w-full h-full object-cover">
                                         <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
                                         <div class="absolute bottom-6 left-6 right-6">
-                                            <h5 class="text-white font-bold text-2xl mb-1">Premium Rackets</h5>
-                                            <p class="text-white/90 text-sm font-medium">Precision & Power</p>
+                                            <h5 class="text-white font-bold text-2xl mb-1">{{ $common['navbar']['promo_texts']['racket_title'][$lang] ?? 'Premium Rackets' }}</h5>
+                                            <p class="text-white/90 text-sm font-medium">{{ $common['navbar']['promo_texts']['racket_desc'][$lang] ?? 'Precision & Power' }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -124,7 +155,7 @@
                     <div class="relative group" data-dropdown="shoes">
                         <a href="{{ route('shoes') }}"
                             class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white flex items-center gap-1">
-                            Shoes
+                            {{ $common['navbar']['shoes'][$lang] ?? 'Shoes' }}
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-300 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
@@ -135,7 +166,7 @@
                                     <!-- Left: Categories (Centered) -->
                                     <div class="flex flex-col justify-center items-center bg-zinc-50/50 p-8 space-y-6">
                                         <div class="w-full text-center">
-                                            <h4 class="text-sm font-bold text-black mb-4 tracking-wide">BRAND</h4>
+                                            <h4 class="text-sm font-bold text-black mb-4 tracking-wide">{{ $common['navbar']['headers']['brand'][$lang] ?? 'BRAND' }}</h4>
                                             <div class="flex flex-wrap justify-center gap-2">
                                                 <a href="{{ route('shoes', ['brand' => 'Bullpadel']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Bullpadel</a>
                                                 <a href="{{ route('shoes', ['brand' => 'Babolat']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Babolat</a>
@@ -146,11 +177,11 @@
                                             </div>
                                         </div>
                                         <div class="w-full text-center">
-                                            <h4 class="text-sm font-bold text-black mb-4 tracking-wide">LEVEL</h4>
+                                            <h4 class="text-sm font-bold text-black mb-4 tracking-wide">{{ $common['navbar']['headers']['level'][$lang] ?? 'LEVEL' }}</h4>
                                             <div class="flex flex-wrap justify-center gap-2">
-                                                <a href="{{ route('shoes', ['level' => 'beginner']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Beginner</a>
-                                                <a href="{{ route('shoes', ['level' => 'intermediate']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Intermediate</a>
-                                                <a href="{{ route('shoes', ['level' => 'pro']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Pro</a>
+                                                <a href="{{ route('shoes', ['level' => 'beginner']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">{{ $common['navbar']['levels']['beginner'][$lang] ?? 'Beginner' }}</a>
+                                                <a href="{{ route('shoes', ['level' => 'intermediate']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">{{ $common['navbar']['levels']['intermediate'][$lang] ?? 'Intermediate' }}</a>
+                                                <a href="{{ route('shoes', ['level' => 'pro']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">{{ $common['navbar']['levels']['pro'][$lang] ?? 'Pro' }}</a>
                                             </div>
                                         </div>
                                     </div>
@@ -159,8 +190,8 @@
                                         <img src="{{ asset('storage/iconsepatu.png') }}" alt="Shoes Collection" class="w-full h-full object-cover">
                                         <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
                                         <div class="absolute bottom-6 left-6 right-6">
-                                            <h5 class="text-white font-bold text-2xl mb-1">Premium Shoes</h5>
-                                            <p class="text-white/90 text-sm font-medium">Move Faster, Play Smarter</p>
+                                            <h5 class="text-white font-bold text-2xl mb-1">{{ $common['navbar']['promo_texts']['shoes_title'][$lang] ?? 'Premium Shoes' }}</h5>
+                                            <p class="text-white/90 text-sm font-medium">{{ $common['navbar']['promo_texts']['shoes_desc'][$lang] ?? 'Move Faster, Play Smarter' }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -172,7 +203,7 @@
                     <div class="relative group" data-dropdown="accessories">
                         <a href="{{ route('apparel') }}"
                             class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white flex items-center gap-1">
-                            Accessories
+                            {{ $common['navbar']['accessories'][$lang] ?? 'Accessories' }}
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-300 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
@@ -183,7 +214,7 @@
                                     <!-- Left: Categories (Centered) -->
                                     <div class="flex flex-col justify-center items-center bg-zinc-50/50 p-8 space-y-6">
                                         <div class="w-full text-center">
-                                            <h4 class="text-sm font-bold text-black mb-4 tracking-wide">BRAND</h4>
+                                            <h4 class="text-sm font-bold text-black mb-4 tracking-wide">{{ $common['navbar']['headers']['brand'][$lang] ?? 'BRAND' }}</h4>
                                             <div class="flex flex-wrap justify-center gap-2">
                                                 <a href="{{ route('apparel', ['brand' => 'Bullpadel']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Bullpadel</a>
                                                 <a href="{{ route('apparel', ['brand' => 'Babolat']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Babolat</a>
@@ -194,11 +225,11 @@
                                             </div>
                                         </div>
                                         <div class="w-full text-center">
-                                            <h4 class="text-sm font-bold text-black mb-4 tracking-wide">LEVEL</h4>
+                                            <h4 class="text-sm font-bold text-black mb-4 tracking-wide">{{ $common['navbar']['headers']['level'][$lang] ?? 'LEVEL' }}</h4>
                                             <div class="flex flex-wrap justify-center gap-2">
-                                                <a href="{{ route('apparel', ['level' => 'beginner']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Beginner</a>
-                                                <a href="{{ route('apparel', ['level' => 'intermediate']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Intermediate</a>
-                                                <a href="{{ route('apparel', ['level' => 'pro']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">Pro</a>
+                                                <a href="{{ route('apparel', ['level' => 'beginner']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">{{ $common['navbar']['levels']['beginner'][$lang] ?? 'Beginner' }}</a>
+                                                <a href="{{ route('apparel', ['level' => 'intermediate']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">{{ $common['navbar']['levels']['intermediate'][$lang] ?? 'Intermediate' }}</a>
+                                                <a href="{{ route('apparel', ['level' => 'pro']) }}" class="px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm">{{ $common['navbar']['levels']['pro'][$lang] ?? 'Pro' }}</a>
                                             </div>
                                         </div>
                                     </div>
@@ -207,8 +238,8 @@
                                         <img src="{{ asset('storage/icontas.jpg') }}" alt="Accessories Collection" class="w-full h-full object-cover">
                                         <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
                                         <div class="absolute bottom-6 left-6 right-6">
-                                            <h5 class="text-white font-bold text-2xl mb-1">Premium Accessories</h5>
-                                            <p class="text-white/90 text-sm font-medium">Comfort Meets Performance</p>
+                                            <h5 class="text-white font-bold text-2xl mb-1">{{ $common['navbar']['promo_texts']['acc_title'][$lang] ?? 'Premium Accessories' }}</h5>
+                                            <p class="text-white/90 text-sm font-medium">{{ $common['navbar']['promo_texts']['acc_desc'][$lang] ?? 'Comfort Meets Performance' }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -217,7 +248,7 @@
                     </div>
 
                     <a href="{{ route('contact') }}"
-                        class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">Contact</a>
+                        class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">{{ $common['navbar']['contact'][$lang] ?? 'Contact' }}</a>
                 </nav>
 
                 <div class="flex items-center gap-2 md:gap-3 text-white/90" id="navIcons">
@@ -228,9 +259,9 @@
                                class="bg-white/10 border border-white/20 rounded-full pl-7 md:pl-9 pr-2 md:pr-4 py-1 md:py-1.5 text-xs md:text-sm text-white placeholder-white/60 focus:outline-none focus:bg-white/20 focus:border-white/40 w-24 md:w-40 lg:w-48 transition-all duration-300"
                                autocomplete="off">
                     </div> -->
-
+                    
                     <!-- Wishlist (mobile only) -->
-                    <a href="{{ route('customer.wishlist.index') }}" class="relative md:hidden transition duration-300 hover:text-white">
+                    <!-- <a href="{{ route('customer.wishlist.index') }}" class="relative md:hidden transition duration-300 hover:text-white">
                         <i class="fas fa-heart text-sm"></i>
                         @php
                             if (auth()->check() && auth()->user()->role === 'customer') {
@@ -244,166 +275,260 @@
                             <span class="wishlist-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
                         @endif
                     </a>
-
+ -->
                     <!-- Mobile Search Icon (hidden since inline search is now visible) -->
                     <button type="button" id="searchToggleBtn" class="hidden transition duration-300 hover:text-white" aria-label="Search" title="Cari Produk">
                         <i class="fas fa-search text-sm"></i>
                     </button>
 
-                    <!-- Hamburger Menu with combined elements -->
-                    <div class="relative" id="hamburgerMenuWrapper">
-                        <button type="button" id="hamburgerMenuBtn" class="inline-flex h-9 w-9 items-center justify-center rounded border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20 relative">
-                            <i class="fas fa-bars text-sm"></i>
-                            <!-- Cart Badge -->
-                            @auth
-                                @if (auth()->user()->role === 'customer')
-                                    @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
-                                    @if ($cartCount > 0)
-                                        <span class="hamburger-cart-badge absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
-                                    @endif
-                                @endif
-                            @endauth
-                            @guest
-                                @php
-                                    $guestCart = session()->get('guest_cart', []);
-                                    $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
-                                @endphp
-                                @if($guestCartCount > 0)
-                                    <span class="hamburger-cart-badge absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $guestCartCount > 9 ? '9+' : $guestCartCount }}</span>
-                                @endif
-                            @endguest
-                            <!-- Wishlist Badge -->
-                            @auth
-                                @if (auth()->user()->role === 'customer')
-                                    @php $wishlistCount = auth()->user()->wishlistItems()->count(); @endphp
-                                    @if ($wishlistCount > 0)
-                                        <span class="hamburger-wishlist-badge absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
-                                    @endif
-                                @endif
-                            @endauth
-                            @guest
-                                @php
-                                    $guestWishlist = session()->get('guest_wishlist', []);
-                                    $guestWishlistCount = count($guestWishlist);
-                                @endphp
-                                @if($guestWishlistCount > 0)
-                                    <span class="hamburger-wishlist-badge absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">{{ $guestWishlistCount > 9 ? '9+' : $guestWishlistCount }}</span>
-                                @endif
-                            @endguest
-                        </button>
-                        <div id="hamburgerMenuDropdown" class="absolute right-0 mt-2 w-48 z-[100] hidden">
-                            <div class="bg-white rounded-lg shadow-lg border border-zinc-100 overflow-hidden">
-                                <!-- Navigation (mobile only) -->
-                                <div class="md:hidden">
-                                    <a href="{{ route('home') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
-                                        <i class="fas fa-home text-zinc-500 text-sm"></i>
-                                        <span class="text-sm text-zinc-700">Home</span>
-                                    </a>
-                                    <a href="{{ route('new-arrivals') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
-                                        <i class="fas fa-star text-zinc-500 text-sm"></i>
-                                        <span class="text-sm text-zinc-700">New Arrivals</span>
-                                    </a>
-                                    <a href="{{ route('racket') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
-                                        <i class="fas fa-table-tennis text-zinc-500 text-sm"></i>
-                                        <span class="text-sm text-zinc-700">Racket</span>
-                                    </a>
-                                    <a href="{{ route('shoes') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
-                                        <i class="fas fa-shoe-prints text-zinc-500 text-sm"></i>
-                                        <span class="text-sm text-zinc-700">Shoes</span>
-                                    </a>
-                                    <a href="{{ route('apparel') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
-                                        <i class="fas fa-tshirt text-zinc-500 text-sm"></i>
-                                        <span class="text-sm text-zinc-700">Accessories</span>
-                                    </a>
-                                </div>
+                    @guest
+                        <a href="{{ route('login') }}" 
+                        class="inline-flex h-9 w-9 md:hidden items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20"
+                        title="Login">
+                            <i class="fas fa-user text-sm"></i>
+                        </a>
+                    @endguest
 
-                                <!-- Login -->
-                                @guest
-                                    <a href="{{ route('login') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
-                                        <i class="fas fa-sign-in-alt text-zinc-500 text-sm"></i>
-                                        <span class="text-sm text-zinc-700">Login</span>
-                                    </a>
-                                @endauth
-                                
-                                <!-- Language Switcher -->
-                                <div class="border-b border-zinc-100">
-                                    <div class="px-3 py-2 bg-zinc-50">
-                                        <div class="flex gap-2">
-                                            <a href="{{ request()->fullUrlWithQuery(['locale' => 'en']) }}" class="flex-1 px-2 py-1.5 text-xs text-zinc-700 hover:bg-white rounded transition {{ session('locale', 'en') === 'en' ? 'bg-white font-semibold' : 'bg-white/50' }}">
-                                                EN
-                                            </a>
-                                            <a href="{{ request()->fullUrlWithQuery(['locale' => 'id']) }}" class="flex-1 px-2 py-1.5 text-xs text-zinc-700 hover:bg-white rounded transition {{ session('locale', 'en') === 'id' ? 'bg-white font-semibold' : 'bg-white/50' }}">
-                                                ID
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Cart -->
-                                <a href="{{ route('customer.cart.index') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
-                                    <div class="relative">
-                                        <i class="fas fa-shopping-bag text-zinc-500 text-sm"></i>
-                                        @auth
-                                            @if (auth()->user()->role === 'customer')
-                                                @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
-                                                @if ($cartCount > 0)
-                                                    <span class="cart-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
-                                                @endif
-                                            @endif
-                                        @endauth
-                                        @guest
-                                            @php 
-                                                $guestCart = session()->get('guest_cart', []);
-                                                $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
-                                            @endphp
-                                            @if($guestCartCount > 0)
-                                                <span class="cart-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $guestCartCount > 9 ? '9+' : $guestCartCount }}</span>
-                                            @endif
-                                        @endguest
-                                    </div>
-                                    <span class="text-sm text-zinc-700">Cart</span>
+                    @auth
+                        @if(auth()->user()->role === 'admin')
+                            <a href="{{ route('admin.dashboard') }}" 
+                            class="inline-flex h-9 w-9 md:hidden items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20" 
+                            title="Dashboard">
+                                <i class="fas fa-user-shield text-sm"></i>
+                            </a>
+                        @elseif(auth()->user()->role === 'customer')
+                            <a href="{{ route('customer.profile.index') }}" 
+                            class="inline-flex h-9 w-9 md:hidden items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20" 
+                            title="Profile">
+                                <i class="fas fa-user-circle text-sm"></i>
+                            </a>
+                        @endif
+                    @endauth
+
+                    <a href="{{ route('customer.cart.index') }}" 
+                    class="relative inline-flex h-9 w-9 md:hidden items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20"
+                    title="Cart">
+                        <i class="fas fa-shopping-bag text-sm"></i>
+                        @php
+                            if (auth()->check() && auth()->user()->role === 'customer') {
+                                $mobileCartCount = auth()->user()->cartItems()->sum('quantity');
+                            } else {
+                                $guestCart = session()->get('guest_cart', []);
+                                $mobileCartCount = array_sum(array_column($guestCart, 'quantity'));
+                            }
+                        @endphp
+                        @if($mobileCartCount > 0)
+                            <span class="cart-badge absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">
+                                {{ $mobileCartCount > 9 ? '9+' : $mobileCartCount }}
+                            </span>
+                        @endif
+                    </a>
+                    
+                    <a href="{{ route('customer.wishlist.index') }}" 
+                    class="relative inline-flex h-9 w-9 md:hidden items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20"
+                    title="Wishlist">
+                        <i class="fas fa-heart text-sm"></i>
+                        @php
+                            if (auth()->check() && auth()->user()->role === 'customer') {
+                                $wishlistCount = auth()->user()->wishlistItems()->count();
+                            } else {
+                                $guestWishlist = session()->get('guest_wishlist', []);
+                                $wishlistCount = count($guestWishlist);
+                            }
+                        @endphp
+                        @if($wishlistCount > 0)
+                            <span class="wishlist-badge absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">
+                                {{ $wishlistCount > 9 ? '9+' : $wishlistCount }}
+                            </span>
+                        @endif
+                    </a>
+
+                    <!-- Dark Mode Toggle (Home Page) -->
+                    <button type="button" id="darkModeToggleHome"
+                            class="hidden md:inline-flex inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20"
+                            title="Toggle Dark/Light Mode" aria-label="Toggle dark mode">
+                        <i class="fas fa-moon text-sm" id="darkModeIconHome"></i>
+                    </button>
+
+                    <!-- ==========================================
+                DESKTOP ONLY UTILITIES (Hidden on Mobile)
+                ========================================== -->
+            <div class="hidden md:flex items-center gap-4 text-white/90">
+                <!-- Language Switcher (Desktop) -->
+                <div class="flex gap-2 bg-white/10 backdrop-blur p-1 rounded border border-white/20">
+                    <a href="{{ request()->fullUrlWithQuery(['locale' => 'en']) }}" class="px-2 py-1 text-xs text-white rounded transition {{ session('locale', 'en') === 'en' ? 'bg-white/20 font-semibold' : 'opacity-60 hover:opacity-100' }}">
+                        EN
+                    </a>
+                    <a href="{{ request()->fullUrlWithQuery(['locale' => 'id']) }}" class="px-2 py-1 text-xs text-white rounded transition {{ session('locale', 'en') === 'id' ? 'bg-white/20 font-semibold' : 'opacity-60 hover:opacity-100' }}">
+                        ID
+                    </a>
+                </div>
+
+                <!-- Login / Account Dashboard (Desktop) -->
+                @guest
+                    <a href="{{ route('login') }}" class="text-sm font-medium hover:text-white transition duration-300">
+                        {{ $common['navbar']['login'][$lang] ?? 'Login' }}
+                    </a>
+                @endguest
+
+                @auth
+                    @if (auth()->user()->role === 'admin')
+                        <a href="{{ route('admin.dashboard') }}" class="text-sm font-medium hover:text-white transition duration-300 flex items-center gap-1.5">
+                            <i class="fas fa-arrow-left text-xs"></i> Dashboard
+                        </a>
+                    @elseif(auth()->user()->role === 'customer')
+                        <a href="{{ route('customer.profile.index') }}" class="text-sm font-medium hover:text-white transition duration-300 flex items-center gap-1.5" title="Profile">
+                            <i class="fas fa-user text-xs"></i>
+                            <span class="max-w-[80px] truncate">{{ auth()->user()->name }}</span>
+                        </a>
+                        <a href="{{ route('customer.orders.index') }}" class="text-sm font-medium hover:text-white transition duration-300" title="Orders">
+                            <i class="fas fa-history text-xs"></i>
+                        </a>
+                    @endif
+                @endauth
+
+                <!-- Wishlist (Desktop) -->
+                <a href="{{ route('customer.wishlist.index') }}" class="relative transition duration-300 hover:text-white p-1" title="Wishlist">
+                    <i class="fas fa-heart text-base"></i>
+                    @php
+                        if (auth()->check() && auth()->user()->role === 'customer') {
+                            $wishlistCount = auth()->user()->wishlistItems()->count();
+                        } else {
+                            $guestWishlist = session()->get('guest_wishlist', []);
+                            $wishlistCount = count($guestWishlist);
+                        }
+                    @endphp
+                    @if($wishlistCount > 0)
+                        <span class="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
+                    @endif
+                </a>
+
+                <!-- Cart (Desktop) -->
+                <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-white p-1" title="Cart">
+                    <i class="fas fa-shopping-bag text-base"></i>
+                    @auth
+                        @if (auth()->user()->role === 'customer')
+                            @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
+                            @if ($cartCount > 0)
+                                <span class="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
+                            @endif
+                        @endif
+                    @endauth
+                    @guest
+                        @php
+                            $guestCart = session()->get('guest_cart', []);
+                            $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
+                        @endphp
+                        @if($guestCartCount > 0)
+                            <span class="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $guestCartCount > 9 ? '9+' : $guestCartCount }}</span>
+                        @endif
+                    @endguest
+                </a>
+            </div>
+
+
+            <!-- ==========================================
+                MOBILE ONLY HAMBURGER (Hidden on Desktop)
+                ========================================== -->
+            
+                <div class="md:hidden relative" id="hamburgerMenuWrapper">
+                <button type="button" id="hamburgerMenuBtn" class="inline-flex h-9 w-9 items-center justify-center rounded border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20 relative">
+                    <i class="fas fa-bars text-sm"></i>
+                    
+                    <!-- Cart Badge (Mobile Indicator) -->
+                    @auth
+                        @if (auth()->user()->role === 'customer')
+                            @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
+                            @if ($cartCount > 0)
+                                <span class="hamburger-cart-badge absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
+                            @endif
+                        @endif
+                    @endauth
+                    @guest
+                        @php
+                            $guestCart = session()->get('guest_cart', []);
+                            $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
+                        @endphp
+                        @if($guestCartCount > 0)
+                            <span class="hamburger-cart-badge absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">{{ $guestCartCount > 9 ? '9+' : $guestCartCount }}</span>
+                        @endif
+                    @endguest
+
+                    <!-- Wishlist Badge (Mobile Indicator) -->
+                    @auth
+                        @if (auth()->user()->role === 'customer')
+                            @php $wishlistCount = auth()->user()->wishlistItems()->count(); @endphp
+                            @if ($wishlistCount > 0)
+                                <span class="hamburger-wishlist-badge absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
+                            @endif
+                        @endif
+                    @endauth
+                    @guest
+                        @php
+                            $guestWishlist = session()->get('guest_wishlist', []);
+                            $guestWishlistCount = count($guestWishlist);
+                        @endphp
+                        @if($guestWishlistCount > 0)
+                            <span class="hamburger-wishlist-badge absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">{{ $guestWishlistCount > 9 ? '9+' : $guestWishlistCount }}</span>
+                        @endif
+                    @endguest
+                </button>
+
+                <!-- Dropdown Menu Panel (Mobile Drawer) -->
+                <div id="hamburgerMenuDropdown" class="absolute right-0 mt-2 w-56 z-[100] hidden">
+                    <div class="bg-white rounded-lg shadow-lg border border-zinc-100 overflow-hidden">
+                        <!-- Navigation Links -->
+                        <div class="flex flex-col">
+                            <a href="{{ route('home') }}" class="flex items-center gap-3 px-4 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
+                                <i class="fas fa-home text-zinc-400 text-sm w-4"></i>
+                                <span class="text-sm text-zinc-700">{{ $common['navbar']['home'][$lang] ?? 'Home' }}</span>
+                            </a>
+                            <a href="{{ route('new-arrivals') }}" class="flex items-center gap-3 px-4 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
+                                <i class="fas fa-star text-zinc-400 text-sm w-4"></i>
+                                <span class="text-sm text-zinc-700">{{ $common['navbar']['new_arrivals'][$lang] ?? 'New Arrivals' }}</span>
+                            </a>
+                            <a href="{{ route('racket') }}" class="flex items-center gap-3 px-4 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
+                                <i class="fas fa-table-tennis text-zinc-400 text-sm w-4"></i>
+                                <span class="text-sm text-zinc-700">{{ $common['navbar']['racket'][$lang] ?? 'Rackets' }}</span>
+                            </a>
+                            <a href="{{ route('shoes') }}" class="flex items-center gap-3 px-4 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
+                                <i class="fas fa-shoe-prints text-zinc-400 text-sm w-4"></i>
+                                <span class="text-sm text-zinc-700">{{ $common['navbar']['shoes'][$lang] ?? 'Shoes' }}</span>
+                            </a>
+                            <a href="{{ route('apparel') }}" class="flex items-center gap-3 px-4 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
+                                <i class="fas fa-tshirt text-zinc-400 text-sm w-4"></i>
+                                <span class="text-sm text-zinc-700">{{ $common['navbar']['accessories'][$lang] ?? 'Accessories' }}</span>
+                            </a>
+                        </div>
+
+                        <!-- Language Switcher & Dark mode mobile Zone -->
+                        <div class="border-b border-zinc-100 p-2.5 bg-zinc-50">
+                            <div class="flex gap-2 mb-2">
+                                <a href="{{ request()->fullUrlWithQuery(['locale' => 'en']) }}" class="flex-1 text-center py-1.5 text-xs text-zinc-700 hover:bg-white rounded border border-transparent shadow-sm transition {{ session('locale', 'en') === 'en' ? 'bg-white font-semibold border-zinc-200' : 'bg-white/50' }}">
+                                    EN
                                 </a>
-                                
-                                <!-- Wishlist -->
-                                <a href="{{ route('customer.wishlist.index') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
-                                    <div class="relative">
-                                        <i class="fas fa-heart text-zinc-500 text-sm"></i>
-                                        @php
-                                            if (auth()->check() && auth()->user()->role === 'customer') {
-                                                $wishlistCount = auth()->user()->wishlistItems()->count();
-                                            } else {
-                                                $guestWishlist = session()->get('guest_wishlist', []);
-                                                $wishlistCount = count($guestWishlist);
-                                            }
-                                        @endphp
-                                        @if($wishlistCount > 0)
-                                            <span class="wishlist-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
-                                        @endif
-                                    </div>
-                                    <span class="text-sm text-zinc-700">Wishlist</span>
+                                <a href="{{ request()->fullUrlWithQuery(['locale' => 'id']) }}" class="flex-1 text-center py-1.5 text-xs text-zinc-700 hover:bg-white rounded border border-transparent shadow-sm transition {{ session('locale', 'en') === 'id' ? 'bg-white font-semibold border-zinc-200' : 'bg-white/50' }}">
+                                    ID
                                 </a>
-                                
-                                <!-- Auth Section for logged-in users -->
-                                @auth
-                                    @if (auth()->user()->role === 'admin')
-                                        <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-t border-zinc-100">
-                                            <i class="fas fa-arrow-left text-zinc-500 text-sm"></i>
-                                            <span class="text-sm text-zinc-700">Dashboard</span>
-                                        </a>
-                                    @elseif(auth()->user()->role === 'customer')
-                                        <a href="{{ route('customer.orders.index') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-t border-zinc-100">
-                                            <i class="fas fa-history text-zinc-500 text-sm"></i>
-                                            <span class="text-sm text-zinc-700">Orders</span>
-                                        </a>
-                                        <a href="{{ route('customer.profile.index') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-t border-zinc-100">
-                                            <i class="fas fa-user text-zinc-500 text-sm"></i>
-                                            <span class="text-sm text-zinc-700">Profile</span>
-                                        </a>
-                                    @endif
-                                @endauth
+                            </div>
+
+                            <div class="flex gap-2">
+                                <button type="button" id="mobileLightModeBtn" 
+                                        class="flex-1 flex items-center justify-center py-1.5 rounded border border-transparent shadow-sm transition dark:bg-white/50 dark:border-transparent bg-white font-semibold border-zinc-200 dark:font-normal">
+                                    <i class="fas fa-sun text-sm transition-colors duration-200" id="iconMobileLight"></i>
+                                </button>
+
+                                <button type="button" id="mobileDarkModeBtn" 
+                                        class="flex-1 flex items-center justify-center py-1.5 rounded border border-transparent shadow-sm transition bg-white/50 dark:bg-white dark:font-semibold dark:border-zinc-200">
+                                    <i class="fas fa-moon text-sm transition-colors duration-200" id="iconMobileDark"></i>
+                                </button>
                             </div>
                         </div>
+
+                        
                     </div>
+                </div>
+            </div>
                 </div>
             </div>
         </header>
@@ -448,8 +573,8 @@
                             <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-zinc-100">
                                 <i class="fas fa-search text-zinc-400"></i>
                             </div>
-                            <p class="text-sm text-zinc-500">Mulai mengetik untuk mencari produk</p>
-                            <p class="mt-1 text-xs text-zinc-400">Cari berdasarkan nama, brand, atau kategori</p>
+                            <p class="text-sm text-zinc-500">{{ $home['search']['overlay']['initial_state_1'][$lang] ?? '' }}</p>
+                            <p class="mt-1 text-xs text-zinc-400">{{ $home['search']['overlay']['initial_state_2'][$lang] ?? '' }}</p>
                         </div>
 
                         <!-- Empty State -->
@@ -457,8 +582,8 @@
                             <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-zinc-100">
                                 <i class="fas fa-box-open text-zinc-400"></i>
                             </div>
-                            <p class="text-sm font-medium text-zinc-700">No products found</p>
-                            <p class="mt-1 text-xs text-zinc-400">Coba kata kunci lain</p>
+                            <p class="text-sm font-medium text-zinc-700">{{ $home['search']['overlay']['empty_title'][$lang] ?? '' }}</p>
+                            <p class="mt-1 text-xs text-zinc-400">{{ $home['search']['overlay']['empty_hint'][$lang] ?? '' }}</p>
                         </div>
 
                         <!-- Results List -->
@@ -468,7 +593,7 @@
             </div>
         </div>
 
-        <<!-- Hero Banner - Full behind navbar -->
+        <!-- Hero Banner - Full behind navbar -->
         <section class="relative w-full min-h-[380px] overflow-hidden bg-zinc-900 sm:min-h-[420px] md:min-h-[360px] lg:min-h-[400px]">
             <img src="{{ asset('storage/banner.webp') }}"
                 alt="Padel Tennis"
@@ -477,109 +602,66 @@
             <div class="absolute inset-0 bg-gradient-to-b from-black/20 via-black/50 to-black/80"></div>
             <div class="relative mx-auto flex min-h-[380px] sm:min-h-[420px] md:min-h-[360px] lg:min-h-[400px] max-w-7xl items-center justify-center px-6 md:px-10 lg:px-12 pt-28 md:pt-24">
                 <div class="flex flex-col items-center justify-center text-center -mt-12 md:-mt-20"> 
-
                     <div class="mb-4 w-full max-w-md px-4">
                         <div class="relative flex items-center" id="navSearchWrapper">
                            <i class="fas fa-search absolute left-4 text-white text-sm pointer-events-none z-10"></i>
-                            
-                            <input type="text"  id="navSearchInput" placeholder="Cari raket, sepatu, atau aksesoris..."
-                                class="w-full bg-white/10 backdrop-blur-md text-white placeholder-white/50 pl-11 pr-4 py-2 rounded-full text-sm border border-white/20 shadow-sm focus:outline-none focus:bg-white/20 focus:border-white/40 focus:ring-1 focus:ring-white/30 transition-all cursor-pointer"
-                                readonly> </div>
+                            <input type="text" id="navSearchInput" placeholder="{{$home['hero']['search_placeholder'][$lang] ?? ''}}"
+                                class="w-full bg-white/10 backdrop-blur-md text-white placeholder-white/50 pl-11 pr-4 py-2 rounded-full text-sm border border-white/20 shadow-sm focus:outline-none focus:bg-white/20 focus:border-white/40 focus:ring-1 focus:ring-white/30 transition-all cursor-pointer" readonly> </div>
                     </div>
-                    <h1 class="text-4xl font-bold text-white mb-2">
-                        NoraPadel
-                    </h1>
-                    
-                    <p class="text-white/80 text-sm max-w-xl mx-auto mb-4">
-                        Experience the ultimate in padel equipment. Premium quality rackets, shoes, and accessories for players who demand excellence.
+                    <h1 class="text-4xl font-bold text-white mb-2">NoraPadel</h1>
+                    <p class="mt-2 md:mt-4 text-[11px] md:text-sm text-zinc-100 leading-relaxed drop-shadow-md max-w-[390px] md:max-w-xl">
+                        {{ $home['hero']['subtitle'][$lang] ?? '' }}
                     </p>
-
-                    <a href="http://norapadel.my.id/shop" class="inline-flex items-center gap-1 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 md:px-6 md:py-2.5 text-[10px] md:text-xs font-semibold text-white backdrop-blur transition duration-300 hover:bg-white/20 hover:scale-[1.02] custom-cursor-on-hover">Shop Now</a>
-
+                    <div class="mt-3 md:mt-6 flex flex-wrap justify-center gap-6">
+                        <!-- <a href="{{ route('shop') }}" class="inline-flex items-center gap-1 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 md:px-6 md:py-2.5 text-[10px] md:text-xs font-semibold text-white backdrop-blur transition duration-300 hover:bg-white/20 hover:scale-[1.02]">{{ $home['hero']['cta_button'][$lang] ?? '' }}</a> -->
+                    </div>
                 </div>
             </div>
         </section>
 
         <!-- Marquee Bar -->
-        <div class="bg-white text-white py-2 overflow-hidden transition-all duration-300" id="marqueeBar">
+        <!-- 6 logos × 20vw = 120vw per set | 2 sets = 240vw | anim: -120vw = seamless loop -->
+        <div class="bg-white py-2 md:py-3 border-y border-zinc-100" style="overflow-x: hidden; overflow-y: visible;" id="marqueeBar">
             <div class="marquee-container">
                 <div class="marquee-content">
                     <!-- Set 1 -->
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/arronax logo.webp') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• ARRONAX •</span>
+                    <span class="marquee-item">
+                        <img src="{{ asset('storage/alpha.png') }}" alt="Alpha" loading="eager">
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/Babolat_logo.svg.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• BABOLAT •</span>
+                    <span class="marquee-item">
+                        <img src="{{ asset('storage/bullpadel2.png') }}" alt="Bullpadel" loading="eager">
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/logobullpadel2 (1).png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• BULLPADEL •</span>
+                    <span class="marquee-item">
+                        <img src="{{ asset('storage/arronax.png') }}" alt="Arronax" loading="eager">
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/logo_nox_1200x1200.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• NOX •</span>
+                    <span class="marquee-item">
+                        <img src="{{ asset('storage/babolat.png') }}" alt="Babolat" loading="eager">
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/alpha padel.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• ALPHA •</span>
+                    <span class="marquee-item">
+                        <img src="{{ asset('storage/head.png') }}" alt="Head" loading="eager">
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/head.jpeg') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• ZEPHYR •</span>
+                    <span class="marquee-item">
+                        <img src="{{ asset('storage/nox.png') }}" alt="Nox" loading="eager">
                     </span>
 
-                    <!-- Set 2 -->
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/arronax logo.webp') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• ARRONAX •</span>
+                    <!-- Set 2 (identical duplicate for seamless infinite loop) -->
+                    <span class="marquee-item">
+                        <img src="{{ asset('storage/alpha.png') }}" alt="Alpha" loading="eager">
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/Babolat_logo.svg.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• BABOLAT •</span>
+                    <span class="marquee-item">
+                        <img src="{{ asset('storage/bullpadel2.png') }}" alt="Bullpadel" loading="eager">
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/logobullpadel2 (1).png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• BULLPADEL •</span>
+                    <span class="marquee-item">
+                        <img src="{{ asset('storage/arronax.png') }}" alt="Arronax" loading="eager">
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/logo_nox_1200x1200.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• NOX •</span>
+                    <span class="marquee-item">
+                        <img src="{{ asset('storage/babolat.png') }}" alt="Babolat" loading="eager">
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/alpha padel.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• ALPHA •</span>
+                    <span class="marquee-item">
+                        <img src="{{ asset('storage/head.png') }}" alt="Head" loading="eager">
                     </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/head.jpeg') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• ZEPHYR •</span>
-                    </span>
-
-                    <!-- Set 3 -->
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/arronax logo.webp') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• ARRONAX •</span>
-                    </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/Babolat_logo.svg.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• BABOLAT •</span>
-                    </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/logobullpadel2 (1).png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• BULLPADEL •</span>
-                    </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/logo_nox_1200x1200.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• NOX •</span>
-                    </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/alpha padel.png') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• ALPHA •</span>
-                    </span>
-                    <span class="marquee-item inline-flex items-center gap-10">
-                        <img src="{{ asset('storage/head.jpeg') }}" alt="NoraPadel" class="h-14 w-14 md:h-20 md:w-20 object-contain" loading="lazy">
-                        <span>• ZEPHYR •</span>
+                    <span class="marquee-item">
+                        <img src="{{ asset('storage/nox.png') }}" alt="Nox" loading="eager">
                     </span>
                 </div>
             </div>
@@ -588,64 +670,277 @@
         <main class="relative z-0">
 
             <!-- Product Filters (Below Hero) -->
-            <section class="bg-zinc-50 py-3 border-b border-zinc-200">
-                <div class="mx-auto w-full max-w-7xl px-3 md:px-10 lg:px-12">
-                    <div class="flex flex-col md:flex-row gap-3 items-center justify-between">
-                        <div class="flex gap-2 flex-nowrap overflow-x-auto pb-1 flex-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                            <select id="filterBrandBottom" class="px-2 py-1.5 border border-zinc-300 rounded-lg text-xs md:text-sm focus:outline-none focus:border-blue-500 transition bg-white shrink-0" onchange="applyFilters()">
+            <!-- Main Layout: Sidebar + Grid -->
+        <div class="mx-auto max-w-7xl px-6 pb-16 md:px-10 lg:px-12">
+            <div class="flex flex-col gap-8 md:flex-row">
+                
+                <!-- Sidebar Filters -->
+                <aside class="w-full md:w-64 shrink-0">
+                    <div class="space-y-6">
+                        
+                        <div class="border-t border-zinc-100 pt-6">
+                            <button type="button" class="filter-toggle flex w-full items-center justify-between text-left">
+                                <h3 class="text-sm font-semibold text-black">
+                                    {{ $home['product_section']['filter_titles']['brand'][$lang] ?? 'Brand' }}
+                                </h3>
+                                <i class="fas fa-chevron-down text-xs text-zinc-400 transition-transform duration-200"></i>
+                            </button>
+                            <div class="filter-content mt-3 flex flex-wrap gap-2">
+                                <a href="{{ request()->fullUrlWithQuery(['brand' => 'Bullpadel']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ $selectedBrand === 'Bullpadel' ? 'bg-black text-white border-black' : '' }}">Bullpadel</a>
+                                <a href="{{ request()->fullUrlWithQuery(['brand' => 'Babolat']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ $selectedBrand === 'Babolat' ? 'bg-black text-white border-black' : '' }}">Babolat</a>
+                                <a href="{{ request()->fullUrlWithQuery(['brand' => 'Nox']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ $selectedBrand === 'Nox' ? 'bg-black text-white border-black' : '' }}">Nox</a>
+                                <a href="{{ request()->fullUrlWithQuery(['brand' => 'Alpha']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ $selectedBrand === 'Alpha' ? 'bg-black text-white border-black' : '' }}">Alpha</a>
+                                <a href="{{ request()->fullUrlWithQuery(['brand' => 'Zephyr']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ $selectedBrand === 'Zephyr' ? 'bg-black text-white border-black' : '' }}">Zephyr</a>
+                                <a href="{{ request()->fullUrlWithQuery(['brand' => 'Arronax']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ $selectedBrand === 'Arronax' ? 'bg-black text-white border-black' : '' }}">Arronax</a>
+                                @if($selectedBrand)
+                                    <a href="{{ request()->fullUrlWithQuery(['brand' => null]) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-rose-600 transition hover:border-rose-600 hover:text-rose-600">Clear</a>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="border-t border-zinc-100 pt-6">
+                            <button type="button" class="filter-toggle flex w-full items-center justify-between text-left">
+                                <h3 class="text-sm font-semibold text-black">
+                                    {{ $home['product_section']['filter_titles']['category'][$lang] ?? 'Category' }}
+                                </h3>
+                                <i class="fas fa-chevron-down text-xs text-zinc-400 transition-transform duration-200"></i>
+                            </button>
+                            
+                            <div class="filter-content mt-3 flex flex-col gap-2">
+                                <label class="flex cursor-pointer items-center gap-2">
+                                    <input type="radio" name="filterCategoryVisual" class="border-zinc-300 text-black focus:ring-black" value="" {{ !request()->get('category') ? 'checked' : '' }} 
+                                        onchange="updateUrlParam('category', this.value)">
+                                    <span class="text-sm text-zinc-600">
+                                        {{ $lang === 'id' ? 'Semua Kategori' : 'All Categories' }}
+                                    </span>
+                                </label>
+
+                                <label class="flex cursor-pointer items-center gap-2">
+                                    <input type="radio" name="filterCategoryVisual" class="border-zinc-300 text-black focus:ring-black" value="racket" {{ request()->get('category') === 'racket' ? 'checked' : '' }} 
+                                        onchange="updateUrlParam('category', this.value)">
+                                    <span class="text-sm text-zinc-600">
+                                        {{ $common['navbar']['racket'][$lang] ?? 'Rackets' }}
+                                    </span>
+                                </label>
+
+                                <label class="flex cursor-pointer items-center gap-2">
+                                    <input type="radio" name="filterCategoryVisual" class="border-zinc-300 text-black focus:ring-black" value="shoes" {{ request()->get('category') === 'shoes' ? 'checked' : '' }} 
+                                        onchange="updateUrlParam('category', this.value)">
+                                    <span class="text-sm text-zinc-600">
+                                        {{ $common['navbar']['shoes'][$lang] ?? 'Shoes' }}
+                                    </span>
+                                </label>
+
+                                <label class="flex cursor-pointer items-center gap-2">
+                                    <input type="radio" name="filterCategoryVisual" class="border-zinc-300 text-black focus:ring-black" value="apparel" {{ request()->get('category') === 'apparel' ? 'checked' : '' }} 
+                                        onchange="updateUrlParam('category', this.value)">
+                                    <span class="text-sm text-zinc-600">
+                                        {{ $common['navbar']['accessories'][$lang] ?? 'Accessories' }}
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-zinc-100 pt-6">
+                            <button type="button" class="filter-toggle flex w-full items-center justify-between text-left">
+                                <h3 class="text-sm font-semibold text-black">
+                                    {{ $home['product_section']['filter_titles']['price'][$lang] ?? 'Price' }}
+                                </h3>
+                                <i class="fas fa-chevron-down text-xs text-zinc-400 transition-transform duration-200"></i>
+                            </button>
+                            <div class="filter-content mt-3 flex flex-col gap-2">
+                                <label class="flex cursor-pointer items-center gap-2">
+                                    <input type="radio" name="filterPriceVisual" class="border-zinc-300 text-black focus:ring-black" value="" {{ !request()->get('price') ? 'checked' : '' }}
+                                        onchange="updateUrlParam('price', this.value)">
+                                    <span class="text-sm text-zinc-600">
+                                        {{ $home['product_section']['price_options']['all'][$lang] ?? 'All Prices' }} 
+                                    </span>
+                                </label>
+                                <label class="flex cursor-pointer items-center gap-2">
+                                    <input type="radio" name="filterPriceVisual" class="border-zinc-300 text-black focus:ring-black" value="low" {{ request()->get('price') === 'low' ? 'checked' : '' }} 
+                                        onchange="updateUrlParam('price', this.value)">
+                                    <span class="text-sm text-zinc-600">
+                                        {{ $home['product_section']['price_options']['low_to_high'][$lang] ?? 'Low to High' }} 
+                                    </span>
+                                </label>
+                                <label class="flex cursor-pointer items-center gap-2">
+                                    <input type="radio" name="filterPriceVisual" class="border-zinc-300 text-black focus:ring-black" value="high" {{ request()->get('price') === 'high' ? 'checked' : '' }} 
+                                        onchange="updateUrlParam('price', this.value)">
+                                    <span class="text-sm text-zinc-600">
+                                        {{ $home['product_section']['price_options']['high_to_low'][$lang] ?? 'High to Low' }} 
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-zinc-100 pt-6">
+                            <button type="button" class="filter-toggle flex w-full items-center justify-between text-left">
+                                <h3 class="text-sm font-semibold text-black">
+                                    {{ $home['product_section']['filter_titles']['sort'][$lang] ?? 'Sort' }}
+                                </h3>
+                                <i class="fas fa-chevron-down text-xs text-zinc-400 transition-transform duration-200"></i>
+                            </button>
+                            <div class="filter-content mt-3 flex flex-col gap-2">
+                                <label class="flex cursor-pointer items-center gap-2">
+                                    <input type="radio" name="filterSortVisual" class="border-zinc-300 text-black focus:ring-black" value="" {{ !request()->get('sort') ? 'checked' : '' }}
+                                        onchange="updateUrlParam('sort', this.value)">
+                                    <span class="text-sm text-zinc-600">
+                                        {{ $home['product_section']['sort_options']['relevance'][$lang] ?? 'Relevance' }}
+                                    </span>
+                                </label>
+                                <label class="flex cursor-pointer items-center gap-2">
+                                    <input type="radio" name="filterSortVisual" class="border-zinc-300 text-black focus:ring-black" value="popular" {{ request()->get('sort') === 'popular' ? 'checked' : '' }} 
+                                        onchange="updateUrlParam('sort', this.value)">
+                                    <span class="text-sm text-zinc-600">
+                                        {{ $home['product_section']['sort_options']['popular'][$lang] ?? 'Popular' }}
+                                    </span>
+                                </label>
+                                <label class="flex cursor-pointer items-center gap-2">
+                                    <input type="radio" name="filterSortVisual" class="border-zinc-300 text-black focus:ring-black" value="latest" {{ request()->get('sort') === 'latest' ? 'checked' : '' }} 
+                                        onchange="updateUrlParam('sort', this.value)">
+                                    <span class="text-sm text-zinc-600">
+                                        {{ $home['product_section']['sort_options']['latest'][$lang] ?? 'Latest' }}
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="border-t border-zinc-100 pt-6">
+                            <button type="button" class="filter-toggle flex w-full items-center justify-between text-left">
+                                <h3 class="text-sm font-semibold text-black">
+                                    {{ $lang === 'id' ? 'Tahun Raket' : 'Year of Racket' }}
+                                </h3>
+                                <i class="fas fa-chevron-down text-xs text-zinc-400 transition-transform duration-200"></i>
+                            </button>
+                            <div class="filter-content mt-3 flex flex-wrap gap-2">
+                                <a href="{{ request()->fullUrlWithQuery(['year' => null]) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs transition hover:border-black hover:text-black {{ !request()->get('year') ? 'bg-black text-white border-black' : 'text-zinc-600' }}">
+                                    {{ $lang === 'id' ? 'Semua' : 'All' }}
+                                </a>
+                                <a href="{{ request()->fullUrlWithQuery(['year' => '2024']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ request()->get('year') === '2024' ? 'bg-black text-white border-black' : '' }}">2024</a>
+                                <a href="{{ request()->fullUrlWithQuery(['year' => '2025']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ request()->get('year') === '2025' ? 'bg-black text-white border-black' : '' }}">2025</a>
+                                <a href="{{ request()->fullUrlWithQuery(['year' => '2026']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ request()->get('year') === '2026' ? 'bg-black text-white border-black' : '' }}">2026</a>
+                                
+                                @if(request()->get('year'))
+                                    <a href="{{ request()->fullUrlWithQuery(['year' => null]) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-rose-600 transition hover:border-rose-600 hover:text-rose-600">Clear</a>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="border-t border-zinc-100 pt-6 mt-4">
+                            <span class="text-xs font-bold uppercase tracking-wider text-zinc-600">
+                                {{ $lang === 'id' ? 'Filter Lanjutan' : 'Advanced Filters' }}
+                            </span>
+                        </div>
+
+                        <div class="border-t border-zinc-100 pt-4">
+                            <button type="button" class="filter-toggle flex w-full items-center justify-between text-left">
+                                <h3 class="text-sm font-semibold text-black">Shape</h3>
+                                <i class="fas fa-chevron-down text-xs text-zinc-400 transition-transform duration-200"></i>
+                            </button>
+                            <div class="filter-content mt-3 flex flex-wrap gap-2">
+                                <a href="{{ request()->fullUrlWithQuery(['shape' => null]) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs transition hover:border-black hover:text-black {{ !request()->get('shape') ? 'bg-black text-white border-black' : 'text-zinc-600' }}">All</a>
+                                <a href="{{ request()->fullUrlWithQuery(['shape' => 'diamond']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ request()->get('shape') === 'diamond' ? 'bg-black text-white border-black' : '' }}">Diamond</a>
+                                <a href="{{ request()->fullUrlWithQuery(['shape' => 'tear drop']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ request()->get('shape') === 'tear drop' ? 'bg-black text-white border-black' : '' }}">Tear Drop</a>
+                                <a href="{{ request()->fullUrlWithQuery(['shape' => 'round']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ request()->get('shape') === 'round' ? 'bg-black text-white border-black' : '' }}">Round</a>
+                                <a href="{{ request()->fullUrlWithQuery(['shape' => 'geometric']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ request()->get('shape') === 'geometric' ? 'bg-black text-white border-black' : '' }}">Geometric</a>
+                                <a href="{{ request()->fullUrlWithQuery(['shape' => null]) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-rose-600 transition hover:border-rose-600 hover:text-rose-600">Clear</a>
+                                <!-- @if(request()->get('shape'))
+                                    
+                                @endif -->
+                            </div>
+                        </div>
+
+                        <div class="border-t border-zinc-100 pt-6">
+                            <button type="button" class="filter-toggle flex w-full items-center justify-between text-left">
+                                <h3 class="text-sm font-semibold text-black">Hardness</h3>
+                                <i class="fas fa-chevron-down text-xs text-zinc-400 transition-transform duration-200"></i>
+                            </button>
+                            <div class="filter-content mt-3 flex flex-wrap gap-2">
+                                <a href="{{ request()->fullUrlWithQuery(['hardness' => null]) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs transition hover:border-black hover:text-black {{ !request()->get('hardness') ? 'bg-black text-white border-black' : 'text-zinc-600' }}">All</a>
+                                <a href="{{ request()->fullUrlWithQuery(['hardness' => 'soft']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ request()->get('hardness') === 'soft' ? 'bg-black text-white border-black' : '' }}">Soft</a>
+                                <a href="{{ request()->fullUrlWithQuery(['hardness' => 'medium']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ request()->get('hardness') === 'medium' ? 'bg-black text-white border-black' : '' }}">Medium</a>
+                                <a href="{{ request()->fullUrlWithQuery(['hardness' => 'hard']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ request()->get('hardness') === 'hard' ? 'bg-black text-white border-black' : '' }}">Hard</a>
+                                <a href="{{ request()->fullUrlWithQuery(['hardness' => null]) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-rose-600 transition hover:border-rose-600 hover:text-rose-600">Clear</a>
+                                <!-- @if(request()->get('hardness')) -->
+                                    
+                                <!-- @endif -->
+                            </div>
+                        </div>
+
+                        <div class="border-t border-zinc-100 pt-6">
+                            <button type="button" class="filter-toggle flex w-full items-center justify-between text-left">
+                                <h3 class="text-sm font-semibold text-black">Carbon Type</h3>
+                                <i class="fas fa-chevron-down text-xs text-zinc-400 transition-transform duration-200"></i>
+                            </button>
+                            <div class="filter-content mt-3 flex flex-wrap gap-2">
+                                <a href="{{ request()->fullUrlWithQuery(['carbon_type' => null]) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs transition hover:border-black hover:text-black {{ !request()->get('carbon_type') ? 'bg-black text-white border-black' : 'text-zinc-600' }}">All</a>
+                                <a href="{{ request()->fullUrlWithQuery(['carbon_type' => 'glass fiber']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ request()->get('carbon_type') === 'glass fiber' ? 'bg-black text-white border-black' : '' }}">Glass Fiber</a>
+                                <a href="{{ request()->fullUrlWithQuery(['carbon_type' => '3k']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ request()->get('carbon_type') === '3k' ? 'bg-black text-white border-black' : '' }}">3K</a>
+                                <a href="{{ request()->fullUrlWithQuery(['carbon_type' => '12k']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ request()->get('carbon_type') === '12k' ? 'bg-black text-white border-black' : '' }}">12K</a>
+                                <a href="{{ request()->fullUrlWithQuery(['carbon_type' => '18k']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ request()->get('carbon_type') === '18k' ? 'bg-black text-white border-black' : '' }}">18K</a>
+                                <a href="{{ request()->fullUrlWithQuery(['carbon_type' => '24k']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ request()->get('carbon_type') === '24k' ? 'bg-black text-white border-black' : '' }}">24K</a>
+                                <a href="{{ request()->fullUrlWithQuery(['carbon_type' => 'mix']) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black {{ request()->get('carbon_type') === 'mix' ? 'bg-black text-white border-black' : '' }}">Mix</a>
+                                <a href="{{ request()->fullUrlWithQuery(['carbon_type' => null]) }}" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-rose-600 transition hover:border-rose-600 hover:text-rose-600">Clear</a>
+                                <!-- @if(request()->get('carbon_type')) -->
+                                   
+                                <!-- @endif -->
+                            </div>
+                        </div>
+                </aside>
+                <!-- Product Grid Area -->
+                <div class="flex-1">
+                    <!-- Mobile Filter Dropdown -->
+                    <div class="lg:hidden mb-4">
+                        <div class="mb-3">
+                            <label class="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-700">Filter</label>
+                        </div>
+                        <div class="flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                            <select id="filterBrand" class="px-2 py-1.5 border border-zinc-300 rounded-lg text-xs focus:outline-none focus:border-blue-500 transition bg-white shrink-0 min-w-[100px]" 
+                                    onchange="updateUrlParam('brand', this.value)">
                                 <option value="">Brand</option>
-                                <option value="Bullpadel">Bullpadel</option>
-                                <option value="Babolat">Babolat</option>
-                                <option value="Nox">Nox</option>
-                                <option value="Alpha">Alpha</option>
-                                <option value="Zephyr">Zephyr</option>
-                                <option value="Arronax">Arronax</option>
+                                <option value="Bullpadel" {{ $selectedBrand === 'Bullpadel' ? 'selected' : '' }}>Bullpadel</option>
+                                <option value="Babolat" {{ $selectedBrand === 'Babolat' ? 'selected' : '' }}>Babolat</option>
+                                <option value="Nox" {{ $selectedBrand === 'Nox' ? 'selected' : '' }}>Nox</option>
+                                <option value="Alpha" {{ $selectedBrand === 'Alpha' ? 'selected' : '' }}>Alpha</option>
+                                <option value="Zephyr" {{ $selectedBrand === 'Zephyr' ? 'selected' : '' }}>Zephyr</option>
+                                <option value="Arronax" {{ $selectedBrand === 'Arronax' ? 'selected' : '' }}>Arronax</option>
                             </select>
-                            <select id="filterCategoryBottom" class="px-2 py-1.5 border border-zinc-300 rounded-lg text-xs md:text-sm focus:outline-none focus:border-blue-500 transition bg-white shrink-0" onchange="applyFilters()">
-                                <option value="">Category</option>
-                                <option value="racket">Racket</option>
-                                <option value="shoes">Shoes</option>
-                                <option value="apparel">Accessories</option>
+                            <select id="filterCategoryBottom" class="hidden">
+                                <option value="" {{ !request()->get('category') ? 'selected' : '' }}></option>
+                                <option value="racket" {{ request()->get('category') === 'racket' ? 'selected' : '' }}></option>
+                                <option value="shoes" {{ request()->get('category') === 'shoes' ? 'selected' : '' }}></option>
+                                <option value="apparel" {{ request()->get('category') === 'apparel' ? 'selected' : '' }}></option>
                             </select>
-                            <select id="filterPriceBottom" class="px-2 py-1.5 border border-zinc-300 rounded-lg text-xs md:text-sm focus:outline-none focus:border-blue-500 transition bg-white shrink-0" onchange="applyFilters()">
-                                <option value="">Price</option>
-                                <option value="low">Low to High</option>
-                                <option value="high">High to Low</option>
+
+                            <select id="filterPriceBottom" class="hidden">
+                                <option value="" {{ !request()->get('price') ? 'selected' : '' }}></option>
+                                <option value="low" {{ request()->get('price') === 'low' ? 'selected' : '' }}></option>
+                                <option value="high" {{ request()->get('price') === 'high' ? 'selected' : '' }}></option>
                             </select>
-                            <select id="filterSortBottom" class="px-2 py-1.5 border border-zinc-300 rounded-lg text-xs md:text-sm focus:outline-none focus:border-blue-500 transition bg-white shrink-0" onchange="applyFilters()">
-                                <option value="">Sort</option>
-                                <option value="popular">Popular</option>
-                                <option value="latest">Latest</option>
+
+                            <select id="filterSortBottom" class="hidden">
+                                <option value="" {{ !request()->get('sort') ? 'selected' : '' }}></option>
+                                <option value="popular" {{ request()->get('sort') === 'popular' ? 'selected' : '' }}></option>
+                                <option value="latest" {{ request()->get('sort') === 'latest' ? 'selected' : '' }}></option>
                             </select>
                         </div>
                     </div>
-                </div>
-            </section>
 
-            <!-- New Arrivals -->
-            <section class="np-fade-section bg-white py-8 lg:py-10 pb-0">
-                <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
-                    
-                    <div class="relative group">
-                        <!-- Left Arrow -->
-                        <button class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded w-10 h-10 flex items-center justify-center transition duration-300" onclick="scrollNewArrivals('left')">
-                            <i class="fas fa-chevron-left text-black text-sm"></i>
-                        </button>
-                        
-                        <!-- Right Arrow -->
-                        <button class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded w-10 h-10 flex items-center justify-center transition duration-300" onclick="scrollNewArrivals('right')">
-                            <i class="fas fa-chevron-right text-black text-sm"></i>
-                        </button>
-                        
-                        <div id="newArrivalsContainer" class="flex gap-6 overflow-x-auto pb-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x snap-mandatory scroll-smooth">
-                        @foreach($newArrivals as $product)
+                    <!-- Grid -->
+                    <div id="productGrid" class="grid grid-cols-3 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                        @forelse($products as $product)
                             @php
                                 $soldCount = \App\Models\OrderItem::where('product_id', $product->id)
                                     ->whereHas('order', function($q) {
                                         $q->whereIn('status', ['completed', 'delivered']);
                                     })->sum('quantity');
                             @endphp
-                            <div class="group snap-start shrink-0 basis-[40%] sm:basis-[48%] md:basis-[32%] lg:basis-[18%] overflow-hidden bg-white transition duration-300 hover:-translate-y-2">
+                            <div class="product-item group block overflow-hidden bg-white transition duration-300 hover:-translate-y-1"
+                               data-name="{{ strtolower($product->name) }}"
+                               data-price="{{ $product->hasActiveDiscount() ? $product->discounted_price : $product->price }}"
+                               data-brand="{{ strtolower($product->brand ?? '') }}"
+                               data-level="{{ $product->level ?? '' }}"
+                               data-category="{{ strtolower($product->category ?? '') }}"
+                               data-stock="{{ $product->stock ?? 0 }}">
                                 <a href="{{ route('produk.show', $product) }}" class="block">
                                     <div class="relative aspect-square overflow-hidden">
                                         <div class="h-full w-full overflow-hidden">
@@ -654,37 +949,19 @@
                                         @if($product->hasActiveDiscount())
                                             <span class="absolute left-0 top-0 bg-rose-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">-{{ $product->formatted_discount_percent }}</span>
                                         @endif
-                                        <!-- Latest Badge for New Arrivals -->
-                                        <span class="absolute left-0 {{ $product->hasActiveDiscount() ? 'top-7' : 'top-0' }} bg-blue-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Latest</span>
-                                        @if($product->package_type === 'bundle')
-                                            <span class="absolute left-0 {{ $product->hasActiveDiscount() ? 'top-14' : 'top-7' }} bg-purple-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Bundle</span>
+                                        @if($product->category === 'arrivals')
+                                            <span class="absolute left-0 {{ $product->hasActiveDiscount() ? 'top-7' : 'top-0' }} bg-blue-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Latest</span>
                                         @endif
-                                        @if($product->isBestSeller())
-                                            <span class="absolute right-0 top-0 bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Best Seller</span>
+                                        @if($product->package_type === 'bundle')
+                                            <span class="absolute left-0 {{ $product->hasActiveDiscount() && $product->category === 'arrivals' ? 'top-14' : ($product->hasActiveDiscount() || $product->category === 'arrivals' ? 'top-7' : 'top-0') }} bg-purple-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Bundle</span>
+                                        @endif
+                                        @if($soldCount >= 5 || $product->package_type === 'bestseller')
+                                            <span class="absolute right-0 top-0 bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Popular</span>
                                         @endif
                                     </div>
-                                    <div class="p-2 md:p-4">
+                                    <div class="p-3">
                                         <h3 class="line-clamp-1 text-sm font-medium text-black">{{ $product->name }}</h3>
                                         <p class="mt-1 text-xs text-zinc-600">{{ $product->category_label }}</p>
-                                        <div class="mt-1 flex items-center gap-1">
-                                            @php
-                                                $rating = $product->average_rating;
-                                                $fullStars = floor($rating);
-                                                $hasHalfStar = ($rating - $fullStars) >= 0.5;
-                                            @endphp
-                                            @for($i = 1; $i <= 5; $i++)
-                                                @if($i <= $fullStars)
-                                                    <i class="fas fa-star text-black text-[10px]"></i>
-                                                @elseif($i == $fullStars + 1 && $hasHalfStar)
-                                                    <i class="fas fa-star-half-alt text-black text-[10px]"></i>
-                                                @else
-                                                    <i class="far fa-star text-zinc-200 text-[10px]"></i>
-                                                @endif
-                                            @endfor
-                                            @if($product->total_reviews > 0)
-                                                <span class="text-[10px] text-zinc-500">({{ $product->total_reviews }})</span>
-                                            @endif
-                                        </div>
                                         @if($product->hasActiveDiscount())
                                             <p class="mt-1 text-base font-semibold text-black">{{ $product->formatted_discounted_price }}</p>
                                             <p class="text-xs text-zinc-400 line-through">{{ $product->formatted_price }}</p>
@@ -693,22 +970,25 @@
                                         @endif
                                     </div>
                                 </a>
-                                <div class="px-2 pb-2 md:px-4 md:pb-4">
+                                <div class="px-2 pb-2">
                                     <div class="flex items-center gap-2">
-                                        <button onclick="addToCart('{{ $product->slug }}', event)" class="border border-zinc-300 bg-transparent px-2 py-1 text-[10px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950">
-                                            Add to cart
+                                        <button onclick="addToCart('{{ $product->slug }}', event)" class="flex-1 border border-zinc-300 bg-transparent px-2 py-1 text-[10px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950 text-center">
+                                             {{$home['product_section']['product_card']['btn_add_to_cart'][$lang] ?? 'Add to cart'}}
                                         </button>
-                                        <button onclick="addToWishlist('{{ $product->slug }}', event)" class="text-zinc-400 transition duration-300 hover:text-rose-500">
-                                            <i class="fas fa-heart text-sm"></i>
+                                        <button onclick="addToWishlist('{{ $product->slug }}', event)" class="p-1 text-zinc-400 transition duration-300 hover:text-rose-500 shrink-0">
+                                            <i class="fas fa-heart text-xs"></i>
                                         </button>
                                     </div>
                                 </div>
                             </div>
-                        @endforeach
-                        </div>
-                    </div>
-                </div>
-            </section>
+                        @empty
+                            <div class="col-span-full rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 p-12 text-center">
+                                <i class="fas fa-box-open text-3xl text-zinc-400"></i>
+                                <p class="mt-3 font-medium text-zinc-500">No products yet</p>
+                            </div>
+                        @endforelse
+                    </div></div> </div> </div> </main>
+
 
             <!-- Category Icons -->
             <section class="np-fade-section bg-white py-4 pt-4">
@@ -826,7 +1106,7 @@
                 <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
                     
                     <div id="productGrid" class="grid grid-cols-3 gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-                        @foreach($shopProducts->take(9) as $product)
+                        @foreach($shopProducts->take(10) as $product)
                             @php
                                 $soldCount = \App\Models\OrderItem::where('product_id', $product->id)
                                     ->whereHas('order', function($q) {
@@ -850,13 +1130,13 @@
                                             <span class="absolute left-0 top-0 bg-rose-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">-{{ $product->formatted_discount_percent }}</span>
                                         @endif
                                         @if($product->category === 'arrivals')
-                                            <span class="absolute left-0 {{ $product->hasActiveDiscount() ? 'top-7' : 'top-0' }} bg-blue-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Latest</span>
+                                            <span class="absolute left-0 {{ $product->hasActiveDiscount() ? 'top-7' : 'top-0' }} bg-blue-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">{{ $home['product_section']['sort_options']['latest'][$lang] ?? 'Latest' }}</span>
                                         @endif
                                         @if($product->package_type === 'bundle')
-                                            <span class="absolute left-0 {{ $product->hasActiveDiscount() && $product->category === 'arrivals' ? 'top-14' : ($product->hasActiveDiscount() || $product->category === 'arrivals' ? 'top-7' : 'top-0') }} bg-purple-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Bundle</span>
+                                            <span class="absolute left-0 {{ $product->hasActiveDiscount() && $product->category === 'arrivals' ? 'top-14' : ($product->hasActiveDiscount() || $product->category === 'arrivals' ? 'top-7' : 'top-0') }} bg-purple-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">{{ $home['product_section']['promo_texts']['racket_desc'][$lang] ?? 'Bundle' }}</span>
                                         @endif
                                         @if($product->isBestSeller())
-                                            <span class="absolute right-0 top-0 bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Popular</span>
+                                            <span class="absolute right-0 top-0 bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">{{ $home['product_section']['sort_options']['popular'][$lang] ?? 'Popular' }}</span>
                                         @endif
                                     </div>
                                     <div class="p-3">
@@ -892,7 +1172,7 @@
                                 <div class="px-2 pb-2 md:px-3 md:pb-3">
                                     <div class="flex items-center gap-2">
                                         <button onclick="addToCart('{{ $product->slug }}', event)" class="border border-zinc-300 bg-transparent px-2 py-1 text-[10px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950 truncate max-w-[80px] md:max-w-none">
-                                            Add to cart
+                                            {{$home['product_section']['product_card']['btn_add_to_cart'][$lang] ?? 'Add to cart'}}
                                         </button>
                                         <button onclick="addToWishlist('{{ $product->slug }}', event)" class="text-zinc-400 transition duration-300 hover:text-rose-500">
                                             <i class="fas fa-heart text-xs md:text-sm"></i>
@@ -907,8 +1187,9 @@
                         <i class="fas fa-search text-4xl text-zinc-300 mb-3"></i>
                         <p class="text-zinc-500">Tidak ada produk yang ditemukan</p>
                     </div>
-                   
                 </div>
+
+                
             </section>
 
             <section id="testimonials" class="np-fade-section bg-white py-18 lg:py-22" data-testimonial-showcase>
@@ -955,7 +1236,7 @@
 
 
 
-            <section class="np-fade-section bg-white py-16 lg:py-20">
+            <!-- <section class="np-fade-section bg-white py-16 lg:py-20">
                 <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
                     <div
                         class="rounded-lg bg-linear-to-r from-zinc-100 to-white px-8 py-14 text-center lg:px-12">
@@ -971,7 +1252,7 @@
                         </a>
                     </div>
                 </div>
-            </section>
+            </section> -->
 
         </main>
 
@@ -988,8 +1269,8 @@
                             <div class="mb-4">
                                 <i class="fas fa-gift text-6xl"></i>
                             </div>
-                            <h2 class="mb-2 text-3xl font-bold">Welcome!</h2>
-                            <p class="text-lg opacity-90">Special Bonus For You</p>
+                            <h2 class="mb-2 text-3xl font-bold">{{ $home['welcome_bonus']['title'][$lang] ?? 'Welcome!' }}</h2>
+                            <p class="text-lg opacity-90">{{ $home['welcome_bonus']['subtitle'][$lang] ?? 'Special Bonus For You' }}</p>
                         </div>
                         
                         <div class="px-8 py-8 text-center">
@@ -1043,47 +1324,261 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
+        .btn-more-products:hover {
+            background-color: #0071e3 !important;
+            border-color: #0071e3 !important;
+            color: #ffffff !important;
+            transform: scale(1.1) !important;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1) !important;
+        }
+        .btn-more-products:hover span,
+        .btn-more-products:hover i {
+            color: #ffffff !important;
+        }
+        .btn-more-products:hover i {
+            transform: translateX(4px);
+        }
+
         #mainNavbar,
         .mobile-bottom-nav {
             display: none !important;
+        }
+
+        /* ============================
+           HOME PAGE — DARK MODE
+        ============================ */
+        /* Dark mode toggle on home page (custom navbar) */
+        [data-theme="dark"] #mainHeader {
+            background: rgba(10,10,10,0.85) !important;
+            border-color: #2d2d2d !important;
+        }
+        /* Main wrapper */
+        [data-theme="dark"] .bg-white.text-black {
+            background-color: #111111 !important;
+            color: #e5e7eb !important;
+        }
+        /* Sections */
+        [data-theme="dark"] section.bg-white,
+        [data-theme="dark"] .np-fade-section.bg-white {
+            background-color: #111111 !important;
+        }
+        [data-theme="dark"] .bg-zinc-50 {
+            background-color: #1a1a1a !important;
+        }
+        [data-theme="dark"] .bg-\[#f5f5f5\] {
+            background-color: #1a1a1a !important;
+        }
+        /* Filters bar */
+        [data-theme="dark"] section.bg-zinc-50 {
+            background-color: #1a1a1a !important;
+        }
+        [data-theme="dark"] select,
+        [data-theme="dark"] #filterBrandBottom,
+        [data-theme="dark"] #filterCategoryBottom,
+        [data-theme="dark"] #filterPriceBottom,
+        [data-theme="dark"] #filterSortBottom {
+            background-color: #1c1c1c !important;
+            color: #e5e7eb !important;
+            border-color: #3d3d3d !important;
+        }
+        /* Product cards */
+        [data-theme="dark"] .product-item,
+        [data-theme="dark"] .product-item.group {
+            background-color: #1c1c1c !important;
+        }
+        [data-theme="dark"] .product-item h3,
+        [data-theme="dark"] .product-item .text-black {
+            color: #f9fafb !important;
+        }
+        [data-theme="dark"] .product-item .text-zinc-600 {
+            color: #9ca3af !important;
+        }
+        [data-theme="dark"] .product-item .text-zinc-400 {
+            color: #6b7280 !important;
+        }
+        [data-theme="dark"] .product-item .border-zinc-300 {
+            border-color: #3d3d3d !important;
+        }
+        [data-theme="dark"] .product-item button.border-zinc-300 {
+            color: #e5e7eb !important;
+        }
+        [data-theme="dark"] .product-item button.border-zinc-300:hover {
+            border-color: #6b7280 !important;
+            color: #ffffff !important;
+        }
+        /* New arrivals slider cards */
+        [data-theme="dark"] #newArrivalsContainer > div {
+            background-color: #1c1c1c !important;
+        }
+        [data-theme="dark"] #newArrivalsContainer h3,
+        [data-theme="dark"] #newArrivalsContainer .text-black {
+            color: #f9fafb !important;
+        }
+        [data-theme="dark"] #newArrivalsContainer .text-zinc-600,
+        [data-theme="dark"] #newArrivalsContainer .text-zinc-500 {
+            color: #9ca3af !important;
+        }
+        /* Category icons section */
+        [data-theme="dark"] section.np-fade-section.bg-white.py-4 h3 {
+            color: #f9fafb !important;
+        }
+        [data-theme="dark"] .far.fa-star {
+            color: #3d3d3d !important;
+        }
+        /* Voucher section */
+        [data-theme="dark"] .bg-gradient-to-r.from-white {
+            background: linear-gradient(to right, #1c1c1c, #252525) !important;
+            border-color: #2d2d2d !important;
+        }
+        [data-theme="dark"] .text-gray-700 {
+            color: #e5e7eb !important;
+        }
+        [data-theme="dark"] .text-gray-500,
+        [data-theme="dark"] .text-gray-400 {
+            color: #9ca3af !important;
+        }
+        [data-theme="dark"] .bg-gray-100 {
+            background-color: #2d2d2d !important;
+        }
+        [data-theme="dark"] .border-gray-200 {
+            border-color: #2d2d2d !important;
+        }
+        /* Marquee bar */
+        [data-theme="dark"] #marqueeBar {
+            background-color: #161616 !important;
+            border-color: #2d2d2d !important;
+        }
+        /* CTA / Level Up section */
+        [data-theme="dark"] .bg-linear-to-r.from-zinc-100,
+        [data-theme="dark"] .rounded-lg.bg-linear-to-r {
+            background: linear-gradient(to right, #1a1a1a, #111111) !important;
+        }
+        [data-theme="dark"] .text-zinc-600 {
+            color: #9ca3af !important;
+        }
+        [data-theme="dark"] .text-zinc-500 {
+            color: #6b7280 !important;
+        }
+        /* Hamburger dropdown dark */
+        [data-theme="dark"] #hamburgerMenuDropdown > div {
+            background-color: #1c1c1c !important;
+            border-color: #2d2d2d !important;
+        }
+        [data-theme="dark"] #hamburgerMenuDropdown a {
+            color: #e5e7eb !important;
+        }
+        [data-theme="dark"] #hamburgerMenuDropdown a:hover {
+            background-color: #2d2d2d !important;
+        }
+        [data-theme="dark"] #hamburgerMenuDropdown .border-b,
+        [data-theme="dark"] #hamburgerMenuDropdown .border-t,
+        [data-theme="dark"] #hamburgerMenuDropdown .border-zinc-100 {
+            border-color: #2d2d2d !important;
+        }
+        /* Search overlay */
+        [data-theme="dark"] #searchPanel > div {
+            background-color: #1c1c1c !important;
+        }
+        [data-theme="dark"] #searchInput {
+            background-color: transparent !important;
+            color: #f9fafb !important;
+        }
+        [data-theme="dark"] #searchResults a:hover {
+            background-color: #2d2d2d !important;
+        }
+        [data-theme="dark"] .text-zinc-900 {
+            color: #f9fafb !important;
+        }
+        [data-theme="dark"] .divide-zinc-100 > * {
+            border-color: #2d2d2d !important;
+        }
+        /* More Products btn in dark */
+        [data-theme="dark"] .btn-more-products {
+            background-color: #1c1c1c !important;
+            border-color: #3d3d3d !important;
+            color: #e5e7eb !important;
         }
 
         html {
             scroll-behavior: smooth;
         }
 
+        #marqueeBar {
+            position: relative;
+            z-index: 10;
+            margin-top: -20px;
+        }
+
+        @media (min-width: 768px) {
+            #marqueeBar {
+                margin-top: -32px;
+            }
+        }
+
         /* Marquee Animation */
         .marquee-container {
             display: flex;
-            overflow: hidden;
+            overflow: visible;
             user-select: none;
             width: 100%;
         }
 
         .marquee-content {
             display: flex;
-            animation: marquee 30s linear infinite;
-            white-space: nowrap;
+            align-items: center;
             will-change: transform;
+            /* Motion driven by JS requestAnimationFrame for 100% stutter-free scrolling */
         }
 
         .marquee-item {
-            display: inline-block;
-            padding: 0 2rem;
-            font-size: 0.75rem;
-            font-weight: 500;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
+            flex: 0 0 auto; /* Auto-width to allow perfect uniform padding gaps */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 1.2vw; /* Fluid mobile padding */
+            box-sizing: border-box;
+            overflow: visible;
         }
 
-        @keyframes marquee {
-            from {
-                transform: translateX(0);
+        .marquee-item img {
+            width: auto;
+            height: 5.6vw; /* Fluid height scaling on mobile */
+            object-fit: contain;
+            display: block;
+        }
+
+        /* Specific responsive height override for Head logo to match visual weight */
+        .marquee-item img[alt="Head"] {
+            height: 8.2vw; /* Mobile height */
+        }
+
+        @media (min-width: 768px) {
+            .marquee-item {
+                padding: 0 2.2vw; /* Fluid tablet padding */
             }
-            to {
-                transform: translateX(-50%);
+            .marquee-item img {
+                height: 4.8vw; /* Fluid height scaling on tablet */
+            }
+            .marquee-item img[alt="Head"] {
+                height: 7.2vw; /* Tablet height */
             }
         }
+
+        @media (min-width: 1024px) {
+            .marquee-item {
+                padding: 0 3.8vw; /* Fluid desktop padding */
+            }
+            .marquee-item img {
+                height: 3.8vw; /* Fluid height scaling on desktop */
+                max-height: 68px;
+            }
+            .marquee-item img[alt="Head"] {
+                height: 5.8vw; /* Desktop height */
+                max-height: 104px;
+            }
+        }
+
+        /* No CSS keyframes needed — RAF engine handles the transform directly */
 
         .np-fade-section {
             opacity: 0;
@@ -1143,6 +1638,105 @@
 
 @push('scripts')
     <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const desktopBtn = document.getElementById('darkModeToggleHome');
+        const mobileLightBtn = document.getElementById('mobileLightModeBtn');
+        const mobileDarkBtn = document.getElementById('mobileDarkModeBtn');
+        
+        // Ambil elemen icon di dalam button untuk ganti warna
+        const iconLight = mobileLightBtn ? mobileLightBtn.querySelector('i') : null;
+        const iconDark = mobileDarkBtn ? mobileDarkBtn.querySelector('i') : null;
+
+        // Fungsi pembantu untuk setel warna icon secara instan
+        function setMobileIconColor(isDarkActive) {
+            if (!iconLight || !iconDark) return;
+            
+            if (isDarkActive) {
+                // Mode Gelap Aktif: Bulan terang (zinc-400), Matahari redup (zinc-300)
+                iconLight.classList.remove('text-zinc-400');
+                iconLight.classList.add('text-zinc-300');
+                
+                iconDark.classList.remove('text-zinc-300');
+                iconDark.classList.add('text-zinc-400');
+            } else {
+                // Mode Terang Aktif: Matahari terang (zinc-400), Bulan redup (zinc-300)
+                iconLight.classList.remove('text-zinc-300');
+                iconLight.classList.add('text-zinc-400');
+                
+                iconDark.classList.remove('text-zinc-400');
+                iconDark.classList.add('text-zinc-300');
+            }
+        }
+
+        // Cek status awal saat halaman selesai dimuat (kasih delay dikit biar script temanmu kelar execute)
+        setTimeout(() => {
+            const isDarkNow = document.documentElement.classList.contains('dark');
+            setMobileIconColor(isDarkNow);
+        }, 50);
+
+        // Klik Matahari di mobile -> Langsung paksa trigger klik desktop & setel warna matahari aktif
+        if (mobileLightBtn && desktopBtn) {
+            mobileLightBtn.addEventListener('click', () => {
+                desktopBtn.click();
+                setMobileIconColor(false); // Matahari aktif
+            });
+        }
+        
+        // Klik Bulan di mobile -> Langsung paksa trigger klik desktop & setel warna bulan aktif
+        if (mobileDarkBtn && desktopBtn) {
+            mobileDarkBtn.addEventListener('click', () => {
+                desktopBtn.click();
+                setMobileIconColor(true); // Bulan aktif
+            });
+        }
+    });
+</script>
+    <script>
+        // Dark Mode Toggle Home Page Custom Navbar
+        (function() {
+            const html = document.documentElement;
+            const btnHome = document.getElementById('darkModeToggleHome');
+            const iconHome = document.getElementById('darkModeIconHome');
+
+            function syncHomeIcon(theme) {
+                if (iconHome) {
+                    iconHome.className = theme === 'dark' ? 'fas fa-sun text-sm' : 'fas fa-moon text-sm';
+                }
+            }
+
+            // Sync on load
+            const currentTheme = html.getAttribute('data-theme') || localStorage.getItem('np_theme') || 'light';
+            syncHomeIcon(currentTheme);
+
+            if (btnHome) {
+                btnHome.addEventListener('click', function() {
+                    const current = html.getAttribute('data-theme');
+                    const next = current === 'dark' ? 'light' : 'dark';
+                    html.setAttribute('data-theme', next);
+                    localStorage.setItem('np_theme', next);
+                    
+                    syncHomeIcon(next);
+                    
+                    // Sync global toggle if present
+                    const iconGlobal = document.getElementById('darkModeIcon');
+                    if (iconGlobal) {
+                        iconGlobal.className = next === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+                    }
+                });
+            }
+
+            // Sync if global toggle is clicked
+            const btnGlobal = document.getElementById('darkModeToggle');
+            if (btnGlobal) {
+                btnGlobal.addEventListener('click', function() {
+                    setTimeout(() => {
+                        const newTheme = html.getAttribute('data-theme');
+                        syncHomeIcon(newTheme);
+                    }, 50);
+                });
+            }
+        })();
+
         // Animate badge function
         function animateBadge(badgeElement) {
             if (!badgeElement) return;
@@ -1378,7 +1972,7 @@
                     if (data.success && data.html) {
                         container.innerHTML = data.html;
                     } else {
-                        container.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500">No products found</div>';
+                        container.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500">{{$home['search']['overlay']['empty_title'][$lang] ?? 'No products found'}}</div>';
                     }
                 })
                 .catch(error => {
@@ -2052,5 +2646,72 @@
                 }
             });
         })();
+
+        /* ============================================================
+         * Buttery-Smooth Marquee Engine (requestAnimationFrame)
+         * RAF syncs with the screen's actual refresh rate (60/120 fps)
+         * guaranteeing zero stutter, zero pause, and zero glitch at loop.
+         * ============================================================ */
+        (function initMarquee() {
+            const content = document.querySelector('.marquee-content');
+            if (!content) return;
+
+            const SPEED = 0.10; // vw per frame — slow & elegant, never pauses
+            let offset = 0;
+            let setWidth = 0; // width of one set of 6 logos in px
+            let rafId = null;
+
+            function getSetWidth() {
+                // Total children = 12 (2 sets of 6). One set = first half.
+                const items = content.children;
+                const half = Math.floor(items.length / 2);
+                let w = 0;
+                for (let i = 0; i < half; i++) {
+                    w += items[i].getBoundingClientRect().width;
+                }
+                return w;
+            }
+
+            function tick() {
+                const pxPerFrame = (SPEED / 100) * window.innerWidth;
+                offset += pxPerFrame;
+
+                // Re-measure on first frame or after resize
+                if (!setWidth) setWidth = getSetWidth();
+
+                // Seamless snap: when offset equals one full set, reset to 0
+                if (offset >= setWidth) {
+                    offset -= setWidth;
+                }
+
+                content.style.transform = `translateX(${-offset}px)`;
+                rafId = requestAnimationFrame(tick);
+            }
+
+            // Re-init on resize so setWidth stays accurate
+            let resizeTimer;
+            window.addEventListener('resize', function() {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function() {
+                    setWidth = getSetWidth();
+                }, 150);
+            });
+
+            // Pause on tab hidden, resume on visible (battery-friendly)
+            document.addEventListener('visibilitychange', function() {
+                if (document.hidden) {
+                    cancelAnimationFrame(rafId);
+                } else {
+                    rafId = requestAnimationFrame(tick);
+                }
+            });
+
+            // Start the engine after images have loaded
+            window.addEventListener('load', function() {
+                setWidth = getSetWidth();
+                rafId = requestAnimationFrame(tick);
+            });
+        })();
     </script>
+    
 @endpush

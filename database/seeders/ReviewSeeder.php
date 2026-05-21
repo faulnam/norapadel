@@ -2,194 +2,494 @@
 
 namespace Database\Seeders;
 
-use App\Models\Product;
-use App\Models\Review;
-use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class ReviewSeeder extends Seeder
 {
     public function run(): void
     {
-        $users = User::whereIn('role', ['customer', 'admin'])->pluck('id');
-        if ($users->isEmpty()) {
-            $users = collect([1, 2]);
-        }
+        // Key langsung pake potongan nama asli produk
+        $bankReview = [
+            'max protector' => [
+                [
+                    'name' => 'athena_shigen',
+                    'rating' => 5,
+                    'comment' => 'Raket jadi aman, bahan gel tebal terproteksi maksimal sampai ke samping.',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ],
+                [
+                    'name' => 'mudhanovia84',
+                    'rating' => 5,
+                    'comment' => "Pengiriman cepat walaupun saat order statusnya pre order\nMantab sih dapat harga murah",
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ]
+            ],
+            'wilson overgrip perforated' => [
+                [
+                    'name' => 'trizkiawawaw',
+                    'rating' => 5,
+                    'comment' => 'Enak dipakai untuk dobel dg grip asli, tidak terlalu tebal, nyaman digenggam',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ],
+                [
+                    'name' => 'slava8899',
+                    'rating' => 5,
+                    'comment' => 'Kualitas bagus 👍. Terima kasih',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ]
+            ],
+            'overgrip wilson racket padel' => [
+                [
+                    'name' => 'arvinsetiawan79',
+                    'rating' => 5,
+                    'comment' => 'Sesuai dengan kualitas, recommended seller',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ]
+            ],
+            'nox nerbo speed balls' => [
+                [
+                    'name' => 'yudhadara18',
+                    'rating' => 5,
+                    'comment' => 'Mantap pengiriman cepet , warbyasak',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ]
+            ],
+            'nox equation hard' => [
+                [
+                    'name' => 'widi_kendhi',
+                    'rating' => 5,
+                    'comment' => 'Sellernya baik banget....T O P pokoknya',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ]
+            ],
+            'nox equation soft' => [
+                [
+                    'name' => 'derichteha',
+                    'rating' => 5,
+                    'comment' => 'pengiriman sangat cepat, seller nya baik banget,, next klo order pasti disini lagiii',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ]
+            ],
+            'nox calzado ml10 hexa blue/silver' => [
+                [
+                    'name' => 'alamnh',
+                    'rating' => 5,
+                    'comment' => 'Cuakepop pollll',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ]
+            ],
+            'nox x - one casual' => [
+                [
+                    'name' => 'carlosardo',
+                    'rating' => 5,
+                    'comment' => 'Raket padle nya bagus',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ]
+            ],
+            'babolat technical viper 2024' => [
+                [
+                    'name' => 'filgi',
+                    'rating' => 5,
+                    'comment' => 'Barang sampai dengan aman, best pelayanan, makasih jugaaa udah di kasih bonus handgrip+protector🙏🏻',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ],
+                [
+                    'name' => 'gandhigo',
+                    'rating' => 5,
+                    'comment' => 'Cepat delivery dan sesuai permintaan. Free overgrip dan protector rackethead',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ]
+            ],
+            'babolat technical viper 2025' => [
+                [
+                    'name' => 'srikandi_32',
+                    'rating' => 5,
+                    'comment' => 'Harga termurah dibanding online store lain maupun toko offline',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ]
+            ],
+            'babolat counter viper 2025' => [
+                [
+                    'name' => 'ryo_siregar',
+                    'rating' => 5,
+                    'comment' => 'carbon cukup keras, untuk smash mantap. finishing cat raket nya glossy tapi ada permukaan kasar sampai ke bagian samping raket nya',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ]
+            ],
+            'babolat air viper 2025' => [
+                [
+                    'name' => 'pleat_pleats',
+                    'rating' => 5,
+                    'comment' => 'Bagus dan keren\nPengiriman juga cepat same day delivery\nRekomen untuk beli dsini',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ],
+                [
+                    'name' => 'karimnazri',
+                    'rating' => 5,
+                    'comment' => 'beli raket yg kedua kalinya di toko ini, dan dapat bonus banyak, auto langsung dipake maen wkwk',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ],
+                [
+                    'name' => 'raksepatu.idn',
+                    'rating' => 5,
+                    'comment' => 'Cocok untuk pemain net. Placing ball accurate.\nKalibrasi new racket cepet karena easy to use but power dapet banget',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ]
+            ],
+            'bullpadel indiga women 2026' => [
+                [
+                    'name' => 'carlosardo',
+                    'rating' => 5,
+                    'comment' => 'Raketnya bagus dan ringan',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ]
+            ],
+            'bullpadel vertex 05 woman 2026' => [
+                [
+                    'name' => 'meryfu89',
+                    'rating' => 5,
+                    'comment' => 'bagus untuk yg butuh power dan ringan. original',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ]
+            ],
+            'bullpadel vertex 04 2025' => [
+                [
+                    'name' => 'rangganisa2431',
+                    'rating' => 5,
+                    'comment' => 'Dari build quality, pas diterima ditangan feelnya berasa original, keren!\nH-1 lebaran dikirim juga dan sampe di lebaran kedua',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ]
+            ],
+            'bullpadel vertex 04 hybrid 2025 raket padel' => [
+                [
+                    'name' => 'luzasby',
+                    'rating' => 5,
+                    'comment' => 'sellernya ramah powl, suabar meskipun nanyak ini itu dan fast respon',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ],
+                [
+                    'name' => 'serasishop',
+                    'rating' => 5,
+                    'comment' => 'Pertama kali beli di Nora Padel. Sebelum beli sdh research cr bedakan raket asli dan palsu. Syukurnya dr nora padel ini ORIGINAL.\nEh dpt banyak freebies lagi...',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ]
+            ],
+            'bullpadel vertex 04 racket 2024' => [
+                [
+                    'name' => 'alfhyshop',
+                    'rating' => 5,
+                    'comment' => 'Mantap bagus banyak bonus nya juga .. seller nya juga enak bisa konsultasi buat pilih mana raket semua pertanyaan saya di jawab degan jelas.🙏',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ]
+            ],
+            'bullpadel bag paleteros pro line bpp26022' => [
+                [
+                    'name' => 'jason_nathan',
+                    'rating' => 5,
+                    'comment' => 'Packing aman, pengiriman cepat ntar di upload lagi setelah grip nya di pasang, thank you..',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ]
+            ],
+            'bullpadel xplo 25' => [
+                [
+                    'name' => 'hanry.tanto',
+                    'rating' => 5,
+                    'comment' => 'Keren sih…\nGak nyesel belinya…\nBagus, packaging aman, dikasi bonus grip nya juga…\nTerima kasih!!!',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ],
+                [
+                    'name' => 'onartroy2000',
+                    'rating' => 5,
+                    'comment' => 'Barang ori 100%, pelayanan cepat.. Makasih',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ],
+                [
+                    'name' => 'vanalbert88',
+                    'rating' => 5,
+                    'comment' => 'Recomend seller.. 👍🏽👍🏽👍🏽👍🏽\nBarang nya asli Original..\nTrusted seller ...',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ]
+            ],
+            'edge guard strip white leather' => [
+                [
+                    'name' => 'tokomimi18',
+                    'rating' => 5,
+                    'comment' => 'Tq seller sdh kedua kalinya order disini murah trs cepet juga, kirim instan langsung sampe. Bisa langsung di pake buat main padel sat set bgt… semoga semakin di perbanyak model2 raketnya',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ],
+                [
+                    'name' => 'hanry.tanto',
+                    'rating' => 5,
+                    'comment' => 'Free protector buat raketnya…\nSimpel biasa sih transparan…\nYg penting bisa melindungi..\nMakasi',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ],
+                [
+                    'name' => 'diahkaruniasari',
+                    'rating' => 5,
+                    'comment' => 'Yeay maaci bonusannya wrna pink pulan mntep deh luv skali ❤️🫶🩷',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ]
+            ],
+            'head zephyr pro blue black' => [
+                [
+                    'name' => 'putraadhik',
+                    'rating' => 5,
+                    'comment' => 'Mudah2an awet',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ]
+            ],
+            'alpha play blue black' => [
+                [
+                    'name' => 'carlosardo',
+                    'rating' => 5,
+                    'comment' => 'Raketnya bagus dan ringan',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ]
+            ],
+            'alpha game blue yellow' => [
+                [
+                    'name' => 'rendypastya',
+                    'rating' => 5,
+                    'comment' => 'Seller fast respon dan bisa memeberi rekomendasi, dan banyak hadiahhnyaaa, toko rekomended banget, good joob good seller 🥰',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ]
+            ],
+            'alpha padel ball' => [
+                [
+                    'name' => 'taufiqardiputra',
+                    'rating' => 5,
+                    'comment' => 'Sesuai',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ]
+            ],
+            'alpha padel vibe' => [
+                [
+                    'name' => 'taufiqardiputra',
+                    'rating' => 5,
+                    'comment' => 'Sesuai',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ]
+            ],
+            'hesacore arronax' => [
+                [
+                    'name' => 'ronnyrenaldy291',
+                    'rating' => 5,
+                    'comment' => 'Pas banget',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ]
+            ],
+            'pro spin strip' => [
+                [
+                    'name' => 'anissugeng',
+                    'rating' => 5,
+                    'comment' => 'Kemasannya aman banget. Barang perfect condition',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ],
+                [
+                    'name' => 'ayu_andini2104',
+                    'rating' => 5,
+                    'comment' => 'Produknya sampai dengan aman. Order kemarin pagi, skrg sudah datang. Kemasan rapih',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ],
+                [
+                    'name' => 'mariam_fatimah',
+                    'rating' => 5,
+                    'comment' => 'Bahan berkualitas, produk original, pengiriman cepat. Makasi min🥰',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ]
 
-        $products = Product::pluck('id');
-        if ($products->isEmpty()) {
-            $this->command->warn('Tidak ada produk untuk di-review.');
-            return;
-        }
-
-        // Hapus review lama agar tidak ada data nama user akun tersisa
-        Review::truncate();
-        $this->command->info('Review lama dihapus.');
-
-        // Pool data review real yang akan dirotasi untuk semua produk
-        $reviewPool = [
-            [
-                'name' => 'Andi Wijaya',
-                'rating' => 5,
-                'comment' => 'Produknya sangat bagus dan sesuai deskripsi. Kualitas premium, recommended banget!',
-                'quality_rating' => 92,
-                'sizing_rating' => null,
-                'usual_size' => null,
-                'is_verified' => true,
             ],
-            [
-                'name' => 'Rina Susanti',
-                'rating' => 4,
-                'comment' => 'Build quality oke, finishing rapi. Cukup puas dengan pembelian ini, worth it.',
-                'quality_rating' => 85,
-                'sizing_rating' => null,
-                'usual_size' => null,
-                'is_verified' => true,
+            'alpha kinesiology' => [
+                [
+                    'name' => 'iyz_236',
+                    'rating' => 5,
+                    'comment' => 'Mantappp raketny .. ORI 1000prsen',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ]
             ],
-            [
-                'name' => 'Budi Santoso',
-                'rating' => 5,
-                'comment' => 'Pelayanan cepat dan aman. Barang sampai dalam kondisi sempurna. Langsung dipakai dan performa maksimal.',
-                'quality_rating' => 95,
-                'sizing_rating' => null,
-                'usual_size' => null,
-                'is_verified' => true,
-            ],
-            [
-                'name' => 'Dian Kusuma',
-                'rating' => 5,
-                'comment' => 'Suka banget sama produk ini. Nyaman dipakai dan hasilnya sesuai ekspektasi. Worth the price!',
-                'quality_rating' => 90,
-                'sizing_rating' => null,
-                'usual_size' => null,
-                'is_verified' => false,
-            ],
-            [
-                'name' => 'Eko Prasetyo',
-                'rating' => 4,
-                'comment' => 'Desainnya elegan dan enak dipakai. Pengiriman cepat ke Jakarta. Overall puas.',
-                'quality_rating' => 80,
-                'sizing_rating' => null,
-                'usual_size' => null,
-                'is_verified' => true,
-            ],
-            [
-                'name' => 'Fani Mulyani',
-                'rating' => 5,
-                'comment' => 'Ini salah satu produk terbaik yang pernah saya beli. Teman-teman pada nanya beli di mana.',
-                'quality_rating' => 94,
-                'sizing_rating' => null,
-                'usual_size' => null,
-                'is_verified' => false,
-            ],
-            [
-                'name' => 'Gilang Ramadhan',
-                'rating' => 4,
-                'comment' => 'Kualitas solid, bahan terasa premium. Stabil saat dipakai, meski perlu sedikit penyesuaian.',
-                'quality_rating' => 88,
-                'sizing_rating' => null,
-                'usual_size' => null,
-                'is_verified' => true,
-            ],
-            [
-                'name' => 'Hani Putri',
-                'rating' => 5,
-                'comment' => 'Sangat nyaman dipakai, tidak licin. Sizing pas sesuai dengan ukuran biasa saya.',
-                'quality_rating' => 90,
-                'sizing_rating' => 70,
-                'usual_size' => '40',
-                'is_verified' => true,
-            ],
-            [
-                'name' => 'Indra Lesmana',
-                'rating' => 4,
-                'comment' => 'Material bagus, muat banyak perlengkapan. Packaging rapi dan aman sampai rumah.',
-                'quality_rating' => 82,
-                'sizing_rating' => null,
-                'usual_size' => null,
-                'is_verified' => true,
-            ],
-            [
-                'name' => 'Joko Tanto',
-                'rating' => 5,
-                'comment' => 'Enak dipakai, tidak licin meski berkeringat. Durabilitas bagus, sudah 2 bulan masih oke.',
-                'quality_rating' => 86,
-                'sizing_rating' => null,
-                'usual_size' => null,
-                'is_verified' => false,
-            ],
-            [
-                'name' => 'Kartika Sari',
-                'rating' => 5,
-                'comment' => 'Langganan beli di sini. Produk original, packing aman, dan admin responsif. Top!',
-                'quality_rating' => 96,
-                'sizing_rating' => null,
-                'usual_size' => null,
-                'is_verified' => true,
-            ],
-            [
-                'name' => 'Lukman Hakim',
-                'rating' => 4,
-                'comment' => 'Ringan dan enak dipakai. Anak saya jadi lebih semangat latihan. Harga terjangkau.',
-                'quality_rating' => 78,
-                'sizing_rating' => null,
-                'usual_size' => null,
-                'is_verified' => true,
-            ],
-            [
-                'name' => 'Maya Anggraini',
-                'rating' => 5,
-                'comment' => 'Warna dan desainnya keren. Performa konsisten, jadi andalan saat main.',
-                'quality_rating' => 91,
-                'sizing_rating' => null,
-                'usual_size' => null,
-                'is_verified' => false,
-            ],
-            [
-                'name' => 'Nanda Perkasa',
-                'rating' => 4,
-                'comment' => 'Mudah dipasang dan melindungi dengan baik. Tidak mengganggu keseimbangan saat pakai.',
-                'quality_rating' => 75,
-                'sizing_rating' => null,
-                'usual_size' => null,
-                'is_verified' => true,
-            ],
-            [
-                'name' => 'Olivia Hartanto',
-                'rating' => 5,
-                'comment' => 'Comfort level tinggi dan support oke banget. Pertama kali coba dan langsung puas.',
-                'quality_rating' => 89,
-                'sizing_rating' => 55,
-                'usual_size' => '38',
-                'is_verified' => true,
+            'tambahan packing box' => [
+                [
+                    'name' => 'derichteha',
+                    'rating' => 5,
+                    'comment' => 'pengiriman sangat cepat, seller nya baik banget,, next klo order pasti disini lagiii',
+                    'quality_rating' => 95,
+                    'sizing_rating' => null,
+                    'usual_size' => null,
+                    'is_verified' => true
+                ]
             ],
         ];
+        
 
-        $productIds = $products->values()->all();
-        $userIds = $users->values()->all();
-        $totalCreated = 0;
+        // Ambil semua produk dari DB
+        $products = DB::table('products')->get();
 
-        // Assign minimal 10 reviews ke SETIAP produk
-        foreach ($productIds as $productId) {
-            for ($i = 0; $i < 10; $i++) {
-                $template = $reviewPool[$i % count($reviewPool)];
-                Review::create([
-                    'product_id' => $productId,
-                    'user_id' => $userIds[$totalCreated % count($userIds)],
-                    'reviewer_name' => $template['name'],
-                    'order_id' => null,
-                    'rating' => $template['rating'],
-                    'comment' => $template['comment'],
-                    'quality_rating' => $template['quality_rating'],
-                    'sizing_rating' => $template['sizing_rating'],
-                    'usual_size' => $template['usual_size'],
-                    'is_verified' => $template['is_verified'],
-                    'is_approved' => true,
+        foreach ($products as $product) {
+            $productNameLower = strtolower($product->name);
+            $matchedKey = null;
+
+            // Loop untuk cek apakah nama produk di DB mengandung salah satu key dari bankReview
+            foreach ($bankReview as $key => $reviews) {
+                if (str_contains($productNameLower, $key)) {
+                    $matchedKey = $key;
+                    break; // Keluar dari loop internal jika sudah ketemu yang cocok
+                }
+            }
+
+            // Kalau tidak ada yang cocok di bankReview, skip ke produk selanjutnya
+
+            
+            if ($matchedKey === null) {
+                            continue;
+                        }
+                        
+
+            // Ambil review berdasarkan key yang cocok
+            $reviews = $bankReview[$matchedKey];
+
+            foreach ($reviews as $r) {
+                $cleanedName = trim($r['name']); 
+
+                DB::table('reviews')->insert([
+                    'product_id'      => $product->id, 
+                    'user_id'         => 2,
+                    'reviewer_name'   => $cleanedName,       // Nama asli reviewer tetap muncul sesuai datamu (widi_kendhi, dll)
+                    'order_id'        => null, 
+                    'rating'          => $r['rating'],
+                    'comment'         => $r['comment'],
+                    
+                    // Antisipasi eror tanda tanya (?) di rating fisik
+                    'quality_rating'  => is_numeric($r['quality_rating'] ?? null) ? $r['quality_rating'] : null,
+                    'sizing_rating'   => is_numeric($r['sizing_rating'] ?? null) ? $r['sizing_rating'] : null,
+                    'usual_size'      => ($r['usual_size'] !== '?') ? ($r['usual_size'] ?? null) : null,
+                    
+                    'is_verified'     => $r['is_verified'] ?? 1, 
+                    'is_approved'     => 1, 
+                    'created_at'      => now(),
+                    'updated_at'      => now(),
                 ]);
-                $totalCreated++;
             }
         }
-
-        $this->command->info('Berhasil seed ' . $totalCreated . ' reviews untuk ' . count($productIds) . ' produk.');
     }
 }
