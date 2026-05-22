@@ -19,17 +19,10 @@ class ReviewController extends Controller
             'usual_size' => 'nullable|string|max:10',
         ]);
 
-        // Check if user already reviewed this product
+        // Check if user already reviewed this product - update instead of blocking
         $existingReview = Review::where('user_id', Auth::id())
             ->where('product_id', $product->id)
             ->first();
-
-        if ($existingReview) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Anda sudah memberikan review untuk produk ini.'
-            ], 400);
-        }
 
         // Check if user has purchased this product (optional, for verified reviews)
         $isVerified = false;
@@ -43,22 +36,37 @@ class ReviewController extends Controller
             $isVerified = $hasPurchased;
         }
 
-        // Auto-approve all reviews
-        $review = Review::create([
-            'product_id' => $product->id,
-            'user_id' => Auth::id(),
-            'rating' => $request->rating,
-            'comment' => $request->comment,
-            'quality_rating' => $request->quality_rating,
-            'sizing_rating' => $request->sizing_rating,
-            'usual_size' => $request->usual_size,
-            'is_verified' => $isVerified,
-            'is_approved' => true,
-        ]);
+        // Update existing review or create new one
+        if ($existingReview) {
+            $existingReview->update([
+                'rating' => $request->rating,
+                'comment' => $request->comment,
+                'quality_rating' => $request->quality_rating,
+                'sizing_rating' => $request->sizing_rating,
+                'usual_size' => $request->usual_size,
+                'is_verified' => $isVerified,
+                'is_approved' => true,
+            ]);
+            $review = $existingReview;
+        } else {
+            // Auto-approve all reviews
+            $review = Review::create([
+                'product_id' => $product->id,
+                'user_id' => Auth::id(),
+                'reviewer_name' => Auth::user()->name,
+                'rating' => $request->rating,
+                'comment' => $request->comment,
+                'quality_rating' => $request->quality_rating,
+                'sizing_rating' => $request->sizing_rating,
+                'usual_size' => $request->usual_size,
+                'is_verified' => $isVerified,
+                'is_approved' => true,
+            ]);
+        }
 
         return response()->json([
             'success' => true,
-            'message' => 'Review berhasil ditambahkan.',
+            'message' => $existingReview ? 'Review berhasil diperbarui.' : 'Review berhasil ditambahkan.',
             'review' => [
                 'id' => $review->id,
                 'user_name' => Auth::user()->name,

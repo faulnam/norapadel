@@ -832,10 +832,10 @@ document.getElementById('reviewForm').addEventListener('submit', function(e) {
     e.preventDefault();
     
     const formData = new FormData(this);
-    const rating = formData.get('rating');
+    const rating = parseInt(formData.get('rating'));
     const comment = formData.get('comment');
 
-    if (!rating) {
+    if (!rating || rating < 1 || rating > 5) {
         alert('Silakan pilih rating terlebih dahulu.');
         return;
     }
@@ -843,7 +843,22 @@ document.getElementById('reviewForm').addEventListener('submit', function(e) {
     const submitBtn = this.querySelector('button[type="submit"]');
     submitBtn.disabled = true;
     submitBtn.textContent = 'Submitting...';
-    
+
+    const payload = {
+        rating: rating,
+        comment: comment
+    };
+
+    // Only include optional fields if they have values
+    const qualityRating = formData.get('quality_rating');
+    if (qualityRating) payload.quality_rating = parseInt(qualityRating);
+
+    const sizingRating = formData.get('sizing_rating');
+    if (sizingRating) payload.sizing_rating = parseInt(sizingRating);
+
+    const usualSize = formData.get('usual_size');
+    if (usualSize) payload.usual_size = usualSize;
+
     fetch('{{ route("customer.reviews.store", $product) }}', {
         method: 'POST',
         headers: {
@@ -851,18 +866,18 @@ document.getElementById('reviewForm').addEventListener('submit', function(e) {
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
             'Accept': 'application/json'
         },
-        body: JSON.stringify({
-            rating: rating,
-            comment: comment,
-            quality_rating: formData.get('quality_rating'),
-            sizing_rating: formData.get('sizing_rating'),
-            usual_size: formData.get('usual_size')
-        })
+        body: JSON.stringify(payload)
     })
     .then(response => {
         if (!response.ok) {
             return response.text().then(text => {
-                try { throw JSON.parse(text); } catch(e) { throw { message: 'Server error: ' + response.status }; }
+                try {
+                    const error = JSON.parse(text);
+                    throw error;
+                } catch(e) {
+                    console.error('Response text:', text);
+                    throw { message: text || 'Server error: ' + response.status };
+                }
             });
         }
         return response.json();
