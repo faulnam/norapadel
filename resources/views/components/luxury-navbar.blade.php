@@ -202,14 +202,6 @@
             </nav>
 
             <div class="flex items-center gap-2 md:gap-3 text-black/80" id="navIcons">
-                <!-- Inline Search (all screens) -->
-                <div class="flex items-center relative" id="navSearchWrapper">
-                    <i class="fas fa-search absolute left-2 md:left-3 text-xs md:text-sm text-zinc-400 pointer-events-none transition-colors duration-300" id="navSearchIcon"></i>
-                    <input type="text" id="navSearchInput" placeholder="Cari..."
-                           class="bg-zinc-50 border border-zinc-200 rounded-full pl-7 md:pl-9 pr-2 md:pr-4 py-1 md:py-1.5 text-xs md:text-sm text-black placeholder-zinc-400 focus:outline-none focus:bg-white focus:border-zinc-300 w-24 md:w-40 lg:w-48 transition-all duration-300"
-                           autocomplete="off">
-                </div>
-
                 <!-- Login (desktop only) -->
                 @guest
                     <a href="{{ route('login') }}" id="loginBtn" class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 bg-zinc-50 border border-zinc-200 rounded-full text-xs font-semibold text-black transition duration-300 hover:bg-zinc-100 hover:border-zinc-300">
