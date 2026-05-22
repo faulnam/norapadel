@@ -127,6 +127,71 @@ class PageController extends Controller
     }
 
     /**
+     * AJAX filter products for home_luxury page
+     */
+    public function filterProducts(Request $request)
+    {
+        $query = Product::active()
+            ->inStock()
+            ->where('is_featured', false)
+            ->where('category', Product::CATEGORY_ORIGINAL);
+
+        // Category filter
+        if ($request->filled('category')) {
+            $category = $request->category;
+            if ($category === 'racket') {
+                $query->where('type', 'racket');
+            } elseif ($category === 'shoes') {
+                $query->where('type', 'shoes');
+            } elseif ($category === 'apparel') {
+                $query->whereIn('type', ['bag', 'grip', 'apparel']);
+            }
+        }
+
+        // Brand filter
+        if ($request->filled('brand')) {
+            $query->where('brand', $request->brand);
+        }
+
+        // Price filter
+        if ($request->filled('price')) {
+            if ($request->price === 'low') {
+                $query->orderBy('price', 'asc');
+            } elseif ($request->price === 'high') {
+                $query->orderBy('price', 'desc');
+            }
+        }
+
+        // Sort filter
+        if ($request->filled('sort')) {
+            if ($request->sort === 'popular') {
+                $query->withCount('orderItems')->orderByDesc('order_items_count');
+            } elseif ($request->sort === 'latest') {
+                $query->latest();
+            }
+        } else {
+            $query->latest();
+        }
+
+        $products = $query->paginate(22)->withQueryString();
+
+        // Get first 10 for New Arrivals section, rest for Shop section
+        $newArrivals = $products->take(10);
+        $shopProductsBottom = $products->slice(10, 12);
+
+        return response()->json([
+            'newArrivals' => $newArrivals,
+            'shopProducts' => $shopProductsBottom,
+            'pagination' => [
+                'current_page' => $products->currentPage(),
+                'last_page' => $products->lastPage(),
+                'total' => $products->total(),
+                'per_page' => $products->perPage(),
+            ]
+        ]);
+    }
+
+    /**
      * Show racket landing and product list page
      */
     public function racket(Request $request)

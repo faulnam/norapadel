@@ -219,7 +219,7 @@
                 @endauth
 
                 <!-- Cart (desktop only) -->
-                <a href="{{ route('customer.cart.index') }}" class="hidden md:relative transition duration-300 hover:text-black">
+                <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-black">
                     <i class="fas fa-shopping-bag text-sm"></i>
                     @auth
                         @if (auth()->user()->role === 'customer')
@@ -239,6 +239,29 @@
                         @endif
                     @endguest
                 </a>
+
+                <!-- Wishlist (desktop only) -->
+                <a href="{{ route('customer.wishlist.index') }}" class="relative transition duration-300 hover:text-black">
+                    <i class="fas fa-heart text-sm"></i>
+                    @php
+                        if (auth()->check() && auth()->user()->role === 'customer') {
+                            $wishlistCount = auth()->user()->wishlistItems()->count();
+                        } else {
+                            $guestWishlist = session()->get('guest_wishlist', []);
+                            $wishlistCount = count($guestWishlist);
+                        }
+                    @endphp
+                    @if($wishlistCount > 0)
+                        <span class="wishlist-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
+                    @endif
+                </a>
+
+                <!-- Language Switcher (desktop only) -->
+                <div class="hidden md:flex items-center gap-1">
+                    <a href="{{ request()->fullUrlWithQuery(['locale' => 'en']) }}" class="px-2 py-1 text-xs font-semibold transition duration-300 {{ session('locale', 'en') === 'en' ? 'text-black' : 'text-zinc-400 hover:text-black' }}">EN</a>
+                    <span class="text-zinc-300">|</span>
+                    <a href="{{ request()->fullUrlWithQuery(['locale' => 'id']) }}" class="px-2 py-1 text-xs font-semibold transition duration-300 {{ session('locale', 'en') === 'id' ? 'text-black' : 'text-zinc-400 hover:text-black' }}">ID</a>
+                </div>
 
                 <!-- Wishlist (mobile only) -->
                 <a href="{{ route('customer.wishlist.index') }}" class="relative md:hidden transition duration-300 hover:text-black">
@@ -286,7 +309,7 @@
                 @endauth
 
                 <!-- Hamburger Menu with combined elements -->
-                <div class="relative" id="hamburgerMenuWrapper">
+                <div class="relative md:hidden" id="hamburgerMenuWrapper">
                     <button type="button" id="hamburgerMenuBtn" class="inline-flex h-9 w-9 items-center justify-center rounded border border-black/15 bg-transparent text-black backdrop-blur transition duration-300 hover:border-black/30 relative">
                         <i class="fas fa-bars text-sm"></i>
                     </button>
@@ -316,8 +339,8 @@
                                 </a>
                             </div>
 
-                            <!-- Language Switcher -->
-                            <div class="border-b border-zinc-100">
+                            <!-- Language Switcher (mobile only) -->
+                            <div class="md:hidden border-b border-zinc-100">
                                 <div class="px-3 py-2 bg-zinc-50">
                                     <div class="flex gap-2">
                                         <a href="{{ request()->fullUrlWithQuery(['locale' => 'en']) }}" class="flex-1 px-2 py-1.5 text-xs text-zinc-700 hover:bg-white rounded transition {{ session('locale', 'en') === 'en' ? 'bg-white font-semibold' : 'bg-white/50' }}">

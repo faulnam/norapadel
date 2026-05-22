@@ -107,6 +107,7 @@ Route::get('/shoes', [PageController::class, 'shoes'])->name('shoes');
 Route::get('/apparel', [PageController::class, 'apparel'])->name('apparel');
 Route::get('/accessories', [PageController::class, 'apparel'])->name('accessories');
 Route::get('/shop', [PageController::class, 'shop'])->name('shop');
+Route::get('/filter-products', [PageController::class, 'filterProducts'])->name('filter-products');
 Route::get('/help-center', [PageController::class, 'helpCenter'])->name('help-center');
 Route::get('/policy', [PageController::class, 'policy'])->name('policy');
 Route::get('/return-refund', [PageController::class, 'returnRefund'])->name('return-refund');

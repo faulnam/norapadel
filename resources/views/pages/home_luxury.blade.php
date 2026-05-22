@@ -221,14 +221,6 @@
                 </nav>
 
                 <div class="flex items-center gap-2 md:gap-3 text-white/90" id="navIcons">
-                    <!-- Inline Search (all screens) -->
-                    <div class="flex items-center relative" id="navSearchWrapper">
-                        <i class="fas fa-search absolute left-2 md:left-3 text-xs md:text-sm text-white/60 pointer-events-none transition-colors duration-300" id="navSearchIcon"></i>
-                        <input type="text" id="navSearchInput" placeholder="Cari..."
-                               class="bg-white/10 border border-white/20 rounded-full pl-7 md:pl-9 pr-2 md:pr-4 py-1 md:py-1.5 text-xs md:text-sm text-white placeholder-white/60 focus:outline-none focus:bg-white/20 focus:border-white/40 w-24 md:w-40 lg:w-48 transition-all duration-300"
-                               autocomplete="off">
-                    </div>
-
                     <!-- Login (desktop only) -->
                     @guest
                         <a href="{{ route('login') }}" id="loginBtn" class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 border border-white/20 rounded-full text-xs font-semibold text-white backdrop-blur transition duration-300 hover:bg-white/20 hover:border-white/30">
@@ -238,7 +230,7 @@
                     @endauth
 
                     <!-- Cart (desktop only) -->
-                    <a href="{{ route('customer.cart.index') }}" class="hidden md:relative transition duration-300 hover:text-white">
+                    <a href="{{ route('customer.cart.index') }}" class="relative transition duration-300 hover:text-white">
                         <i class="fas fa-shopping-bag text-sm"></i>
                         @auth
                             @if (auth()->user()->role === 'customer')
@@ -258,6 +250,29 @@
                             @endif
                         @endguest
                     </a>
+
+                    <!-- Wishlist (desktop only) -->
+                    <a href="{{ route('customer.wishlist.index') }}" class="relative transition duration-300 hover:text-white">
+                        <i class="fas fa-heart text-sm"></i>
+                        @php
+                            if (auth()->check() && auth()->user()->role === 'customer') {
+                                $wishlistCount = auth()->user()->wishlistItems()->count();
+                            } else {
+                                $guestWishlist = session()->get('guest_wishlist', []);
+                                $wishlistCount = count($guestWishlist);
+                            }
+                        @endphp
+                        @if($wishlistCount > 0)
+                            <span class="wishlist-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
+                        @endif
+                    </a>
+
+                    <!-- Language Switcher (desktop only) -->
+                    <div class="hidden md:flex items-center gap-1">
+                        <a href="{{ request()->fullUrlWithQuery(['locale' => 'en']) }}" class="px-2 py-1 text-xs font-semibold transition duration-300 {{ session('locale', 'en') === 'en' ? 'text-white' : 'text-white/60 hover:text-white' }}">EN</a>
+                        <span class="text-white/40">|</span>
+                        <a href="{{ request()->fullUrlWithQuery(['locale' => 'id']) }}" class="px-2 py-1 text-xs font-semibold transition duration-300 {{ session('locale', 'en') === 'id' ? 'text-white' : 'text-white/60 hover:text-white' }}">ID</a>
+                    </div>
 
                     <!-- Wishlist (mobile only) -->
                     <a href="{{ route('customer.wishlist.index') }}" class="relative md:hidden transition duration-300 hover:text-white">
@@ -310,7 +325,7 @@
                     </button>
 
                     <!-- Hamburger Menu with combined elements -->
-                    <div class="relative" id="hamburgerMenuWrapper">
+                    <div class="relative md:hidden" id="hamburgerMenuWrapper">
                         <button type="button" id="hamburgerMenuBtn" class="inline-flex h-9 w-9 items-center justify-center rounded border border-white/30 bg-white/10 text-white backdrop-blur transition duration-300 hover:bg-white/20 relative">
                             <i class="fas fa-bars text-sm"></i>
                         </button>
@@ -340,8 +355,8 @@
                                     </a>
                                 </div>
 
-                                <!-- Language Switcher -->
-                                <div class="border-b border-zinc-100">
+                                <!-- Language Switcher (mobile only) -->
+                                <div class="md:hidden border-b border-zinc-100">
                                     <div class="px-3 py-2 bg-zinc-50">
                                         <div class="flex gap-2">
                                             <a href="{{ request()->fullUrlWithQuery(['locale' => 'en']) }}" class="flex-1 px-2 py-1.5 text-xs text-zinc-700 hover:bg-white rounded transition {{ session('locale', 'en') === 'en' ? 'bg-white font-semibold' : 'bg-white/50' }}">
@@ -447,7 +462,14 @@
                 loading="eager">
             <div class="absolute inset-0 bg-gradient-to-b from-black/20 via-black/50 to-black/80"></div>
             <div class="relative mx-auto flex h-[300px] max-w-7xl items-center justify-center px-6 md:px-10 lg:px-12 pt-16">
-                <div class="max-w-2xl text-center text-white">
+                <div class="max-w-2xl w-full text-center text-white">
+                    <!-- Search Input -->
+                    <div class="flex items-center relative mb-6 max-w-md mx-auto">
+                        <i class="fas fa-search absolute left-3 text-white/60 pointer-events-none text-sm"></i>
+                        <input type="text" id="heroSearchInput" placeholder="Cari..."
+                               class="w-full bg-white/10 border border-white/20 rounded-full pl-10 pr-4 py-2 text-sm text-white placeholder-white/60 focus:outline-none focus:bg-white/20 focus:border-white/30 backdrop-blur transition-all duration-300"
+                               autocomplete="off">
+                    </div>
                     <h1 class="text-lg font-semibold tracking-tight sm:text-2xl md:text-3xl lg:text-4xl drop-shadow-lg">NoraPadel</h1>
                     <p class="mt-2 md:mt-4 text-[11px] md:text-sm text-zinc-100 leading-relaxed drop-shadow-md">Experience the ultimate in padel equipment. Premium quality rackets, shoes, and accessories for players who demand excellence.</p>
                 </div>
@@ -459,7 +481,7 @@
         <!-- 6 logos × 20vw = 120vw per set | 2 sets = 240vw | anim: -120vw = seamless loop -->
         <div class="bg-white py-2 md:py-3 border-y border-zinc-100" style="overflow-x: hidden; overflow-y: visible;" id="marqueeBar">
             <div class="marquee-container">
-                <div class="marquee-content">
+                <div class="marquee-content" id="marqueeContent">
                     <!-- Set 1 -->
                     <span class="marquee-item">
                         <img src="{{ asset('storage/alpha.jpeg') }}" alt="Alpha" loading="eager">
@@ -988,7 +1010,7 @@
         /* Marquee Animation */
         .marquee-container {
             display: flex;
-            overflow: visible;
+            overflow: hidden;
             user-select: none;
             width: 100%;
         }
@@ -996,8 +1018,16 @@
         .marquee-content {
             display: flex;
             align-items: center;
-            will-change: transform;
-            /* Motion driven by JS requestAnimationFrame for 100% stutter-free scrolling */
+            animation: marquee 20s linear infinite;
+        }
+
+        @keyframes marquee {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
         }
 
         .marquee-item {
@@ -1737,6 +1767,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             })();
 
+            
             // Navbar scroll effect
             const header = document.getElementById('mainHeader');
             const logoText = document.getElementById('logoText');
@@ -2188,6 +2219,146 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
                 }
             });
+
+        // Filter functionality
+        let currentFilters = {
+            category: null,
+            brand: null,
+            price: null,
+            sort: null
+        };
+
+        function applyFilter(type, value) {
+            currentFilters[type] = value;
+            fetchFilteredProducts();
+        }
+
+        function clearFilter(type) {
+            currentFilters[type] = null;
+            fetchFilteredProducts();
+        }
+
+        function applyFilters() {
+            const price = document.querySelector('input[name="filterPrice"]:checked')?.value || null;
+            const sort = document.querySelector('input[name="filterSort"]:checked')?.value || null;
+            currentFilters.price = price;
+            currentFilters.sort = sort;
+            fetchFilteredProducts();
+        }
+
+        async function fetchFilteredProducts() {
+            const params = new URLSearchParams();
+            if (currentFilters.category) params.append('category', currentFilters.category);
+            if (currentFilters.brand) params.append('brand', currentFilters.brand);
+            if (currentFilters.price) params.append('price', currentFilters.price);
+            if (currentFilters.sort) params.append('sort', currentFilters.sort);
+
+            try {
+                const response = await fetch(`{{ route('filter-products') }}?${params.toString()}`);
+                const data = await response.json();
+                updateProductGrid(data);
+            } catch (error) {
+                console.error('Error fetching filtered products:', error);
+            }
+        }
+
+        function updateProductGrid(data) {
+            const newArrivalsGrid = document.getElementById('newArrivalsGrid');
+            const productGrid = document.getElementById('productGrid');
+
+            if (newArrivalsGrid && data.newArrivals) {
+                newArrivalsGrid.innerHTML = data.newArrivals.map(product => createProductCard(product)).join('');
+            }
+
+            if (productGrid && data.shopProducts) {
+                productGrid.innerHTML = data.shopProducts.map(product => createProductCard(product)).join('');
+            }
+
+            updateFilterChips();
+        }
+
+        function createProductCard(product) {
+            const soldCount = product.sold_count || 0;
+            const hasDiscount = product.discount_price && product.discount_price < product.price;
+            const discountPercent = hasDiscount ? Math.round(((product.price - product.discount_price) / product.price) * 100) : 0;
+            const displayPrice = hasDiscount ? product.discount_price : product.price;
+
+            return `
+                <div class="product-item product-card group block overflow-hidden bg-white transition duration-300 hover:-translate-y-1"
+                     data-name="${product.name.toLowerCase()}"
+                     data-price="${displayPrice}"
+                     data-category="${product.type.toLowerCase()}"
+                     data-brand="${(product.brand || '').toLowerCase()}"
+                     data-level="${product.level || ''}"
+                     data-discount="${hasDiscount ? 'yes' : 'no'}"
+                     data-bundle="${product.package_type === 'bundle' ? 'yes' : 'no'}"
+                     data-sold="${soldCount}">
+                    <a href="/produk/${product.slug}" class="block">
+                        <div class="relative aspect-square overflow-hidden">
+                            <div class="h-full w-full overflow-hidden">
+                                <img src="${product.image_url}" alt="${product.name}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" onerror="this.onerror=null;this.src='/images/logo.png';" loading="lazy">
+                            </div>
+                            ${hasDiscount ? `<span class="absolute left-0 top-0 bg-rose-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">-${discountPercent}%</span>` : ''}
+                            ${product.category === 'arrivals' ? `<span class="absolute left-0 ${hasDiscount ? 'top-7' : 'top-0'} bg-blue-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Latest</span>` : ''}
+                            ${product.package_type === 'bundle' ? `<span class="absolute left-0 ${hasDiscount && product.category === 'arrivals' ? 'top-14' : (hasDiscount || product.category === 'arrivals' ? 'top-7' : 'top-0')} bg-purple-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Bundle</span>` : ''}
+                            ${soldCount > 10 ? `<span class="absolute right-0 top-0 bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Best Seller</span>` : ''}
+                        </div>
+                    </a>
+                    <div class="p-2 md:p-4">
+                        <h3 class="line-clamp-1 text-sm font-medium text-black">${product.name}</h3>
+                        <p class="mt-1 text-xs text-zinc-600">${product.category_label || ''}</p>
+                        <div class="mt-1 flex items-center gap-1">
+                            ${product.average_rating ? `
+                            <div class="flex items-center">
+                                <i class="fas fa-star text-black text-[10px]"></i>
+                                <span class="text-[10px] text-zinc-600 ml-1">${parseFloat(product.average_rating).toFixed(1)}</span>
+                                ${product.total_reviews > 0 ? `<span class="text-[10px] text-zinc-500">(${product.total_reviews})</span>` : ''}
+                            </div>` : ''}
+                        </div>
+                        ${hasDiscount ? `
+                        <p class="mt-1 text-base font-semibold text-black">Rp ${displayPrice.toLocaleString('id-ID')}</p>
+                        <p class="text-xs text-zinc-400 line-through">Rp ${product.price.toLocaleString('id-ID')}</p>
+                        ` : `
+                        <p class="mt-1 text-base font-semibold text-black">Rp ${product.price.toLocaleString('id-ID')}</p>
+                        `}
+                    </div>
+                    <div class="px-2 pb-2 md:px-4 md:pb-4">
+                        <div class="flex items-center gap-2">
+                            <button onclick="addToCart('${product.slug}', event)" class="border border-zinc-300 bg-transparent px-2 py-1 text-[10px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950">
+                                Add to cart
+                            </button>
+                            <button onclick="addToWishlist('${product.slug}', event)" class="text-zinc-400 transition duration-300 hover:text-rose-500">
+                                <i class="fas fa-heart text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateFilterChips() {
+            document.querySelectorAll('[data-category]').forEach(chip => {
+                const category = chip.dataset.category;
+                if (currentFilters.category === category) {
+                    chip.classList.add('border-black', 'bg-black', 'text-white');
+                    chip.classList.remove('border-zinc-200', 'text-zinc-600');
+                } else {
+                    chip.classList.remove('border-black', 'bg-black', 'text-white');
+                    chip.classList.add('border-zinc-200', 'text-zinc-600');
+                }
+            });
+
+            document.querySelectorAll('[data-brand]').forEach(chip => {
+                const brand = chip.dataset.brand;
+                if (currentFilters.brand === brand) {
+                    chip.classList.add('border-black', 'bg-black', 'text-white');
+                    chip.classList.remove('border-zinc-200', 'text-zinc-600');
+                } else {
+                    chip.classList.remove('border-black', 'bg-black', 'text-white');
+                    chip.classList.add('border-zinc-200', 'text-zinc-600');
+                }
+            });
+        }
         })();
     </script>
 @endpush
