@@ -3,6 +3,9 @@
 @section('title', $product->name . ' - NoraPadel')
 
 @section('content')
+@php
+    $productdetail = json_decode(@file_get_contents(public_path('translation/productdetail.json')), true) ?? [];
+@endphp
 <div class="bg-white text-black antialiased">
     @include('components.luxury-navbar')
     <main class="pt-16 md:pt-20">
@@ -11,9 +14,9 @@
                 <!-- Breadcrumb -->
                 <nav class="mb-2 text-xs">
                     <ol class="flex items-center gap-2 text-zinc-600">
-                        <li><a href="{{ route('home') }}" class="hover:text-black transition">Home</a></li>
+                        <li><a href="{{ route('home') }}" class="hover:text-black transition">{{ $productdetail['breadcrumb']['home'][$lang] ?? 'Home' }}</a></li>
                         <li><i class="fas fa-chevron-right text-[10px]"></i></li>
-                        <li><a href="{{ route('shop') }}" class="hover:text-black transition">Produk</a></li>
+                        <li><a href="{{ route('shop') }}" class="hover:text-black transition">{{ $productdetail['breadcrumb']['products'][$lang] ?? 'Products' }}</a></li>
                         <li><i class="fas fa-chevron-right text-[10px]"></i></li>
                         <li class="text-black font-medium truncate max-w-[200px]">{{ $product->name }}</li>
                     </ol>
@@ -32,10 +35,10 @@
                                     <span class="absolute left-3 top-3 bg-rose-500 px-3 py-1.5 text-xs font-semibold text-white z-10 rounded">-{{ $product->formatted_discount_percent }}</span>
                                 @endif
                                 @if($product->package_type === 'bundle')
-                                    <span class="absolute left-3 {{ $product->hasActiveDiscount() ? 'top-12' : 'top-3' }} bg-purple-500 px-3 py-1.5 text-xs font-semibold text-white z-10 rounded">Bundle</span>
+                                    <span class="absolute left-3 {{ $product->hasActiveDiscount() ? 'top-12' : 'top-3' }} bg-purple-500 px-3 py-1.5 text-xs font-semibold text-white z-10 rounded">{{ $productdetail['badges']['bundle'][$lang] ?? 'Bundle' }}</span>
                                 @endif
                                 @if($product->isBestSeller())
-                                    <span class="absolute right-3 top-3 bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white z-10 rounded">Best Seller</span>
+                                    <span class="absolute right-3 top-3 bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white z-10 rounded">{{ $productdetail['badges']['best_seller'][$lang] ?? 'Best Seller' }}</span>
                                 @endif
                             </div>
                         </div>
@@ -64,19 +67,19 @@
                             @if($product->package_type === 'bundle')
                                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-700 border border-purple-200">
                                     <i class="fas fa-box-open text-[10px]"></i>
-                                    Bundling
+                                    {{ $productdetail['badges']['bundle'][$lang] ?? 'Bundle' }}
                                 </span>
                             @endif
                             
                             @if($product->hasActiveDiscount())
                                 <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700 border border-red-200">
-                                    Discount {{ $product->formatted_discount_percent }}
+                                    {{ $productdetail['badges']['discount'][$lang] ?? 'Discount' }} {{ $product->formatted_discount_percent }}
                                 </span>
                             @endif
 
                             @if($product->stock <= 0)
                                 <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-zinc-100 text-zinc-500 border border-zinc-200">
-                                    Out of Stock
+                                    {{ $productdetail['badges']['out_of_stock'][$lang] ?? 'Out of Stock' }}
                                 </span>
                             @endif
                         </div>
@@ -108,7 +111,7 @@
                             <span class="text-zinc-400">|</span>
                             <div class="text-zinc-600">
                                 <i class="fas fa-box text-xs mr-1"></i>
-                                <span class="font-semibold text-black">{{ $totalSold }}</span> Terjual
+                                <span class="font-semibold text-black">{{ $totalSold }}</span> {{ $productdetail['info_section']['sold'][$lang] ?? 'Sold' }}
                             </div>
                         </div>
 
@@ -120,7 +123,7 @@
                                     <span class="text-lg text-zinc-400 line-through">{{ $product->formatted_price }}</span>
                                 </div>
                                 <p class="text-sm text-green-600 font-medium">
-                                    <i class="fas fa-tag mr-1"></i>Save {{ $product->formatted_discount_amount }}
+                                    <i class="fas fa-tag mr-1"></i>{{ $productdetail['info_section']['save_amount'][$lang] ?? 'Save' }} {{ $product->formatted_discount_amount }}
                                 </p>
                             @else
                                 <span class="text-3xl font-bold text-black">{{ $product->formatted_price }}</span>
@@ -129,7 +132,7 @@
 
                         <!-- Description -->
                         <div class="border-t border-zinc-200 pt-4">
-                            <h3 class="text-xs font-semibold text-black uppercase tracking-wider mb-2">Product Description</h3>
+                            <h3 class="text-xs font-semibold text-black uppercase tracking-wider mb-2">{{ $productdetail['info_section']['description_title'][$lang] ?? 'Product Description' }}</h3>
                             @php
                                 $rawDescription = trim((string) $product->description);
 
@@ -178,7 +181,7 @@
                                 @forelse($displayParts as $paragraph)
                                     <p>{{ $paragraph }}</p>
                                 @empty
-                                    <p class="text-zinc-500">No description available.</p>
+                                    <p class="text-zinc-500">{{ $productdetail['info_section']['no_description'][$lang] ?? 'No description available.' }}.</p>
                                 @endforelse
                                 @if($hasMore)
                                     <p class="text-zinc-500">...</p>
@@ -188,15 +191,15 @@
 
                         <!-- Product Details -->
                         <div class="border-t border-zinc-200 pt-4">
-                            <h3 class="text-xs font-semibold text-black uppercase tracking-wider mb-2">Product Details</h3>
+                            <h3 class="text-xs font-semibold text-black uppercase tracking-wider mb-2">{{ $productdetail['info_section']['details_title'][$lang] ?? 'Product Details' }}</h3>
                             <div class="grid grid-cols-2 gap-2 text-sm">
                                 <div class="flex items-center gap-2 text-zinc-600">
                                     <i class="fas fa-weight-hanging w-4 text-xs"></i>
-                                    <span>Weight: <strong class="text-black">{{ $product->formatted_weight }}</strong></span>
+                                    <span>{{ $productdetail['info_section']['weight'][$lang] ?? 'Weight' }}: <strong class="text-black">{{ $product->formatted_weight }}</strong></span>
                                 </div>
                                 <div class="flex items-center gap-2 text-zinc-600">
                                     <i class="fas fa-boxes w-4 text-xs"></i>
-                                    <span>Stock: <strong class="text-black">{{ $product->stock }}</strong></span>
+                                    <span>{{ $productdetail['info_section']['stock'][$lang] ?? 'Stock' }}: <strong class="text-black">{{ $product->stock }}</strong></span>
                                 </div>
                             </div>
                         </div>
@@ -209,12 +212,12 @@
                                     <input type="hidden" name="quantity" value="1">
                                     <button type="submit" class="w-full border border-black bg-black px-3 py-3 text-sm font-semibold text-white transition duration-200 hover:bg-black/90 hover:border-black/90 flex items-center justify-center gap-2">
                                         <i class="fas fa-shopping-cart text-sm"></i>
-                                        Add to Cart
+                                        {{ $productdetail['actions']['add_to_cart'][$lang] ?? 'Add to Cart' }}
                                     </button>
                                 </form>
                             @else
                                 <button disabled class="w-full bg-zinc-200 text-zinc-500 py-3 font-semibold text-sm cursor-not-allowed">
-                                    Out of Stock
+                                    {{ $productdetail['actions']['out_of_stock_btn'][$lang] ?? 'Out of Stock' }}
                                 </button>
                             @endif
                         </div>
@@ -227,7 +230,7 @@
                         <!-- Left Column - Review Summary -->
                         <div class="space-y-8">
                             <div>
-                                <p class="text-[10px] font-semibold tracking-[0.15em] text-zinc-400 uppercase mb-4">Customer Reviews</p>
+                                <p class="text-[10px] font-semibold tracking-[0.15em] text-zinc-400 uppercase mb-4">{{ $productdetail['reviews']['title_section'][$lang] ?? 'Customer Reviews' }}</p>
                                 <div class="flex items-end gap-3 mb-3">
                                     <span class="text-5xl font-light text-black">{{ $avgRating > 0 ? number_format($avgRating, 1) : '0.0' }}</span>
                                     <span class="text-xl text-zinc-400 mb-2">/5</span>
@@ -237,7 +240,9 @@
                                         <i class="fas fa-star {{ $i <= floor($avgRating) ? 'text-black' : 'text-zinc-200' }} text-sm"></i>
                                     @endfor
                                 </div>
-                                <p class="text-[11px] font-medium tracking-[0.1em] text-zinc-500 uppercase">{{ $totalReviews }} {{ $totalReviews === 1 ? 'Review' : 'Reviews' }}</p>
+                                <p class="text-[11px] font-medium tracking-[0.1em] text-zinc-500 uppercase">
+                                    {{ $totalReviews }} {{ $totalReviews === 1 ? ($productdetail['reviews']['review_count_single'][$lang] ?? 'Review') : ($productdetail['reviews']['review_count_plural'][$lang] ?? 'Reviews') }}
+                                </p>
                             </div>
 
                             <!-- Rating Breakdown -->
@@ -259,38 +264,30 @@
                         <div class="space-y-6 lg:pl-4">
                             <!-- Header -->
                             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-                                <h3 class="text-[11px] font-semibold tracking-[0.15em] text-black uppercase">Reviews {{ $totalReviews }}</h3>
+                                <h3 class="text-[11px] font-semibold tracking-[0.15em] text-black uppercase">
+                                    {{ $productdetail['reviews']['review_count_plural'][$lang] ?? 'Reviews' }} {{ $totalReviews }}
+                                </h3>
                                 @auth
                                     <button onclick="openReviewModal()" class="w-full sm:w-auto bg-black text-white px-6 py-2.5 text-[10px] font-semibold tracking-[0.1em] uppercase transition duration-200 hover:bg-white hover:text-black border border-black whitespace-nowrap">
-                                        Write a Review
+                                        {{ $productdetail['reviews']['write_review'][$lang] ?? 'Write a Review' }}
                                     </button>
                                 @else
                                     <a href="{{ route('login') }}" class="w-full sm:w-auto text-center bg-black text-white px-6 py-2.5 text-[10px] font-semibold tracking-[0.1em] uppercase transition duration-200 hover:bg-white hover:text-black border border-black whitespace-nowrap">
-                            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
-                                <h3 class="text-[11px] font-semibold tracking-[0.15em] text-black uppercase">Reviews {{ $totalReviews }}</h3>
-                                @auth
-                                    <button onclick="openReviewModal()" class="bg-black text-white px-4 py-2 text-[10px] font-semibold tracking-[0.1em] uppercase transition duration-200 hover:bg-white hover:text-black border border-black whitespace-nowrap">
-                                        Write a Review
-                                    </button>
-                                @else
-                                    <a href="{{ route('login') }}" class="bg-black text-white px-4 py-2 text-[10px] font-semibold tracking-[0.1em] uppercase transition duration-200 hover:bg-white hover:text-black border border-black whitespace-nowrap">
-                                        Login to Review
+                                        {{ $productdetail['reviews']['login_to_review'][$lang] ?? 'Login to Review' }}
                                     </a>
                                 @endauth
                             </div>
 
                             <!-- Search & Filter -->
                             <div class="flex flex-col sm:flex-row gap-3 mb-8">
-                                <input type="text" id="reviewSearch" placeholder="Search reviews" class="w-full sm:flex-1 px-4 py-2.5 border border-zinc-200 text-sm focus:outline-none focus:border-zinc-400 transition">
+                                <input type="text" id="reviewSearch" placeholder="{{ $productdetail['reviews']['search_placeholder'][$lang] ?? 'Search reviews' }}" class="w-full sm:flex-1 px-4 py-2.5 border border-zinc-200 text-sm focus:outline-none focus:border-zinc-400 transition">
                                 <select id="reviewRatingFilter" class="w-full sm:w-auto px-4 py-2.5 border border-zinc-200 text-sm focus:outline-none focus:border-zinc-400 transition bg-white min-w-[130px]">
-                                <input type="text" id="reviewSearch" placeholder="Search reviews" class="flex-1 px-4 py-2.5 border border-zinc-200 text-sm focus:outline-none focus:border-zinc-400 transition">
-                                <select id="reviewRatingFilter" class="px-4 py-2.5 border border-zinc-200 text-sm focus:outline-none focus:border-zinc-400 transition bg-white min-w-[130px]">
-                                    <option value="all">All ratings</option>
-                                    <option value="5">5 stars</option>
-                                    <option value="4">4 stars</option>
-                                    <option value="3">3 stars</option>
-                                    <option value="2">2 stars</option>
-                                    <option value="1">1 star</option>
+                                    <option value="all">{{ $productdetail['reviews']['filter_all'][$lang] ?? 'All ratings' }}</option>
+                                    <option value="5">5 {{ $productdetail['reviews']['filter_stars'][$lang] ?? 'stars' }}</option>
+                                    <option value="4">4 {{ $productdetail['reviews']['filter_stars'][$lang] ?? 'stars' }}</option>
+                                    <option value="3">3 {{ $productdetail['reviews']['filter_stars'][$lang] ?? 'stars' }}</option>
+                                    <option value="2">2 {{ $productdetail['reviews']['filter_stars'][$lang] ?? 'stars' }}</option>
+                                    <option value="1">1 {{ $productdetail['reviews']['filter_star_single'][$lang] ?? 'star' }}</option>
                                 </select>
                             </div>
 
@@ -304,7 +301,7 @@
                                             <div class="flex flex-wrap items-center gap-2 mb-1">
                                                 <h4 class="text-xs font-semibold tracking-[0.05em] text-black uppercase">{{ $review->reviewer_name ?? $review->user->name }}</h4>
                                                 @if($review->is_verified)
-                                                <span class="text-[9px] text-zinc-400 uppercase tracking-wider">· Verified Buyer</span>
+                                                <span class="text-[9px] text-zinc-400 uppercase tracking-wider">· {{ $productdetail['badges']['verified_buyer'][$lang] ?? 'Verified Buyer' }}</span>
                                                 @endif
                                             </div>
                                             <div class="flex items-center gap-1">
@@ -325,7 +322,7 @@
                             @else
                             <div class="py-12 text-center">
                                 <i class="fas fa-star text-4xl text-zinc-200 mb-3"></i>
-                                <p class="text-sm text-zinc-500">No reviews yet. Be the first to review this product!</p>
+                                <p class="text-sm text-zinc-500">{{ $productdetail['reviews']['no_reviews'][$lang] ?? 'No reviews yet. Be the first to review this product!' }}</p>
                             </div>
                             @endif
                         </div>
@@ -336,8 +333,8 @@
                 @if($relatedProducts->count() > 0)
                 <div class="mt-16 pt-12 border-t border-zinc-200">
                     <div class="mb-6">
-                        <h2 class="text-2xl font-semibold tracking-tight text-black">Produk Terkait</h2>
-                        <p class="mt-2 text-zinc-600">Produk lain yang mungkin Anda suka</p>
+                        <h2 class="text-2xl font-semibold tracking-tight text-black">{{ $productdetail['related_products']['title'][$lang] ?? 'Related Products' }}</h2>
+                        <p class="mt-2 text-zinc-600">{{ $productdetail['related_products']['subtitle'][$lang] ?? 'Other products you might like' }}</p>
                     </div>
 
                     <div class="flex gap-4 overflow-x-auto pb-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x snap-mandatory">
@@ -363,13 +360,13 @@
                                         <span class="absolute left-0 top-0 bg-rose-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">-{{ $related->formatted_discount_percent }}</span>
                                     @endif
                                     @if($related->category === 'arrivals')
-                                        <span class="absolute left-0 {{ $related->hasActiveDiscount() ? 'top-7' : 'top-0' }} bg-blue-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Latest</span>
+                                        <span class="absolute left-0 {{ $related->hasActiveDiscount() ? 'top-7' : 'top-0' }} bg-blue-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">{{ $lang === 'id' ? 'Baru' : 'Latest' }}</span>
                                     @endif
                                     @if($related->package_type === 'bundle')
-                                        <span class="absolute left-0 {{ $related->hasActiveDiscount() && $related->category === 'arrivals' ? 'top-14' : ($related->hasActiveDiscount() || $related->category === 'arrivals' ? 'top-7' : 'top-0') }} bg-purple-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Bundle</span>
+                                        <span class="absolute left-0 {{ $related->hasActiveDiscount() && $related->category === 'arrivals' ? 'top-14' : ($related->hasActiveDiscount() || $related->category === 'arrivals' ? 'top-7' : 'top-0') }} bg-purple-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">{{ $productdetail['badges']['bundle'][$lang] ?? 'Bundle' }}</span>
                                     @endif
                                     @if($related->isBestSeller())
-                                        <span class="absolute right-0 top-0 bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">Best Seller</span>
+                                        <span class="absolute right-0 top-0 bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none">{{ $productdetail['badges']['best_seller'][$lang] ?? 'Best Seller' }}</span>
                                     @endif
                                 </div>
                                 <div class="p-2 md:p-4">
@@ -386,7 +383,7 @@
                             <div class="px-2 pb-2 md:px-4 md:pb-4">
                                 <div class="flex items-center gap-2">
                                     <button onclick="addToCart('{{ $related->slug }}', event)" class="border border-zinc-300 bg-transparent px-2 py-1 text-[10px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950">
-                                        Add to cart
+                                        {{ $productdetail['actions']['add_to_cart'][$lang] ?? 'Add to Cart' }}
                                     </button>
                                     <button onclick="addToWishlist('{{ $related->slug }}', event)" class="text-zinc-400 transition duration-300 hover:text-rose-500">
                                         <i class="fas fa-heart text-sm"></i>
@@ -456,15 +453,15 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('Product successfully added to cart!');
+                alert('{{ $productdetail['actions']['cart_success_alert'][$lang] ?? 'Product successfully added to cart!' }}');
                 location.reload();
             } else {
-                alert(data.message || 'Failed to add product to cart');
+                alert(data.message || '{{ $lang === 'id' ? 'Gagal menambahkan produk ke keranjang' : 'Failed to add product to cart' }}');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('An error occurred. Please try again.');
+            alert('{{ $lang === 'id' ? 'Terjadi kesalahan. Silakan coba lagi.' : 'An error occurred. Please try again.' }}');
         });
     }
 
@@ -485,15 +482,15 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('Product successfully added to wishlist!');
+                alert('{{ $productdetail['actions']['add_to_wishlist_alert'][$lang] ?? 'Product successfully added to wishlist!' }}');
                 location.reload();
             } else {
-                alert(data.message || 'Product already in wishlist');
+                alert(data.message || '{{ $productdetail['actions']['already_wishlist_alert'][$lang] ?? 'Product already in wishlist' }}');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('An error occurred. Please try again.');
+            alert('{{ $lang === 'id' ? 'Terjadi kesalahan. Silakan coba lagi.' : 'An error occurred. Please try again.' }}');
         });
     }
 
@@ -570,7 +567,7 @@
                             `).join('');
                             searchResults.classList.remove('hidden');
                         } else {
-                            searchResults.innerHTML = '<p class="text-sm text-zinc-500 p-2 text-center">Tidak ada produk ditemukan</p>';
+                            searchResults.innerHTML = '<p class="text-sm text-zinc-500 p-2 text-center">{{ $lang === 'id' ? 'Tidak ada produk ditemukan' : 'No products found' }}</p>';
                             searchResults.classList.remove('hidden');
                         }
                     })
@@ -805,7 +802,7 @@ document.getElementById('reviewForm')?.addEventListener('submit', function(e) {
             newReview.className = 'py-8 border-b border-zinc-100 last:border-0 review-item';
             newReview.setAttribute('data-rating', formData.get('rating'));
 
-            const userName = data.review?.user_name || data.review?.name || auth()->user()?.name || 'Anonymous';
+            const userName = data.review?.user_name || data.review?.name || '{{ auth()->user() ? auth()->user()->name : 'Anonymous' }}';
             const isVerified = data.review?.is_verified !== false;
 
             newReview.innerHTML = `
@@ -813,7 +810,7 @@ document.getElementById('reviewForm')?.addEventListener('submit', function(e) {
                     <div>
                         <div class="flex items-center gap-2 mb-1">
                             <h4 class="text-xs font-semibold tracking-[0.05em] text-black uppercase">${userName}</h4>
-                            ${isVerified ? '<span class="text-[9px] text-zinc-400 uppercase tracking-wider">· Verified Buyer</span>' : ''}
+                            ${isVerified ? '<span class="text-[9px] text-zinc-400 uppercase tracking-wider">· {{ $productdetail['badges']['verified_buyer'][$lang] ?? 'Verified Buyer' }}</span>' : ''}
                         </div>
                         <div class="flex items-center gap-1">
                             ${Array(5).fill(0).map((_, i) =>
@@ -821,7 +818,7 @@ document.getElementById('reviewForm')?.addEventListener('submit', function(e) {
                             ).join('')}
                         </div>
                     </div>
-                    <span class="text-[10px] text-zinc-400">Just now</span>
+                    <span class="text-[10px] text-zinc-400">{{ $lang === 'id' ? 'Baru saja' : 'Just now' }}</span>
                 </div>
                 ${formData.get('comment') ? `<p class="text-sm text-zinc-600 leading-relaxed mb-4 review-text">${formData.get('comment')}</p>` : ''}
             `;
@@ -847,12 +844,12 @@ document.getElementById('reviewForm')?.addEventListener('submit', function(e) {
             document.getElementById('reviewForm').reset();
             selectRating(0);
         } else {
-            alert(data.message || 'Failed to submit review');
+            alert(data.message || '{{ $lang === 'id' ? 'Gagal mengirimkan ulasan' : 'Failed to submit review' }}');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Terjadi kesalahan. Silakan coba lagi.');
+        alert('{{ $lang === 'id' ? 'Terjadi kesalahan. Silakan coba lagi.' : 'An error occurred. Please try again.' }}');
     });
 });
 
@@ -892,7 +889,7 @@ document.getElementById('reviewForm')?.addEventListener('submit', function(e) {
 <div id="reviewModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm">
     <div class="relative w-full max-w-lg mx-4 bg-white rounded-2xl shadow-xl">
         <div class="flex items-center justify-between p-6 border-b border-zinc-200">
-            <h3 class="text-lg font-semibold text-black">Write a Review</h3>
+            <h3 class="text-lg font-semibold text-black">{{ $productdetail['reviews']['write_review'][$lang] ?? 'Write a Review' }}</h3>
             <button onclick="closeReviewModal()" class="text-zinc-400 hover:text-black transition">
                 <i class="fas fa-times text-xl"></i>
             </button>
@@ -900,7 +897,7 @@ document.getElementById('reviewForm')?.addEventListener('submit', function(e) {
         <form id="reviewForm" class="p-4 space-y-3">
             <!-- Rating -->
             <div>
-                <label class="block text-sm font-medium text-black mb-2">Rating *</label>
+                <label class="block text-sm font-medium text-black mb-2">{{ $lang === 'id' ? 'Nilai *' : 'Rating *' }}</label>
                 <div class="flex gap-2 star-rating cursor-pointer">
                     <i class="fas fa-star text-2xl text-zinc-200 hover:text-black transition" onclick="selectRating(1)"></i>
                     <i class="fas fa-star text-2xl text-zinc-200 hover:text-black transition" onclick="selectRating(2)"></i>
@@ -913,13 +910,13 @@ document.getElementById('reviewForm')?.addEventListener('submit', function(e) {
 
             <!-- Comment -->
             <div>
-                <label for="comment" class="block text-sm font-medium text-black mb-2">Comment</label>
-                <textarea id="comment" name="comment" rows="3" class="w-full px-4 py-2.5 border border-zinc-200 rounded-lg text-sm focus:outline-none focus:border-zinc-400 transition" placeholder="Share your experience with this product..."></textarea>
+                <label for="comment" class="block text-sm font-medium text-black mb-2">{{ $lang === 'id' ? 'Komentar' : 'Comment' }}</label>
+                <textarea id="comment" name="comment" rows="3" class="w-full px-4 py-2.5 border border-zinc-200 rounded-lg text-sm focus:outline-none focus:border-zinc-400 transition" placeholder="{{ $lang === 'id' ? 'Bagikan pengalaman Anda tentang produk ini...' : 'Share your experience with this product...' }}"></textarea>
             </div>
 
             <!-- Submit Button -->
             <button type="submit" class="w-full bg-black text-white py-3 rounded-lg font-semibold text-sm hover:bg-black/90 transition">
-                Submit Review
+                {{ $lang === 'id' ? 'Kirim Ulasan' : 'Submit Review' }}
             </button>
         </form>
     </div>
