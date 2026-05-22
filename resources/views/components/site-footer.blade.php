@@ -1,3 +1,8 @@
+@php
+    $lang = $lang ?? session('locale', 'en');
+    $common = $common ?? [];
+@endphp
+
 <footer class="border-t border-black/10 bg-white py-12 text-zinc-600" data-parallax data-parallax-speed="0.01">
     <div class="mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-12">
         

@@ -222,7 +222,7 @@
                         @endif
                     @endauth
                     @guest
-                        @php 
+                        @php
                             $guestCart = session()->get('guest_cart', []);
                             $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
                         @endphp
@@ -248,6 +248,13 @@
                     @endif
                 </a>
 
+                <!-- Profile (desktop only - logged in) -->
+                @auth
+                    <a href="{{ route('customer.profile.index') }}" class="hidden md:inline-flex items-center justify-center w-8 h-8 rounded-full bg-zinc-50 border border-zinc-200 text-black transition duration-300 hover:bg-zinc-100 hover:border-zinc-300">
+                        <i class="fas fa-user text-sm"></i>
+                    </a>
+                @endauth
+
                 <!-- Language Switcher (desktop only) -->
                 <div class="hidden md:flex items-center gap-1">
                     <a href="{{ request()->fullUrlWithQuery(['locale' => 'en']) }}" class="px-2 py-1 text-xs font-semibold transition duration-300 {{ session('locale', 'en') === 'en' ? 'text-black' : 'text-zinc-400 hover:text-black' }}">EN</a>
@@ -255,49 +262,25 @@
                     <a href="{{ request()->fullUrlWithQuery(['locale' => 'id']) }}" class="px-2 py-1 text-xs font-semibold transition duration-300 {{ session('locale', 'en') === 'id' ? 'text-black' : 'text-zinc-400 hover:text-black' }}">ID</a>
                 </div>
 
-                <!-- Wishlist (mobile only) -->
-                <a href="{{ route('customer.wishlist.index') }}" class="relative md:hidden transition duration-300 hover:text-black">
-                    <i class="fas fa-heart text-black/80 text-sm"></i>
-                    @php
-                        if (auth()->check() && auth()->user()->role === 'customer') {
-                            $wishlistCount = auth()->user()->wishlistItems()->count();
-                        } else {
-                            $guestWishlist = session()->get('guest_wishlist', []);
-                            $wishlistCount = count($guestWishlist);
-                        }
-                    @endphp
-                    @if($wishlistCount > 0)
-                        <span class="wishlist-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $wishlistCount > 9 ? '9+' : $wishlistCount }}</span>
-                    @endif
-                </a>
+              
 
-                <!-- Cart (mobile only) -->
-                <a href="{{ route('customer.cart.index') }}" class="relative md:hidden transition duration-300 hover:text-black">
-                    <i class="fas fa-shopping-bag text-black/80 text-sm"></i>
-                    @auth
-                        @if (auth()->user()->role === 'customer')
-                            @php $cartCount = auth()->user()->cartItems()->sum('quantity'); @endphp
-                            @if ($cartCount > 0)
-                                <span class="cart-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
-                            @endif
-                        @endif
-                    @endauth
-                    @guest
-                        @php 
-                            $guestCart = session()->get('guest_cart', []);
-                            $guestCartCount = array_sum(array_column($guestCart, 'quantity'));
-                        @endphp
-                        @if($guestCartCount > 0)
-                            <span class="cart-badge absolute -right-1.5 -top-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">{{ $guestCartCount > 9 ? '9+' : $guestCartCount }}</span>
-                        @endif
-                    @endguest
-                </a>
+                
 
                 <!-- Login (mobile only) -->
                 @guest
-                    <a href="{{ route('login') }}" class="md:hidden transition duration-300 hover:text-black">
-                        <i class="fas fa-sign-in-alt text-black/80 text-sm"></i>
-                    </a>
+                    <div class="relative md:hidden" id="profileMenuWrapper">
+                        <button type="button" id="profileMenuBtn" class="inline-flex h-9 w-9 items-center justify-center rounded border border-black/15 bg-transparent text-black backdrop-blur transition duration-300 hover:border-black/30">
+                            <i class="fas fa-user text-sm"></i>
+                        </button>
+                        <div id="profileMenuDropdown" class="absolute right-0 mt-2 w-48 z-50 hidden">
+                            <div class="bg-white rounded-lg shadow-lg border border-zinc-100 overflow-hidden">
+                                <a href="{{ route('login') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition">
+                                    <i class="fas fa-sign-in-alt text-zinc-500 text-sm"></i>
+                                    <span class="text-sm text-zinc-700">Login</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 @endauth
 
                 <!-- Hamburger Menu with combined elements -->
@@ -514,4 +497,14 @@
             }
         });
     });
+
+    // Profile Menu Toggle (Mobile)
+    (function() {
+        const btn = document.getElementById('profileMenuBtn');
+        const dropdown = document.getElementById('profileMenuDropdown');
+        const wrapper = document.getElementById('profileMenuWrapper');
+        if (!btn || !dropdown || !wrapper) return;
+        btn.addEventListener('click', function(e){ e.stopPropagation(); dropdown.classList.toggle('hidden'); });
+        document.addEventListener('click', function(e){ if(!wrapper.contains(e.target)) dropdown.classList.add('hidden'); });
+    })();
 </script>

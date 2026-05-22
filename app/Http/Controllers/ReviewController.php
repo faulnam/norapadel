@@ -43,10 +43,7 @@ class ReviewController extends Controller
             $isVerified = $hasPurchased;
         }
 
-        // Auto-approve if total approved reviews for this product is under 10
-        $totalApprovedReviews = $product->reviews()->approved()->count();
-        $autoApprove = $totalApprovedReviews < 10;
-
+        // Auto-approve all reviews
         $review = Review::create([
             'product_id' => $product->id,
             'user_id' => Auth::id(),
@@ -56,12 +53,12 @@ class ReviewController extends Controller
             'sizing_rating' => $request->sizing_rating,
             'usual_size' => $request->usual_size,
             'is_verified' => $isVerified,
-            'is_approved' => $autoApprove,
+            'is_approved' => true,
         ]);
 
         return response()->json([
             'success' => true,
-            'message' => $autoApprove ? 'Review berhasil ditambahkan.' : 'Review berhasil ditambahkan dan menunggu persetujuan admin.',
+            'message' => 'Review berhasil ditambahkan.',
             'review' => [
                 'id' => $review->id,
                 'user_name' => Auth::user()->name,

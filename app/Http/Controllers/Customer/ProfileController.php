@@ -16,7 +16,8 @@ class ProfileController extends Controller
     public function index()
     {
         $user = auth()->user();
-        return view('customer.profile.index', compact('user'));
+        $orders = $user->orders()->latest()->take(5)->get();
+        return view('customer.profile.index', compact('user', 'orders'));
     }
 
     /**

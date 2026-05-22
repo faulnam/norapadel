@@ -157,35 +157,103 @@
                     <form action="{{ route('customer.profile.update-password') }}" method="POST" class="space-y-4">
                         @csrf
                         @method('PATCH')
-                        
+
                         <div>
                             <label class="mb-2 block text-sm font-medium text-black">Current Password</label>
-                            <input type="password" class="w-full rounded-xl border border-black/10 px-4 py-2.5 text-sm transition focus:border-black focus:outline-none focus:ring-1 focus:ring-black @error('current_password') border-rose-500 @enderror" 
+                            <input type="password" class="w-full rounded-xl border border-black/10 px-4 py-2.5 text-sm transition focus:border-black focus:outline-none focus:ring-1 focus:ring-black @error('current_password') border-rose-500 @enderror"
                                    name="current_password" required>
                             @error('current_password')
                                 <p class="mt-1 text-xs text-rose-600">{{ $message }}</p>
                             @enderror
                         </div>
-                        
+
                         <div>
                             <label class="mb-2 block text-sm font-medium text-black">New Password</label>
-                            <input type="password" class="w-full rounded-xl border border-black/10 px-4 py-2.5 text-sm transition focus:border-black focus:outline-none focus:ring-1 focus:ring-black @error('password') border-rose-500 @enderror" 
+                            <input type="password" class="w-full rounded-xl border border-black/10 px-4 py-2.5 text-sm transition focus:border-black focus:outline-none focus:ring-1 focus:ring-black @error('password') border-rose-500 @enderror"
                                    name="password" required>
                             @error('password')
                                 <p class="mt-1 text-xs text-rose-600">{{ $message }}</p>
                             @enderror
                             <p class="mt-1 text-xs text-zinc-500">Minimum 8 characters</p>
                         </div>
-                        
+
                         <div>
                             <label class="mb-2 block text-sm font-medium text-black">Confirm New Password</label>
                             <input type="password" class="w-full rounded-xl border border-black/10 px-4 py-2.5 text-sm transition focus:border-black focus:outline-none focus:ring-1 focus:ring-black" name="password_confirmation" required>
                         </div>
-                        
+
                         <button type="submit" class="rounded-full border border-black bg-white px-6 py-2.5 text-sm font-medium text-black transition hover:bg-black hover:text-white">
                             <i class="fas fa-key mr-2"></i>Change Password
                         </button>
                     </form>
+                </div>
+            </div>
+
+            <!-- Order History -->
+            <div class="overflow-hidden rounded-2xl border border-black/6 bg-white shadow-sm">
+                <div class="border-b border-black/6 bg-zinc-50 px-6 py-4">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-lg font-semibold text-black"><i class="fas fa-shopping-bag mr-2"></i>Recent Orders</h4>
+                        <a href="{{ route('customer.orders.index') }}" class="text-sm font-medium text-violet-600 hover:text-violet-700">View All <i class="fas fa-chevron-right text-xs ml-1"></i></a>
+                    </div>
+                </div>
+                <div class="px-6 py-6">
+                    @forelse($orders as $order)
+                        <div class="mb-4 last:mb-0 rounded-xl border border-black/6 p-4 hover:border-black/10 transition">
+                            <div class="mb-3 flex items-center justify-between">
+                                <div>
+                                    <h5 class="font-semibold text-black">{{ $order->order_number }}</h5>
+                                    <p class="text-xs text-zinc-500">{{ $order->created_at->format('d F Y, H:i') }}</p>
+                                </div>
+                                @php
+                                    $statusColors = [
+                                        'pending_payment' => 'bg-amber-100 text-amber-800',
+                                        'paid' => 'bg-blue-100 text-blue-800',
+                                        'processing' => 'bg-purple-100 text-purple-800',
+                                        'shipped' => 'bg-indigo-100 text-indigo-800',
+                                        'delivered' => 'bg-emerald-100 text-emerald-800',
+                                        'completed' => 'bg-emerald-100 text-emerald-800',
+                                        'cancelled' => 'bg-red-100 text-red-800',
+                                    ];
+                                    $statusColor = $statusColors[$order->status] ?? 'bg-zinc-100 text-zinc-800';
+                                @endphp
+                                <span class="rounded-full px-2.5 py-0.5 text-xs font-medium {{ $statusColor }}">{{ $order->status_label }}</span>
+                            </div>
+                            <div class="mb-3 space-y-1.5">
+                                @foreach($order->items->take(2) as $item)
+                                    <div class="flex items-center justify-between text-xs">
+                                        <span class="text-zinc-700">{{ $item->product_name }} <span class="text-zinc-400">×{{ $item->quantity }}</span></span>
+                                        <span class="font-medium text-black">{{ $item->formatted_subtotal }}</span>
+                                    </div>
+                                @endforeach
+                                @if($order->items->count() > 2)
+                                    <p class="text-xs text-zinc-500">+{{ $order->items->count() - 2 }} item lainnya</p>
+                                @endif
+                            </div>
+                            <div class="flex items-center justify-between border-t border-zinc-100 pt-3">
+                                <div>
+                                    <p class="text-xs text-zinc-500">Total</p>
+                                    <p class="text-sm font-semibold text-black">{{ $order->formatted_total }}</p>
+                                </div>
+                                <a href="{{ route('customer.orders.show', $order) }}"
+                                   class="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-xs font-medium text-black hover:bg-zinc-50 transition">
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="py-8 text-center">
+                            <div class="mb-3 flex h-14 w-14 mx-auto items-center justify-center rounded-full bg-zinc-100">
+                                <i class="fas fa-shopping-bag text-2xl text-zinc-400"></i>
+                            </div>
+                            <h5 class="mb-1 text-sm font-semibold text-black">No Orders Yet</h5>
+                            <p class="mb-4 text-xs text-zinc-600">Let's start shopping for padel equipment!</p>
+                            <a href="{{ route('produk.index') }}"
+                               class="inline-block rounded-lg bg-black px-4 py-2 text-xs font-medium text-white hover:bg-black/90 transition">
+                                Start Shopping
+                            </a>
+                        </div>
+                    @endforelse
                 </div>
             </div>
         </div>

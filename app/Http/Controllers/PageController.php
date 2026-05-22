@@ -699,13 +699,12 @@ class PageController extends Controller
         // Get reviews with user data (max 10 untuk tampilan detail)
         $reviews = $product->reviews()
             ->with('user')
-            ->approved()
             ->latest()
             ->take(10)
             ->get();
 
-        // Total approved reviews untuk statistik
-        $totalReviews = $product->reviews()->approved()->count();
+        // Total reviews untuk statistik
+        $totalReviews = $product->reviews()->count();
         $avgRating = $totalReviews > 0 ? round($reviews->avg('rating'), 1) : 0;
         
         // Rating breakdown

@@ -988,8 +988,8 @@ class ShopeeProductsSeeder extends Seeder
                 'original_price' => 2300000,
             ],
             [
-                'name' => 'Nox AT10 Genius 18K 2024 By Agustin Tapia Nora Dynamic Store',
-                'slug' => 'nox-at10-genius-18k-2024-by-agustin-tapia-nora-dynamic-store',
+                'name' => 'Nox AT10 Genius 18K 2024 By Agustin Tapia',
+                'slug' => 'nox-at10-genius-18k-2024-by-agustin-tapia',
                 'description' => 'Nox AT10 Genius 18K 2024 by Agustín Tapia  The Nox AT10 Genius 18K 2024 is the professional padel racket co-developed with Agustín Tapia, designed for players seeking the perfect balance between power, control, and comfort. Key Features 18K Aluminized Carbon Face – Ensures outstanding stability, durability, and consistent performance in different weather conditions. MLD Black EVA Core – Multilayer black EVA provides a medium-hard touch, delivering both explosive power and excellent responsiveness. Teardrop Shape – Offers a wide sweet spot and balanced weight distribution, allowing for versatility in both defensive and attacking play. Exclusive Spin+ Surface – Dual-textured striking face (3D hexagonal in the center and sandy finish on the edges) for maximum spin and precision. Custom Grip® & Pulse System – Officially certified by Testea Padel, this patented system improves grip by up to 52% and reduces vibration by 29%, minimizing strain on the arm. Safety System – Replaceable safety cord that’s safer, more hygienic, and fully customizable. EOS Flp Aerodynamics – Side perforations that improve racket aerodynamics for faster, smoother swings. On-Court Performance The AT10 Genius 18K 2024 excels in versatility. It offers great maneuverability, comfort during long matches, and exceptional ball output even on slow shots. Players highlight its ability to deliver spin-rich strokes, a wide sweet spot, and impressive control. While it’s not the most powerful racket in the Nox lineup, it shines in precision, defensive play, and overall balance.',
                 'price' => 3500000,
                 'stock' => 3,
@@ -1216,9 +1216,9 @@ class ShopeeProductsSeeder extends Seeder
                 'original_price' => 7700000,
             ],
             [
-                'name' => 'Bullpadel Vertex 04 Hybrid 2024 - Raket Padel Power & Control - Nora Dynamic Store Padel',
-                'slug' => 'bullpadel-vertex-04-hybrid-2024-raket-padel-power-control-nora-dynamic-store-padel',
-                'description' => 'Bullpadel Vertex 04 Hybrid 2024 - Raket Padel Power & Control - Nora Dynamic Store Padel  Step up your game with the Bullpadel Vertex 04 Hybrid 2024, designed for advanced players who want maximum control and power. The hybrid teardrop shape, Topspin rough surface, Curvaktiv, and Air Power technologies offer better stability, durability, and precision.  Built with Xtend Carbon 12K, Multieva core, and CarbonTube frame, this racket ensures excellent balance and responsiveness. With CustomWeight for balance adjustment, Vibradrive for reduced vibration, and Hesacore grip for added comfort.  Balance: High Shape: Teardrop Surface: Xtend Carbon 12K + Rough Core: Multieva Frame: CarbonTube Level: Advanced Thickness: 38mm  For players chasing power, control, and precision every time.',
+                'name' => 'Bullpadel Vertex 04 Hybrid 2024 - Raket Padel Power & Control',
+                'slug' => 'bullpadel-vertex-04-hybrid-2024-raket-padel-power-control',
+                'description' => 'Bullpadel Vertex 04 Hybrid 2024 - Raket Padel Power & Control - Store Padel  Step up your game with the Bullpadel Vertex 04 Hybrid 2024, designed for advanced players who want maximum control and power. The hybrid teardrop shape, Topspin rough surface, Curvaktiv, and Air Power technologies offer better stability, durability, and precision.  Built with Xtend Carbon 12K, Multieva core, and CarbonTube frame, this racket ensures excellent balance and responsiveness. With CustomWeight for balance adjustment, Vibradrive for reduced vibration, and Hesacore grip for added comfort.  Balance: High Shape: Teardrop Surface: Xtend Carbon 12K + Rough Core: Multieva Frame: CarbonTube Level: Advanced Thickness: 38mm  For players chasing power, control, and precision every time.',
                 'price' => 3850000,
                 'stock' => 5,
                 'image' => 'https://cf.shopee.co.id/file/id-11134207-7ra0s-mchdbdenl4q7cc',
@@ -1396,8 +1396,8 @@ class ShopeeProductsSeeder extends Seeder
                 'original_price' => 2900000,
             ],
             [
-                'name' => 'Wilson Bela Team Raket Padel Rackets NORA DYNAMIC STORE',
-                'slug' => 'wilson-bela-team-raket-padel-rackets-nora-dynamic-store',
+                'name' => 'Wilson Bela Team Raket Padel Rackets',
+                'slug' => 'wilson-bela-team-raket-padel-rackets',
                 'description' => '*PO 1-2 Minggu*  Dayung yang paling dapat dimainkan dalam koleksi Fernando Belasteguin terbaru dari Wilson, Bela Team bertujuan untuk meningkatkan permainan Anda dan tampil memukau saat melakukannya. Fitur-fitur unggulannya meliputi bahan fiberglass tenun untuk stabilitas ekstra, tekstur permukaan berpola anak panah untuk meningkatkan putaran, dan desain apik yang ditonjolkan oleh aksen inframerah dan ciri khas Bela. Sebuah kisah inspiratif tentang mengatasi cedera dan segala rintangan untuk menjadi salah satu pemain terhebat sepanjang masa, Bela berupaya untuk menginspirasi legenda yang belum tersentuh dalam diri Anda. Dayung dilengkapi tali pergelangan tangan yang menampilkan tulisan tangan Spanyol putrinya yang bertuliskan ´´Belasteguin Tidak Pernah Menyerah´´, sumber inspirasi bagi Bela saat ia menghadapi rintangan terberatnya baik di dalam maupun di luar lapangan.  Fitur:  - Dirancang bersama dan terinspirasi oleh legenda padel Fernando Belasteguin - Fiberglass Weave memberikan perpaduan yang bagus antara stabilitas dan respons dayung - Core EVA Foam memiliki busa kepadatan rendah untuk performa yang stabil sambil mempertahankan rasa lembut dan nyaman - Tekstur Arrow-Grip memiliki pola mata panah pada permukaan dayung untuk rasa yang luar biasa dan tingkat putaran ekstra - Sublime Grip mencakup perpaduan ideal antara kelembutan, daya rekat, dan kenyamanan dengan penyerapan kelembapan tambahan melalui perforasi mikro pada permukaannya - Tali Pergelangan Tangan Bela yang terpasang pada pegangan memberikan kontrol dan langkah-langkah keamanan ekstra  Tentang Bela: - Dirancang bersama dengan padel hebat Fernando "Bela" Belasteguin, lini Bela melambangkan hati, kerja keras, dan keinginan untuk menang yang tertanam dalam diri pria yang bertahan di peringkat #1 dunia selama 16 tahun. Lini raket padel memiliki konstruksi yang kuat, tekstur yang unik, dan desain mutakhir untuk memberikan perpaduan kekuatan dan kontrol berkualitas juara bagi pemain yang bercita-cita tinggi dan berprestasi.  Anyaman Fiberglass: - Konstruksi rangka fiberglass memberikan perpaduan yang bagus antara stabilitas dan responsivitas dayung.  Busa EVA Inti: - Busa dengan kepadatan rendah memberikan kinerja yang stabil sambil mempertahankan rasa lembut dan nyaman saat bersentuhan.  Pegangan Panah: - Tekstur pola mata panah pada permukaan mencengkeram bola untuk rasa yang luar biasa dan tingkat putaran ekstra.  Bentuk Berlian: - Bentuk berlian menciptakan sweet spot yang lebih lebar di bagian atas permukaan raket padel, menarik bagi gaya permainan yang lebih agresif dan menciptakan smash yang lebih kuat.',
                 'price' => 3159000,
                 'stock' => 5,
@@ -1420,8 +1420,8 @@ class ShopeeProductsSeeder extends Seeder
                 'original_price' => 7300000,
             ],
             [
-                'name' => 'Babolat Technical Viper APT Raket Padel Rackets NORA DYNAMIC STORE',
-                'slug' => 'babolat-technical-viper-apt-raket-padel-rackets-nora-dynamic-store',
+                'name' => 'Babolat Technical Viper APT Raket Padel Rackets ',
+                'slug' => 'babolat-technical-viper-apt-raket-padel-rackets',
                 'description' => '*PO 1-2 Minggu*  Daya ledak dan ketepatan dalam pukulan menyerang. Inilah yang dibutuhkan penyerang teknis untuk mengendalikan permainan dan membuat perbedaan menggunakan keterampilan dan kekuatan.  Technical Viper berevolusi menjadi versi baru dari dirinya sendiri. Kemampuan bermain yang sama dengan desain eksklusif baru yang membuat setiap raket menjadi unik. Jadilah PENYERANG TEKNIS. Hancurkan dari mana saja. Edisi khusus APT Padel Tour.  Fitur:  Daya Ledak: - Anda Membutuhkan Daya Ledak, Kami Memberikan Anda Daya Ledak. Pada Intensitas Tertinggi, Berkat Kombinasi Permukaan Karbon dan Teknologi X-Eva, Anda Akan Menemukan Daya Ledak yang Belum Pernah Anda Alami Sebelumnya. Buat Perbedaan dan Kalahkan Lawan Anda.  Ketepatan: - Penyerang Teknis Harus Tegas dalam Setiap Pukulan Menyerang. Untuk Melakukannya, Ketepatan Adalah Wajib. Berkat Pola Lubang yang Disesuaikan dengan Bentuknya yang Seperti Berlian, Raket Ini Akan Membuat Pukulan Anda Sama Tegasnya dengan Pukulan Bedah.  Kenyamanan: - Padel adalah Permainan yang Harus Dapat Anda Mainkan Tanpa Rasa Khawatir. Kami Tahu Bahwa Kekakuan Raket Dapat Menyebabkan Ketidaknyamanan pada Lengan Beberapa Pemain. Inilah Alasannya Tim R&D Kami Berusaha Mengurangi Risiko Cedera dan Menciptakan Teknologi Baru. Sistem Penyerap Getaran, Didukung Oleh Smac, Dibuat dengan Bahan Elastomer yang Terintegrasi dalam Konstruksi Raket. Bermain Lebih Aman dengan Kenyamanan Lebih di Setiap Pukulan.  Spesifikasi:  - Tipologi Pemain: Technical Striker - Bentuk Kepala: Diamond  Komposisi: - Rangka: Karbon - Permukaan: Karbon - Inti: Multi-Eva - Berat: 365 G +/- 10g - Ketebalan: 38 Mm - Tipe Keseimbangan: Head Heavy - Pegangan yang Direkomendasikan: Syntec Pro  Teknologi:  X-EVA: - Konstruksi sandwich pada inti dengan tiga lapisan EVA berbeda yang disesuaikan dengan setiap raket meningkatkan ledakan pada pukulan yang kuat berkat dua lapisan eksterior yang lebih kaku, sekaligus memberikan lebih banyak forgiveness dan kenyamanan dari lapisan dalam yang fleksibel pada pukulan yang lebih lembut.  3D Spin+: - Pola timbul pada permukaan raket yang dikombinasikan dengan finishing kasar memungkinkan Anda memukul dengan lebih banyak spin dan meningkatkan kontrol Anda.  Sistem Pola Lubang: - Distribusi dan ukuran lubang yang dioptimalkan khusus untuk setiap bentuk raket mengoptimalkan transmisi daya dan meningkatkan presisi saat mengembalikan pukulan.',
                 'price' => 5609368,
                 'stock' => 5,
@@ -1517,7 +1517,7 @@ class ShopeeProductsSeeder extends Seeder
             ],
             [
                 'name' => ' Padel | Racket Bullpadel Icon 2025',
-                'slug' => 'nora-dynamic-sport-padel-racket-bullpadel-icon-2025',
+                'slug' => 'padel-racket-bullpadel-icon-2025',
                 'description' => " Padel | Racket Bullpadel Icon 2025  The Bullpadel Icon 2025 is a high performance padel racket designed for advanced and professional players seeking a blend of power, control, and precision. Endorsed by professional player Juan Martín Díaz, this racket incorporates cutting edge technologies to enhance on court performance.  Shape : Diamond  Weight : Approximately 355–370 grams  Balance : Medium  Core : MultiEva Surface : Fiberglass and carbon hybrid  Frame : CarbonTube  Length : 455 mm Thickness : 38 mm  Integrated Technologies - Gyroflex : Twisted arm structure inspired by efficient and dynamic shapes, improving aerodynamics and energy transfer for enhanced power and spin.​ - Torsion Concept : 25-degree structural twist in the arms, optimizing energy transfer and aerodynamics, enhancing power, spin, and precision.​ - Ease Vibe System : Reduces vibrations by up to 49%, providing a more comfortable and effective feel.​ - Vibradrive System : Absorbs vibrations to reduce arm fatigue.​ - CustomWeight : Allows players to adjust the racket\\'s weight distribution to suit their playing style.​  ✿✿✿  Availability & Shipping  1. Pre-Order (PO): Estimated 1 – 2 weeks 2. Shipping can be fast or slow at any time depending on overseas shipping.",
                 'price' => 5299000,
                 'stock' => 5,
@@ -1529,7 +1529,7 @@ class ShopeeProductsSeeder extends Seeder
             ],
             [
                 'name' => ' Padel | Racket Bullpadel Elite W 2025',
-                'slug' => 'nora-dynamic-sport-padel-racket-bullpadel-elite-w-2025',
+                'slug' => 'padel-racket-bullpadel-elite-w-2025',
                 'description' => "Racket Bullpadel Elite W 2025  Elite, Gemma Triay\\'s racket, is the perfect balance of elegance, control, and power. Created for the player who wants it all: style, performance, and presence. With its chic design, Elite becomes a natural extension of your style, seamlessly blending performance and fashion. Elite is not just a game tool; it\\'s a statement of intent.  On the court, its hybrid shape allows you to dominate every point with the grace and power that set you apart, ensuring a complete game, just like you. Off the court, its lifestyle aesthetic transforms Elite into the ultimate accessory for those who understand that sport and style go hand in hand. Elite is, in short, a lethally sophisticated racket. Designed for the player who not only competes but leaves a mark.  Technologies: Elite Core, Air React Channel, Vibradrive, Fibrix, Multieva, Carbontube.  Approximate Weight: 350-360 grams. Profile: 38mm. Balance: ~25.8 cm Shape: Hybrid Outer Composition: Fibrix Inner Composition: Multieva Player: Expert adult Type: All-Around Play Playing Surface: 524 cm²  ✿✿✿  Availability & Shipping  Pre-Order : Estimated delivery within 1–2 weeks.​ Shipping Note : Delivery times may vary depending on international shipping and customs processes.",
                 'price' => 5299000,
                 'stock' => 5,
@@ -1541,7 +1541,7 @@ class ShopeeProductsSeeder extends Seeder
             ],
             [
                 'name' => ' Padel | Bullpadel Ionic Light 25 Racket',
-                'slug' => 'nora-dynamic-sport-padel-bullpadel-ionic-light-25-racket',
+                'slug' => 'padel-bullpadel-ionic-light-25-racket',
                 'description' => 'Bullpadel Ionic Light 2025 dirancang untuk pemain tingkat menengah hingga lanjutan yang mencari kombinasi sempurna antara kontrol dan kekuatan. Dengan bentuk kepala tetesan air (teardrop) dan keseimbangan menengah, raket ini menawarkan manuverabilitas tinggi tanpa mengorbankan daya pukul.  Bentuk Kepala : Tetesan air (Teardrop)​ Berat : 350–360 gram​ Keseimbangan : Menengah​ Ketebalan : 38 mm​ Rangka : CarbonTube (100% serat karbon)​ Permukaan : Glaphite (kombinasi serat karbon dan fiberglass)​ Inti : MultiEva (lapisan luar padat untuk kekuatan, lapisan dalam lembut untuk kontrol)​  Teknologi : - XForce : Memperkuat struktur raket untuk stabilitas ekstra.​ - 3D Grain : Tekstur permukaan poligonal untuk meningkatkan spin dan kontrol bola.​ - Ionic Heart Design : Desain bagian tengah raket yang memberikan kekakuan tambahan dan kontrol lebih baik.  Raket ini juga digunakan oleh pemain profesional seperti Claudia Fernández, menandakan kualitas dan performa tinggi yang ditawarkan.  ⋆⋆⋆  NOTE : 1. Pre-Order (PO): Estimasi 1–2 minggu 2. Pengiriman dapat cepat atau lambat kapan saja tergantung pada pengiriman luar negeri.',
                 'price' => 3499000,
                 'stock' => 5,
@@ -1637,7 +1637,7 @@ class ShopeeProductsSeeder extends Seeder
             ],
             [
                 'name' => ' Padel | Hirostar Blackstone Racket',
-                'slug' => 'nora-dynamic-sport-padel-hirostar-blackstone-racket',
+                'slug' => 'padel-hirostar-blackstone-racket',
                 'description' => ' Padel | Hirostar Blackstone Racket  The Hirostar Blackstone Racket is designed for padel players who demand a smooth balance of control and precision, backed by consistent power. With a sleek black finish and top-tier construction, this racket is made to perform.  Shape : Teardrop  Weight : Approx. 360 – 375 gr Frame : Full carbon fiber  Surface : Rough textured face  Core : High density EVA  Design : Elegant matte black with clean, modern accents  Recommended for intermediate to advanced players looking for a dependable, stylish racket to elevate their game!  Note ! 1. Pre Order (PO): Estimated 2–3 weeks 2. Items may arrive sooner or later than expected depending on overseas shipping.',
                 'price' => 4499000,
                 'stock' => 5,
@@ -1649,8 +1649,8 @@ class ShopeeProductsSeeder extends Seeder
             ],
             [
                 'name' => ' Padel | Hirostar Redstone Racket',
-                'slug' => 'nora-dynamic-sport-padel-hirostar-redstone-racket',
-                'description' => 'Nora Dynamic Store | Hirostar Redstone Racket  The Hirostar Redstone Racket is crafted for players who want high control and solid power, all wrapped in a striking red design. Perfect for competitive matches and serious training, this racket delivers precision with every shot.  Shape : Teardrop Weight : Approx. 360 – 375 gr Frame : Carbon fiber  Surface : Rough textured finish  Core : High density EVA  Design : Bold red aesthetic with premium finish  Ideal for intermediate to advanced players who want to play with confidence, power, and style.  NOTE ! 1. Pre-Order (PO): Estimated 2–3 weeks 2. Shipping may arrive slightly earlier or later depending on logistics and customs.',
+                'slug' => '-padel-hirostar-redstone-racket',
+                'description' => ' Hirostar Redstone Racket  The Hirostar Redstone Racket is crafted for players who want high control and solid power, all wrapped in a striking red design. Perfect for competitive matches and serious training, this racket delivers precision with every shot.  Shape : Teardrop Weight : Approx. 360 – 375 gr Frame : Carbon fiber  Surface : Rough textured finish  Core : High density EVA  Design : Bold red aesthetic with premium finish  Ideal for intermediate to advanced players who want to play with confidence, power, and style.  NOTE ! 1. Pre-Order (PO): Estimated 2–3 weeks 2. Shipping may arrive slightly earlier or later depending on logistics and customs.',
                 'price' => 4999000,
                 'stock' => 5,
                 'image' => 'https://cf.shopee.co.id/file/id-11134207-7rbk9-m8h6je0vi3p406',
@@ -1673,7 +1673,7 @@ class ShopeeProductsSeeder extends Seeder
             ],
             [
                 'name' => ' Padel | Racket Bullpadel Flow Woman 2025',
-                'slug' => 'nora-dynamic-sport-padel-racket-bullpadel-flow-woman-2025',
+                'slug' => 'padel-racket-bullpadel-flow-woman-2025',
                 'description' => 'Racket Bullpadel Flow Woman 2025  The Bullpadel Flow Woman 2025 is a high performance padel racket designed for advanced female players seeking a blend of power, control, and maneuverability. Endorsed by professional player Alejandra Salazar, this racket combines cutting edge technology with a lightweight design to enhance on court performance.  Shape : Diamond Weight : Approximately 350–360 grams​ Balance : High Core : MultiEva Surface : Fibrix  Frame : 100% Carbon Feel : Medium - soft  Integrated Technologies : FlowForce/3D Grain Surface/Vibradrive System/Carbontube Frame  ✿✿✿  Availability & Shipping : 1. Pre-Order (PO) : Estimated 1 – 2 weeks 2. Shipping can be fast or slow at any time depending on overseas shipping.',
                 'price' => 4399000,
                 'stock' => 5,
@@ -1781,7 +1781,7 @@ class ShopeeProductsSeeder extends Seeder
             ],
             [
                 'name' => ' Padel | Racket Bullpadel Neuron 2025',
-                'slug' => 'nora-dynamic-sport-padel-racket-bullpadel-neuron-2025',
+                'slug' => 'padel-racket-bullpadel-neuron-2025',
                 'description' => ' Padel | Racket Bullpadel Neuron 2025  The Bullpadel Neuron 2025 is a high performance padel racket designed for advanced and professional players seeking a balance of power and control. Endorsed by professional player Federico Chingotto, this racket integrates innovative technologies to enhance on court performance.​  Shape: Hybrid  Weight: Approximately 365–375 grams  Balance: Medium Core: MultiEva  Surface: Xtend Carbon 3K  Frame: CarbonTube  Length: 455 mm Thickness: 38 mm  Integrated Technologies : - Neuron Heart : A transverse bridge providing stability and preventing twisting, enhancing control during strikes.​ - Wave Side Profile : Wave-shaped frame structure that dissipates vibrations and reduces flexion upon impact, facilitating power generation with less effort.​ - Vibradrive System : Absorbs vibrations to reduce arm fatigue.​ - Hesacore Grip : Ergonomic design for improved grip and reduced strain.​  ✿✿✿  Availability & Shipping  1. Pre-Order (PO): Estimated 1 – 2 weeks 2. Shipping can be fast or slow at any time depending on overseas shipping.',
                 'price' => 5199000,
                 'stock' => 5,
@@ -1805,7 +1805,7 @@ class ShopeeProductsSeeder extends Seeder
             ],
             [
                 'name' => ' Padel | Bullpadel Vertex 04 W 2024 Racket',
-                'slug' => 'nora-dynamic-sport-padel-bullpadel-vertex-04-w-2024-racket',
+                'slug' => 'padel-bullpadel-vertex-04-w-2024-racket',
                 'description' => ' Padel | Bullpadel Vertex 04 W 2024 Racket  The Vertex 04 W 2024 is designed for professional and advanced female players seeking explosive power with great control. Lightweight and maneuverable, it features the latest Bullpadel innovations for top level play.  Shape : Diamond  Weight : Approx. 345 – 360 grams Core : MultiEVA  Surface : Fibrix (Carbon + Fiberglass hybrid) Frame : 100% CarbonTube Finish : Topspin 3D surface for added ball spin  Technology :  1. Air React Channel – aerodynamic frame for speed & stability 2. Vertex Heart System – reduces vibration and improves balance 3. Custom Weight System – allows fine-tuning of racket balance  Take your padel game to the next level with the same racket used by the pros!',
                 'price' => 4200000,
                 'stock' => 2,
@@ -1877,7 +1877,7 @@ class ShopeeProductsSeeder extends Seeder
             ],
             [
                 'name' => ' Padel | NOX AT Pro Cup Genius 2024 Racket',
-                'slug' => 'nora-dynamic-sport-padel-nox-at-pro-cup-genius-2024-racket',
+                'slug' => 'padel-nox-at-pro-cup-genius-2024-racket',
                 'description' => ' Padel | NOX AT Pro Cup Genius 2024  The 2024 version of the legendary Agustín Tapia racket is here! The NOX AT Pro Cup Genius 2024 combines control, power, and comfort, making it a top choice for serious padel players. Engineered with advanced materials and technologies, it’s built for performance on every point.  Shape : Teardrop  Core : HR3 EVA  Surface : Fiber Glass Silver with 3D finish for better spin Frame : 100% Carbon  Technology : AVS anti vibration system, Smartstrap® replaceable wrist strap Weight : 360 - 375 grams  Take your padel game to the next level with the same racket used by the pros!  ! NOTED ! 1. Pre-Order (PO) : Estimated delivery 2 - 4 weeks  2. This estimate is a benchmark, sometimes it can be less than the delivery time or it can be more.',
                 'price' => 2600000,
                 'stock' => 5,
@@ -1997,7 +1997,7 @@ class ShopeeProductsSeeder extends Seeder
             ],
             [
                 'name' => ' Padel | Bullpadel Ionic Power 25 Racket',
-                'slug' => 'nora-dynamic-sport-padel-bullpadel-ionic-power-25-racket',
+                'slug' => 'padel-bullpadel-ionic-power-25-racket',
                 'description' => 'Bullpadel Ionic Power 2025 – Power Meets Precision  The Bullpadel Ionic Power 2025 is engineered for intermediate to advanced players seeking a powerful and aggressive playing style. Its diamond shaped head and high balance point are designed to maximize offensive shots, making it ideal for players who dominate the court with forceful smashes.  Shape : Diamond Weight : Approximately 365–375gr Balance : High Thickness : 38 mm  Frame : CarbonTube (100% carbon fiber)  Surface : Glaphite (carbon fiber and fiberglass blend) Core : MultiEva   Technologies : 1. XForce : Enhances structural stability for better performance.​ 2. 3D Grain : Polygonal surface texture for improved spin and control.​ 3. Ionic Heart Design : Provides extra rigidity and control.​  Unleash your power on the court with a racket trusted by top players. Limited stock available — secure yours now with Pre-Order!',
                 'price' => 3499000,
                 'stock' => 5,
@@ -2021,7 +2021,7 @@ class ShopeeProductsSeeder extends Seeder
             ],
             [
                 'name' => ' Padel | Bullpadel Pearl Cloud 25 Racket',
-                'slug' => 'nora-dynamic-sport-padel-bullpadel-pearl-cloud-25-racket',
+                'slug' => 'padel-bullpadel-pearl-cloud-25-racket',
                 'description' => 'Bullpadel Pearl Cloud 25 – Lightweight Power with Precision  The Bullpadel Pearl Cloud 25 is designed for intermediate to advanced players seeking a balance of power and control. Its diamond-shaped head and high balance point provide powerful shots, while the lightweight construction ensures maneuverability.  Shape : Diamond​ Weight : Approximately 355–365g​r Balance : High​ Thickness : 38 mm​ Frame Composition : CarbonTube​ Surface Composition : ElasticFiber​ Core Composition : CloudEva​  Technologies : TRINAMIC : Inverted triangular geometry in the core for improved strength and efficiency.​ AIR REACT CHANNEL : Aerodynamic system enhancing stability and energy return  Unleash your power on the court with a racket trusted by top players. Limited stock available — secure yours now with Pre Order Est 1 - 2 week!',
                 'price' => 4399000,
                 'stock' => 5,
@@ -2069,7 +2069,7 @@ class ShopeeProductsSeeder extends Seeder
             ],
             [
                 'name' => ' Padel | Hirostar Alien Pro Racket',
-                'slug' => 'nora-dynamic-sport-padel-hirostar-alien-pro-racket',
+                'slug' => 'padel-hirostar-alien-pro-racket',
                 'description' => ' Padel | Hirostar Alien Pro Racket  Step up your padel game with the Hirostar Alien Pro, a premium racket built for players who crave both explosive power and pinpoint control. With advanced construction and a bold, futuristic design, this racket is ready for serious matches.  Shape : Teardrop  Weight : Approx. 360 – 375 gr Frame : Carbon fiber  Surface : Textured finish  Core : High density EVA  Design : Sleek and modern with unique cosmic visuals  Note : 1. Pre Order (PO): Estimated 2 – 3 weeks 2. Items may arrive sooner or later than expected depending on overseas shipping.',
                 'price' => 5499000,
                 'stock' => 1,
@@ -2105,7 +2105,7 @@ class ShopeeProductsSeeder extends Seeder
             ],
             [
                 'name' => ' Padel | Racket Bullpadel Icon Cloud 25',
-                'slug' => 'nora-dynamic-sport-padel-racket-bullpadel-icon-cloud-25',
+                'slug' => 'padel-racket-bullpadel-icon-cloud-25',
                 'description' => " Padel | Racket Bullpadel Icon Cloud 25  When you talk about padel, you talk about Juan Martín Díaz, an iconic legend who made history by remaining number 1 in the world for 14 years. His playing style, his mastery, and his legacy have left an indelible mark on this sport. That is why we present to the world ICON, a racket that transcends its purpose, a tribute to greatness, a symbol of excellence, and a definitive tool for those seeking to dominate the court with the same spirit as Juan Martín Díaz.  With every stroke, the ICON invites you to impact the present and leave an indelible mark on the court, inspiring your game with effects that transcend time, like the legends that endure. With the ICON, every point counts, every play matters, and every victory is etched forever.  Get Juan Martín Díaz\\'s racket today and start writing your own story on the court!  Technologies : Torsion Concept, Ease Vibe, Custom Weight, 3D Grain, Hesacore, Vibradrive, X-Tend Carbon 12k, Multieva, Carbontube. Approximate weight : 370-375 gr. Profile : 38mm. Balance : ≈26.3 cm. Shape : Diamond Outer Composition : X-Tend Carbon 12k Inner Composition : Multieva. Player: Expert Adult. Type: Attack Playing Surface: 534cm² Roughness: 3D",
                 'price' => 4499000,
                 'stock' => 5,
@@ -2129,7 +2129,7 @@ class ShopeeProductsSeeder extends Seeder
             ],
             [
                 'name' => ' Padel | NOX ML10 Shotgun Racket',
-                'slug' => 'nora-dynamic-sport-padel-nox-ml10-shotgun-racket',
+                'slug' => 'padel-nox-ml10-shotgun-racket',
                 'description' => ' Padel | NOX ML10 Shotgun Racket  The NOX ML10 Shotgun is a powerful padel racket designed in collaboration with Miguel Lamperti, one of the most iconic players in the game. With its diamond shape and high balance design, this racket is made for offensive players who love smashing with force and precision.  Shape : Diamond  Core : HR3 EVA  Surface : 12K Carbon  Frame : 100% Carbon Finish : Rough surface for enhanced spin Weight : Approx. 360 – 375 grams  Tech Features : • AVS (Anti Vibration System) • Smartstrap® replaceable safety cord • Designed with Miguel Lamperti  Powerful, stylish, and built for competitive players who want to dominate at the net!  NOTED : 1. Pre Order available ( est 2 - 4 weeks delivery ) 2. Items may arrive sooner or later than expected depending on overseas shipping.',
                 'price' => 3470000,
                 'stock' => 5,
@@ -2213,7 +2213,7 @@ class ShopeeProductsSeeder extends Seeder
             ],
             [
                 'name' => ' Padel | Racket Bullpadel Pearl 2025',
-                'slug' => 'nora-dynamic-sport-padel-racket-bullpadel-pearl-2025',
+                'slug' => 'padel-racket-bullpadel-pearl-2025',
                 'description' => 'The Bullpadel Pearl 2025 is a high performance padel racket designed for advanced players seeking a blend of power, control, and precision. Endorsed by professional player Bea González, this racket combines innovative technologies with a refined design to enhance on-court performance.  Shape: Diamond  Weight: Approximately 355–365 grams  Balance: High Core: MultiEva Surface: Fibrix Frame: 100% Carbon  Length: 455 mm  Thickness: 38 mm  Integrated Technologies Vibradrive System: Absorbs vibrations to reduce arm fatigue.​ Air React Channel: Enhances aerodynamics for better swing speed.​ Trinamic Core: Triangular structure allows load distribution when hitting for more power without losing control.  ✿✿✿  Availability & Shipping  1. Pre-Order (PO): Estimated 1 – 2 weeks 2. Shipping can be fast or slow at any time depending on overseas shipping.',
                 'price' => 5299000,
                 'stock' => 5,
@@ -2357,7 +2357,7 @@ class ShopeeProductsSeeder extends Seeder
             ],
             [
                 'name' => ' Padel | Hirostar Solar Racket',
-                'slug' => 'nora-dynamic-sport-padel-hirostar-solar-racket',
+                'slug' => 'padel-hirostar-solar-racket',
                 'description' => ' Padel | Hirostar Solar Racket  Unleash your game with the Hirostar Solar Racket, designed for speed, agility, and precision. With a slightly lighter weight and aerodynamic build, the Solar is perfect for players who thrive on quick reactions, strategic placement, and all around court movement.  Shape: Teardrop  Weight: Approx. 355 – 370 gr  Frame: 100% Carbon Fiber Core: Medium density EVA Foam  Surface: Matte finish with light texture  Balance: Medium  Design: Bold solar inspired look with radiant accents   Note ! 1. Pre Order (PO): Estimated 2–3 weeks 2. Delivery may be slightly faster or longer depending on logistics/customs',
                 'price' => 3499000,
                 'stock' => 5,
@@ -2381,7 +2381,7 @@ class ShopeeProductsSeeder extends Seeder
             ],
             [
                 'name' => ' Padel | Bullpadel Neuron Cloud 25 Racket',
-                'slug' => 'nora-dynamic-sport-padel-bullpadel-neuron-cloud-25-racket',
+                'slug' => 'padel-bullpadel-neuron-cloud-25-racket',
                 'description' => ' Padel | Bullpadel Neuron Cloud 25 Racket  The new Neuron Cloud maintains the structure and advanced technologies that made the Neuron and Fede Chingotto a benchmark in control and precision, but with the added perk of even more comfortable materials to achieve a version that is comfier to use and more flexible. With each hit, you will feel the difference, a softness that protects, a comfort that reduces impact, resulting in a winning performance.  Play on the clouds with your feet on the ground. Neuron Cloud turns every movement and hit into a fun and pleasant experience, for all round enjoyment of your favourite sport.  Approx. weight: 365 g.  Profile: 38 mm.  Balance: ≈ 25.  Shape: Hybrid.  Outer Comp.: Elastic Fiber.  Inner Comp.: Cloud EVA.  Player: Intensive.  Type: Defense.  Playing surface: 535 cm².  Roughness: 3D. Technologies: Wave System, Wave Bridge, Aero Channel, Ease Vibe, Custom Weight, Smart Holes, 3D Grain, Hesacore Gel, Vibradrive, Elastic Fiber, CloudEva, Carbontube.  Unleash your power on the court with a racket trusted by top players. Limited stock available — secure yours now with Pre Order!',
                 'price' => 4399000,
                 'stock' => 5,

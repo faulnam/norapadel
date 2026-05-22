@@ -101,7 +101,6 @@
                                         })->sum('quantity');
 
                                     $reviews = \App\Models\Review::where('product_id', $product->id)
-                                        ->where('is_approved', true)
                                         ->get();
                                     $displayRating = $reviews->isNotEmpty() ? $reviews->avg('rating') : 5.0;
                                 @endphp
@@ -758,43 +757,6 @@ function selectRating(rating) {
     document.getElementById('ratingInput').value = rating;
 }
 
-// Submit review form
-document.getElementById('reviewForm')?.addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(this);
-    
-    fetch('{{ route('customer.reviews.store', $product) }}', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-            rating: formData.get('rating'),
-            comment: formData.get('comment'),
-            quality_rating: formData.get('quality_rating'),
-            sizing_rating: formData.get('sizing_rating'),
-            usual_size: formData.get('usual_size')
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert(data.message);
-            closeReviewModal();
-            location.reload();
-        } else {
-            alert(data.message || 'Failed to submit review');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Terjadi kesalahan. Silakan coba lagi.');
-    });
-});
-
 // Review Filter: Search + Rating
 (function() {
     const searchInput = document.getElementById('reviewSearch');
@@ -863,4 +825,106 @@ document.getElementById('reviewForm')?.addEventListener('submit', function(e) {
         </form>
     </div>
 </div>
+
+<script>
+// Review form submit handler — must be after the modal HTML
+document.getElementById('reviewForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const rating = formData.get('rating');
+    const comment = formData.get('comment');
+
+    if (!rating) {
+        alert('Silakan pilih rating terlebih dahulu.');
+        return;
+    }
+
+    const submitBtn = this.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting...';
+    
+    fetch('{{ route("customer.reviews.store", $product) }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            rating: rating,
+            comment: comment,
+            quality_rating: formData.get('quality_rating'),
+            sizing_rating: formData.get('sizing_rating'),
+            usual_size: formData.get('usual_size')
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.text().then(text => {
+                try { throw JSON.parse(text); } catch(e) { throw { message: 'Server error: ' + response.status }; }
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            const reviewData = data.review;
+            const starsHtml = Array.from({length: 5}, (_, i) => 
+                `<i class="fas fa-star ${i < reviewData.rating ? 'text-black' : 'text-zinc-200'} text-xs"></i>`
+            ).join('');
+
+            const newReviewHtml = `
+                <div class="py-8 border-b border-zinc-100 last:border-0 review-item" data-rating="${reviewData.rating}">
+                    <div class="flex items-start justify-between mb-3">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <h4 class="text-xs font-semibold tracking-[0.05em] text-black uppercase">${reviewData.user_name}</h4>
+                            </div>
+                            <div class="flex items-center gap-1">${starsHtml}</div>
+                        </div>
+                        <span class="text-[10px] text-zinc-400">Just now</span>
+                    </div>
+                    ${reviewData.comment ? `<p class="text-sm text-zinc-600 leading-relaxed mb-4 review-text">${reviewData.comment}</p>` : ''}
+                </div>
+            `;
+
+            let reviewsList = document.getElementById('reviewsList');
+            if (!reviewsList) {
+                const emptyState = document.querySelector('.py-12.text-center');
+                if (emptyState) {
+                    const container = document.createElement('div');
+                    container.className = 'space-y-0 max-h-[600px] overflow-y-auto pr-2';
+                    container.id = 'reviewsList';
+                    emptyState.replaceWith(container);
+                    reviewsList = container;
+                }
+            }
+
+            if (reviewsList) {
+                reviewsList.insertAdjacentHTML('afterbegin', newReviewHtml);
+            }
+
+            closeReviewModal();
+            document.getElementById('reviewForm').reset();
+            document.querySelectorAll('.star-rating i').forEach(s => {
+                s.classList.remove('text-black');
+                s.classList.add('text-zinc-200');
+            });
+
+            alert('Review berhasil ditambahkan!');
+        } else {
+            alert(data.message || 'Gagal mengirim review.');
+        }
+    })
+    .catch(error => {
+        console.error('Review error:', error);
+        alert(error.message || 'Terjadi kesalahan. Pastikan Anda sudah login.');
+    })
+    .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Review';
+    });
+});
+</script>
 @endpush
