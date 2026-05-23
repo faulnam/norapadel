@@ -19,7 +19,7 @@
                     </ol>
                 </nav>
 
-                <div class="grid md:grid-cols-[auto_1fr] gap-5 lg:gap-6 py-4">
+                <div class="grid md:grid-cols-[auto_1fr] gap-5 lg:gap-6 py-4 items-start">
                     <!-- Product Gallery -->
                     <div class="flex flex-col gap-3 max-w-[600px]" x-data="{ activeImage: '{{ $product->image_url }}' }">
                         <!-- Main Image -->
@@ -131,77 +131,79 @@
                             @endif
                         </div>
 
-                        <!-- Description -->
+                        <!-- Specifications Table -->
                         <div class="border-t border-zinc-200 pt-4">
-                            <h3 class="text-xs font-semibold text-black uppercase tracking-wider mb-2">Product Description</h3>
-                            @php
-                                $rawDescription = trim((string) $product->description);
-
-                                // Split by new lines first, fallback to sentence split.
-                                $parts = preg_split("/\r\n|\r|\n/", $rawDescription) ?: [];
-                                $parts = array_values(array_filter(array_map('trim', $parts)));
-
-                                if (count($parts) === 0 && $rawDescription !== '') {
-                                    $sentences = preg_split('/(?<=[.!?])\s+/', $rawDescription) ?: [];
-                                    $sentences = array_values(array_filter(array_map('trim', $sentences)));
-
-                                    // Build up to 3 short paragraphs from sentences.
-                                    $parts = [];
-                                    $buffer = '';
-                                    foreach ($sentences as $sentence) {
-                                        $candidate = trim($buffer === '' ? $sentence : ($buffer . ' ' . $sentence));
-                                        if (mb_strlen($candidate) > 180 && $buffer !== '') {
-                                            $parts[] = $buffer;
-                                            $buffer = $sentence;
-                                            if (count($parts) >= 3) break;
-                                        } else {
-                                            $buffer = $candidate;
-                                        }
-                                    }
-                                    if (count($parts) < 3 && trim($buffer) !== '') {
-                                        $parts[] = trim($buffer);
-                                    }
-                                }
-
-                                $maxParagraphs = 10;
-                                $displayParts = array_slice($parts, 0, $maxParagraphs);
-
-                                // Clamp each paragraph length to keep it tidy.
-                                $displayParts = array_map(function ($p) {
-                                    $p = trim((string) $p);
-                                    if (mb_strlen($p) > 220) {
-                                        return rtrim(mb_substr($p, 0, 217)) . '...';
-                                    }
-                                    return $p;
-                                }, $displayParts);
-
-                                $hasMore = count($parts) > $maxParagraphs;
-                            @endphp
-
-                            <div class="space-y-2 text-sm text-zinc-600 leading-relaxed">
-                                @forelse($displayParts as $paragraph)
-                                    <p>{{ $paragraph }}</p>
-                                @empty
-                                    <p class="text-zinc-500">No description available.</p>
-                                @endforelse
-                                @if($hasMore)
-                                    <p class="text-zinc-500">...</p>
-                                @endif
+                            <h3 class="text-[10px] font-semibold text-black uppercase tracking-wider mb-3">Specifications</h3>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-xs">
+                                    <tbody>
+                                        @php
+                                            $primarySpecs = [
+                                                'Brand' => $product->brand,
+                                                'Series' => $product->series,
+                                                'Shape' => $product->shape,
+                                                'Balance' => $product->balance,
+                                                'Weight' => $product->racket_weight,
+                                            ];
+                                            $allSpecs = [
+                                                'Brand' => $product->brand,
+                                                'Series' => $product->series,
+                                                'Shape' => $product->shape,
+                                                'Balance' => $product->balance,
+                                                'Weight' => $product->racket_weight,
+                                                'Level' => $product->level ? ucfirst($product->level) : null,
+                                                'Play Style' => $product->play_style,
+                                                'Player Type' => $product->player_type,
+                                                'Core' => $product->core,
+                                                'Faces' => $product->faces,
+                                                'Frame' => $product->frame,
+                                                'Surface' => $product->surface,
+                                                'Feel' => $product->feel,
+                                                'Power' => $product->power,
+                                                'Control' => $product->control,
+                                                'Maneuverability' => $product->maneuverability,
+                                                'Comfort' => $product->comfort,
+                                                'Technology' => $product->technology,
+                                                'Benefits' => $product->benefits,
+                                                'Suitable For' => $product->suitable_for,
+                                                'Collection' => $product->collection,
+                                            ];
+                                        @endphp
+                                        @foreach($primarySpecs as $label => $value)
+                                            @if($value)
+                                                <tr class="border-b border-zinc-100">
+                                                    <td class="py-1.5 px-1.5 font-medium text-zinc-700 w-1/3">{{ $label }}</td>
+                                                    <td class="py-1.5 px-1.5 text-zinc-600">{{ $value }}</td>
+                                                </tr>
+                                            @endif
+                                        @endforeach
+                                    </tbody>
+                                </table>
                             </div>
-                        </div>
 
-                        <!-- Product Details -->
-                        <div class="border-t border-zinc-200 pt-4">
-                            <h3 class="text-xs font-semibold text-black uppercase tracking-wider mb-2">Product Details</h3>
-                            <div class="grid grid-cols-2 gap-2 text-sm">
-                                <div class="flex items-center gap-2 text-zinc-600">
-                                    <i class="fas fa-weight-hanging w-4 text-xs"></i>
-                                    <span>Weight: <strong class="text-black">{{ $product->formatted_weight }}</strong></span>
-                                </div>
-                                <div class="flex items-center gap-2 text-zinc-600">
-                                    <i class="fas fa-boxes w-4 text-xs"></i>
-                                    <span>Stock: <strong class="text-black">{{ $product->stock }}</strong></span>
-                                </div>
+                            <!-- Expand/Collapse Button -->
+                            <button id="toggleSpecs" onclick="toggleSpecs()" class="flex items-center gap-1 text-xs text-zinc-600 hover:text-black mt-2 transition-colors">
+                                <span id="toggleText">View More</span>
+                                <i id="toggleIcon" class="fas fa-chevron-down transition-transform duration-200"></i>
+                            </button>
+
+                            <!-- Additional Specifications (Hidden by default) -->
+                            <div id="additionalSpecs" class="hidden overflow-x-auto mt-2">
+                                <table class="w-full text-xs">
+                                    <tbody>
+                                        @php
+                                            $additionalSpecs = array_slice($allSpecs, 5, null, true);
+                                        @endphp
+                                        @foreach($additionalSpecs as $label => $value)
+                                            @if($value)
+                                                <tr class="border-b border-zinc-100">
+                                                    <td class="py-1.5 px-1.5 font-medium text-zinc-700 w-1/3">{{ $label }}</td>
+                                                    <td class="py-1.5 px-1.5 text-zinc-600">{{ $value }}</td>
+                                                </tr>
+                                            @endif
+                                        @endforeach
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
 
@@ -941,5 +943,21 @@ document.getElementById('reviewForm').addEventListener('submit', function(e) {
         submitBtn.textContent = 'Submit Review';
     });
 });
+
+function toggleSpecs() {
+    const additionalSpecs = document.getElementById('additionalSpecs');
+    const toggleText = document.getElementById('toggleText');
+    const toggleIcon = document.getElementById('toggleIcon');
+
+    if (additionalSpecs.classList.contains('hidden')) {
+        additionalSpecs.classList.remove('hidden');
+        toggleText.textContent = 'View Less';
+        toggleIcon.style.transform = 'rotate(180deg)';
+    } else {
+        additionalSpecs.classList.add('hidden');
+        toggleText.textContent = 'View More';
+        toggleIcon.style.transform = 'rotate(0deg)';
+    }
+}
 </script>
 @endpush

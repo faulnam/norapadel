@@ -737,38 +737,6 @@
             </div>
         </main>
 
-        <!-- Category Icons Section (Outside Main) -->
-        <section class="np-fade-section bg-white py-8 lg:py-10">
-            <div class="mx-auto max-w-7xl px-6 md:px-10 lg:px-12">
-                <div class="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
-                        <a href="{{ route('racket') }}" class="flex flex-col items-center justify-center p-4 md:p-6 bg-white cursor-pointer transition hover:opacity-80">
-                            <div class="w-36 h-36 md:w-48 md:h-48 mb-3 md:mb-4 flex items-center justify-center">
-                                <img src="{{ asset('storage/iconracket.jpg') }}" alt="Racket" class="w-full h-full object-contain">
-                            </div>
-                            <h3 class="text-sm md:text-base font-medium text-black">Racket</h3>
-                        </a>
-                        <a href="{{ route('shoes') }}" class="flex flex-col items-center justify-center p-4 md:p-6 bg-white cursor-pointer transition hover:opacity-80">
-                            <div class="w-36 h-36 md:w-48 md:h-48 mb-3 md:mb-4 flex items-center justify-center">
-                                <img src="{{ asset('storage/iconsepatu.png') }}" alt="Shoes" class="w-full h-full object-contain">
-                            </div>
-                            <h3 class="text-sm md:text-base font-medium text-black">Shoes</h3>
-                        </a>
-                        <a href="{{ route('apparel') }}" class="flex flex-col items-center justify-center p-4 md:p-6 bg-white cursor-pointer transition hover:opacity-80">
-                            <div class="w-36 h-36 md:w-48 md:h-48 mb-3 md:mb-4 flex items-center justify-center">
-                                <img src="{{ asset('storage/icontas.jpg') }}" alt="Bag" class="w-full h-full object-contain">
-                            </div>
-                            <h3 class="text-sm md:text-base font-medium text-black">Bags</h3>
-                        </a>
-                        <a href="{{ route('apparel') }}" class="flex flex-col items-center justify-center p-4 md:p-6 bg-white cursor-pointer transition hover:opacity-80">
-                            <div class="w-36 h-36 md:w-48 md:h-48 mb-3 md:mb-4 flex items-center justify-center">
-                                <img src="{{ asset('storage/icongrip.jpg') }}" alt="Grip" class="w-full h-full object-contain">
-                            </div>
-                            <h3 class="text-sm md:text-base font-medium text-black">Grips</h3>
-                        </a>
-                </div>
-            </div>
-        </section>
-
         <!-- Shop Section (Outside Main, 12 products, 2 rows x 6 cols) -->
         <section class="np-fade-section bg-white py-8 lg:py-10">
             <div class="mx-auto max-w-7xl px-6 md:px-10 lg:px-12">
