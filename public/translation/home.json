@@ -1,53 +1,60 @@
 {
+  "navbar": {
+    "home": { "id": "Beranda", "en": "Home" },
+    "new_arrivals": { "id": "Terbaru", "en": "New Arrivals" },
+    "racket": { "id": "Raket", "en": "Racket" },
+    "shoes": { "id": "Sepatu", "en": "Shoes" },
+    "accessories": { "id": "Aksesoris", "en": "Accessories" },
+    "contact": { "id": "Kontak", "en": "Contact" },
+    "brand": { "id": "Merek", "en": "Brand" },
+    "level": { "id": "Level", "en": "Level" },
+    "category": { "id": "Kategori", "en": "Category" },
+    "beginner": { "id": "Pemula", "en": "Beginner" },
+    "intermediate": { "id": "Menengah", "en": "Intermediate" },
+    "pro": { "id": "Profesional", "en": "Pro" },
+    "login": { "id": "Masuk", "en": "Login" },
+    "cart": { "id": "Keranjang", "en": "Cart" },
+    "wishlist": { "id": "Wishlist", "en": "Wishlist" },
+    "profile": { "id": "Profil", "en": "Profile" },
+    "orders": { "id": "Pesanan", "en": "Orders" },
+    "dashboard": { "id": "Dasbor", "en": "Dashboard" }
+  },
   "hero": {
     "search_placeholder": {
-      "id": "Cari raket, sepatu, aksesoris...",
-      "en": "Search for rackets, shoes, accessories..."
+      "id": "Cari...",
+      "en": "Search..."
     },
-    "search_modal": {
-      "close_hint": { "id": "ESC", "en": "ESC" },
-      "typing_hint": { "id": "Mulai mengetik untuk mencari produk...", "en": "Type to start searching for products..." },
-      "search_by": { "id": "Cari berdasarkan nama, brand, atau kategori", "en": "Search by name, brand, or category" }
+    "title": {
+      "id": "NoraPadel",
+      "en": "NoraPadel"
     },
     "subtitle": {
       "id": "Rasakan pengalaman terbaik dengan perlengkapan padel pilihan. Raket, sepatu, dan aksesoris kualitas premium untuk pemain yang mengutamakan kesempurnaan.",
       "en": "Experience the ultimate in padel equipment. Premium quality rackets, shoes, and accessories for players who demand excellence."
-    },
-    "cta_button": {
-      "id": "Belanja Sekarang",
-      "en": "Shop Now"
     }
   },
-  "product_section": {
-    "filter_titles": {
-      "category": { "id": "Kategori", "en": "Category" },
-      "brand": { "id": "Merek", "en": "Brand" },
-      "price": { "id": "Harga", "en": "Price" },
-      "sort": { "id": "Urutkan", "en": "Sort" },
-      "clear": { "id": "Bersihkan", "en": "Clear" }
-    },
-    "price_options": {
-      "all": { "id": "Semua Harga", "en": "All Prices" },
-      "low_to_high": { "id": "Termurah ke Termahal", "en": "Low to High" },
-      "high_to_low": { "id": "Termahal ke Termurah", "en": "High to Low" }
-    },
-    "sort_options": {
-      "default": { "id": "Bawaan", "en": "Default" },
-      "popular": { "id": "Populer", "en": "Popular" },
-      "latest": { "id": "Terbaru", "en": "Latest" }
-    },
-    "voucher": {
-      "available": { "id": "Voucher tersedia", "en": "Vouchers available" }
-    },
-    "product_card": {
-      "btn_detail": { "id": "Detail", "en": "Details" },
-      "btn_add_to_cart": { "id": "Tambah ke Keranjang", "en": "Add to Cart" }
-    },
-    "bottom_categories": {
-      "racket": { "id": "Raket", "en": "Racket" },
-      "shoes": { "id": "Sepatu", "en": "Shoes" },
-      "bags": { "id": "Tas", "en": "Bags" },
-      "grips": { "id": "Grip", "en": "Grips" }
-    }
+  "filters": {
+    "category": { "id": "Kategori", "en": "Category" },
+    "brand": { "id": "Merek", "en": "Brand" },
+    "price": { "id": "Harga", "en": "Price" },
+    "sort": { "id": "Urutkan", "en": "Sort" },
+    "clear": { "id": "Bersihkan", "en": "Clear" },
+    "all_prices": { "id": "Semua Harga", "en": "All Prices" },
+    "low_to_high": { "id": "Termurah ke Termahal", "en": "Low to High" },
+    "high_to_low": { "id": "Termahal ke Termurah", "en": "High to Low" },
+    "default": { "id": "Bawaan", "en": "Default" },
+    "popular": { "id": "Populer", "en": "Popular" },
+    "latest": { "id": "Terbaru", "en": "Latest" },
+    "racket": { "id": "Raket", "en": "Racket" },
+    "shoes": { "id": "Sepatu", "en": "Shoes" },
+    "accessories": { "id": "Aksesoris", "en": "Accessories" }
+  },
+  "product": {
+    "no_results": { "id": "Tidak ada produk ditemukan", "en": "No products found" },
+    "add_to_cart": { "id": "Tambah ke Keranjang", "en": "Add to cart" },
+    "voucher_available": { "id": "Voucher tersedia", "en": "Vouchers available" }
+  },
+  "search": {
+    "placeholder": { "id": "Cari produk, brand, atau kategori...", "en": "Search products, brand, or category..." }
   }
 }

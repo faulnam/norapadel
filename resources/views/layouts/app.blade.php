@@ -819,6 +819,105 @@
                 font-size: 1.25rem;
             }
         }
+
+        /* Dark Theme Styles */
+        [data-theme="dark"] {
+            --bg-primary: #18181b;
+            --bg-secondary: #27272a;
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --border-color: #3f3f46;
+        }
+
+        [data-theme="dark"] body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .bg-white {
+            background-color: var(--bg-secondary) !important;
+        }
+
+        [data-theme="dark"] .text-black {
+            color: var(--text-primary) !important;
+        }
+
+        [data-theme="dark"] .text-zinc-600,
+        [data-theme="dark"] .text-zinc-500,
+        [data-theme="dark"] .text-zinc-400 {
+            color: var(--text-secondary) !important;
+        }
+
+        [data-theme="dark"] .border-zinc-200,
+        [data-theme="dark"] .border-zinc-100 {
+            border-color: var(--border-color) !important;
+        }
+
+        [data-theme="dark"] .hover\:border-black:hover {
+            border-color: var(--text-primary) !important;
+        }
+
+        [data-theme="dark"] .hover\:text-black:hover {
+            color: var(--text-primary) !important;
+        }
+
+        /* All buttons in dark mode */
+        [data-theme="dark"] button {
+            color: var(--text-primary) !important;
+        }
+
+        [data-theme="dark"] button.bg-white {
+            background-color: var(--bg-secondary) !important;
+        }
+
+        [data-theme="dark"] button.bg-gray-100 {
+            background-color: var(--bg-primary) !important;
+        }
+
+        [data-theme="dark"] button.text-zinc-800 {
+            color: var(--text-primary) !important;
+        }
+
+        [data-theme="dark"] button.text-zinc-600 {
+            color: var(--text-secondary) !important;
+        }
+
+        [data-theme="dark"] button.border-zinc-300 {
+            border-color: var(--border-color) !important;
+        }
+
+        [data-theme="dark"] button.border-zinc-200 {
+            border-color: var(--border-color) !important;
+        }
+
+        /* Filter chips in dark mode */
+        [data-theme="dark"] .filter-chip {
+            color: var(--text-secondary) !important;
+            border-color: var(--border-color) !important;
+        }
+
+        [data-theme="dark"] .filter-chip.bg-black {
+            background-color: var(--text-primary) !important;
+            color: var(--bg-primary) !important;
+            border-color: var(--text-primary) !important;
+        }
+
+        [data-theme="dark"] .filter-chip:hover {
+            color: var(--text-primary) !important;
+            border-color: var(--text-primary) !important;
+        }
+
+        /* Theme toggle button */
+        [data-theme="dark"] #themeToggle {
+            background-color: var(--bg-secondary) !important;
+            border-color: var(--border-color) !important;
+            color: var(--text-primary) !important;
+        }
+
+        [data-theme="dark"] #themeToggle:hover {
+            background-color: var(--border-color) !important;
+            border-color: var(--text-primary) !important;
+        }
     </style>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -1417,13 +1516,44 @@
             window.addEventListener('resize', requestTick);
             requestTick();
         })();
+
+        // Theme Toggle Functionality
+        window.toggleTheme = function() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        };
+
+        function updateThemeIcon(theme) {
+            const themeIcon = document.getElementById('themeIcon');
+            if (themeIcon) {
+                if (theme === 'dark') {
+                    themeIcon.classList.remove('fa-sun');
+                    themeIcon.classList.add('fa-moon');
+                } else {
+                    themeIcon.classList.remove('fa-moon');
+                    themeIcon.classList.add('fa-sun');
+                }
+            }
+        }
+
+        // Initialize theme on page load
+        (function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+        })();
     </script>
-    
+
     {{-- Notification Sound Component for Customer --}}
     @auth
         <x-notification-sound role="customer" />
     @endauth
-    
+
     @stack('scripts')
 </body>
 </html>

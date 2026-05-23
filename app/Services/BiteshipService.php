@@ -911,7 +911,7 @@ class BiteshipService
         return [
             'success' => true,
             'data' => [
-                'id' => 'BITESHIP-' . strtoupper(uniqid()),
+                'id' => strtoupper(substr(uniqid(), -12)),
                 'courier' => [
                     'waybill_id' => $waybillId,
                     'company' => $orderData['courier_code'],
@@ -929,7 +929,27 @@ class BiteshipService
             ],
         ];
     }
-    
+
+    /**
+     * Mock cancel order
+     */
+    private function mockCancelOrder(string $orderId, ?string $reason = null): array
+    {
+        sleep(1);
+
+        return [
+            'success' => true,
+            'message' => 'Cancel order Biteship berhasil (MOCK).',
+            'data' => [
+                'id' => $orderId,
+                'status' => 'cancelled',
+                'cancelled_at' => now()->format('Y-m-d H:i:s'),
+                'cancel_reason' => $reason ?? 'Dibatalkan oleh customer',
+            ],
+            'status' => 'cancelled',
+        ];
+    }
+
     /**
      * Generate nomor resi sesuai format ekspedisi
      */
@@ -1188,6 +1208,11 @@ class BiteshipService
                 'success' => false,
                 'message' => 'Biteship order ID kosong.',
             ];
+        }
+
+        // Mock mode
+        if ($this->useMock) {
+            return $this->mockCancelOrder($orderId, $reason);
         }
 
         $payload = [

@@ -257,10 +257,15 @@
 
                 <!-- Language Switcher (desktop only) -->
                 <div class="hidden md:flex items-center gap-1">
-                    <a href="{{ request()->fullUrlWithQuery(['locale' => 'en']) }}" class="px-2 py-1 text-xs font-semibold transition duration-300 {{ session('locale', 'en') === 'en' ? 'text-black' : 'text-zinc-400 hover:text-black' }}">EN</a>
+                    <button onclick="switchLanguage('en')" class="px-2 py-1 text-xs font-semibold transition duration-300 hover:text-black lang-btn" data-lang="en">EN</button>
                     <span class="text-zinc-300">|</span>
-                    <a href="{{ request()->fullUrlWithQuery(['locale' => 'id']) }}" class="px-2 py-1 text-xs font-semibold transition duration-300 {{ session('locale', 'en') === 'id' ? 'text-black' : 'text-zinc-400 hover:text-black' }}">ID</a>
+                    <button onclick="switchLanguage('id')" class="px-2 py-1 text-xs font-semibold transition duration-300 hover:text-black lang-btn" data-lang="id">ID</button>
                 </div>
+
+                <!-- Theme Toggle (desktop only) -->
+                <button onclick="toggleTheme()" class="hidden md:flex items-center justify-center w-8 h-8 rounded-full bg-zinc-50 border border-zinc-200 text-black transition duration-300 hover:bg-zinc-100 hover:border-zinc-300" id="themeToggle" title="Toggle Theme">
+                    <i class="fas fa-sun text-sm" id="themeIcon"></i>
+                </button>
 
               
 
@@ -318,12 +323,12 @@
                             <div class="md:hidden border-b border-zinc-100">
                                 <div class="px-3 py-2 bg-zinc-50">
                                     <div class="flex gap-2">
-                                        <a href="{{ request()->fullUrlWithQuery(['locale' => 'en']) }}" class="flex-1 px-2 py-1.5 text-xs text-zinc-700 hover:bg-white rounded transition {{ session('locale', 'en') === 'en' ? 'bg-white font-semibold' : 'bg-white/50' }}">
+                                        <button onclick="switchLanguage('en')" class="flex-1 px-2 py-1.5 text-xs text-zinc-700 hover:bg-white rounded transition lang-btn-mobile" data-lang="en">
                                             EN
-                                        </a>
-                                        <a href="{{ request()->fullUrlWithQuery(['locale' => 'id']) }}" class="flex-1 px-2 py-1.5 text-xs text-zinc-700 hover:bg-white rounded transition {{ session('locale', 'en') === 'id' ? 'bg-white font-semibold' : 'bg-white/50' }}">
+                                        </button>
+                                        <button onclick="switchLanguage('id')" class="flex-1 px-2 py-1.5 text-xs text-zinc-700 hover:bg-white rounded transition lang-btn-mobile" data-lang="id">
                                             ID
-                                        </a>
+                                        </button>
                                     </div>
                                 </div>
                             </div>

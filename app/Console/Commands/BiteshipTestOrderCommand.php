@@ -7,14 +7,21 @@ use Illuminate\Console\Command;
 
 class BiteshipTestOrderCommand extends Command
 {
-    protected $signature = 'biteship:test-order {courier=jnt}';
-    protected $description = 'Test Biteship order creation dengan berbagai ekspedisi';
+    protected $signature = 'biteship:test-order {courier=jnt} {--status=confirmed : Order status (confirmed/cancelled)}';
+    protected $description = 'Test Biteship order creation dengan berbagai ekspedisi dan status';
 
     public function handle()
     {
         $courier = strtolower($this->argument('courier'));
-        
+        $status = strtolower($this->option('status'));
+
+        if (!in_array($status, ['confirmed', 'cancelled'])) {
+            $this->error('Status must be either "confirmed" or "cancelled"');
+            return Command::FAILURE;
+        }
+
         $this->info("Testing Biteship order creation untuk ekspedisi: {$courier}");
+        $this->info("Target Status: {$status}");
         $this->newLine();
 
         $biteship = app(BiteshipService::class);
@@ -48,12 +55,13 @@ class BiteshipTestOrderCommand extends Command
 
             $data = $result['data'] ?? [];
             $courier = $data['courier'] ?? [];
+            $orderId = $data['id'] ?? null;
 
             $this->info("Detail Order:");
             $this->table(
                 ['Field', 'Value'],
                 [
-                    ['Order ID', $data['id'] ?? '-'],
+                    ['Order ID', $orderId ?? '-'],
                     ['Status', $data['status'] ?? '-'],
                     ['Waybill ID', $courier['waybill_id'] ?? '-'],
                     ['Courier Company', $courier['company'] ?? '-'],
@@ -63,9 +71,34 @@ class BiteshipTestOrderCommand extends Command
             );
             $this->newLine();
 
+            // Cancel order if requested
+            if ($status === 'cancelled' && $orderId) {
+                $this->info("Cancelling order...");
+                $cancelResult = $biteship->cancelOrder($orderId, 'TEST ORDER - Cancelled via command');
+
+                if ($cancelResult['success'] ?? false) {
+                    $this->info("✅ Order berhasil dibatalkan!");
+                    $this->newLine();
+
+                    $cancelData = $cancelResult['data'] ?? [];
+                    $this->info("Detail Cancel:");
+                    $this->table(
+                        ['Field', 'Value'],
+                        [
+                            ['Order ID', $cancelData['id'] ?? $orderId],
+                            ['Status', $cancelData['status'] ?? 'cancelled'],
+                        ]
+                    );
+                } else {
+                    $this->error("❌ Gagal membatalkan order!");
+                    $this->error("Error: " . ($cancelResult['message'] ?? 'Unknown error'));
+                }
+                $this->newLine();
+            }
+
             $this->info("✅ Silakan cek dashboard Biteship untuk memastikan order muncul:");
             $this->info("   https://dashboard.biteship.com/orders");
-            
+
             return Command::SUCCESS;
         } else {
             $this->error("❌ Gagal membuat order!");

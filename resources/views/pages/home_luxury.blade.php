@@ -20,13 +20,13 @@
 
                 <nav class="hidden items-center gap-6 md:flex" id="navLinks">
                     <a href="{{ route('home') }}"
-                        class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">Home</a>
+                        class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white" data-i18n="navbar.home">Home</a>
 
                     <!-- New Arrivals Mega Dropdown -->
                     <div class="relative group" data-dropdown="new-arrivals">
                         <a href="{{ route('new-arrivals') }}"
                             class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white flex items-center gap-1">
-                            New Arrivals
+                            <span data-i18n="navbar.new_arrivals">New Arrivals</span>
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-300 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
@@ -76,7 +76,7 @@
                     <div class="relative group" data-dropdown="racket">
                         <a href="{{ route('racket') }}"
                             class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white flex items-center gap-1">
-                            Racket
+                            <span data-i18n="navbar.racket">Racket</span>
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-300 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
@@ -124,7 +124,7 @@
                     <div class="relative group" data-dropdown="shoes">
                         <a href="{{ route('shoes') }}"
                             class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white flex items-center gap-1">
-                            Shoes
+                            <span data-i18n="navbar.shoes">Shoes</span>
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-300 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
@@ -172,7 +172,7 @@
                     <div class="relative group" data-dropdown="accessories">
                         <a href="{{ route('apparel') }}"
                             class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white flex items-center gap-1">
-                            Accessories
+                            <span data-i18n="navbar.accessories">Accessories</span>
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-300 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
@@ -217,7 +217,7 @@
                     </div>
 
                     <a href="{{ route('contact') }}"
-                        class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white">Contact</a>
+                        class="border-b border-transparent text-sm text-white/90 transition duration-300 hover:border-white/30 hover:text-white" data-i18n="navbar.contact">Contact</a>
                 </nav>
 
                 <div class="flex items-center gap-2 md:gap-3 text-white/90" id="navIcons">
@@ -225,7 +225,7 @@
                     @guest
                         <a href="{{ route('login') }}" id="loginBtn" class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 border border-white/20 rounded-full text-xs font-semibold text-white backdrop-blur transition duration-300 hover:bg-white/20 hover:border-white/30">
                             <i class="fas fa-sign-in-alt text-sm"></i>
-                            <span>Login</span>
+                            <span data-i18n="navbar.login">Login</span>
                         </a>
                     @endauth
 
@@ -276,10 +276,15 @@
 
                     <!-- Language Switcher (desktop only) -->
                     <div class="hidden md:flex items-center gap-1">
-                        <a href="{{ request()->fullUrlWithQuery(['locale' => 'en']) }}" class="px-2 py-1 text-xs font-semibold transition duration-300 {{ session('locale', 'en') === 'en' ? 'text-white' : 'text-white/60 hover:text-white' }}">EN</a>
+                        <button onclick="switchLanguage('en')" class="px-2 py-1 text-xs font-semibold transition duration-300 hover:text-white lang-btn-hero" data-lang="en">EN</button>
                         <span class="text-white/40">|</span>
-                        <a href="{{ request()->fullUrlWithQuery(['locale' => 'id']) }}" class="px-2 py-1 text-xs font-semibold transition duration-300 {{ session('locale', 'en') === 'id' ? 'text-white' : 'text-white/60 hover:text-white' }}">ID</a>
+                        <button onclick="switchLanguage('id')" class="px-2 py-1 text-xs font-semibold transition duration-300 hover:text-white lang-btn-hero" data-lang="id">ID</button>
                     </div>
+
+                    <!-- Theme Toggle (desktop only) -->
+                    <button onclick="toggleTheme()" class="hidden md:flex items-center justify-center w-8 h-8 rounded-full bg-white/10 border border-white/30 text-white transition duration-300 hover:bg-white/20 hover:border-white/40" id="themeToggle" title="Toggle Theme">
+                        <i class="fas fa-sun text-sm" id="themeIcon"></i>
+                    </button>
 
                     
 
@@ -295,7 +300,7 @@
                                 <div class="bg-white rounded-lg shadow-lg border border-zinc-100 overflow-hidden">
                                     <a href="{{ route('login') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition">
                                         <i class="fas fa-sign-in-alt text-zinc-500 text-sm"></i>
-                                        <span class="text-sm text-zinc-700">Login</span>
+                                        <span class="text-sm text-zinc-700" data-i18n="navbar.login">Login</span>
                                     </a>
                                 </div>
                             </div>
@@ -318,23 +323,23 @@
                                 <div class="md:hidden">
                                     <a href="{{ route('home') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
                                         <i class="fas fa-home text-zinc-500 text-sm"></i>
-                                        <span class="text-sm text-zinc-700">Home</span>
+                                        <span class="text-sm text-zinc-700" data-i18n="navbar.home">Home</span>
                                     </a>
                                     <a href="{{ route('new-arrivals') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
                                         <i class="fas fa-star text-zinc-500 text-sm"></i>
-                                        <span class="text-sm text-zinc-700">New Arrivals</span>
+                                        <span class="text-sm text-zinc-700" data-i18n="navbar.new_arrivals">New Arrivals</span>
                                     </a>
                                     <a href="{{ route('racket') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
                                         <i class="fas fa-table-tennis text-zinc-500 text-sm"></i>
-                                        <span class="text-sm text-zinc-700">Racket</span>
+                                        <span class="text-sm text-zinc-700" data-i18n="navbar.racket">Racket</span>
                                     </a>
                                     <a href="{{ route('shoes') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
                                         <i class="fas fa-shoe-prints text-zinc-500 text-sm"></i>
-                                        <span class="text-sm text-zinc-700">Shoes</span>
+                                        <span class="text-sm text-zinc-700" data-i18n="navbar.shoes">Shoes</span>
                                     </a>
                                     <a href="{{ route('apparel') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-b border-zinc-100">
                                         <i class="fas fa-tshirt text-zinc-500 text-sm"></i>
-                                        <span class="text-sm text-zinc-700">Accessories</span>
+                                        <span class="text-sm text-zinc-700" data-i18n="navbar.accessories">Accessories</span>
                                     </a>
                                 </div>
 
@@ -342,12 +347,12 @@
                                 <div class="md:hidden border-b border-zinc-100">
                                     <div class="px-3 py-2 bg-zinc-50">
                                         <div class="flex gap-2">
-                                            <a href="{{ request()->fullUrlWithQuery(['locale' => 'en']) }}" class="flex-1 px-2 py-1.5 text-xs text-zinc-700 hover:bg-white rounded transition {{ session('locale', 'en') === 'en' ? 'bg-white font-semibold' : 'bg-white/50' }}">
+                                            <button onclick="switchLanguage('en')" class="flex-1 px-2 py-1.5 text-xs text-zinc-700 hover:bg-white rounded transition lang-btn-mobile" data-lang="en">
                                                 EN
-                                            </a>
-                                            <a href="{{ request()->fullUrlWithQuery(['locale' => 'id']) }}" class="flex-1 px-2 py-1.5 text-xs text-zinc-700 hover:bg-white rounded transition {{ session('locale', 'en') === 'id' ? 'bg-white font-semibold' : 'bg-white/50' }}">
+                                            </button>
+                                            <button onclick="switchLanguage('id')" class="flex-1 px-2 py-1.5 text-xs text-zinc-700 hover:bg-white rounded transition lang-btn-mobile" data-lang="id">
                                                 ID
-                                            </a>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -357,16 +362,16 @@
                                     @if (auth()->user()->role === 'admin')
                                         <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-t border-zinc-100">
                                             <i class="fas fa-arrow-left text-zinc-500 text-sm"></i>
-                                            <span class="text-sm text-zinc-700">Dashboard</span>
+                                            <span class="text-sm text-zinc-700" data-i18n="navbar.dashboard">Dashboard</span>
                                         </a>
                                     @elseif(auth()->user()->role === 'customer')
                                         <a href="{{ route('customer.orders.index') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-t border-zinc-100">
                                             <i class="fas fa-history text-zinc-500 text-sm"></i>
-                                            <span class="text-sm text-zinc-700">Orders</span>
+                                            <span class="text-sm text-zinc-700" data-i18n="navbar.orders">Orders</span>
                                         </a>
                                         <a href="{{ route('customer.profile.index') }}" class="flex items-center gap-3 px-3 py-2.5 hover:bg-zinc-50 transition border-t border-zinc-100">
                                             <i class="fas fa-user text-zinc-500 text-sm"></i>
-                                            <span class="text-sm text-zinc-700">Profile</span>
+                                            <span class="text-sm text-zinc-700" data-i18n="navbar.profile">Profile</span>
                                         </a>
                                     @endif
                                 @endauth
@@ -447,14 +452,20 @@
             <div class="relative mx-auto flex h-[300px] max-w-7xl items-center justify-center px-6 md:px-10 lg:px-12 pt-16">
                 <div class="max-w-2xl w-full text-center text-white">
                     <!-- Search Input -->
-                    <div class="flex items-center relative mb-6 max-w-md mx-auto">
+                    <div class="flex items-center relative mb-6 max-w-md mx-auto" id="heroSearchWrapper">
                         <i class="fas fa-search absolute left-3 text-white/60 pointer-events-none text-sm"></i>
                         <input type="text" id="heroSearchInput" placeholder="Cari..."
                                class="w-full bg-white/10 border border-white/20 rounded-full pl-10 pr-4 py-2 text-sm text-white placeholder-white/60 focus:outline-none focus:bg-white/20 focus:border-white/30 backdrop-blur transition-all duration-300"
-                               autocomplete="off">
+                               autocomplete="off" data-i18n-placeholder="hero.search_placeholder">
+                        <!-- Autocomplete Dropdown -->
+                        <div id="heroSearchDropdown" class="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl border border-zinc-100 overflow-hidden hidden z-50 max-h-80 overflow-y-auto">
+                            <div id="heroSearchResults" class="py-2">
+                                <!-- Results will be inserted here -->
+                            </div>
+                        </div>
                     </div>
-                    <h1 class="text-lg font-semibold tracking-tight sm:text-2xl md:text-3xl lg:text-4xl drop-shadow-lg">NoraPadel</h1>
-                    <p class="mt-2 md:mt-4 text-[11px] md:text-sm text-zinc-100 leading-relaxed drop-shadow-md">Experience the ultimate in padel equipment. Premium quality rackets, shoes, and accessories for players who demand excellence.</p>
+                    <h1 class="text-lg font-semibold tracking-tight sm:text-2xl md:text-3xl lg:text-4xl drop-shadow-lg" data-i18n="hero.title">NoraPadel</h1>
+                    <p class="mt-2 md:mt-4 text-[11px] md:text-sm text-zinc-100 leading-relaxed drop-shadow-md" data-i18n="hero.subtitle">Experience the ultimate in padel equipment. Premium quality rackets, shoes, and accessories for players who demand excellence.</p>
                 </div>
             </div>
         </section>
@@ -520,21 +531,21 @@
                             <!-- Category -->
                             <div>
                                 <button type="button" class="filter-toggle flex w-full items-center justify-between text-left">
-                                    <h3 class="text-sm font-semibold text-black">Category</h3>
+                                    <h3 class="text-sm font-semibold text-black" data-i18n="filters.category">Category</h3>
                                     <i class="fas fa-chevron-down text-xs text-zinc-400 transition-transform duration-200"></i>
                                 </button>
                                 <div class="filter-content mt-3 flex flex-wrap gap-2">
-                                    <a href="javascript:void(0)" onclick="applyFilter('category', 'racket')" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black" data-category="racket">Racket</a>
-                                    <a href="javascript:void(0)" onclick="applyFilter('category', 'shoes')" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black" data-category="shoes">Shoes</a>
-                                    <a href="javascript:void(0)" onclick="applyFilter('category', 'apparel')" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black" data-category="apparel">Accessories</a>
-                                    <a href="javascript:void(0)" onclick="clearFilter('category')" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-rose-600 transition hover:border-rose-600 hover:text-rose-600">Clear</a>
+                                    <a href="javascript:void(0)" onclick="applyFilter('category', 'original')" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black" data-category="original" data-i18n="filters.racket">Racket</a>
+                                    <a href="javascript:void(0)" onclick="applyFilter('category', 'shoes')" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black" data-category="shoes" data-i18n="filters.shoes">Shoes</a>
+                                    <a href="javascript:void(0)" onclick="applyFilter('category', 'pedas')" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black" data-category="pedas" data-i18n="filters.accessories">Accessories</a>
+                                    <a href="javascript:void(0)" onclick="clearFilter('category')" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-rose-600 transition hover:border-rose-600 hover:text-rose-600" data-i18n="filters.clear">Clear</a>
                                 </div>
                             </div>
 
                             <!-- Brand -->
                             <div class="border-t border-zinc-100 pt-6">
                                 <button type="button" class="filter-toggle flex w-full items-center justify-between text-left">
-                                    <h3 class="text-sm font-semibold text-black">Brand</h3>
+                                    <h3 class="text-sm font-semibold text-black" data-i18n="filters.brand">Brand</h3>
                                     <i class="fas fa-chevron-down text-xs text-zinc-400 transition-transform duration-200"></i>
                                 </button>
                                 <div class="filter-content mt-3 flex flex-wrap gap-2">
@@ -544,28 +555,28 @@
                                     <a href="javascript:void(0)" onclick="applyFilter('brand', 'Alpha')" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black" data-brand="Alpha">Alpha</a>
                                     <a href="javascript:void(0)" onclick="applyFilter('brand', 'Zephyr')" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black" data-brand="Zephyr">Zephyr</a>
                                     <a href="javascript:void(0)" onclick="applyFilter('brand', 'Arronax')" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600 transition hover:border-black hover:text-black" data-brand="Arronax">Arronax</a>
-                                    <a href="javascript:void(0)" onclick="clearFilter('brand')" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-rose-600 transition hover:border-rose-600 hover:text-rose-600">Clear</a>
+                                    <a href="javascript:void(0)" onclick="clearFilter('brand')" class="filter-chip rounded-full border border-zinc-200 px-3 py-1 text-xs text-rose-600 transition hover:border-rose-600 hover:text-rose-600" data-i18n="filters.clear">Clear</a>
                                 </div>
                             </div>
 
                             <!-- Price -->
                             <div class="border-t border-zinc-100 pt-6">
                                 <button type="button" class="filter-toggle flex w-full items-center justify-between text-left">
-                                    <h3 class="text-sm font-semibold text-black">Price</h3>
+                                    <h3 class="text-sm font-semibold text-black" data-i18n="filters.price">Price</h3>
                                     <i class="fas fa-chevron-down text-xs text-zinc-400 transition-transform duration-200"></i>
                                 </button>
                                 <div class="filter-content mt-3 flex flex-col gap-2">
                                     <label class="flex cursor-pointer items-center gap-2">
                                         <input type="radio" name="filterPrice" class="border-zinc-300 text-black focus:ring-black" value="" onchange="applyFilters()">
-                                        <span class="text-sm text-zinc-600">All Prices</span>
+                                        <span class="text-sm text-zinc-600" data-i18n="filters.all_prices">All Prices</span>
                                     </label>
                                     <label class="flex cursor-pointer items-center gap-2">
                                         <input type="radio" name="filterPrice" class="border-zinc-300 text-black focus:ring-black" value="low" onchange="applyFilters()">
-                                        <span class="text-sm text-zinc-600">Low to High</span>
+                                        <span class="text-sm text-zinc-600" data-i18n="filters.low_to_high">Low to High</span>
                                     </label>
                                     <label class="flex cursor-pointer items-center gap-2">
                                         <input type="radio" name="filterPrice" class="border-zinc-300 text-black focus:ring-black" value="high" onchange="applyFilters()">
-                                        <span class="text-sm text-zinc-600">High to Low</span>
+                                        <span class="text-sm text-zinc-600" data-i18n="filters.high_to_low">High to Low</span>
                                     </label>
                                 </div>
                             </div>
@@ -573,21 +584,21 @@
                             <!-- Sort -->
                             <div class="border-t border-zinc-100 pt-6">
                                 <button type="button" class="filter-toggle flex w-full items-center justify-between text-left">
-                                    <h3 class="text-sm font-semibold text-black">Sort</h3>
+                                    <h3 class="text-sm font-semibold text-black" data-i18n="filters.sort">Sort</h3>
                                     <i class="fas fa-chevron-down text-xs text-zinc-400 transition-transform duration-200"></i>
                                 </button>
                                 <div class="filter-content mt-3 flex flex-col gap-2">
                                     <label class="flex cursor-pointer items-center gap-2">
                                         <input type="radio" name="filterSort" class="border-zinc-300 text-black focus:ring-black" value="" onchange="applyFilters()">
-                                        <span class="text-sm text-zinc-600">Default</span>
+                                        <span class="text-sm text-zinc-600" data-i18n="filters.default">Default</span>
                                     </label>
                                     <label class="flex cursor-pointer items-center gap-2">
                                         <input type="radio" name="filterSort" class="border-zinc-300 text-black focus:ring-black" value="popular" onchange="applyFilters()">
-                                        <span class="text-sm text-zinc-600">Popular</span>
+                                        <span class="text-sm text-zinc-600" data-i18n="filters.popular">Popular</span>
                                     </label>
                                     <label class="flex cursor-pointer items-center gap-2">
                                         <input type="radio" name="filterSort" class="border-zinc-300 text-black focus:ring-black" value="latest" onchange="applyFilters()">
-                                        <span class="text-sm text-zinc-600">Latest</span>
+                                        <span class="text-sm text-zinc-600" data-i18n="filters.latest">Latest</span>
                                     </label>
                                 </div>
                             </div>
@@ -609,7 +620,7 @@
                         </span>
                         <span class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center border border-white">{{ $vouchers->count() }}</span>
                     </div>
-                    <span class="text-xs text-zinc-500">Voucher tersedia</span>
+                    <span class="text-xs text-zinc-500" data-i18n="product.voucher_available">Voucher tersedia</span>
                 </button>
             </div>
 
@@ -679,7 +690,7 @@
                                         $q->whereIn('status', ['completed', 'delivered']);
                                     })->sum('quantity');
                             @endphp
-                            <div class="product-card group overflow-hidden bg-white transition duration-300 hover:-translate-y-1" data-category="{{ strtolower($product->type) }}" data-brand="{{ strtolower($product->brand ?? '') }}">
+                            <div class="product-card group overflow-hidden bg-white transition duration-300 hover:-translate-y-1" data-category="{{ strtolower($product->category ?? '') }}" data-brand="{{ strtolower($product->brand ?? '') }}">
                                 <a href="{{ route('produk.show', $product) }}" class="block">
                                     <div class="relative aspect-square overflow-hidden">
                                         <div class="h-full w-full overflow-hidden">
@@ -720,7 +731,7 @@
                                 </a>
                                 <div class="px-2 pb-2 md:px-4 md:pb-4">
                                     <div class="flex items-center gap-2">
-                                        <button onclick="addToCart('{{ $product->slug }}', event)" class="border border-zinc-300 bg-transparent px-2 py-1 text-[10px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950">
+                                        <button onclick="addToCart('{{ $product->slug }}', event)" class="border border-zinc-300 bg-transparent px-2 py-1 text-[10px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950" data-i18n="product.add_to_cart">
                                             Add to cart
                                         </button>
                                         <button onclick="addToWishlist('{{ $product->slug }}', event)" class="text-zinc-400 transition duration-300 hover:text-rose-500">
@@ -751,7 +762,7 @@
                        <div class="product-item product-card group block overflow-hidden bg-white transition duration-300 hover:-translate-y-1"
                                  data-name="{{ strtolower($product->name) }}"
                                  data-price="{{ $product->hasActiveDiscount() ? $product->discounted_price : $product->price }}"
-                                 data-category="{{ strtolower($product->type) }}"
+                                 data-category="{{ strtolower($product->category ?? '') }}"
                                  data-brand="{{ strtolower($product->brand ?? '') }}"
                                  data-level="{{ $product->level ?? '' }}"
                                  data-discount="{{ $product->hasActiveDiscount() ? 'yes' : 'no' }}"
@@ -798,7 +809,7 @@
                                 </a>
                                 <div class="px-2 pb-2 md:px-3 md:pb-3">
                                     <div class="flex items-center gap-2">
-                                        <button onclick="addToCart('{{ $product->slug }}', event)" class="border border-zinc-300 bg-transparent px-2 py-1 text-[10px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950 truncate max-w-[80px] md:max-w-none">
+                                        <button onclick="addToCart('{{ $product->slug }}', event)" class="border border-zinc-300 bg-transparent px-2 py-1 text-[10px] font-semibold text-zinc-800 transition duration-300 hover:border-zinc-500 hover:text-zinc-950 truncate max-w-[80px] md:max-w-none" data-i18n="product.add_to_cart">
                                             Add to cart
                                         </button>
                                         <button onclick="addToWishlist('{{ $product->slug }}', event)" class="text-zinc-400 transition duration-300 hover:text-rose-500">
@@ -945,6 +956,103 @@
 
         html {
             scroll-behavior: smooth;
+        }
+
+        /* Dark Theme Styles */
+        [data-theme="dark"] {
+            --bg-primary: #18181b;
+            --bg-secondary: #27272a;
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --border-color: #3f3f46;
+        }
+
+        [data-theme="dark"] body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .bg-white {
+            background-color: var(--bg-secondary) !important;
+        }
+
+        [data-theme="dark"] .text-black {
+            color: var(--text-primary) !important;
+        }
+
+        [data-theme="dark"] .text-zinc-600,
+        [data-theme="dark"] .text-zinc-500,
+        [data-theme="dark"] .text-zinc-400 {
+            color: var(--text-secondary) !important;
+        }
+
+        [data-theme="dark"] .border-zinc-200,
+        [data-theme="dark"] .border-zinc-100 {
+            border-color: var(--border-color) !important;
+        }
+
+        [data-theme="dark"] .hover\:border-black:hover {
+            border-color: var(--text-primary) !important;
+        }
+
+        [data-theme="dark"] .hover\:text-black:hover {
+            color: var(--text-primary) !important;
+        }
+
+        /* Add to cart button dark mode */
+        [data-theme="dark"] button[class*="border-zinc-300"][class*="text-zinc-800"] {
+            color: var(--text-primary) !important;
+            border-color: var(--border-color) !important;
+        }
+
+        [data-theme="dark"] button[class*="border-zinc-300"]:hover {
+            border-color: var(--text-primary) !important;
+        }
+
+        /* All buttons in dark mode */
+        [data-theme="dark"] button {
+            color: var(--text-primary) !important;
+        }
+
+        [data-theme="dark"] button.bg-white {
+            background-color: var(--bg-secondary) !important;
+        }
+
+        [data-theme="dark"] button.bg-gray-100 {
+            background-color: var(--bg-primary) !important;
+        }
+
+        [data-theme="dark"] button.text-zinc-800 {
+            color: var(--text-primary) !important;
+        }
+
+        [data-theme="dark"] button.text-zinc-600 {
+            color: var(--text-secondary) !important;
+        }
+
+        [data-theme="dark"] button.border-zinc-300 {
+            border-color: var(--border-color) !important;
+        }
+
+        [data-theme="dark"] button.border-zinc-200 {
+            border-color: var(--border-color) !important;
+        }
+
+        /* Filter chips in dark mode */
+        [data-theme="dark"] .filter-chip {
+            color: var(--text-secondary) !important;
+            border-color: var(--border-color) !important;
+        }
+
+        [data-theme="dark"] .filter-chip.bg-black {
+            background-color: var(--text-primary) !important;
+            color: var(--bg-primary) !important;
+            border-color: var(--text-primary) !important;
+        }
+
+        [data-theme="dark"] .filter-chip:hover {
+            color: var(--text-primary) !important;
+            border-color: var(--text-primary) !important;
         }
 #marqueeBar {
             position: relative;
@@ -1202,19 +1310,21 @@ document.addEventListener('DOMContentLoaded', function () {
                     // Animate and update cart badge
                     const currentCount = parseInt(data.cart_count || 0);
                     updateCartBadge(currentCount);
-                    
+
                     if (button) {
                         button.innerHTML = '✓ Added';
                         setTimeout(() => {
                             button.disabled = false;
-                            button.innerHTML = 'Add to cart';
+                            const addToCartText = getTranslation('product.add_to_cart') || 'Add to cart';
+                            button.textContent = addToCartText;
                         }, 1500);
                     }
                 } else {
                     alert(data.message || 'Gagal menambahkan produk ke keranjang');
                     if (button) {
                         button.disabled = false;
-                        button.innerHTML = 'Add to cart';
+                        const addToCartText = getTranslation('product.add_to_cart') || 'Add to cart';
+                        button.textContent = addToCartText;
                     }
                 }
             })
@@ -1223,7 +1333,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 alert('Terjadi kesalahan. Silakan coba lagi.');
                 if (button) {
                     button.disabled = false;
-                    button.innerHTML = 'Add to cart';
+                    const addToCartText = getTranslation('product.add_to_cart') || 'Add to cart';
+                    button.textContent = addToCartText;
                 }
             });
         }
@@ -1352,11 +1463,11 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log('Applying filters with params:', params.toString());
 
             // Show loading state
-            const newArrivalsContainer = document.getElementById('newArrivalsContainer');
+            const newArrivalsGrid = document.getElementById('newArrivalsGrid');
             const productGrid = document.getElementById('productGrid');
             
-            if (newArrivalsContainer) {
-                newArrivalsContainer.innerHTML = '<div class="flex items-center justify-center w-full py-8"><i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i></div>';
+            if (newArrivalsGrid) {
+                newArrivalsGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8"><i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i></div>';
             }
             if (productGrid) {
                 productGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 col-span-full"><i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i></div>';
@@ -1371,15 +1482,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 .then(data => {
                     console.log('Response data:', data);
                     if (data.success && data.html) {
-                        if (newArrivalsContainer) {
-                            newArrivalsContainer.innerHTML = data.html;
+                        if (newArrivalsGrid) {
+                            newArrivalsGrid.innerHTML = data.html;
                         }
                         if (productGrid) {
                             productGrid.innerHTML = data.html;
                         }
                     } else {
-                        if (newArrivalsContainer) {
-                            newArrivalsContainer.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500">No products found</div>';
+                        if (newArrivalsGrid) {
+                            newArrivalsGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500">No products found</div>';
                         }
                         if (productGrid) {
                             productGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500 col-span-full">No products found</div>';
@@ -1388,8 +1499,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    if (newArrivalsContainer) {
-                        newArrivalsContainer.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500">Error loading products</div>';
+                    if (newArrivalsGrid) {
+                        newArrivalsGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500">Error loading products</div>';
                     }
                     if (productGrid) {
                         productGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500 col-span-full">Error loading products</div>';
@@ -1397,78 +1508,62 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
         };
 
-        // Apply single filter (for sidebar chips)
+        // Apply single filter (for sidebar chips) - Client-side filtering
         window.applyFilter = function(filterType, value) {
             console.log('Applying filter:', filterType, value);
-            
+
             // Update chip styling
             const chips = document.querySelectorAll(`.filter-chip[data-${filterType}]`);
             chips.forEach(chip => {
                 chip.classList.remove('bg-black', 'text-white', 'border-black');
                 chip.classList.add('text-zinc-600', 'border-zinc-200');
             });
-            
+
             const activeChip = document.querySelector(`.filter-chip[data-${filterType}="${value}"]`);
             if (activeChip) {
                 activeChip.classList.add('bg-black', 'text-white', 'border-black');
                 activeChip.classList.remove('text-zinc-600', 'border-zinc-200');
             }
 
-            // Fetch filtered products via AJAX
-            const params = new URLSearchParams();
-            if (filterType === 'category') {
-                params.append('category', value);
-            } else if (filterType === 'brand') {
-                params.append('brand', value);
-            }
-
-            console.log('Fetching:', `/api/new-arrivals/filter?${params.toString()}`);
-
-            // Show loading state
-            const newArrivalsContainer = document.getElementById('newArrivalsContainer');
-            const productGrid = document.getElementById('productGrid');
-            
-            if (newArrivalsContainer) {
-                newArrivalsContainer.innerHTML = '<div class="flex items-center justify-center w-full py-8"><i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i></div>';
-            }
-            if (productGrid) {
-                productGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 col-span-full"><i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i></div>';
-            }
-
-            fetch(`/api/new-arrivals/filter?${params.toString()}`)
-                .then(response => {
-                    console.log('Response status:', response.status);
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Response data:', data);
-                    if (data.success && data.html) {
-                        // Update both containers with filtered products
-                        if (newArrivalsContainer) {
-                            newArrivalsContainer.innerHTML = data.html;
-                        }
-                        if (productGrid) {
-                            productGrid.innerHTML = data.html;
-                        }
-                    } else {
-                        if (newArrivalsContainer) {
-                            newArrivalsContainer.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500">No products found</div>';
-                        }
-                        if (productGrid) {
-                            productGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500 col-span-full">No products found</div>';
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    if (newArrivalsContainer) {
-                        newArrivalsContainer.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500">Error loading products</div>';
-                    }
-                    if (productGrid) {
-                        productGrid.innerHTML = '<div class="flex items-center justify-center w-full py-8 text-gray-500 col-span-full">Error loading products</div>';
-                    }
-                });
+            // Filter both grids client-side
+            filterGrid('newArrivalsGrid', filterType, value);
+            filterGrid('productGrid', filterType, value);
         };
+
+        // Filter a specific grid
+        function filterGrid(gridId, filterType, value) {
+            const grid = document.getElementById(gridId);
+            if (!grid) return;
+
+            const products = grid.querySelectorAll('.product-card, .product-item');
+            let visibleCount = 0;
+
+            products.forEach(product => {
+                const productValue = product.getAttribute(`data-${filterType}`);
+                const shouldShow = value === 'all' || productValue === value.toLowerCase();
+
+                if (shouldShow) {
+                    product.style.display = '';
+                    visibleCount++;
+                } else {
+                    product.style.display = 'none';
+                }
+            });
+
+            // Show "no results" message if no products match
+            let noResults = grid.querySelector('.no-results-message');
+            if (visibleCount === 0) {
+                if (!noResults) {
+                    noResults = document.createElement('div');
+                    noResults.className = 'no-results-message col-span-full text-center py-12';
+                    noResults.innerHTML = '<i class="fas fa-search text-4xl text-zinc-300 mb-3"></i><p class="text-zinc-500">Tidak ada produk yang ditemukan</p>';
+                    grid.appendChild(noResults);
+                }
+                noResults.style.display = 'block';
+            } else if (noResults) {
+                noResults.style.display = 'none';
+            }
+        }
 
         // Clear filter
         window.clearFilter = function(filterType) {
@@ -1477,10 +1572,28 @@ document.addEventListener('DOMContentLoaded', function () {
                 chip.classList.remove('bg-black', 'text-white', 'border-black');
                 chip.classList.add('text-zinc-600', 'border-zinc-200');
             });
-            
-            // Reload page to reset all filters
-            window.location.reload();
+
+            // Reset both grids to show all products
+            resetGrid('newArrivalsGrid');
+            resetGrid('productGrid');
         };
+
+        // Reset a specific grid to show all products
+        function resetGrid(gridId) {
+            const grid = document.getElementById(gridId);
+            if (!grid) return;
+
+            const products = grid.querySelectorAll('.product-card, .product-item');
+            products.forEach(product => {
+                product.style.display = '';
+            });
+
+            // Hide "no results" message if present
+            const noResults = grid.querySelector('.no-results-message');
+            if (noResults) {
+                noResults.style.display = 'none';
+            }
+        }
 
         // Filter toggle functionality
         document.querySelectorAll('.filter-toggle').forEach(toggle => {
@@ -1548,7 +1661,7 @@ document.addEventListener('DOMContentLoaded', function () {
         (function() {
             // Scroll New Arrivals Function
             window.scrollNewArrivals = function(direction) {
-                const container = document.getElementById('newArrivalsContainer');
+                const container = document.getElementById('newArrivalsGrid');
                 if (!container) return;
                 
                 const scrollAmount = 400;
@@ -2320,6 +2433,221 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
         }
+        })();
+
+        // Theme Toggle Functionality
+        window.toggleTheme = function() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        };
+
+        function updateThemeIcon(theme) {
+            const themeIcon = document.getElementById('themeIcon');
+            if (themeIcon) {
+                if (theme === 'dark') {
+                    themeIcon.classList.remove('fa-sun');
+                    themeIcon.classList.add('fa-moon');
+                } else {
+                    themeIcon.classList.remove('fa-moon');
+                    themeIcon.classList.add('fa-sun');
+                }
+            }
+        }
+
+        // Initialize theme on page load
+        (function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+        })();
+
+        // Hero Search Autocomplete
+        (function() {
+            const searchInput = document.getElementById('heroSearchInput');
+            const searchDropdown = document.getElementById('heroSearchDropdown');
+            const searchResults = document.getElementById('heroSearchResults');
+            let debounceTimer;
+
+            if (!searchInput || !searchDropdown || !searchResults) return;
+
+            searchInput.addEventListener('input', function() {
+                const query = this.value.trim();
+
+                clearTimeout(debounceTimer);
+
+                if (query.length < 2) {
+                    searchDropdown.classList.add('hidden');
+                    return;
+                }
+
+                debounceTimer = setTimeout(() => {
+                    fetchProducts(query);
+                }, 300);
+            });
+
+            searchInput.addEventListener('focus', function() {
+                if (this.value.trim().length >= 2) {
+                    fetchProducts(this.value.trim());
+                }
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!searchInput.contains(e.target) && !searchDropdown.contains(e.target)) {
+                    searchDropdown.classList.add('hidden');
+                }
+            });
+
+            async function fetchProducts(query) {
+                try {
+                    const response = await fetch(`/api/search-products?q=${encodeURIComponent(query)}`);
+                    const data = await response.json();
+
+                    if (data.products && data.products.length > 0) {
+                        displayResults(data.products);
+                    } else {
+                        displayNoResults();
+                    }
+                } catch (error) {
+                    console.error('Search error:', error);
+                }
+            }
+
+            function displayResults(products) {
+                searchResults.innerHTML = products.map(product => `
+                    <a href="/produk/${product.slug}" class="flex items-center gap-3 px-4 py-3 hover:bg-zinc-50 transition">
+                        <img src="${product.image_url}" alt="${product.name}" class="w-12 h-12 object-cover rounded-lg" onerror="this.src='/images/logo.png'">
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-zinc-900 truncate">${product.name}</p>
+                            <p class="text-xs text-zinc-500">${product.category_label || ''}</p>
+                        </div>
+                        <p class="text-sm font-semibold text-zinc-900">Rp ${parseInt(product.price).toLocaleString('id-ID')}</p>
+                    </a>
+                `).join('');
+
+                searchDropdown.classList.remove('hidden');
+            }
+
+            function displayNoResults() {
+                const noResultsText = getTranslation('product.no_results');
+                searchResults.innerHTML = `
+                    <div class="px-4 py-8 text-center">
+                        <p class="text-sm text-zinc-500">${noResultsText}</p>
+                    </div>
+                `;
+                searchDropdown.classList.remove('hidden');
+            }
+        })();
+
+        // i18n Language Switching
+        (function() {
+            let translations = {};
+            let currentLanguage = 'en'; // Default to English
+
+            async function loadTranslations() {
+                try {
+                    const response = await fetch('/translation/home.json');
+                    translations = await response.json();
+                    // Get language from URL parameter or session, default to English
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const urlLocale = urlParams.get('locale');
+                    const sessionLocale = '{{ session('locale') }}';
+                    currentLanguage = urlLocale || sessionLocale || 'en';
+                    console.log('Current language:', currentLanguage);
+                    applyTranslations();
+                    updateLanguageButtons();
+                } catch (error) {
+                    console.error('Failed to load translations:', error);
+                }
+            }
+
+            function getTranslation(key) {
+                const keys = key.split('.');
+                let value = translations;
+                for (const k of keys) {
+                    value = value ? value[k] : null;
+                    if (!value) return null;
+                }
+                return value ? value[currentLanguage] || value['en'] : null;
+            }
+
+            function applyTranslations() {
+                // Apply to elements with data-i18n attribute
+                document.querySelectorAll('[data-i18n]').forEach(element => {
+                    const key = element.getAttribute('data-i18n');
+                    const translation = getTranslation(key);
+                    if (translation) {
+                        element.textContent = translation;
+                    }
+                });
+
+                // Apply to placeholder attributes
+                document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+                    const key = element.getAttribute('data-i18n-placeholder');
+                    const translation = getTranslation(key);
+                    if (translation) {
+                        element.placeholder = translation;
+                    }
+                });
+            }
+
+            function updateLanguageButtons() {
+                // Update desktop language buttons (luxury-navbar - black text)
+                document.querySelectorAll('.lang-btn').forEach(btn => {
+                    const lang = btn.getAttribute('data-lang');
+                    if (lang === currentLanguage) {
+                        btn.classList.add('text-black');
+                        btn.classList.remove('text-zinc-400');
+                    } else {
+                        btn.classList.remove('text-black');
+                        btn.classList.add('text-zinc-400');
+                    }
+                });
+
+                // Update desktop language buttons (home_luxury navbar - white text on dark)
+                document.querySelectorAll('.lang-btn-hero').forEach(btn => {
+                    const lang = btn.getAttribute('data-lang');
+                    if (lang === currentLanguage) {
+                        btn.classList.add('text-white');
+                        btn.classList.remove('text-white/60');
+                    } else {
+                        btn.classList.remove('text-white');
+                        btn.classList.add('text-white/60');
+                    }
+                });
+
+                // Update mobile language buttons
+                document.querySelectorAll('.lang-btn-mobile').forEach(btn => {
+                    const lang = btn.getAttribute('data-lang');
+                    if (lang === currentLanguage) {
+                        btn.classList.add('bg-white', 'font-semibold');
+                        btn.classList.remove('bg-white/50');
+                    } else {
+                        btn.classList.remove('bg-white', 'font-semibold');
+                        btn.classList.add('bg-white/50');
+                    }
+                });
+            }
+
+            // Expose function globally for manual language switching
+            window.switchLanguage = function(lang) {
+                currentLanguage = lang;
+                applyTranslations();
+                updateLanguageButtons();
+                const newUrl = new URL(window.location);
+                newUrl.searchParams.set('locale', lang);
+                window.history.pushState({}, '', newUrl);
+                console.log('Switched to language:', lang);
+            };
+
+            window.getTranslation = getTranslation;
+
+            // Load translations on page load
+            loadTranslations();
         })();
     </script>
 @endpush
